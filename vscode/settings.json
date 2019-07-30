@@ -1,0 +1,19 @@
+{
+    "window.titleBarStyle": "custom",
+    "workbench.tree.indent": 25,
+    "window.zoomLevel": 0,
+    "editor.fontSize": 16,
+    "solargraph.useBundler": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "explorer.autoReveal": false,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "explorer.confirmDragAndDrop": false,
+    "files.associations": {
+      "*.plist": "xml"
+    },
+    "explorer.confirmDelete": false,
+    "editor.autoClosingBrackets": "never",
+    "editor.autoClosingQuotes": "never"
+}
