@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sudo-write-file() {
+tools::sudo-write-file() {
   local dest="$1"
   local mode="${2:-0644}"
   local owner="${3:-root}"

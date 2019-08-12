@@ -14,31 +14,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+ubuntu::ensure-this-is-ubuntu-workstation() {
+  if [ "${DESKTOP_SESSION}" != ubuntu ]; then
+    echo "This has to be an ubuntu workstation (${?})" >&2
+    exit 1
+  fi
+}
+
 ubuntu::set-timezone() {
   local timezone="$1"
-  sudo timedatectl set-timezone "$timezone"
-}
-
-ubuntu::set-locale() {
-  local locale="$1"
-
-  sudo locale-gen "$locale"
-  sudo update-locale "LANG=$locale" "LANGUAGE=$locale" "LC_CTYPE=$locale" "LC_ALL=$locale"
-
-  export LANG="$locale"
-  export LANGUAGE="$locale"
-  export LC_CTYPE="$locale"
-  export LC_ALL="$locale"
-}
-
-ubuntu::fix-nvidia-gpu-background-image-glitch() {
-  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh  || { echo "Unable to install ubuntu/background-fix.sh (${?})" >&2; exit 1; }
-}
-
-ubuntu::install-my-computer-deploy-shell-alias() {
-sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL
-  alias my-computer-deploy="${PWD}/bin/shell"
-SHELL
+  sudo timedatectl set-timezone "$timezone" || { echo "Unable to set timezone (${?})" >&2; exit 1; }
 }
 
 ubuntu::set-hostname() {
@@ -51,6 +36,24 @@ ubuntu::set-hostname() {
   sudo hostname --file "$hostnameFile" || { echo "Unable to load hostname from $hostnameFile (${?})" >&2; exit 1; }
 }
 
+ubuntu::set-locale() {
+  local locale="$1"
+
+  sudo locale-gen "$locale" || { echo "Unable to run locale-gen (${?})" >&2; exit 1; }
+  sudo update-locale "LANG=$locale" "LANGUAGE=$locale" "LC_CTYPE=$locale" "LC_ALL=$locale" || { echo "Unable to run update-locale (${?})" >&2; exit 1; }
+
+  export LANG="$locale"
+  export LANGUAGE="$locale"
+  export LC_CTYPE="$locale"
+  export LC_ALL="$locale"
+}
+
+ubuntu::install-my-computer-deploy-shell-alias() {
+tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || { echo "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh (${?})" >&2; exit 1; }
+  alias my-computer-deploy="${PWD}/bin/shell"
+SHELL
+}
+
 ubuntu::set-inotify-max-user-watches() {
   local sysctl="/etc/sysctl.conf"
 
@@ -60,7 +63,7 @@ ubuntu::set-inotify-max-user-watches() {
   fi
 
   if grep --quiet "^fs.inotify.max_user_watches" "$sysctl" && grep --quiet "^fs.inotify.max_user_instances" "$sysctl"; then
-    echo fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set
+    echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set"
   else
     echo fs.inotify.max_user_watches=1000000 | sudo tee --append "$sysctl"
     test "${PIPESTATUS[*]}" = "0 0" || { echo "Unable to write to $sysctl (${?})" >&2; exit 1; }
@@ -114,7 +117,7 @@ ubuntu::apt::install-basic-tools() {
 
 ubuntu::apt::install-ruby-and-devtools() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    postgresql libpq-dev postgresql-contrib \
+    postgresql libpq-dev postgresql-contrib python-psycopg2 \
     sqlite3 libsqlite3-dev \
     build-essential libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
     autoconf bison libncurses-dev libffi-dev libgdbm-dev \
@@ -149,6 +152,11 @@ ubuntu::apt::install-gsettings() {
   fi
 }
 
+ubuntu::apt::install-tor() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    tor || { echo "Unable to apt-get install (${?})" >&2; exit 1; }
+}
+
 ubuntu::configure-desktop-apps() {
   # use dconf-editor to determine key/value pairs
 
@@ -165,4 +173,8 @@ ubuntu::configure-desktop-apps() {
   dbus-launch gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || { echo "Unable to set gsettings (${?})" >&2; exit 1; }
   dbus-launch gsettings set org.gnome.nautilus.preferences show-delete-permanently true || { echo "Unable to set gsettings (${?})" >&2; exit 1; }
   dbus-launch gsettings set org.gnome.nautilus.preferences show-hidden-files true || { echo "Unable to set gsettings (${?})" >&2; exit 1; }
+}
+
+ubuntu::fix-nvidia-gpu-background-image-glitch() {
+  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || { echo "Unable to install ubuntu/background-fix.sh (${?})" >&2; exit 1; }
 }

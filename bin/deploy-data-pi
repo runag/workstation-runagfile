@@ -17,28 +17,33 @@
 set -o xtrace
 set -o nounset
 
-# data-pi
+. tools.sh
 . data-pi/lib.sh
-data-pi::install-motd
-data-pi::install-led-heartbeat
-
-ubuntu::set-hostname "stan-data-pi"
-
-data-pi::apt::add-ubuntu-raspi2-ppa
-
-# ubuntu
 . ubuntu/lib.sh
+. netdata/lib.sh
 
-ubuntu::set-timezone UTC
-ubuntu::set-locale en_US.UTF-8
+data-pi::ensure-this-is-raspberry-pi || { echo "Function call failed (${?})" >&2; exit 1; }
 
-ubuntu::install-my-computer-deploy-shell-alias
-ubuntu::set-inotify-max-user-watches
+data-pi::install-motd || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::install-led-heartbeat || { echo "Function call failed (${?})" >&2; exit 1; }
 
-ubuntu::apt::update
-ubuntu::apt::dist-upgrade
+data-pi::apt::add-ubuntu-raspi2-ppa || { echo "Function call failed (${?})" >&2; exit 1; }
 
-ubuntu::apt::install-basic-tools
-data-pi::apt::install-packages
+ubuntu::set-hostname "stan-data-pi" || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::set-timezone UTC || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::set-locale en_US.UTF-8 || { echo "Function call failed (${?})" >&2; exit 1; }
 
-ubuntu::apt::autoremove
+ubuntu::install-my-computer-deploy-shell-alias || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::set-inotify-max-user-watches || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::update || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::dist-upgrade || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::install-basic-tools || { echo "Function call failed (${?})" >&2; exit 1; }
+
+data-pi::apt::install-packages || { echo "Function call failed (${?})" >&2; exit 1; }
+
+netdata::install || { echo "Function call failed (${?})" >&2; exit 1; }
+netdata::configure || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::autoremove || { echo "Function call failed (${?})" >&2; exit 1; }

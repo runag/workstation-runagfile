@@ -14,12 +14,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-data-pi::install-motd() {
-  sudo install --mode=0755 --owner=root --group=root -D -t /etc/update-motd.d data-pi/85-raspberry || { echo "Unable to install /etc/update-motd.d/85-raspberry (${?})" >&2; exit 1; }
+data-pi::ensure-this-is-raspberry-pi() {
+  if [ "$(dpkg --print-architecture)" !=  armhf ]; then
+    echo "This has to be an Raspberry Pi (${?})" >&2
+    exit 1
+  fi
 }
 
 data-pi::install-shell-aliases() {
   sudo install --mode=0644 --owner=root --group=root -D -t /etc/profile.d data-pi/data-pi-shell-aliases.sh || { echo "Unable to install data-pi-shell-aliases.sh (${?})" >&2; exit 1; }
+}
+
+data-pi::install-motd() {
+  sudo install --mode=0755 --owner=root --group=root -D -t /etc/update-motd.d data-pi/85-raspberry || { echo "Unable to install /etc/update-motd.d/85-raspberry (${?})" >&2; exit 1; }
 }
 
 data-pi::install-led-heartbeat() {
@@ -32,7 +39,7 @@ data-pi::install-led-heartbeat() {
 }
 
 data-pi::apt::add-ubuntu-raspi2-ppa() {
-  sudo add-apt-repository ppa:ubuntu-raspi2/ppa || { echo "Unable to add-apt-repository ppa:ubuntu-raspi2/ppa (${?})" >&2; exit 1; }
+  sudo add-apt-repository --yes ppa:ubuntu-raspi2/ppa || { echo "Unable to add-apt-repository ppa:ubuntu-raspi2/ppa (${?})" >&2; exit 1; }
 }
 
 data-pi::apt::install-packages() {

@@ -336,3 +336,20 @@ sudo systemctl start pgadmin4.service
 org.gnome.nautilus.desktop trash-icon-visible false
 org.gnome.nautilus.desktop volumes-visible false
 ```
+
+
+# TOR
+
+```sh
+sudo apt-get install tor
+sudo nano /etc/tor/torrc
+
+# add the following
+HiddenServiceDir /var/lib/tor/ssh_hidden_service/
+HiddenServiceVersion 3
+HiddenServicePort 22 127.0.0.1:22
+
+sudo systemctl restart tor
+
+sudo cat /var/lib/tor/ssh_hidden_service/hostname
+```

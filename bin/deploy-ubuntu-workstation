@@ -17,40 +17,35 @@
 set -o xtrace
 set -o nounset
 
-. lib.sh
-
-
-# data-pi
 . data-pi/lib.sh
-data-pi::install-shell-aliases
-
-
-# ubuntu
-. ubuntu/lib.sh
-ubuntu::install-my-computer-deploy-shell-alias
-ubuntu::set-inotify-max-user-watches
-
-ubuntu::apt::add-yarn-source
-ubuntu::apt::add-nodejs-source
-
-ubuntu::apt::update
-ubuntu::apt::dist-upgrade
-
-ubuntu::apt::install-basic-tools
-ubuntu::apt::install-ruby-and-devtools
-ubuntu::apt::install-nodejs
-ubuntu::apt::install-gsettings
-
-ubuntu::apt::autoremove
-
-ubuntu::configure-desktop-apps
-
-
-# sublime
 . sublime/lib.sh
-sublime::install-sublime-merge
-
-
-# vscode
+. tools.sh
+. ubuntu/lib.sh
 . vscode/lib.sh
-vscode::install-config
+
+ubuntu::ensure-this-is-ubuntu-workstation || { echo "Function call failed (${?})" >&2; exit 1; }
+
+data-pi::install-shell-aliases || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::install-my-computer-deploy-shell-alias || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::set-inotify-max-user-watches || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::add-yarn-source || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::add-nodejs-source || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::update || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::dist-upgrade || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::install-basic-tools || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-ruby-and-devtools || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-nodejs || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-gsettings || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-tor || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::apt::autoremove || { echo "Function call failed (${?})" >&2; exit 1; }
+
+ubuntu::configure-desktop-apps || { echo "Function call failed (${?})" >&2; exit 1; }
+
+sublime::install-sublime-merge || { echo "Function call failed (${?})" >&2; exit 1; }
+
+vscode::install-config || { echo "Function call failed (${?})" >&2; exit 1; }
