@@ -341,7 +341,8 @@ org.gnome.nautilus.desktop volumes-visible false
 # TOR
 
 ```sh
-sudo apt-get install tor
+# https://2019.www.torproject.org/docs/debian.html.en
+
 sudo nano /etc/tor/torrc
 
 # add the following
@@ -352,4 +353,6 @@ HiddenServicePort 22 127.0.0.1:22
 sudo systemctl restart tor
 
 sudo cat /var/lib/tor/ssh_hidden_service/hostname
+
+journalctl -f --since today
 ```

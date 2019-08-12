@@ -15,10 +15,10 @@
 #  limitations under the License.
 
 alias data-pi='ssh -q -L 8385:localhost:8384 -L 19998:localhost:19999 ubuntu@stan-data-pi.local'
-alias data-pi-onion='ssh -q -L 8385:localhost:8384 -L 19998:localhost:19999 -o ProxyCommand="nc -x localhost:9050 %h %p" ubuntu@3qxbzvlft57ftlsqgmsnag5nbm7cgopcyi4fufvlzyxdwlelxvodqmad.onion'
+alias data-pi-onion='ssh -q -L 8385:localhost:8384 -L 19998:localhost:19999 -o ProxyCommand="nc -x localhost:9050 %h %p" ubuntu@o2rp4oychvfwfjeep34c7s5jsw5xdktkvhxitwj7bo5btmkqvody4dyd.onion'
 
 alias data-pi-unlock='export BW_SESSION="$(bw unlock --raw)" && bw get password "kelly disk key" | ssh ubuntu@stan-data-pi.local "echo unlocking... && ! { findmnt -M ~/kelly > /dev/null && echo already unlocked; } && sudo cryptsetup luksOpen /dev/sda1 kelly && sudo fsck -pf /dev/mapper/kelly && sudo mount /dev/mapper/kelly ~/kelly && sudo systemctl start syncthing-kelly@ubuntu.service && echo done"'
-alias data-pi-onion-unlock='export BW_SESSION="$(bw unlock --raw)" && bw get password "kelly disk key" | ssh -o ProxyCommand="nc -x localhost:9050 %h %p" ubuntu@3qxbzvlft57ftlsqgmsnag5nbm7cgopcyi4fufvlzyxdwlelxvodqmad.onion "echo unlocking... && ! { findmnt -M ~/kelly > /dev/null && echo already unlocked; } && sudo cryptsetup luksOpen /dev/sda1 kelly && sudo fsck -pf /dev/mapper/kelly && sudo mount /dev/mapper/kelly ~/kelly && sudo systemctl start syncthing-kelly@ubuntu.service && echo done"'
+alias data-pi-onion-unlock='export BW_SESSION="$(bw unlock --raw)" && bw get password "kelly disk key" | ssh -o ProxyCommand="nc -x localhost:9050 %h %p" ubuntu@o2rp4oychvfwfjeep34c7s5jsw5xdktkvhxitwj7bo5btmkqvody4dyd.onion "echo unlocking... && ! { findmnt -M ~/kelly > /dev/null && echo already unlocked; } && sudo cryptsetup luksOpen /dev/sda1 kelly && sudo fsck -pf /dev/mapper/kelly && sudo mount /dev/mapper/kelly ~/kelly && sudo systemctl start syncthing-kelly@ubuntu.service && echo done"'
 
 alias data-pi-halt="ssh ubuntu@stan-data-pi.local 'echo halting... && sudo halt'"
 alias data-pi-reboot="ssh ubuntu@stan-data-pi.local 'echo rebooting... && sudo reboot'"
