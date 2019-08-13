@@ -16,19 +16,24 @@
 
 set -o nounset
 
+fail() {
+  echo "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: in \`${FUNCNAME[1]}': Error: ${1:-"Abnormal termination"}" >&2
+  exit "${2:-1}"
+}
+
 my-computer-deploy::shell() {
   local relativeDirPath
   local absoluteDirPath
 
-  relativeDirPath="$(dirname "${BASH_SOURCE[0]}")" || { echo "Unable to determine relativeDirPath (${?})" >&2; exit 1; }
-  absoluteDirPath="$(cd "${relativeDirPath}" >/dev/null 2>&1 && pwd)" || { echo "Unable to determine absoluteDirPath (${?})" >&2; exit 1; }
+  relativeDirPath="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine relativeDirPath (${?})"
+  absoluteDirPath="$(cd "${relativeDirPath}" >/dev/null 2>&1 && pwd)" || fail "Unable to determine absoluteDirPath (${?})"
 
   export PATH="${absoluteDirPath}:${PATH}"
 
-  cd "${absoluteDirPath}" || { echo "Unable to cd to ${absoluteDirPath} (${?})" >&2; exit 1; }
-  cd .. || { echo "Unable to cd to parent dir from ${absoluteDirPath} (${?})" >&2; exit 1; }
+  cd "${absoluteDirPath}" || fail "Unable to cd to ${absoluteDirPath} (${?})"
+  cd .. || fail "Unable to cd to parent dir from ${absoluteDirPath} (${?})"
 
   $SHELL
 }
 
-my-computer-deploy::shell || { echo "Call to my-computer-deploy::shell failed (${?})" >&2; exit 1; }
+my-computer-deploy::shell || fail "Call to my-computer-deploy::shell failed (${?})"

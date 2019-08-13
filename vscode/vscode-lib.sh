@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 vscode::install-config() {
-  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/settings.json || { echo "Unable to install settings.json (${?})" >&2; exit 1; }
-  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/keybindings.json || { echo "Unable to install keybindings.json (${?})" >&2; exit 1; }
+  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/settings.json || fail "Unable to install settings.json (${?})"
+  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/keybindings.json || fail "Unable to install keybindings.json (${?})"
 }
 
 vscode::merge-config() {

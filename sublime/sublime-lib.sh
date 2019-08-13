@@ -16,17 +16,17 @@
 
 sublime::install-sublime-merge() {
   curl --fail --silent --show-error https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-  test "${PIPESTATUS[*]}" = "0 0" || { echo "Unable to curl https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add" >&2; exit 1; }
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add"
 
-  sudo apt-get install -o Acquire::ForceIPv4=true apt-transport-https || { echo "Unable to apt-get install (${?})" >&2; exit 1; }
+  sudo apt-get install -o Acquire::ForceIPv4=true apt-transport-https || fail "Unable to apt-get install (${?})"
 
   echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-  test "${PIPESTATUS[*]}" = "0 0" || { echo "Unable to wrote to /etc/apt/sources.list.d/sublime-text.list" >&2; exit 1; }
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to wrote to /etc/apt/sources.list.d/sublime-text.list"
 
-  sudo apt-get -o Acquire::ForceIPv4=true update || { echo "Unable to apt-get update (${?})" >&2; exit 1; }
+  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update (${?})"
 
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    sublime-merge || { echo "Unable to apt-get install (${?})" >&2; exit 1; }
+    sublime-merge || fail "Unable to apt-get install (${?})"
 }
 
 sublime::install-sublime-text() {

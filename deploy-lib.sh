@@ -25,13 +25,13 @@ tools::sudo-write-file() {
   local owner="${3:-root}"
   local group="${4:-$owner}"
 
-  local dirName; dirName="$(dirname "${dest}")" || { echo "Unable to get dirName of '${dest}' (${?})" >&2; exit 1; }
+  local dirName; dirName="$(dirname "${dest}")" || fail "Unable to get dirName of '${dest}' (${?})"
 
-  sudo mkdir -p "${dirName}" || { echo "Unable to mkdir -p '${dirName}' (${?})" >&2; exit 1; }
+  sudo mkdir -p "${dirName}" || fail "Unable to mkdir -p '${dirName}' (${?})"
 
   cat | sudo tee "$dest"
-  test "${PIPESTATUS[*]}" = "0 0" || { echo "Unable to cat or write to dest $dest" >&2; exit 1; }
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to cat or write to '$dest'"
 
-  sudo chmod "$mode" "$dest" || { echo "Unable to chmod '${dest}' (${?})" >&2; exit 1; }
-  sudo chown "$owner:$group" "$dest" || { echo "Unable to chown '${dest}' (${?})" >&2; exit 1; }
+  sudo chmod "$mode" "$dest" || fail "Unable to chmod '${dest}' (${?})"
+  sudo chown "$owner:$group" "$dest" || fail "Unable to chown '${dest}' (${?})"
 }

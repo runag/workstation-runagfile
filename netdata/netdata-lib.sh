@@ -21,7 +21,7 @@ netdata::install() {
 }
 
 netdata::configure() {
-  sudo install --mode=0644 --owner=root --group=root -D -t /etc/netdata netdata/netdata.conf || { echo "Unable to install netdata/netdata.conf (${?})" >&2; exit 1; }
-  sudo install --mode=0644 --owner=root --group=root -D -t /etc/netdata/python.d netdata/python.d/postgres.conf || { echo "Unable to install netdata/python.d/postgres.conf (${?})" >&2; exit 1; }
-  sudo systemctl restart netdata || { echo "Unable to run systemctl restart (${?})" >&2; exit 1; }
+  sudo install --mode=0644 --owner=root --group=root -D -t /etc/netdata netdata/netdata.conf || fail "Unable to install netdata/netdata.conf (${?})"
+  sudo install --mode=0644 --owner=root --group=root -D -t /etc/netdata/python.d netdata/python.d/postgres.conf || fail "Unable to install netdata/python.d/postgres.conf (${?})"
+  sudo systemctl restart netdata || fail "Unable to run systemctl restart (${?})"
 }
