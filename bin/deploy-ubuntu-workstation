@@ -17,35 +17,35 @@
 set -o xtrace
 set -o nounset
 
-. data-pi/lib.sh
-. sublime/lib.sh
-. tools.sh
-. ubuntu/lib.sh
-. vscode/lib.sh
+. deploy-lib.sh || fail
+. data-pi/data-pi-lib.sh || fail
+. sublime/sublime-lib.sh || fail
+. ubuntu/ubuntu-lib.sh || fail
+. vscode/vscode-lib.sh || fail
 
-ubuntu::ensure-this-is-ubuntu-workstation || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::ensure-this-is-ubuntu-workstation || fail
 
-data-pi::install-shell-aliases || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::install-shell-aliases || fail
 
-ubuntu::install-my-computer-deploy-shell-alias || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::set-inotify-max-user-watches || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::install-my-computer-deploy-shell-alias || fail
+ubuntu::set-inotify-max-user-watches || fail
 
-ubuntu::apt::add-yarn-source || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::add-nodejs-source || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::add-yarn-source || fail
+ubuntu::apt::add-nodejs-source || fail
 
-ubuntu::apt::update || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::dist-upgrade || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::update || fail
+ubuntu::apt::dist-upgrade || fail
 
-ubuntu::apt::install-basic-tools || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::install-ruby-and-devtools || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::install-nodejs || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::install-gsettings || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::install-tor || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-basic-tools || fail
+ubuntu::apt::install-ruby-and-devtools || fail
+ubuntu::apt::install-nodejs || fail
+ubuntu::apt::install-gsettings || fail
+ubuntu::apt::install-tor || fail
 
-ubuntu::apt::autoremove || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::autoremove || fail
 
-ubuntu::configure-desktop-apps || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::configure-desktop-apps || fail
 
-sublime::install-sublime-merge || { echo "Function call failed (${?})" >&2; exit 1; }
+sublime::install-sublime-merge || fail
 
-vscode::install-config || { echo "Function call failed (${?})" >&2; exit 1; }
+vscode::install-config || fail

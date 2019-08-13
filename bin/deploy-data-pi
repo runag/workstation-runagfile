@@ -17,33 +17,33 @@
 set -o xtrace
 set -o nounset
 
-. tools.sh
-. data-pi/lib.sh
-. ubuntu/lib.sh
-. netdata/lib.sh
+. deploy-lib.sh || fail
+. data-pi/data-pilib.sh || fail
+. netdata/netdata-lib.sh || fail
+. ubuntu/ubuntu-lib.sh || fail
 
-data-pi::ensure-this-is-raspberry-pi || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::ensure-this-is-raspberry-pi || fail
 
-data-pi::install-motd || { echo "Function call failed (${?})" >&2; exit 1; }
-data-pi::install-led-heartbeat || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::install-motd || fail
+data-pi::install-led-heartbeat || fail
 
-data-pi::apt::add-ubuntu-raspi2-ppa || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::apt::add-ubuntu-raspi2-ppa || fail
 
-ubuntu::set-hostname "stan-data-pi" || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::set-timezone UTC || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::set-locale en_US.UTF-8 || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::set-hostname "stan-data-pi" || fail
+ubuntu::set-timezone UTC || fail
+ubuntu::set-locale en_US.UTF-8 || fail
 
-ubuntu::install-my-computer-deploy-shell-alias || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::set-inotify-max-user-watches || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::install-my-computer-deploy-shell-alias || fail
+ubuntu::set-inotify-max-user-watches || fail
 
-ubuntu::apt::update || { echo "Function call failed (${?})" >&2; exit 1; }
-ubuntu::apt::dist-upgrade || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::update || fail
+ubuntu::apt::dist-upgrade || fail
 
-ubuntu::apt::install-basic-tools || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::install-basic-tools || fail
 
-data-pi::apt::install-packages || { echo "Function call failed (${?})" >&2; exit 1; }
+data-pi::apt::install-packages || fail
 
-netdata::install || { echo "Function call failed (${?})" >&2; exit 1; }
-netdata::configure || { echo "Function call failed (${?})" >&2; exit 1; }
+netdata::install || fail
+netdata::configure || fail
 
-ubuntu::apt::autoremove || { echo "Function call failed (${?})" >&2; exit 1; }
+ubuntu::apt::autoremove || fail

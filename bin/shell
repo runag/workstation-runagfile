@@ -31,4 +31,4 @@ my-computer-deploy::shell() {
   $SHELL
 }
 
-my-computer-deploy::shell
+my-computer-deploy::shell || { echo "Call to my-computer-deploy::shell failed (${?})" >&2; exit 1; }

@@ -17,6 +17,7 @@
 set -o xtrace
 set -o nounset
 
-. macos/lib.sh
+. deploy-lib.sh || fail
+. macos/macos-lib.sh || fail
 
-macos::increase-maxfiles-limit
+macos::increase-maxfiles-limit || fail

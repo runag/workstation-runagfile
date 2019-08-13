@@ -14,6 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+fail() {
+  echo "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: in \`${FUNCNAME[1]}': Error: ${1:-"Abnormal termination"}" >&2
+  exit "${2:-1}"
+}
+
 tools::sudo-write-file() {
   local dest="$1"
   local mode="${2:-0644}"

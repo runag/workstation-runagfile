@@ -17,8 +17,9 @@
 set -o xtrace
 set -o nounset
 
-. vscode/lib.sh
+. deploy-lib.sh || fail
+. vscode/vscode-lib.sh || fail
 
-vscode::merge-config
+vscode::merge-config || fail
 
-wait || { echo "Unable to wait for merge to complete (${?})" >&2; exit 1; }
+wait || fail "Unable to wait for merge to complete (${?})"
