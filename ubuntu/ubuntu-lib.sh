@@ -16,14 +16,14 @@
 
 ubuntu::ensure-this-is-ubuntu-workstation() {
   if [ "${DESKTOP_SESSION}" != ubuntu ]; then
-    echo "This has to be an ubuntu workstation (${?})" >&2
+    echo "This has to be an ubuntu workstation ($?)" >&2
     exit 1
   fi
 }
 
 ubuntu::set-timezone() {
   local timezone="$1"
-  sudo timedatectl set-timezone "$timezone" || fail "Unable to set timezone (${?})"
+  sudo timedatectl set-timezone "$timezone" || fail "Unable to set timezone ($?)"
 }
 
 ubuntu::set-hostname() {
@@ -31,16 +31,16 @@ ubuntu::set-hostname() {
   local hostnameFile=/etc/hostname
 
   echo "$hostname" | sudo tee "$hostnameFile"
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $hostnameFile (${?})"
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $hostnameFile ($?)"
 
-  sudo hostname --file "$hostnameFile" || fail "Unable to load hostname from $hostnameFile (${?})"
+  sudo hostname --file "$hostnameFile" || fail "Unable to load hostname from $hostnameFile ($?)"
 }
 
 ubuntu::set-locale() {
   local locale="$1"
 
-  sudo locale-gen "$locale" || fail "Unable to run locale-gen (${?})"
-  sudo update-locale "LANG=$locale" "LANGUAGE=$locale" "LC_CTYPE=$locale" "LC_ALL=$locale" || fail "Unable to run update-locale (${?})"
+  sudo locale-gen "$locale" || fail "Unable to run locale-gen ($?)"
+  sudo update-locale "LANG=$locale" "LANGUAGE=$locale" "LC_CTYPE=$locale" "LC_ALL=$locale" || fail "Unable to run update-locale ($?)"
 
   export LANG="$locale"
   export LANGUAGE="$locale"
@@ -49,7 +49,7 @@ ubuntu::set-locale() {
 }
 
 ubuntu::install-my-computer-deploy-shell-alias() {
-tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || fail "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh (${?})"
+tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || fail "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh ($?)"
   alias my-computer-deploy="${PWD}/bin/shell"
 SHELL
 }
@@ -66,12 +66,12 @@ ubuntu::set-inotify-max-user-watches() {
     echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set"
   else
     echo fs.inotify.max_user_watches=1000000 | sudo tee --append "$sysctl"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl (${?})"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl ($?)"
 
     echo fs.inotify.max_user_instances=2048 | sudo tee --append "$sysctl"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl (${?})"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl ($?)"
 
-    sudo sysctl -p || fail "Unable to update sysctl config (${?})"
+    sudo sysctl -p || fail "Unable to update sysctl config ($?)"
   fi
 }
 
@@ -91,20 +91,20 @@ ubuntu::apt::add-nodejs-source() {
   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
 
   # Apt update
-  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update (${?})"
+  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
 }
 
 ubuntu::apt::update() {
-  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update (${?})"
+  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
 }
 
 ubuntu::apt::dist-upgrade() {
-  sudo apt-get -o Acquire::ForceIPv4=true -y dist-upgrade || fail "Unable to apt-get dist-upgrade (${?})"
+  sudo apt-get -o Acquire::ForceIPv4=true -y dist-upgrade || fail "Unable to apt-get dist-upgrade ($?)"
 }
 
 # autoremove packages that are no longer needed
 ubuntu::apt::autoremove() {
-  sudo apt-get -o Acquire::ForceIPv4=true -y autoremove || fail "Unable to apt-get autoremove (${?})"
+  sudo apt-get -o Acquire::ForceIPv4=true -y autoremove || fail "Unable to apt-get autoremove ($?)"
 }
 
 ubuntu::apt::install-basic-tools() {
@@ -112,7 +112,7 @@ ubuntu::apt::install-basic-tools() {
     git \
     tmux \
     curl \
-    mc ranger ncdu || fail "Unable to apt-get install (${?})"
+    mc ranger ncdu || fail "Unable to apt-get install ($?)"
 }
 
 ubuntu::apt::install-ruby-and-devtools() {
@@ -132,49 +132,49 @@ ubuntu::apt::install-ruby-and-devtools() {
     graphviz \
     python-pip \
     inotify-tools \
-    shellcheck || fail "Unable to apt-get install (${?})"
+    shellcheck || fail "Unable to apt-get install ($?)"
 }
 
 ubuntu::apt::install-nodejs() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     yarn \
-    nodejs || fail "Unable to apt-get install (${?})"
+    nodejs || fail "Unable to apt-get install ($?)"
 }
 
 ubuntu::apt::install-gsettings() {
   # dconf-tools for ubuntu earlier than 19.04
   if [ "$(apt-cache search --names-only dconf-tools | wc -l)" = "0" ]; then
     sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-cli dconf-editor || fail "Unable to apt-get install (${?})"
+      dconf-cli dconf-editor || fail "Unable to apt-get install ($?)"
   else
     sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-tools || fail "Unable to apt-get install (${?})"
+      dconf-tools || fail "Unable to apt-get install ($?)"
   fi
 }
 
 ubuntu::apt::install-tor() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    tor || fail "Unable to apt-get install (${?})"
+    tor || fail "Unable to apt-get install ($?)"
 }
 
 ubuntu::configure-desktop-apps() {
   # use dconf-editor to determine key/value pairs
 
-  dbus-launch gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings (${?})"
+  dbus-launch gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
 
-  local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile (${?})"
+  local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
   local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
-  dbus-launch gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings (${?})"
-  dbus-launch gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings (${?})"
+  dbus-launch gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
+  dbus-launch gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
 
-  dbus-launch gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings (${?})"
-  dbus-launch gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings (${?})"
-  dbus-launch gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings (${?})"
-  dbus-launch gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings (${?})"
-  dbus-launch gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings (${?})"
+  dbus-launch gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
+  dbus-launch gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
+  dbus-launch gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
+  dbus-launch gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
+  dbus-launch gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
 }
 
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
-  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh (${?})"
+  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
 }

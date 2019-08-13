@@ -18,7 +18,7 @@ set -o xtrace
 set -o nounset
 
 # --checksum
-rclone sync "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || { echo "rclone sync failed (${?})" >&2; exit 1; }
-rclone check "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || { echo "rclone check failed (${?})" >&2; exit 1; }
+rclone sync "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || { echo "rclone sync failed ($?)" >&2; exit 1; }
+rclone check "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || { echo "rclone check failed ($?)" >&2; exit 1; }
 
 echo "Done in $((SECONDS / 3600))h$(((SECONDS % 3600) / 60))m$((SECONDS % 60))s"

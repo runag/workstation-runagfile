@@ -22,4 +22,4 @@ set -o nounset
 
 vscode::merge-config || fail
 
-wait || fail "Unable to wait for merge to complete (${?})"
+wait || fail "Unable to wait for merge to complete ($?)"

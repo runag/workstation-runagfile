@@ -19,11 +19,11 @@ macos::increase-maxfiles-limit() {
 
   local dst="/Library/LaunchDaemons/limit.maxfiles.plist"
 
-  sudo cp macos/limit.maxfiles.plist "${dst}" || fail "Unable to copy to $dst (${?})"
+  sudo cp macos/limit.maxfiles.plist "${dst}" || fail "Unable to copy to $dst ($?)"
 
-  sudo chmod 0644 "${dst}" || fail "Unable to chmod ${dst} (${?})"
+  sudo chmod 0644 "${dst}" || fail "Unable to chmod ${dst} ($?)"
 
-  sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} (${?})"
+  sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} ($?)"
 
   echo "increase-maxfiles-limit: reboot required!"
 }

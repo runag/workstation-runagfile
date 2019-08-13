@@ -25,15 +25,15 @@ my-computer-deploy::shell() {
   local relativeDirPath
   local absoluteDirPath
 
-  relativeDirPath="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine relativeDirPath (${?})"
-  absoluteDirPath="$(cd "${relativeDirPath}" >/dev/null 2>&1 && pwd)" || fail "Unable to determine absoluteDirPath (${?})"
+  relativeDirPath="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine relativeDirPath ($?)"
+  absoluteDirPath="$(cd "${relativeDirPath}" >/dev/null 2>&1 && pwd)" || fail "Unable to determine absoluteDirPath ($?)"
 
   export PATH="${absoluteDirPath}:${PATH}"
 
-  cd "${absoluteDirPath}" || fail "Unable to cd to ${absoluteDirPath} (${?})"
-  cd .. || fail "Unable to cd to parent dir from ${absoluteDirPath} (${?})"
+  cd "${absoluteDirPath}" || fail "Unable to cd to ${absoluteDirPath} ($?)"
+  cd .. || fail "Unable to cd to parent dir from ${absoluteDirPath} ($?)"
 
   $SHELL
 }
 
-my-computer-deploy::shell || fail "Call to my-computer-deploy::shell failed (${?})"
+my-computer-deploy::shell || fail "Call to my-computer-deploy::shell failed ($?)"
