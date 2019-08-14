@@ -48,12 +48,6 @@ ubuntu::set-locale() {
   export LC_ALL="$locale"
 }
 
-ubuntu::install-my-computer-deploy-shell-alias() {
-tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || fail "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh ($?)"
-  alias my-computer-deploy="${PWD}/bin/shell"
-SHELL
-}
-
 ubuntu::set-inotify-max-user-watches() {
   local sysctl="/etc/sysctl.conf"
 

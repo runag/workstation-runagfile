@@ -27,7 +27,7 @@ ubuntu::ensure-this-is-ubuntu-workstation || fail
 
 data-pi::install-shell-aliases || fail
 
-ubuntu::install-my-computer-deploy-shell-alias || fail
+tools::install-my-computer-deploy-shell-alias || fail
 ubuntu::set-inotify-max-user-watches || fail
 
 ubuntu::apt::add-yarn-source || fail

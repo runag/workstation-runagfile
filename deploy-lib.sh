@@ -35,3 +35,53 @@ tools::sudo-write-file() {
   sudo chmod "$mode" "$dest" || fail "Unable to chmod '${dest}' ($?)"
   sudo chown "$owner:$group" "$dest" || fail "Unable to chown '${dest}' ($?)"
 }
+
+tools::install-my-computer-deploy-shell-alias() {
+tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || fail "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh ($?)"
+  alias my-computer-deploy="${PWD}/bin/shell"
+SHELL
+}
+
+tools::make-latest-git-repository-clone-available() {
+  local repoUrl="$1"
+  local localCloneDir="$2"
+
+  tools::add-host-to-ssh-known-hosts bitbucket.org || fail
+  tools::add-host-to-ssh-known-hosts github.com || fail
+
+  if [ ! -d "${localCloneDir}" ]; then
+    git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+  else
+    local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
+
+    if [ "${existingRepoUrl}" != "${repoUrl}" ]; then
+      rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
+      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+    else
+      (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
+    fi
+  fi
+}
+
+tools::add-host-to-ssh-known-hosts() {
+  local hostName="$1"
+  local knownHosts="${HOME}/.ssh/known_hosts"
+
+  if ! command -v ssh-keygen >/dev/null; then
+    fail "ssh-keygen not found"
+  fi
+
+  if [ ! -f "${knownHosts}" ]; then
+    local knownHostsDirname; knownHostsDirname="$(dirname "${knownHosts}")" || fail
+
+    mkdir -p "${knownHostsDirname}" || fail
+    chmod 700 "${knownHostsDirname}" || fail
+
+    touch "${knownHosts}" || fail
+    chmod 644 "${knownHosts}" || fail
+  fi
+
+  if ! ssh-keygen -F "${hostName}" >/dev/null; then
+    ssh-keyscan -T 60 -H "${hostName}" >> "${knownHosts}" || fail
+  fi
+}

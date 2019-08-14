@@ -18,7 +18,7 @@ set -o xtrace
 set -o nounset
 
 . deploy-lib.sh || fail
-. data-pi/data-pilib.sh || fail
+. data-pi/data-pi-lib.sh || fail
 . netdata/netdata-lib.sh || fail
 . ubuntu/ubuntu-lib.sh || fail
 
@@ -33,7 +33,7 @@ ubuntu::set-hostname "stan-data-pi" || fail
 ubuntu::set-timezone UTC || fail
 ubuntu::set-locale en_US.UTF-8 || fail
 
-ubuntu::install-my-computer-deploy-shell-alias || fail
+tools::install-my-computer-deploy-shell-alias || fail
 ubuntu::set-inotify-max-user-watches || fail
 
 ubuntu::apt::update || fail
@@ -47,3 +47,13 @@ netdata::install || fail
 netdata::configure || fail
 
 ubuntu::apt::autoremove || fail
+
+# Backup
+tools::make-latest-git-repository-clone-available "https://github.com/senotrusov/backup-script" "${HOME}/backup-script" || fail
+( cd "${HOME}/backup-script" && ./backup-script install ) || fail
+
+backup-script install data-pi/backup-configs/backup-data-pi || fail
+backup-data-pi init || fail
+
+backup-script install data-pi/backup-configs/backup-polina-files || fail
+backup-polina-files init || fail
