@@ -27,7 +27,7 @@ BORG_BASE_DIR="${REPO_VOLUME}"
 
 RCLONE_REMOTE="onedrive"
 RCLONE_PATH="backups"
-RCLONE_EXTRA_ARGS="--bwlimit 500k"
+RCLONE_EXTRA_ARGS="--bwlimit 400k"
 RCLONE_STATE_DIR="${REPO_VOLUME}/.cache/backup-rclone-state/${REPO_NAME}"
 RCLONE_CONFIG="${REPO_VOLUME}/.config/rclone/rclone.conf"
 
