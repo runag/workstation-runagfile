@@ -43,8 +43,8 @@ ubuntu::apt::install-basic-tools || fail
 
 data-pi::apt::install-packages || fail
 
-netdata::install || fail
-netdata::configure || fail
+# netdata::install || fail
+# netdata::configure || fail
 
 ubuntu::apt::autoremove || fail
 
