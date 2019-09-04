@@ -44,6 +44,12 @@ Install only LTS release as its most stable (all other releases are shaky)
 Use efibootmgr tool after ubuntu is installed to put windows first in boot order,
 otherwise the bitlocker will ask for key at every boot)
 
+
+```sh
+sudo efibootmgr
+sudo efibootmgr --bootorder xxxx
+```
+
 ```sh
 echo 'alias reboot-me="sudo efibootmgr --bootnext 0002 && sudo reboot"' | sudo tee /etc/profile.d/reboot-me.sh
 ```
@@ -276,7 +282,7 @@ code --install-extension robinbentley.sass-indented
 code --install-extension sianglim.slim
 
 
-# Desktop mouse 
+# Desktop mouse
 
 > from https://askubuntu.com/questions/1067062/change-mouse-speed-on-ubuntu-18-04
 
