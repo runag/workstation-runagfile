@@ -362,3 +362,15 @@ sudo cat /var/lib/tor/ssh_hidden_service/hostname
 
 journalctl -f --since today
 ```
+
+
+# Video stuff
+```sh
+sudo apt-get install ffmpeg
+sudo add-apt-repository ppa:obsproject/obs-studio
+sudo apt-get install obs-studio
+sudo apt install guvcview
+# run guvcview and adjust settings
+# https://help.ubuntu.com/community/Webcam/Troubleshooting
+# maybe use a terminal-based config
+```
