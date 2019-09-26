@@ -25,13 +25,9 @@ set -o nounset
 
 ubuntu::ensure-this-is-ubuntu-workstation || fail
 
-data-pi::install-shell-aliases || fail
-
 tools::install-my-computer-deploy-shell-alias || fail
-ubuntu::set-inotify-max-user-watches || fail
 
-ubuntu::apt::add-yarn-source || fail
-ubuntu::apt::add-nodejs-source || fail
+ubuntu::set-inotify-max-user-watches || fail
 
 ubuntu::apt::update || fail
 ubuntu::apt::dist-upgrade || fail
@@ -47,5 +43,9 @@ ubuntu::apt::autoremove || fail
 ubuntu::configure-desktop-apps || fail
 
 sublime::install-sublime-merge || fail
+ubuntu::install-vscode || fail
 
 vscode::install-config || fail
+
+data-pi::install-shell-aliases || fail
+

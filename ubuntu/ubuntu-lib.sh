@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 ubuntu::ensure-this-is-ubuntu-workstation() {
-  if [ "${DESKTOP_SESSION}" != ubuntu ]; then
+  if [ "${DESKTOP_SESSION:-}" != ubuntu ] && [ "${GNOME_SHELL_SESSION_MODE:-}" != ubuntu ]; then
     echo "This has to be an ubuntu workstation ($?)" >&2
     exit 1
   fi
@@ -69,25 +69,6 @@ ubuntu::set-inotify-max-user-watches() {
   fi
 }
 
-ubuntu::apt::add-yarn-source() {
-  # Yarn
-  curl --fail --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add"
-
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to wrote to /etc/apt/sources.list.d/yarn.list"
-}
-
-ubuntu::apt::add-nodejs-source() {
-  # Node
-  # Please use only even-numbered nodejs releases here, they are LTS
-  curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
-
-  # Apt update
-  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
-}
-
 ubuntu::apt::update() {
   sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
 }
@@ -130,6 +111,20 @@ ubuntu::apt::install-ruby-and-devtools() {
 }
 
 ubuntu::apt::install-nodejs() {
+  # Yarn
+  curl --fail --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add"
+
+  echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to wrote to /etc/apt/sources.list.d/yarn.list"
+
+  # Node
+  # Please use only even-numbered nodejs releases here, they are LTS
+  curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
+
+  ubuntu::apt::update || fail
+
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     yarn \
     nodejs || fail "Unable to apt-get install ($?)"
@@ -172,3 +167,8 @@ ubuntu::configure-desktop-apps() {
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
   sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
 }
+
+ubuntu::install-vscode() {
+  sudo snap install --classic code || fail "Unable to install vscode ($?)"
+}
+

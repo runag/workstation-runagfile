@@ -374,3 +374,7 @@ sudo apt install guvcview
 # https://help.ubuntu.com/community/Webcam/Troubleshooting
 # maybe use a terminal-based config
 ```
+
+
+# Disable screen lock
+gsettings set org.gnome.desktop.session idle-delay 0 
