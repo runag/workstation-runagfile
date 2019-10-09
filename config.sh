@@ -14,11 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o xtrace
-set -o nounset
+export BITWARDEN_LOGIN="stan@senotrusov.com"
 
-. deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
-. config.sh || fail "Unable to load config.sh"
-. macos/macos-lib.sh || fail
+export DATA_PI_DISK_KEY="kelly disk key"
+export DATA_PI_DISK_NAME="kelly"
+export DATA_PI_HOSTNAME="stan-data-pi"
+export DATA_PI_LOCAL_ADDRESS="stan-data-pi.local"
+export DATA_PI_SYNCTHING_SERVICE="syncthing-kelly"
+export DATA_PI_USER="ubuntu"
 
-macos::increase-maxfiles-limit || fail
+export GIT_USER_EMAIL="stan@senotrusov.com"
+export GIT_USER_NAME="Stanislav Senotrusov"

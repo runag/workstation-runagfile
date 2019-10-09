@@ -14,12 +14,51 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+vscode::install() {
+  sudo snap install code --classic || fail "Unable to snap install ($?)"
+}
+
+vscode::list-extensions-to-temp-file() {
+  local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
+  code --list-extensions | sort > "${tmpFile}"
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to list extensions"
+  echo "${tmpFile}"
+}
+
+vscode::install-extensions() {
+  if [ -f vscode/extensions.txt ]; then
+    local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
+
+    if ! diff vscode/extensions.txt "${extensionsList}" >/dev/null 2>&1; then
+      local extension
+      cat vscode/extensions.txt | while IFS="" read -r extension; do
+        if [ -n "${extension}" ]; then
+          code --install-extension "${extension}" || fail "Unable to install vscode extension ${extension}"
+        fi
+      done
+    fi
+
+    rm "${extensionsList}" || fail
+  fi
+
+  vscode::sync-merge-extensions-config || fail
+}
+
+vscode::sync-merge-extensions-config() {
+  local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
+  deploy-lib::install-config vscode/extensions.txt "${extensionsList}" || fail
+  rm "${extensionsList}" || fail
+}
+
 vscode::install-config() {
-  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/settings.json || fail "Unable to install settings.json ($?)"
-  install --mode=0644 -D -t "$HOME/.config/Code/User" vscode/keybindings.json || fail "Unable to install keybindings.json ($?)"
+  deploy-lib::install-config vscode/settings.json "${HOME}/.config/Code/User/settings.json" || fail
+  deploy-lib::install-config vscode/keybindings.json "${HOME}/.config/Code/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
-  meld --newtab vscode/settings.json "$HOME/.config/Code/User/settings.json" &
-  meld --newtab vscode/keybindings.json "$HOME/.config/Code/User/keybindings.json" &
+  deploy-lib::merge-config vscode/settings.json "$HOME/.config/Code/User/settings.json" || fail
+  deploy-lib::merge-config vscode/keybindings.json "$HOME/.config/Code/User/keybindings.json" || fail
+
+  local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
+  deploy-lib::merge-config vscode/extensions.txt "${extensionsList}" || fail
 }

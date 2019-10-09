@@ -25,7 +25,6 @@ Install only LTS release as its most stable (all other releases are shaky)
 
 
 # Partition
-
 1) (IF MAC) MacOS partition app
 
     * Make half the edrive as APFS
@@ -107,30 +106,10 @@ sudo apt install psensor
 
 # Bitwarden
 ```sh
-sudo apt update
-sudo apt install -y jq xclip
-sudo snap install bw
-
-export BW_SESSION="$(bw login stan@senotrusov.com --raw)" # enter password
+export BW_SESSION="$(bw login stan@senotrusov.com --raw)"
 export BW_SESSION="$(bw unlock --raw)"
 bw sync
 ```
-
-# SSH KEY
-```sh
-mkdir -p --mode=0700 ~/.ssh
-
-export BW_SESSION="$(bw unlock --raw)"
-
-bw get item "stas@foo ssh private key" | jq '.notes' --raw-output | (umask 077; tee ~/.ssh/id_rsa)
-bw get item "stas@foo ssh public key" | jq '.notes' --raw-output | (umask 077; tee ~/.ssh/id_rsa.pub)
-
-bw get password "stas@foo password for ssh private key" | xclip -selection clipboard
-
-# login somewhere and save password to ubuntu key store
-ssh root@storycomputer.com
-```
-
 
 # Swap
 ```sh
@@ -138,30 +117,6 @@ sudo swapoff /swapfile
 sudo dd if=/dev/zero of=/swapfile bs=4M count=1024 oflag=append conv=notrunc
 sudo mkswap /swapfile
 sudo swapon /swapfile
-```
-
-# User dirs
-```sh
-nano ~/.config/user-dirs.dirs
-# spare Desktop
-# spare Downloads
-# comment all the rest
-
-echo "enabled=false" > ~/.config/user-dirs.conf
-
-rm -rf "$HOME/Documents"
-rm -rf "$HOME/Music"
-rm -rf "$HOME/Pictures"
-rm -rf "$HOME/Public"
-rm -rf "$HOME/Templates"
-rm -rf "$HOME/Videos"
-
-rm -rf "$HOME/Sync"
-
-xdg-user-dirs-update
-
-echo snap >> ~/.hidden
-echo "VirtualBox VMs" >> ~/.hidden
 ```
 
 # KVM VM
@@ -178,11 +133,6 @@ groups
 ```sh
 gpg --import stan-at-senotrusov-com-gpg-key.txt
 gpg --edit-key stan@senotrusov.com trust
-```
-
-# Desktop nvidia background fix
-```sh
-sudo install --mode="0755" --owner="root" --group="root" "background-fix.sh" -D "/usr/lib/systemd/system-sleep"
 ```
 
 # Grub
@@ -215,75 +165,12 @@ echo "/dev/disk/by-uuid/9b900fbd-1435-4582-b3b0-e19f33782bb0 /home/stan/yaphit a
 sudo mount -a
 ```
 
-# Syncthing
-```sh
-echo fs.inotify.max_user_watches=1000000 | sudo tee --append /etc/sysctl.conf
-echo fs.inotify.max_user_instances=2048 | sudo tee --append /etc/sysctl.conf
-sudo sysctl -p
-
-sudo apt-get --yes update
-sudo apt-get --yes install curl
-
-# following https://apt.syncthing.net/
-curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
-echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-sudo apt-get --yes update
-sudo apt-get --yes install syncthing
-
-# on desktop
-systemctl enable syncthing@stan.service
-systemctl start syncthing@stan.service
-```
-
-# Git
-```sh
-sudo apt install git -y
-git config --global user.name "Stanislav Senotrusov"
-git config --global user.email "stan@senotrusov.com"
-```
-
-# Villaslink project
-```sh
-git clone git@github.com:senotrusov/villaslink.git && cd villaslink
-sftp root@stage.villaslink.com:/opt/application/current/config/master.key config/master.key
-bin/provision
-```
-
 # Dropbox
 ```sh
 sudo apt install python3-gpg
 ```
 
-# Install desktop stuff
-```sh
-sudo snap install bitwarden bw code telegram-desktop
-sudo snap install skype --classic
-sudo apt install mc
-```
-
-
-# VSCode
-
-## Install gems
-
-```sh
-sudo gem install rake solargraph
-```
-
-## Configure VScode
-
-code --list-extensions
-
-code --install-extension castwide.solargraph
-code --install-extension coolbear.systemd-unit-file
-code --install-extension hjleochen.rails-nav
-code --install-extension kaiwood.endwise
-code --install-extension robinbentley.sass-indented
-code --install-extension sianglim.slim
-
-
 # Desktop mouse
-
 > from https://askubuntu.com/questions/1067062/change-mouse-speed-on-ubuntu-18-04
 
 ```sh
@@ -296,7 +183,6 @@ for (( ; ; )); do xinput --list-props 'ASUS ROG SICA' | grep 'libinput Accel Spe
 ```
 
 # pgadmin4
-
 > from https://askubuntu.com/questions/831262/how-to-install-pgadmin-4-in-desktop-mode-on-ubuntu
 
 ```sh
@@ -336,16 +222,7 @@ sudo systemctl start pgadmin4.service
   * /home/stan/.pgpass
 
 
-# Desktop customisation
-
-```sh
-org.gnome.nautilus.desktop trash-icon-visible false
-org.gnome.nautilus.desktop volumes-visible false
-```
-
-
 # TOR
-
 ```sh
 # https://2019.www.torproject.org/docs/debian.html.en
 
@@ -364,17 +241,9 @@ journalctl -f --since today
 ```
 
 
-# Video stuff
+# Web cameras
+https://help.ubuntu.com/community/Webcam/Troubleshooting
+
 ```sh
-sudo apt-get install ffmpeg
-sudo add-apt-repository ppa:obsproject/obs-studio
-sudo apt-get install obs-studio
-sudo apt install guvcview
-# run guvcview and adjust settings
-# https://help.ubuntu.com/community/Webcam/Troubleshooting
-# maybe use a terminal-based config
+guvcview
 ```
-
-
-# Disable screen lock
-gsettings set org.gnome.desktop.session idle-delay 0 

@@ -19,7 +19,7 @@ fail() {
   exit "${2:-1}"
 }
 
-tools::sudo-write-file() {
+deploy-lib::sudo-write-file() {
   local dest="$1"
   local mode="${2:-0644}"
   local owner="${3:-root}"
@@ -27,7 +27,7 @@ tools::sudo-write-file() {
 
   local dirName; dirName="$(dirname "${dest}")" || fail "Unable to get dirName of '${dest}' ($?)"
 
-  sudo mkdir -p "${dirName}" || fail "Unable to mkdir -p '${dirName}' ($?)"
+  sudo mkdir --parents "${dirName}" || fail "Unable to mkdir --parents '${dirName}' ($?)"
 
   cat | sudo tee "$dest"
   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to cat or write to '$dest'"
@@ -36,18 +36,18 @@ tools::sudo-write-file() {
   sudo chown "$owner:$group" "$dest" || fail "Unable to chown '${dest}' ($?)"
 }
 
-tools::install-my-computer-deploy-shell-alias() {
-tools::sudo-write-file /etc/profile.d/my-computer-deploy-shell-alias.sh <<SHELL || fail "Unable to write file /etc/profile.d/my-computer-deploy-shell-alias.sh ($?)"
-  alias my-computer-deploy="${PWD}/bin/shell"
+deploy-lib::install-my-computer-deploy-shell-alias() {
+  tee "${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh" <<SHELL || fail "Unable to write file: ${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh ($?)"
+    alias my-computer-deploy="${PWD}/bin/shell"
 SHELL
 }
 
-tools::make-latest-git-repository-clone-available() {
+deploy-lib::make-latest-git-repository-clone-available() {
   local repoUrl="$1"
   local localCloneDir="$2"
 
-  tools::add-host-to-ssh-known-hosts bitbucket.org || fail
-  tools::add-host-to-ssh-known-hosts github.com || fail
+  deploy-lib::add-host-to-ssh-known-hosts bitbucket.org || fail
+  deploy-lib::add-host-to-ssh-known-hosts github.com || fail
 
   if [ ! -d "${localCloneDir}" ]; then
     git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
@@ -63,7 +63,7 @@ tools::make-latest-git-repository-clone-available() {
   fi
 }
 
-tools::add-host-to-ssh-known-hosts() {
+deploy-lib::add-host-to-ssh-known-hosts() {
   local hostName="$1"
   local knownHosts="${HOME}/.ssh/known_hosts"
 
@@ -74,7 +74,7 @@ tools::add-host-to-ssh-known-hosts() {
   if [ ! -f "${knownHosts}" ]; then
     local knownHostsDirname; knownHostsDirname="$(dirname "${knownHosts}")" || fail
 
-    mkdir -p "${knownHostsDirname}" || fail
+    mkdir --parents "${knownHostsDirname}" || fail
     chmod 700 "${knownHostsDirname}" || fail
 
     touch "${knownHosts}" || fail
@@ -83,5 +83,93 @@ tools::add-host-to-ssh-known-hosts() {
 
   if ! ssh-keygen -F "${hostName}" >/dev/null; then
     ssh-keyscan -T 60 -H "${hostName}" >> "${knownHosts}" || fail
+  fi
+}
+
+deploy-lib::install-config() {
+  src="$1"
+  dst="$2"
+
+  if [ -f "${dst}" ]; then
+    if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
+      if command -v meld >/dev/null; then
+        meld "${src}" "${dst}" || fail "Unable to merge configs ${src} and ${dst} ($?)"
+      else
+        fail "Unable to merge configs ${src} and ${dst}: meld not found"
+      fi
+    fi
+  else
+    install --mode=0644 "${src}" -D "${dst}" || fail "Unable to install config from ${src} to ${dst} ($?)"
+  fi
+}
+
+deploy-lib::merge-config() {
+  src="$1"
+  dst="$2"
+
+  if [ -f "${dst}" ]; then
+    if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
+      if command -v meld >/dev/null; then
+        meld --newtab "${src}" "${dst}" &
+      else
+        fail "Unable to merge configs ${src} and ${dst}: meld not found"
+      fi
+    fi
+  fi
+}
+
+deploy-lib::bitwarden::unlock() {
+  if [ -z "${BW_SESSION:-}" ]; then
+    echo "Please enter your bitwarden password"
+    if ! BW_SESSION="$(bw unlock --raw)"; then
+      if [ "${BW_SESSION}" = "You are not logged in." ]; then
+        if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
+          fail "Unable to login to bitwarden"
+        fi
+      else
+        fail "Unable to unlock bitwarden database"
+      fi
+    fi
+    export BW_SESSION
+    bw sync || fail "Unable to sync bitwarden"
+  fi
+}
+
+deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
+  local item="$1"
+  local outputFile="$2"
+  local setUmask="${3:-"0022"}"
+  local bwdata
+  
+  if [ ! -f "${outputFile}" ]; then
+    deploy-lib::bitwarden::unlock || fail
+    
+    if bwdata="$(bw get item "${item}")"; then
+      local dirName="$(dirname "${outputFile}")" || fail
+      
+      if [ ! -d "${dirName}" ]; then
+        mkdir --parents "${dirName}"
+      fi
+
+      echo "${bwdata}" | jq '.notes' --raw-output | (umask "${setUmask}" && tee "${outputFile}.tmp")
+
+      local savedPipeStatus="${PIPESTATUS[*]}"
+
+      if [ "${savedPipeStatus}" = "0 0 0" ]; then
+        mv "${outputFile}.tmp" "${outputFile}" || fail "Unable to move temp file to the output file: ${outputFile}.tmp to ${outputFile}"
+      else
+        rm "${outputFile}.tmp" || fail "Unable to remove temp file: ${outputFile}.tmp"
+        fail "Unable to produce ${outputFile} (${savedPipeStatus})"
+      fi
+    else
+      echo "${bwdata}" >&2
+      fail "Unable to bw get item ${item}"
+    fi
+  fi
+}
+
+deploy-lib::remove-dir-if-empty() {
+  if [ -d "$1" ]; then
+    rm --dir "$1"
   fi
 }

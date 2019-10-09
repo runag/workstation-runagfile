@@ -19,5 +19,6 @@
     "editor.quickSuggestions": false,
     "editor.parameterHints.enabled": false,
     "editor.suggestOnTriggerCharacters": false,
-    "editor.wordBasedSuggestions": false
+    "editor.wordBasedSuggestions": false,
+    "search.location": "sidebar"
 }

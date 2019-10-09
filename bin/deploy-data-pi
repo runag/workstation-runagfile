@@ -17,43 +17,80 @@
 set -o xtrace
 set -o nounset
 
-. deploy-lib.sh || fail
+. deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
+. config.sh || fail "Unable to load config.sh"
 . data-pi/data-pi-lib.sh || fail
-. netdata/netdata-lib.sh || fail
 . ubuntu/ubuntu-lib.sh || fail
+. ubuntu/ubuntu-packages.sh || fail
+# . netdata/netdata-lib.sh || fail
 
-data-pi::ensure-this-is-raspberry-pi || fail
+ubuntu::deploy-data-pi::as-root() {
+  # System configuration
+  ubuntu::set-inotify-max-user-watches || fail
+  ubuntu::set-hostname "${DATA_PI_HOSTNAME}" || fail
+  ubuntu::set-timezone UTC || fail
+  ubuntu::set-locale en_US.UTF-8 || fail
 
-data-pi::install-motd || fail
-data-pi::install-led-heartbeat || fail
+  # Update the system
+  apt::update || fail
+  apt::dist-upgrade || fail
 
-data-pi::apt::add-ubuntu-raspi2-ppa || fail
+  # Add repositories
+  data-pi::apt::add-ubuntu-raspi2-ppa || fail
 
-ubuntu::set-hostname "stan-data-pi" || fail
-ubuntu::set-timezone UTC || fail
-ubuntu::set-locale en_US.UTF-8 || fail
+  # Install packages
+  apt::install-basic-tools || fail
+  apt::install-tor || fail
+  
+  # error: snap "bw" is not available on stable for this architecture (armhf) but exists on other architectures (amd64).
+  # snap::install-bitwarden-cli || fail
+  
+  data-pi::apt::install-packages || fail
 
-tools::install-my-computer-deploy-shell-alias || fail
-ubuntu::set-inotify-max-user-watches || fail
+  # Netdata
+  # netdata::install || fail
+  # netdata::configure || fail
 
-ubuntu::apt::update || fail
-ubuntu::apt::dist-upgrade || fail
+  # apt::install-syncthing || fail
+  # systemctl enable "syncthing@${SUDO_USER}.service" || fail
+  # systemctl start "syncthing@${SUDO_USER}.service" || fail
 
-ubuntu::apt::install-basic-tools || fail
+  # Cleanup
+  apt::autoremove || fail
 
-data-pi::apt::install-packages || fail
+  # Install visual stuff
+  data-pi::install-motd || fail
+  data-pi::install-led-heartbeat || fail
+}
 
-# netdata::install || fail
-# netdata::configure || fail
 
-ubuntu::apt::autoremove || fail
+ubuntu::deploy-data-pi::as-user() {
+  # Shell aliases
+  ubuntu::install-bashrcd || fail
+  deploy-lib::install-my-computer-deploy-shell-alias || fail
+}
 
-# Backup
-tools::make-latest-git-repository-clone-available "https://github.com/senotrusov/backup-script" "${HOME}/backup-script" || fail
-( cd "${HOME}/backup-script" && ./backup-script install ) || fail
+ubuntu::deploy-data-pi::backup() {
+  deploy-lib::make-latest-git-repository-clone-available "https://github.com/senotrusov/backup-script" "${HOME}/backup-script" || fail
+  ( cd "${HOME}/backup-script" && ./backup-script install ) || fail
 
-backup-script install data-pi/backup-configs/backup-data-pi || fail
-backup-data-pi init || fail
+  backup-script install data-pi/backup-configs/backup-data-pi || fail
+  backup-data-pi init || fail
 
-backup-script install data-pi/backup-configs/backup-polina-files || fail
-backup-polina-files init || fail
+  backup-script install data-pi/backup-configs/backup-polina-files || fail
+  backup-polina-files init || fail
+}
+
+ubuntu::deploy-data-pi() {
+  data-pi::ensure-this-is-raspberry-pi || fail
+
+  sudo bash -c "set -o xtrace; set -o nounset; $(declare -f); . config.sh || fail; ubuntu::deploy-data-pi::as-root" || fail "Unable to execute ubuntu::deploy-data-pi::as-root ($?)"
+
+  ubuntu::deploy-data-pi::as-user || fail
+
+  ubuntu::deploy-data-pi::backup || fail
+
+  echo "ubuntu::deploy-data-pi completed"
+}
+
+ubuntu::deploy-data-pi || fail

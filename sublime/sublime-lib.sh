@@ -14,60 +14,52 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sublime::install-sublime-merge() {
+sublime::apt::add-sublime-source() {
   curl --fail --silent --show-error https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add"
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add"
 
-  sudo apt-get install -o Acquire::ForceIPv4=true apt-transport-https || fail "Unable to apt-get install ($?)"
+  echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list || fail "Unable to write to /etc/apt/sources.list.d/sublime-text.list"
+}
 
-  echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to wrote to /etc/apt/sources.list.d/sublime-text.list"
-
-  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
-
+sublime::apt::install-sublime-merge() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     sublime-merge || fail "Unable to apt-get install ($?)"
 }
 
-sublime::install-sublime-text() {
-  curl --fail --silent --show-error https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-
-  sudo apt-get install -o Acquire::ForceIPv4=true apt-transport-https
-
-  echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-
-  sudo apt-get -o Acquire::ForceIPv4=true update
-
+sublime::apt::install-sublime-text() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    sublime-text
+    sublime-text || fail "Unable to apt-get install ($?)"
 }
 
-sublime::configure-sublime-text() {
-  local installedPackages="$HOME/.config/sublime-text-3/Installed Packages"
+sublime::install-config() {
+  local installedPackages="${HOME}/.config/sublime-text-3/Installed Packages"
+  local packageControlPackage="${installedPackages}/Package Control.sublime-package"
 
-  local packageControlPackage="$installedPackages/Package Control.sublime-package"
+  if [ ! -f "${packageControlPackage}" ]; then
+    mkdir --parents "${installedPackages}" || fail "Unable to create directory ${installedPackages} ($?)"
+    
+    curl --fail --silent --show-error "https://packagecontrol.io/Package%20Control.sublime-package" --output "${packageControlPackage}.tmp" || fail "Unable to download https://packagecontrol.io/Package%20Control.sublime-package ($?)"
 
-  if [ ! -f "$packageControlPackage" ]; then
-    mkdir --parents "$installedPackages"
-    curl --fail --silent --show-error "https://packagecontrol.io/Package%20Control.sublime-package" --output "$packageControlPackage.tmp"
-    mv "$packageControlPackage.tmp" "$packageControlPackage"
+    mv "${packageControlPackage}.tmp" "${packageControlPackage}" || fail "Unable to rename temp file to${packageControlPackage}"
   fi
 
-  sublime::install-sublime-text-preferences "Preferences.sublime-settings"
-  sublime::install-sublime-text-preferences "Package Control.sublime-settings"
-  sublime::install-sublime-text-preferences "Terminal.sublime-settings"
+  sublime::install-config-file "Preferences.sublime-settings" || fail "Unable to install Preferences.sublime-settings ($?)"
+  sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
+  sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
+
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${HOME}/.config/sublime-text-3/Local/License.sublime_license"
 }
 
-sublime::install-sublime-text-preferences() {
-  local fileName="$1"
+sublime::merge-config() {
+  sublime::merge-config-file "Preferences.sublime-settings" || fail
+  sublime::merge-config-file "Package Control.sublime-settings" || fail
+  sublime::merge-config-file "Terminal.sublime-settings" || fail
+}
 
-  local userPackage="$HOME/.config/sublime-text-3/Packages/User"
-  mkdir --parents "$userPackage"
+sublime::install-config-file() {
+  deploy-lib::install-config "sublime/$1" "${HOME}/.config/sublime-text-3/Packages/User/$1" || fail "Unable to install $1 ($?)"
+}
 
-  local source="sublime/$fileName"
-  local dest="$userPackage/$fileName"
-
-  if [ -f "$source" ] && [ ! -f "$dest" ]; then
-    install --mode=0644 "$source" "$dest"
-  fi
+sublime::merge-config-file() {
+  deploy-lib::merge-config "sublime/$1" "${HOME}/.config/sublime-text-3/Packages/User/$1" || fail "Unable to merge $1 ($?)"
 }

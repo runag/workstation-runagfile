@@ -17,35 +17,98 @@
 set -o xtrace
 set -o nounset
 
-. deploy-lib.sh || fail
+. deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
+. config.sh || fail "Unable to load config.sh"
 . data-pi/data-pi-lib.sh || fail
 . sublime/sublime-lib.sh || fail
 . ubuntu/ubuntu-lib.sh || fail
+. ubuntu/ubuntu-packages.sh || fail
 . vscode/vscode-lib.sh || fail
 
-ubuntu::ensure-this-is-ubuntu-workstation || fail
+ubuntu::deploy-workstation::as-root() {
+  # System configuration
+  ubuntu::set-inotify-max-user-watches || fail
 
-tools::install-my-computer-deploy-shell-alias || fail
+  # Update the system
+  apt::update || fail
+  apt::dist-upgrade || fail
 
-ubuntu::set-inotify-max-user-watches || fail
+  # Install packages
+  apt::install-basic-tools || fail
+  apt::install-ruby-and-devtools || fail
+  ruby::install-system-gems || fail
+  apt::install-tor || fail
+  apt::install-ffmpeg || fail
+  snap::install-bitwarden-cli || fail
+  apt::install-dconf || fail
+  apt::install-basic-gui-tools || fail
+  snap::install-basic-gui-tools || fail
 
-ubuntu::apt::update || fail
-ubuntu::apt::dist-upgrade || fail
+  # Test if it is a standalone workstation
 
-ubuntu::apt::install-basic-tools || fail
-ubuntu::apt::install-ruby-and-devtools || fail
-ubuntu::apt::install-nodejs || fail
-ubuntu::apt::install-gsettings || fail
-ubuntu::apt::install-tor || fail
+  # "hostnamectl status" could also be used to detect that we are running insde the vm
+  if ! grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
+    apt::install-obs-studio || fail
+    snap::install-productivity-gui-tools || fail
 
-ubuntu::apt::autoremove || fail
+    apt::install-syncthing || fail
+    systemctl enable "syncthing@${SUDO_USER}.service" || fail
+    systemctl start "syncthing@${SUDO_USER}.service" || fail
+  fi
 
-ubuntu::configure-desktop-apps || fail
+  vscode::install || fail
 
-sublime::install-sublime-merge || fail
-ubuntu::install-vscode || fail
+  # Add extra apt sources
+  apt::add-yarn-source || fail
+  apt::add-nodejs-source || fail
+  sublime::apt::add-sublime-source || fail
+  apt::update || fail
 
-vscode::install-config || fail
+  # Instal packages from added sources
+  apt::install-nodejs-and-yarn || fail
+  sublime::apt::install-sublime-merge || fail
+  sublime::apt::install-sublime-text || fail
 
-data-pi::install-shell-aliases || fail
+  # Cleanup
+  apt::autoremove || fail
 
+  # Add hgfs automount if needed
+  ubuntu::perhaps-add-hgfs-automount || fail
+}
+
+ubuntu::deploy-workstation::as-user() {
+  # Configuration
+  ubuntu::configure-desktop-apps || fail
+  vscode::install-config || fail
+  vscode::install-extensions || fail
+  sublime::install-config || fail
+
+  # Shell aliases
+  ubuntu::install-bashrcd || fail
+  data-pi::install-shell-aliases || fail
+  deploy-lib::install-my-computer-deploy-shell-alias || fail
+
+  # SSH keys
+  ubuntu::install-ssh-keys || fail
+
+  # Git
+  ubuntu::configure-git || fail
+
+  # User dirs
+  ubuntu::remove-user-dirs || fail
+
+  # symlink hgfs mounts
+  ubuntu::symlink-hgfs-mounts || fail
+}
+
+ubuntu::deploy-workstation() {
+  ubuntu::ensure-this-is-ubuntu-workstation || fail
+
+  sudo bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+
+  ubuntu::deploy-workstation::as-user || fail
+
+  echo "ubuntu::deploy-workstation completed"
+}
+
+ubuntu::deploy-workstation || fail

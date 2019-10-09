@@ -1,0 +1,6 @@
+castwide.solargraph
+coolbear.systemd-unit-file
+hjleochen.rails-nav
+kaiwood.endwise
+sianglim.slim
+syler.sass-indented

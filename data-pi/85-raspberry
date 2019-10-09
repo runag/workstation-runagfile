@@ -14,18 +14,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.echo "\n  Raspberry Pi\n"
 
+
+# You will not see stderr from motd scripts, I have no idea why. So no >&2; here for error messages.
+
 # https://www.funtoo.org/Raspberry_Pi_Userland_(VCGENCMD)
 
 echo -n "  "
-vcgencmd get_throttled || { echo "Unable to vcgencmd get_throttled ($?)" >&2; }
+vcgencmd get_throttled || { echo "Unable to execute vcgencmd get_throttled ($?)"; }
 
 echo -n "  "
-vcgencmd measure_temp || { echo "Unable to vcgencmd measure_temp ($?)" >&2; }
+vcgencmd measure_temp || { echo "Unable to execute vcgencmd measure_temp ($?)"; }
 
 for i in core sdram_c sdram_i sdram_p; do
-  echo "  ${i}_$(vcgencmd measure_volts "${i}" || { echo "Unable to vcgencmd measure_volts ${i} ($?)" >&2; })"
+  echo "  ${i}_$(vcgencmd measure_volts "${i}" || { echo "Unable to execute vcgencmd measure_volts ${i} ($?)"; })"
 done
 
 echo ""
 
-sudo smartctl -H -A -l error /dev/sda || { echo "Unable to smartctl /dev/sda ($?)" >&2; }
+sudo smartctl -H -A -l error /dev/sda || { echo "Unable to execute smartctl /dev/sda ($?)"; }

@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 ubuntu::ensure-this-is-ubuntu-workstation() {
-  if [ "${DESKTOP_SESSION:-}" != ubuntu ] && [ "${GNOME_SHELL_SESSION_MODE:-}" != ubuntu ]; then
-    echo "This has to be an ubuntu workstation ($?)" >&2
+  if [ "${DESKTOP_SESSION:-}" != "ubuntu" ] && [ "${DESKTOP_SESSION:-}" != "ubuntu-wayland" ] ; then
+    echo "This has to be an ubuntu workstation" >&2
     exit 1
   fi
 }
@@ -30,8 +30,7 @@ ubuntu::set-hostname() {
   local hostname="$1"
   local hostnameFile=/etc/hostname
 
-  echo "$hostname" | sudo tee "$hostnameFile"
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $hostnameFile ($?)"
+  echo "$hostname" | sudo tee "$hostnameFile" || fail "Unable to write to $hostnameFile ($?)"
 
   sudo hostname --file "$hostnameFile" || fail "Unable to load hostname from $hostnameFile ($?)"
 }
@@ -59,116 +58,142 @@ ubuntu::set-inotify-max-user-watches() {
   if grep --quiet "^fs.inotify.max_user_watches" "$sysctl" && grep --quiet "^fs.inotify.max_user_instances" "$sysctl"; then
     echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set"
   else
-    echo fs.inotify.max_user_watches=1000000 | sudo tee --append "$sysctl"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl ($?)"
+    echo "fs.inotify.max_user_watches=1000000" | sudo tee --append "$sysctl" || fail "Unable to write to $sysctl ($?)"
 
-    echo fs.inotify.max_user_instances=2048 | sudo tee --append "$sysctl"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to $sysctl ($?)"
+    echo "fs.inotify.max_user_instances=2048" | sudo tee --append "$sysctl" || fail "Unable to write to $sysctl ($?)"
 
     sudo sysctl -p || fail "Unable to update sysctl config ($?)"
   fi
 }
 
-ubuntu::apt::update() {
-  sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
-}
+ubuntu::install-bashrcd() {
+  if [ ! -d "${HOME}/.bashrc.d" ]; then
+    mkdir --parents "${HOME}/.bashrc.d" || fail "Unable to create the directory: ${HOME}/.bashrc.d"
+  fi
 
-ubuntu::apt::dist-upgrade() {
-  sudo apt-get -o Acquire::ForceIPv4=true -y dist-upgrade || fail "Unable to apt-get dist-upgrade ($?)"
-}
-
-# autoremove packages that are no longer needed
-ubuntu::apt::autoremove() {
-  sudo apt-get -o Acquire::ForceIPv4=true -y autoremove || fail "Unable to apt-get autoremove ($?)"
-}
-
-ubuntu::apt::install-basic-tools() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    git \
-    tmux \
-    curl \
-    mc ranger ncdu || fail "Unable to apt-get install ($?)"
-}
-
-ubuntu::apt::install-ruby-and-devtools() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    postgresql libpq-dev postgresql-contrib python-psycopg2 \
-    sqlite3 libsqlite3-dev \
-    build-essential libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
-    autoconf bison libncurses-dev libffi-dev libgdbm-dev \
-    ghostscript libgs-dev imagemagick \
-    apache2-utils \
-    memcached \
-    awscli \
-    redis-server \
-    ruby-full \
-    p7zip-full \
-    jq \
-    graphviz \
-    python-pip \
-    inotify-tools \
-    shellcheck || fail "Unable to apt-get install ($?)"
-}
-
-ubuntu::apt::install-nodejs() {
-  # Yarn
-  curl --fail --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add"
-
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to wrote to /etc/apt/sources.list.d/yarn.list"
-
-  # Node
-  # Please use only even-numbered nodejs releases here, they are LTS
-  curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
-
-  ubuntu::apt::update || fail
-
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    yarn \
-    nodejs || fail "Unable to apt-get install ($?)"
-}
-
-ubuntu::apt::install-gsettings() {
-  # dconf-tools for ubuntu earlier than 19.04
-  if [ "$(apt-cache search --names-only dconf-tools | wc -l)" = "0" ]; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-cli dconf-editor || fail "Unable to apt-get install ($?)"
+  if grep --quiet "^# bashrc.d loader" "${HOME}/.bashrc"; then
+    echo "bashrc.d loader already present"
   else
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-tools || fail "Unable to apt-get install ($?)"
+tee --append "${HOME}/.bashrc" <<SHELL || fail "Unable to append to the file: ${HOME}/.bashrc"
+
+# bashrc.d loader
+if [ -d "\${HOME}/.bashrc.d" ]; then
+  for file_bb21go6nkCN82Gk9XeY2 in "\${HOME}/.bashrc.d"/*.sh; do
+    if [ -f "\${file_bb21go6nkCN82Gk9XeY2}" ]; then
+      . "\${file_bb21go6nkCN82Gk9XeY2}" || { echo "Unable to load file \${file_bb21go6nkCN82Gk9XeY2} (\$?)"; }
+    fi
+  done
+  unset file_bb21go6nkCN82Gk9XeY2
+fi
+SHELL
   fi
 }
 
-ubuntu::apt::install-tor() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    tor || fail "Unable to apt-get install ($?)"
-}
+ubuntu::install-ssh-keys() {
+  if [ ! -d "${HOME}/.ssh" ]; then
+    mkdir --parents --mode=0700 "${HOME}/.ssh" || fail
+  fi
 
-ubuntu::configure-desktop-apps() {
-  # use dconf-editor to determine key/value pairs
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077"
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077"
 
-  dbus-launch gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
-
-  local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-  local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
-
-  dbus-launch gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
-  dbus-launch gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
-
-  dbus-launch gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
-  dbus-launch gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
-  dbus-launch gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
-  dbus-launch gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
-  dbus-launch gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+  # if ! ssh-add -L | grep --quiet "^${HOME}/\\.ssh/id_rsa$"; then
+  #   deploy-lib::bitwarden::unlock || fail
+  #   true | DISPLAY= SSH_ASKPASS="bin/get-my-current-ssh-key-password" ssh-add || fail "ssh-add failed"
+  # fi
 }
 
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
   sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
 }
 
-ubuntu::install-vscode() {
-  sudo snap install --classic code || fail "Unable to install vscode ($?)"
+ubuntu::configure-desktop-apps() {
+  # use dconf-editor to determine key/value pairs
+  # why did I use dbus-launch? "dbus-launch gsettings set ..."
+
+  # Terminal
+  gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
+
+  local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
+  local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
+
+  gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
+  gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
+
+  # Nautilus
+  gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
+  gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
+  gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
+  gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
+  gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+
+  # Desktop
+  gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
+  gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+
+  # Disable screen lock
+  gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
 }
 
+ubuntu::configure-git() {
+  git config --global user.name "${GIT_USER_NAME}" || fail
+  git config --global user.email "${GIT_USER_EMAIL}" || fail
+}
+
+ubuntu::perhaps-add-hgfs-automount() {
+  # https://askubuntu.com/a/1051620
+  if hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
+    if ! grep --quiet "fuse.vmhgfs-fuse" /etc/fstab; then
+      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
+    fi
+  fi
+}
+
+ubuntu::symlink-hgfs-mounts() {
+  if findmnt -M /mnt/hgfs >/dev/null; then
+    local f dirPath dirName
+    for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
+      dirName="$(basename "$dirPath")" || fail
+      if [ ! -e "${HOME}/${dirName}" ]; then
+        ln --symbolic "${dirPath}" "${HOME}/${dirName}" || fail "unable to create symlink to ${dirPath}"
+      fi
+    done
+  fi
+}
+
+ubuntu::remove-user-dirs() {
+  tee "${HOME}/.config/user-dirs.dirs" <<SHELL || fail "Unable to write file: ${HOME}/.config/user-dirs.dirs ($?)"
+XDG_DESKTOP_DIR="$HOME/Desktop"
+XDG_DOWNLOAD_DIR="$HOME/Downloads"
+SHELL
+
+  tee "${HOME}/.config/user-dirs.conf" <<SHELL || fail "Unable to write file: ${HOME}/.config/user-dirs.conf ($?)"
+enabled=false
+SHELL
+
+  # The script will continue on any errors in rm, so non-empty directories will be preserved.
+  deploy-lib::remove-dir-if-empty "$HOME/Documents"
+  deploy-lib::remove-dir-if-empty "$HOME/Music"
+  deploy-lib::remove-dir-if-empty "$HOME/Pictures"
+  deploy-lib::remove-dir-if-empty "$HOME/Public"
+  deploy-lib::remove-dir-if-empty "$HOME/Templates"
+  deploy-lib::remove-dir-if-empty "$HOME/Videos"
+
+  if [ -f "$HOME/examples.desktop" ]; then
+    rm "$HOME/examples.desktop" || fail
+  fi
+
+  xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
+
+  if ! grep --quiet "^Desktop$" "${HOME}/.hidden"; then
+    echo "Desktop" >> "${HOME}/.hidden" || fail
+  fi
+
+  if ! grep --quiet "^snap$" "${HOME}/.hidden"; then
+    echo "snap" >> "${HOME}/.hidden" || fail
+  fi
+
+  if ! grep --quiet "^VirtualBox VMs$" "${HOME}/.hidden"; then
+    echo "VirtualBox VMs" >> "${HOME}/.hidden" || fail
+  fi
+}
