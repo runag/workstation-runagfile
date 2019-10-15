@@ -56,7 +56,7 @@ ubuntu::deploy-workstation::as-root() {
     systemctl start "syncthing@${SUDO_USER}.service" || fail
   fi
 
-  vscode::install || fail
+  vscode::snap::install || fail
 
   # Add extra apt sources
   apt::add-yarn-source || fail
@@ -86,7 +86,7 @@ ubuntu::deploy-workstation::as-user() {
   # Shell aliases
   ubuntu::install-bashrcd || fail
   data-pi::install-shell-aliases || fail
-  deploy-lib::install-my-computer-deploy-shell-alias || fail
+  ubuntu::install-my-computer-deploy-shell-alias || fail
 
   # SSH keys
   ubuntu::install-ssh-keys || fail

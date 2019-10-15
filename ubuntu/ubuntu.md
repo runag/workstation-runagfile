@@ -1,30 +1,9 @@
-# NVIDIA + WAYLAND on Ubuntu 18.04 LTS
-* Terrible input lag (mouse feel terrible)
-* Lag when moving window from one monitor to another
+# Install
 
-Just use nvidia proprietary driver + xorg
-
-# Laptop screen tearing
-> from https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
-
-```sh
-sudo nano /etc/modprobe.d/zz-nvidia-modeset.conf
-
-# add
-options nvidia_drm modeset=1
-
-sudo update-initramfs -u
-```
-
-# My desktop NVIDIA 1060 card
-Install nvidia driver bacause nouvae can't controll the FAN
-
-
-# How to choose ubuntu version
+## How to choose ubuntu version
 Install only LTS release as its most stable (all other releases are shaky)
 
-
-# Partition
+## Partition
 1) (IF MAC) MacOS partition app
 
     * Make half the edrive as APFS
@@ -38,11 +17,9 @@ Install only LTS release as its most stable (all other releases are shaky)
     * Make / inside encrypted
     * Install boot loader on /boot partition, not to the /sda (tho whole drive)
 
-
-# EFI and windows dual boot
+## EFI and windows dual boot
 Use efibootmgr tool after ubuntu is installed to put windows first in boot order,
 otherwise the bitlocker will ask for key at every boot)
-
 
 ```sh
 sudo efibootmgr
@@ -54,15 +31,18 @@ echo 'alias reboot-me="sudo efibootmgr --bootnext 0002 && sudo reboot"' | sudo t
 ```
 
 
-# Drivers for "Broadcom BCM4353" (Macbook air 2012)
+# Hardware
+
+## Macbook Air mid-2012
+
+### Drivers for "Broadcom BCM4353" (Macbook air 2012)
 You will need USB wifi first
 
 Do not use proprietary drivers at install-time
 
 sudo apt-get install ubuntu-sta-common ubuntu-sta-source ubuntu-sta-dkms
 
-
-# Macbook video driver fix
+### Macbook video driver fix
 drm:drm_atomic_helper_wait_for_flip_done flip_done timed out
 
 > from https://askubuntu.com/questions/893817/boot-very-slow-because-of-drm-kms-helper-errors
@@ -78,16 +58,14 @@ sudo update-grub
 sudo reboot
 ```
 
-
-# Scrolling on Mac
+### Scrolling on Mac
 > from https://www.reddit.com/r/linux/comments/72mfv8/psa_for_firefox_users_set_moz_use_xinput21_to/
 > Run this command: echo export MOZ_USE_XINPUT2=1 | sudo tee /etc/profile.d/use-xinput2.sh
 > Log out and back in.
 > Firefox should now use xinput 2.
 > (optional) Open Firefox and go to about:preferences -> Advanced (or about:preferences -> Browsing for Firefox Nightly), and uncheck Use smooth scrolling. This disables the old style smooth scrolling, which just causes an annoying delay when using xinput2 style scrolling imo.
 
-
-# Macbook fan control
+### Macbook fan control
 ```sh
 sudo apt install mbpfan
 sudo nano /etc/mbpfan.conf
@@ -104,46 +82,34 @@ sudo apt install psensor
 # configure to show TC0C in notification area
 ```
 
-# Bitwarden
-```sh
-export BW_SESSION="$(bw login stan@senotrusov.com --raw)"
-export BW_SESSION="$(bw unlock --raw)"
-bw sync
-```
+## NVIDIA
 
-# Swap
-```sh
-sudo swapoff /swapfile
-sudo dd if=/dev/zero of=/swapfile bs=4M count=1024 oflag=append conv=notrunc
-sudo mkswap /swapfile
-sudo swapon /swapfile
-```
+### Open source driver for NVIDIA + WAYLAND on Ubuntu 18.04 LTS
+* Terrible input lag (mouse feel terrible)
+* Lag when moving window from one monitor to another
 
-# KVM VM
-> https://help.ubuntu.com/community/KVM/Installation
+Just use nvidia proprietary driver + xorg
+
+
+### Laptop screen tearing
+> from https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
 
 ```sh
-sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
-# reboot the computer and see if you are in libvirt group
-groups
+sudo nano /etc/modprobe.d/zz-nvidia-modeset.conf
+
+# add
+options nvidia_drm modeset=1
+
+sudo update-initramfs -u
 ```
 
 
-# GPG
-```sh
-gpg --import stan-at-senotrusov-com-gpg-key.txt
-gpg --edit-key stan@senotrusov.com trust
-```
+### My desktop NVIDIA 1060 card
+Install nvidia driver bacause nouvae can't controll the FAN
 
-# Grub
-```sh
-sudo nano /etc/defaults/grub
-# change the following:
-# GRUB_TIMEOUT=1
-sudo update-grub
-```
 
-# My encrypted disks
+
+## My encrypted disks
 ```sh
 export BW_SESSION="$(bw unlock --raw)"
 
@@ -165,12 +131,7 @@ echo "/dev/disk/by-uuid/9b900fbd-1435-4582-b3b0-e19f33782bb0 /home/stan/yaphit a
 sudo mount -a
 ```
 
-# Dropbox
-```sh
-sudo apt install python3-gpg
-```
-
-# Desktop mouse
+## Desktop mouse
 > from https://askubuntu.com/questions/1067062/change-mouse-speed-on-ubuntu-18-04
 
 ```sh
@@ -182,7 +143,61 @@ for (( ; ; )); do xinput --list-props 'ASUS ROG SICA' | grep 'libinput Accel Spe
 # -0.699640
 ```
 
-# pgadmin4
+## Web cameras
+https://help.ubuntu.com/community/Webcam/Troubleshooting
+
+```sh
+guvcview
+```
+
+
+# System configuration
+
+## Swap
+```sh
+sudo swapoff /swapfile
+sudo dd if=/dev/zero of=/swapfile bs=4M count=1024 oflag=append conv=notrunc
+sudo mkswap /swapfile
+sudo swapon /swapfile
+```
+
+## Grub
+```sh
+sudo nano /etc/defaults/grub
+# change the following:
+# GRUB_TIMEOUT=1
+sudo update-grub
+```
+
+
+# Applications
+
+## Bitwarden
+```sh
+export BW_SESSION="$(bw login stan@senotrusov.com --raw)"
+export BW_SESSION="$(bw unlock --raw)"
+bw sync
+```
+
+## TOR
+```sh
+# https://2019.www.torproject.org/docs/debian.html.en
+
+sudo nano /etc/tor/torrc
+
+# add the following
+HiddenServiceDir /var/lib/tor/ssh_hidden_service/
+HiddenServiceVersion 3
+HiddenServicePort 22 127.0.0.1:22
+
+sudo systemctl restart tor
+
+sudo cat /var/lib/tor/ssh_hidden_service/hostname
+
+journalctl -f --since today
+```
+
+## pgadmin4
 > from https://askubuntu.com/questions/831262/how-to-install-pgadmin-4-in-desktop-mode-on-ubuntu
 
 ```sh
@@ -221,29 +236,22 @@ sudo systemctl start pgadmin4.service
   * localhost
   * /home/stan/.pgpass
 
-
-# TOR
+## Dropbox
 ```sh
-# https://2019.www.torproject.org/docs/debian.html.en
-
-sudo nano /etc/tor/torrc
-
-# add the following
-HiddenServiceDir /var/lib/tor/ssh_hidden_service/
-HiddenServiceVersion 3
-HiddenServicePort 22 127.0.0.1:22
-
-sudo systemctl restart tor
-
-sudo cat /var/lib/tor/ssh_hidden_service/hostname
-
-journalctl -f --since today
+sudo apt install python3-gpg
 ```
 
+## GPG
+```sh
+gpg --import stan-at-senotrusov-com-gpg-key.txt
+gpg --edit-key stan@senotrusov.com trust
+```
 
-# Web cameras
-https://help.ubuntu.com/community/Webcam/Troubleshooting
+## KVM
+> https://help.ubuntu.com/community/KVM/Installation
 
 ```sh
-guvcview
+sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+# reboot the computer and see if you are in libvirt group
+groups
 ```

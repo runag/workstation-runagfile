@@ -56,7 +56,7 @@ ubuntu::set-inotify-max-user-watches() {
   fi
 
   if grep --quiet "^fs.inotify.max_user_watches" "$sysctl" && grep --quiet "^fs.inotify.max_user_instances" "$sysctl"; then
-    echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set"
+    echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set" >&2
   else
     echo "fs.inotify.max_user_watches=1000000" | sudo tee --append "$sysctl" || fail "Unable to write to $sysctl ($?)"
 
@@ -89,14 +89,38 @@ SHELL
   fi
 }
 
+ubuntu::install-my-computer-deploy-shell-alias() {
+  tee "${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh" <<SHELL || fail "Unable to write file: ${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh ($?)"
+    alias my-computer-deploy="${PWD}/bin/shell"
+SHELL
+}
+
 ubuntu::install-ssh-keys() {
   if [ ! -d "${HOME}/.ssh" ]; then
-    mkdir --parents --mode=0700 "${HOME}/.ssh" || fail
+    mkdir --mode=0700 "${HOME}/.ssh" || fail
   fi
 
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077"
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077"
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 
+  local addedToKeyringFlag="${HOME}/.ssh/id_rsa.added_to_keyring"
+
+  if [ ! -f "${addedToKeyringFlag}" ]; then
+    local testHost="tilde.club"
+    local testUsername="senotrusov"
+
+    deploy-lib::add-host-to-ssh-known-hosts "${testHost}" || fail
+
+    deploy-lib::bitwarden::unlock || fail
+    bw get password "my current password for ssh private key" | xclip -selection clipboard
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to copy ssh key password to the clipboard"
+
+    ssh "${testUsername}@${testHost}" true || fail "Unable to execute ssh test command"
+
+    touch "${addedToKeyringFlag}" || fail "Unable to touch"
+  fi
+  
+  # This command will add unlocked key to the ssh agent but it will be lost upon reboot
   # if ! ssh-add -L | grep --quiet "^${HOME}/\\.ssh/id_rsa$"; then
   #   deploy-lib::bitwarden::unlock || fail
   #   true | DISPLAY= SSH_ASKPASS="bin/get-my-current-ssh-key-password" ssh-add || fail "ssh-add failed"
@@ -172,12 +196,12 @@ enabled=false
 SHELL
 
   # The script will continue on any errors in rm, so non-empty directories will be preserved.
-  deploy-lib::remove-dir-if-empty "$HOME/Documents"
-  deploy-lib::remove-dir-if-empty "$HOME/Music"
-  deploy-lib::remove-dir-if-empty "$HOME/Pictures"
-  deploy-lib::remove-dir-if-empty "$HOME/Public"
-  deploy-lib::remove-dir-if-empty "$HOME/Templates"
-  deploy-lib::remove-dir-if-empty "$HOME/Videos"
+  deploy-lib::remove-dir-if-empty "$HOME/Documents" || fail
+  deploy-lib::remove-dir-if-empty "$HOME/Music" || fail
+  deploy-lib::remove-dir-if-empty "$HOME/Pictures" || fail
+  deploy-lib::remove-dir-if-empty "$HOME/Public" || fail
+  deploy-lib::remove-dir-if-empty "$HOME/Templates" || fail
+  deploy-lib::remove-dir-if-empty "$HOME/Videos" || fail
 
   if [ -f "$HOME/examples.desktop" ]; then
     rm "$HOME/examples.desktop" || fail
@@ -186,14 +210,14 @@ SHELL
   xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
 
   if ! grep --quiet "^Desktop$" "${HOME}/.hidden"; then
-    echo "Desktop" >> "${HOME}/.hidden" || fail
+    echo "Desktop" >>"${HOME}/.hidden" || fail
   fi
 
   if ! grep --quiet "^snap$" "${HOME}/.hidden"; then
-    echo "snap" >> "${HOME}/.hidden" || fail
+    echo "snap" >>"${HOME}/.hidden" || fail
   fi
 
   if ! grep --quiet "^VirtualBox VMs$" "${HOME}/.hidden"; then
-    echo "VirtualBox VMs" >> "${HOME}/.hidden" || fail
+    echo "VirtualBox VMs" >>"${HOME}/.hidden" || fail
   fi
 }

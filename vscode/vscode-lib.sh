@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-vscode::install() {
+vscode::snap::install() {
   sudo snap install code --classic || fail "Unable to snap install ($?)"
 }
 
@@ -31,6 +31,7 @@ vscode::install-extensions() {
 
     if ! diff vscode/extensions.txt "${extensionsList}" >/dev/null 2>&1; then
       local extension
+      # TODO: how to do correct error handling here (cat | while)?
       cat vscode/extensions.txt | while IFS="" read -r extension; do
         if [ -n "${extension}" ]; then
           code --install-extension "${extension}" || fail "Unable to install vscode extension ${extension}"

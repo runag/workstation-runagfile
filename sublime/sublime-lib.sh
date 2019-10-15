@@ -47,7 +47,7 @@ sublime::install-config() {
   sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
   sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${HOME}/.config/sublime-text-3/Local/License.sublime_license"
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${HOME}/.config/sublime-text-3/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {

@@ -40,3 +40,8 @@ The names should be as the following:
 ``Sublime Text 3 license``  
 ``data-pi onion address``  
 ``kelly disk key``  
+
+# Please check shell scripts before commiting any changes
+```sh
+shellcheck bin/* *.sh **/*.sh
+```

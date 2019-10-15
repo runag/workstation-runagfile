@@ -27,17 +27,17 @@ data-pi::install-shell-aliases() {
   if [ ! -f "${outputFile}" ]; then
     deploy-lib::bitwarden::unlock || fail
 
-    local onionAddress="$(bw get password "data-pi onion address")" || fail "Unable to get data-pi onion address"
+    local onionAddress; onionAddress="$(bw get password "data-pi onion address")" || fail "Unable to get data-pi onion address"
 
-    local portMappings="-q -L 8385:localhost:8384 -L 19998:localhost:19999"
-    local torProxy="-o ProxyCommand=$(printf "%q" "nc -x localhost:9050 %h %p")"
+    local portMappings; portMappings="-q -L 8385:localhost:8384 -L 19998:localhost:19999" || fail
+    local torProxy; torProxy="-o ProxyCommand=$(printf "%q" "nc -x localhost:9050 %h %p")" || fail
 
-    local getPassword="BW_SESSION=\"\$(bw unlock --raw)\" bw get password $(printf "%q" "${DATA_PI_DISK_KEY}")"
+    local getPassword; getPassword="BW_SESSION=\"\$(bw unlock --raw)\" bw get password $(printf "%q" "${DATA_PI_DISK_KEY}")" || fail
 
-    local unlockCommand="$(printf "%q" "echo unlocking... && ! { findmnt -M ~/$(printf "%q" "${DATA_PI_DISK_NAME}") >/dev/null && echo already unlocked; } && sudo cryptsetup luksOpen /dev/sda1 $(printf "%q" "${DATA_PI_DISK_NAME}") && sudo fsck -pf /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") && sudo mount /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") ~/$(printf "%q" "${DATA_PI_DISK_NAME}") && sudo systemctl start $(printf "%q" "${DATA_PI_SYNCTHING_SERVICE}@${DATA_PI_USER}").service && echo done")"
-    local haltCommand="$(printf "%q" "echo halting... && sudo halt")"
-    local rebootCommand="$(printf "%q" "echo rebooting... && sudo reboot")"
-    local statusCommand="$(printf "%q" "uptime && date")"
+    local unlockCommand; unlockCommand="$(printf "%q" "echo unlocking... && ! { findmnt -M ~/$(printf "%q" "${DATA_PI_DISK_NAME}") >/dev/null && echo already unlocked; } && sudo cryptsetup luksOpen /dev/sda1 $(printf "%q" "${DATA_PI_DISK_NAME}") && sudo fsck -pf /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") && sudo mount /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") ~/$(printf "%q" "${DATA_PI_DISK_NAME}") && sudo systemctl start $(printf "%q" "${DATA_PI_SYNCTHING_SERVICE}@${DATA_PI_USER}").service && echo done")" || fail
+    local haltCommand; haltCommand="$(printf "%q" "echo halting... && sudo halt")" || fail
+    local rebootCommand; rebootCommand="$(printf "%q" "echo rebooting... && sudo reboot")" || fail
+    local statusCommand; statusCommand="$(printf "%q" "uptime && date")" || fail
 
     tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
       alias data-pi='ssh ${portMappings} ${DATA_PI_USER}@${DATA_PI_LOCAL_ADDRESS}'

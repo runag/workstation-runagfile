@@ -36,10 +36,12 @@ deploy-lib::sudo-write-file() {
   sudo chown "$owner:$group" "$dest" || fail "Unable to chown '${dest}' ($?)"
 }
 
-deploy-lib::install-my-computer-deploy-shell-alias() {
-  tee "${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh" <<SHELL || fail "Unable to write file: ${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh ($?)"
-    alias my-computer-deploy="${PWD}/bin/shell"
-SHELL
+deploy-lib::remove-dir-if-empty() {
+  if [ -d "$1" ]; then
+    # Note: no "|| fail" here because if directory is not empty rm will set the erorr status
+    rm --dir "$1"
+    true
+  fi
 }
 
 deploy-lib::make-latest-git-repository-clone-available() {
@@ -120,16 +122,25 @@ deploy-lib::merge-config() {
 
 deploy-lib::bitwarden::unlock() {
   if [ -z "${BW_SESSION:-}" ]; then
-    echo "Please enter your bitwarden password"
-    if ! BW_SESSION="$(bw unlock --raw)"; then
-      if [ "${BW_SESSION}" = "You are not logged in." ]; then
+    local errorString
+    if ! errorString="$(bw sync --raw 2>&1)"; then
+      if [ "${errorString}" = "You are not logged in." ]; then
+        echo "Please enter your bitwarden password to login"
         if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
           fail "Unable to login to bitwarden"
         fi
-      else
-        fail "Unable to unlock bitwarden database"
+        export BW_SESSION
       fi
     fi
+  fi
+
+  if [ -z "${BW_SESSION:-}" ]; then
+    echo "Please enter your bitwarden to unlock the vault"
+
+    if ! BW_SESSION="$(bw unlock --raw)"; then
+      fail "Unable to unlock bitwarden database"
+    fi
+
     export BW_SESSION
     bw sync || fail "Unable to sync bitwarden"
   fi
@@ -145,10 +156,10 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
     deploy-lib::bitwarden::unlock || fail
     
     if bwdata="$(bw get item "${item}")"; then
-      local dirName="$(dirname "${outputFile}")" || fail
+      local dirName; dirName="$(dirname "${outputFile}")" || fail
       
       if [ ! -d "${dirName}" ]; then
-        mkdir --parents "${dirName}"
+        mkdir --parents "${dirName}" || fail
       fi
 
       echo "${bwdata}" | jq '.notes' --raw-output | (umask "${setUmask}" && tee "${outputFile}.tmp")
@@ -165,11 +176,5 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
       echo "${bwdata}" >&2
       fail "Unable to bw get item ${item}"
     fi
-  fi
-}
-
-deploy-lib::remove-dir-if-empty() {
-  if [ -d "$1" ]; then
-    rm --dir "$1"
   fi
 }

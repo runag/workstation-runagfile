@@ -115,10 +115,6 @@ apt::install-ffmpeg() {
       || fail "Unable to apt-get install ($?)"
 }
 
-snap::install-bitwarden-cli() {
-  sudo snap install bw || fail "Unable to snap install ($?)"
-}
-
 apt::install-dconf() {
   # dconf-tools for ubuntu earlier than 19.04
   if [ "$(apt-cache search --names-only dconf-tools | wc -l)" = "0" ]; then
@@ -137,12 +133,6 @@ apt::install-basic-gui-tools() {
       || fail "Unable to apt-get install ($?)"
 }
 
-snap::install-basic-gui-tools() {
- sudo snap install \
-    chromium \
-    || fail "Unable to snap install ($?)"
-}
-
 apt::install-obs-studio() {
   sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
 
@@ -150,6 +140,16 @@ apt::install-obs-studio() {
     obs-studio \
     guvcview \
       || fail "Unable to apt-get install ($?)"
+}
+
+snap::install-bitwarden-cli() {
+  sudo snap install bw || fail "Unable to snap install ($?)"
+}
+
+snap::install-basic-gui-tools() {
+ sudo snap install \
+    chromium \
+    || fail "Unable to snap install ($?)"
 }
 
 snap::install-productivity-gui-tools() {
