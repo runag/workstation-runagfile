@@ -103,28 +103,38 @@ ubuntu::install-ssh-keys() {
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 
-  local addedToKeyringFlag="${HOME}/.ssh/id_rsa.added_to_keyring"
-
-  if [ ! -f "${addedToKeyringFlag}" ]; then
-    local testHost="tilde.club"
-    local testUsername="senotrusov"
-
-    deploy-lib::add-host-to-ssh-known-hosts "${testHost}" || fail
-
-    deploy-lib::bitwarden::unlock || fail
-    bw get password "my current password for ssh private key" | xclip -selection clipboard
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to copy ssh key password to the clipboard"
-
-    ssh "${testUsername}@${testHost}" true || fail "Unable to execute ssh test command"
-
-    touch "${addedToKeyringFlag}" || fail "Unable to touch"
-  fi
-  
-  # This command will add unlocked key to the ssh agent but it will be lost upon reboot
+  # Take 1: This command will add unlocked key to the ssh agent but it will be lost upon reboot
   # if ! ssh-add -L | grep --quiet "^${HOME}/\\.ssh/id_rsa$"; then
   #   deploy-lib::bitwarden::unlock || fail
   #   true | DISPLAY= SSH_ASKPASS="bin/get-my-current-ssh-key-password" ssh-add || fail "ssh-add failed"
   # fi
+
+  # Take 2: Copy password to the clipboard and manual input
+  # local addedToKeyringFlag="${HOME}/.ssh/id_rsa.added_to_keyring"
+  # if [ ! -f "${addedToKeyringFlag}" ]; then
+  #   local testHost="tilde.club"
+  #   local testUsername="senotrusov"
+
+  #   deploy-lib::add-host-to-ssh-known-hosts "${testHost}" || fail
+
+  #   deploy-lib::bitwarden::unlock || fail
+  #   bw get password "my current password for ssh private key" | xclip -selection clipboard
+  #   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to copy ssh key password to the clipboard"
+
+  #   ssh "${testUsername}@${testHost}" true || fail "Unable to execute ssh test command"
+
+  #   echo "" | xclip -selection clipboard || fail
+
+  #   touch "${addedToKeyringFlag}" || fail "Unable to touch"
+  # fi
+
+  # Take 3: Save directly to the keyring
+  if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
+    deploy-lib::bitwarden::unlock || fail
+    bw get password "my current password for ssh private key" \
+      | secret-tool store --label="Unlock password for: ${HOME}/.ssh/id_rsa" unique "ssh-store:${HOME}/.ssh/id_rsa"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
+  fi
 }
 
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
@@ -162,6 +172,19 @@ ubuntu::configure-desktop-apps() {
 ubuntu::configure-git() {
   git config --global user.name "${GIT_USER_NAME}" || fail
   git config --global user.email "${GIT_USER_EMAIL}" || fail
+
+  if ! secret-tool lookup server github.com user "${GITHUB_LOGIN}" protocol https xdg:schema org.gnome.keyring.NetworkPassword >/dev/null; then
+    deploy-lib::bitwarden::unlock || fail
+    bw get password "my github personal access token" \
+      | secret-tool store --label="Git: https://github.com/" server github.com user "${GITHUB_LOGIN}" protocol https xdg:schema org.gnome.keyring.NetworkPassword
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store github personal access token"
+  fi
+
+  if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
+    cd /usr/share/doc/git/contrib/credential/libsecret || fail
+    sudo make || fail
+    git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
+  fi
 }
 
 ubuntu::perhaps-add-hgfs-automount() {

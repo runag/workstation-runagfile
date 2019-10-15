@@ -25,3 +25,5 @@ export DATA_PI_USER="ubuntu"
 
 export GIT_USER_EMAIL="stan@senotrusov.com"
 export GIT_USER_NAME="Stanislav Senotrusov"
+
+export GITHUB_LOGIN="senotrusov"

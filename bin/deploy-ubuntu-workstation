@@ -41,8 +41,8 @@ ubuntu::deploy-workstation::as-root() {
   apt::install-ffmpeg || fail
   snap::install-bitwarden-cli || fail
   apt::install-dconf || fail
-  apt::install-basic-gui-tools || fail
-  snap::install-basic-gui-tools || fail
+  apt::install-workstation-tools || fail
+  snap::install-workstation-tools || fail
 
   # Test if it is a standalone workstation
 

@@ -126,10 +126,12 @@ apt::install-dconf() {
   fi
 }
 
-apt::install-basic-gui-tools() {
+apt::install-workstation-tools() {
+  # https://wiki.gnome.org/Projects/Libsecret
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     meld \
     xclip \
+    libsecret-tools libsecret-1-0 libsecret-1-dev \
       || fail "Unable to apt-get install ($?)"
 }
 
@@ -146,7 +148,7 @@ snap::install-bitwarden-cli() {
   sudo snap install bw || fail "Unable to snap install ($?)"
 }
 
-snap::install-basic-gui-tools() {
+snap::install-workstation-tools() {
  sudo snap install \
     chromium \
     || fail "Unable to snap install ($?)"
