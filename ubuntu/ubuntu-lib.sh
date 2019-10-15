@@ -168,7 +168,7 @@ ubuntu::perhaps-add-hgfs-automount() {
   # https://askubuntu.com/a/1051620
   if hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
     if ! grep --quiet "fuse.vmhgfs-fuse" /etc/fstab; then
-      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
+      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
     fi
   fi
 }
