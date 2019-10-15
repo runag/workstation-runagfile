@@ -1,11 +1,15 @@
 ## deploy-ubuntu-workstation one-liner
 ```sh
-cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && bin/deploy-ubuntu-workstation
+cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && bin/deploy-ubuntu-workstation
+```
+## deploy-data-pi one-liner
+```sh
+cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && bin/deploy-data-pi
 ```
 
-## Clone to new machine one-liner
+## Clone to a new machine one-liner
 ```sh
-cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && ls -1 bin/*
+cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && ls -1 bin/*
 ```
 
 ## Deployment
