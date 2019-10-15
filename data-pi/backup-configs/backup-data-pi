@@ -37,5 +37,5 @@ RCLONE_CONFIG="${REPO_VOLUME}/.config/rclone/rclone.conf"
 # CHECKPOINT=""
 
 make-backup() {
-  PREFIX="" FROM_PATH="/home/ubuntu/kelly" add-files notes
+  PREFIX="" FROM_PATH="/home/ubuntu/kelly" add-files notes distfiles distfiles-macos distfiles-unix distfiles-windows emma-docs media
 }
