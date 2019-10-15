@@ -103,32 +103,6 @@ ubuntu::install-ssh-keys() {
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 
-  # Take 1: This command will add unlocked key to the ssh agent but it will be lost upon reboot
-  # if ! ssh-add -L | grep --quiet "^${HOME}/\\.ssh/id_rsa$"; then
-  #   deploy-lib::bitwarden::unlock || fail
-  #   true | DISPLAY= SSH_ASKPASS="bin/get-my-current-ssh-key-password" ssh-add || fail "ssh-add failed"
-  # fi
-
-  # Take 2: Copy password to the clipboard and manual input
-  # local addedToKeyringFlag="${HOME}/.ssh/id_rsa.added_to_keyring"
-  # if [ ! -f "${addedToKeyringFlag}" ]; then
-  #   local testHost="tilde.club"
-  #   local testUsername="senotrusov"
-
-  #   deploy-lib::add-host-to-ssh-known-hosts "${testHost}" || fail
-
-  #   deploy-lib::bitwarden::unlock || fail
-  #   bw get password "my current password for ssh private key" | xclip -selection clipboard
-  #   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to copy ssh key password to the clipboard"
-
-  #   ssh "${testUsername}@${testHost}" true || fail "Unable to execute ssh test command"
-
-  #   echo "" | xclip -selection clipboard || fail
-
-  #   touch "${addedToKeyringFlag}" || fail "Unable to touch"
-  # fi
-
-  # Take 3: Save directly to the keyring
   if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
     deploy-lib::bitwarden::unlock || fail
     bw get password "my current password for ssh private key" \
