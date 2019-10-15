@@ -45,7 +45,6 @@ ubuntu::deploy-workstation::as-root() {
   snap::install-workstation-tools || fail
 
   # Test if it is a standalone workstation
-
   # "hostnamectl status" could also be used to detect that we are running insde the vm
   if ! grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
     apt::install-obs-studio || fail
