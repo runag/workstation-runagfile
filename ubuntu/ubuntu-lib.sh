@@ -90,8 +90,16 @@ SHELL
 }
 
 ubuntu::install-my-computer-deploy-shell-alias() {
-  tee "${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh" <<SHELL || fail "Unable to write file: ${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh ($?)"
+  local output="${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
     alias my-computer-deploy="${PWD}/bin/shell"
+SHELL
+}
+
+ubuntu::use-nano-editor() {
+  local output="${HOME}/.bashrc.d/use-nano-editor.sh"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+  export EDITOR="$(which nano)"
 SHELL
 }
 
@@ -141,6 +149,12 @@ ubuntu::configure-desktop-apps() {
 
   # Disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
+
+  # Auto set time zone
+  gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
+
+  # Dash
+  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
 }
 
 ubuntu::configure-git() {
