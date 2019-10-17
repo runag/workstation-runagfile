@@ -1,15 +1,15 @@
 ## deploy-ubuntu-workstation one-liner
 ```sh
-cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && bin/deploy-ubuntu-workstation
+cd ~ && if ! command -v git; then sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-ubuntu-workstation
 ```
 ## deploy-data-pi one-liner
 ```sh
-cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && bin/deploy-data-pi
+cd ~ && if ! command -v git; then sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-data-pi
 ```
 
 ## Clone to a new machine one-liner
 ```sh
-cd ~ && command -v git || sudo apt install -y git && test -d my-computer-deploy && (cd my-computer-deploy && git pull) || git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy && ls -1 bin/*
+cd ~ && if ! command -v git; then sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && ls -1 bin/*
 ```
 
 ## Deployment
