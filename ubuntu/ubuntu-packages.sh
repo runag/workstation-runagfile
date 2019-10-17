@@ -69,6 +69,7 @@ apt::install-basic-tools() {
     mc ranger ncdu \
     p7zip-full \
     tmux \
+    sysbench \
       || fail "Unable to apt-get install ($?)"
 }
 
