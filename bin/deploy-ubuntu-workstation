@@ -36,7 +36,7 @@ ubuntu::deploy-workstation::as-root() {
   # Install packages
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
-  ruby::install-system-gems || fail
+  # ruby::install-system-gems || fail
   apt::install-tor || fail
   apt::install-ffmpeg || fail
   snap::install-bitwarden-cli || fail
