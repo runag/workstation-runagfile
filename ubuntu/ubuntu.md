@@ -36,11 +36,20 @@ echo 'alias reboot-me="sudo efibootmgr --bootnext 0002 && sudo reboot"' | sudo t
 ## Macbook Air mid-2012
 
 ### Drivers for "Broadcom BCM4353" (Macbook air 2012)
-You will need USB wifi first
+
+On 18.04 default driver somehow works but connection in unreliable.
+
+On 19.? you need USB network dongle first
 
 Do not use proprietary drivers at install-time
 
+On 18.04 just enable proprietary drivers from the interface.
+
+On 19.? do the following:
+
+```sh
 sudo apt-get install ubuntu-sta-common ubuntu-sta-source ubuntu-sta-dkms
+```
 
 ### Macbook video driver fix
 drm:drm_atomic_helper_wait_for_flip_done flip_done timed out

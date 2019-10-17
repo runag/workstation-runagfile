@@ -34,6 +34,7 @@ ubuntu::deploy-workstation::as-root() {
   apt::dist-upgrade || fail
 
   # Install packages
+  apt::perhaps-install-mbpfan || fail
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
   # ruby::install-system-gems || fail

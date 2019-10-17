@@ -146,6 +146,14 @@ apt::install-obs-studio() {
       || fail "Unable to apt-get install ($?)"
 }
 
+apt::perhaps-install-mbpfan() {
+  if sudo dmidecode --string baseboard-version | grep --quiet "MacBookAir5\\,2"; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      mbpfan \
+        || fail "Unable to apt-get install ($?)"
+  fi 
+}
+
 snap::install-bitwarden-cli() {
   sudo snap install bw || fail "Unable to snap install ($?)"
 }
