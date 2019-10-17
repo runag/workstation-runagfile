@@ -159,18 +159,13 @@ snap::install-bitwarden-cli() {
 }
 
 snap::install-workstation-tools() {
- sudo snap install \
-    chromium \
-    || fail "Unable to snap install ($?)"
+ sudo snap install chromium || fail "Unable to snap install ($?)"
 }
 
-snap::install-productivity-workstation-tools() {
-  sudo snap install \
-    telegram-desktop \
-    discord \
-    libreoffice \
-    bitwarden \
-    || fail "Unable to snap install ($?)"
-
+snap::install-productivity-gui-tools() {
+  sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
+  sudo snap install discord || fail "Unable to snap install ($?)"
+  sudo snap install libreoffice || fail "Unable to snap install ($?)"
+  sudo snap install bitwarden || fail "Unable to snap install ($?)"
   sudo snap install skype --classic || fail "Unable to snap install ($?)"
 }
