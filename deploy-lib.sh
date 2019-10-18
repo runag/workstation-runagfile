@@ -162,15 +162,18 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
         mkdir --parents "${dirName}" || fail
       fi
 
-      echo "${bwdata}" | jq '.notes' --raw-output | (umask "${setUmask}" && tee "${outputFile}.tmp")
+      echo "${bwdata}" | jq '.notes' --raw-output --exit-status | (umask "${setUmask}" && tee "${outputFile}.tmp")
 
       local savedPipeStatus="${PIPESTATUS[*]}"
 
       if [ "${savedPipeStatus}" = "0 0 0" ]; then
+        if [ ! -s "${outputFile}.tmp" ]; then
+          fail "Bitwarden item ${item} expected to have a non-empty note field"
+        fi
         mv "${outputFile}.tmp" "${outputFile}" || fail "Unable to move temp file to the output file: ${outputFile}.tmp to ${outputFile}"
       else
         rm "${outputFile}.tmp" || fail "Unable to remove temp file: ${outputFile}.tmp"
-        fail "Unable to produce ${outputFile} (${savedPipeStatus})"
+        fail "Unable to produce '${outputFile}' (${savedPipeStatus}), Bitwarden item '${item}' may not present or have an empty note field"
       fi
     else
       echo "${bwdata}" >&2
