@@ -20,11 +20,11 @@ set -o nounset && if ! command -v sysbench >/dev/null; then sudo apt install -y 
 echo "### CPU ###" && \
 sysbench cpu run && \
 \
-echo "### RAM ###" && \
-sysbench memory run --memory-block-size=4096 && \
-\
 echo "### THREADS ###" && \
 sysbench threads run && \
+\
+echo "### RAM ###" && \
+sysbench memory run --memory-block-size=4096 && \
 \
 sysbench fileio prepare && \
 \
