@@ -131,6 +131,7 @@ apt::install-workstation-tools() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     meld \
     xclip \
+    imwheel \
     libsecret-tools libsecret-1-0 libsecret-1-dev \
       || fail "Unable to apt-get install ($?)"
 }
@@ -154,7 +155,7 @@ snap::install-workstation-tools() {
     || fail "Unable to snap install ($?)"
 }
 
-snap::install-productivity-gui-tools() {
+snap::install-productivity-workstation-tools() {
   sudo snap install \
     telegram-desktop \
     discord \

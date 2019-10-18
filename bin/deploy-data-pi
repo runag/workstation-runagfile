@@ -52,8 +52,7 @@ ubuntu::deploy-data-pi::as-root() {
   # netdata::configure || fail
 
   # apt::install-syncthing || fail
-  # systemctl enable "syncthing@${SUDO_USER}.service" || fail
-  # systemctl start "syncthing@${SUDO_USER}.service" || fail
+  # systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
 
   # Cleanup
   apt::autoremove || fail
@@ -93,4 +92,4 @@ ubuntu::deploy-data-pi() {
   echo "ubuntu::deploy-data-pi completed"
 }
 
-ubuntu::deploy-data-pi || fail
+"${1:-ubuntu::deploy-data-pi}" "${@:2}" || fail

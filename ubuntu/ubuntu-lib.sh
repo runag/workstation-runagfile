@@ -155,6 +155,9 @@ ubuntu::configure-desktop-apps() {
 
   # Dash
   gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
+
+  # Sound alerts
+  gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
 }
 
 ubuntu::configure-git() {
@@ -231,4 +234,33 @@ SHELL
   if ! grep --quiet "^VirtualBox VMs$" "${HOME}/.hidden"; then
     echo "VirtualBox VMs" >>"${HOME}/.hidden" || fail
   fi
+}
+
+ubuntu::setup-imwhell() {
+  local outputFile="${HOME}/.imwheelrc"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+".*"
+None,      Up,   Button4, 3
+None,      Down, Button5, 3
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+SHELL
+
+  local outputFile="${HOME}/.config/autostart/imwheel.desktop"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/imwheel
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=IMWheel
+Name=IMWheel
+Comment[en_US]=Custom scroll speed
+Comment=Custom scroll speed
+SHELL
+
+  /usr/bin/imwheel --kill
 }

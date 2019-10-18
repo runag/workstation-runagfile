@@ -22,6 +22,5 @@
     "editor.wordBasedSuggestions": false,
     "search.location": "sidebar",
     "editor.cursorSurroundingLines": 2,
-    "editor.smoothScrolling": true,
-    "editor.mouseWheelScrollSensitivity": 2
+    "editor.smoothScrolling": true
 }

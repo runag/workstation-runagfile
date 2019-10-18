@@ -48,11 +48,10 @@ ubuntu::deploy-workstation::as-root() {
   # "hostnamectl status" could also be used to detect that we are running insde the vm
   if ! grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
     apt::install-obs-studio || fail
-    snap::install-productivity-gui-tools || fail
+    snap::install-productivity-workstation-tools || fail
 
     apt::install-syncthing || fail
-    systemctl enable "syncthing@${SUDO_USER}.service" || fail
-    systemctl start "syncthing@${SUDO_USER}.service" || fail
+    systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
 
   vscode::snap::install || fail
@@ -76,8 +75,10 @@ ubuntu::deploy-workstation::as-root() {
 }
 
 ubuntu::deploy-workstation::as-user() {
-  # Configuration
+  # Desktop configuration
   ubuntu::configure-desktop-apps || fail
+
+  # Editors
   vscode::install-config || fail
   vscode::install-extensions || fail
   sublime::install-config || fail
@@ -98,6 +99,9 @@ ubuntu::deploy-workstation::as-user() {
 
   # symlink hgfs mounts
   ubuntu::symlink-hgfs-mounts || fail
+
+  # IMWhell
+  ubuntu::setup-imwhell || fail
 }
 
 ubuntu::deploy-workstation() {
@@ -110,4 +114,4 @@ ubuntu::deploy-workstation() {
   echo "ubuntu::deploy-workstation completed"
 }
 
-ubuntu::deploy-workstation || fail
+"${1:-ubuntu::deploy-workstation}" "${@:2}" || fail
