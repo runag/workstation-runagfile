@@ -26,31 +26,31 @@ sysbench threads run && \
 echo "### RAM ###" && \
 sysbench memory run --memory-block-size=4096 && \
 \
-sysbench fileio prepare && \
+sysbench fileio prepare --file-extra-flags=direct && \
 \
 echo "### SEQUENTIAL READ ###" && \
-sysbench fileio run --file-test-mode=seqrd --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=off && \
+sysbench fileio run --file-test-mode=seqrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off && \
 \
 echo "### RANDOM READ ###" && \
-sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=off && \
+sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off && \
 \
 echo "### RANDOM READ QD32 ###" && \
-sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=off --file-io-mode=async --file-async-backlog=32 && \
+sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off --file-io-mode=async --file-async-backlog=32 && \
 \
 echo "### SEQUENTIAL WRITE FSYNC EVERY 100 REQ ###" && \
-sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 && \
+sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct && \
 \
 echo "### RANDOM WRITE FSYNC EVERY 100 REQ ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 && \
+sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct && \
 \
 echo "### SEQUENTIAL WRITE NOSYNC ###" && \
-sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=on && \
+sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on && \
 \
 echo "### RANDOM WRITE NOSYNC ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=on && \
+sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on && \
 \
 echo "### RANDOM WRITE NOSYNC QD32 ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-fsync-freq=0 --file-fsync-end=on --file-io-mode=async --file-async-backlog=32 && \
+sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on --file-io-mode=async --file-async-backlog=32 && \
 \
 sysbench fileio cleanup \
 \
