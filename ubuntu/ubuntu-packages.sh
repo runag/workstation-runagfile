@@ -90,12 +90,10 @@ apt::install-ruby-and-devtools() {
     shellcheck \
     sqlite3 libsqlite3-dev \
       || fail "Unable to apt-get install ($?)"
-}
 
-ruby::install-system-gems() {
-  sudo gem install rake solargraph || fail "Unable to install gems"
-  sudo gem update --system || fail "Unable to execute gem update --system"
-  sudo gem update || fail "Unable to update gems"
+  # sudo gem install rake solargraph || fail "Unable to install gems"
+  # sudo gem update --system || fail "Unable to execute gem update --system"
+  # sudo gem update || fail "Unable to update gems"
 }
 
 apt::install-tor() {
@@ -107,12 +105,6 @@ apt::install-tor() {
 apt::install-syncthing() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     syncthing \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-ffmpeg() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    ffmpeg \
       || fail "Unable to apt-get install ($?)"
 }
 
@@ -137,9 +129,14 @@ apt::install-workstation-tools() {
       || fail "Unable to apt-get install ($?)"
 }
 
+apt::install-ffmpeg() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    ffmpeg \
+      || fail "Unable to apt-get install ($?)"
+}
+
 apt::install-obs-studio() {
   sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
-
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     obs-studio \
     guvcview \
@@ -162,10 +159,10 @@ snap::install-workstation-tools() {
  sudo snap install chromium || fail "Unable to snap install ($?)"
 }
 
-snap::install-productivity-gui-tools() {
-  sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
-  sudo snap install discord || fail "Unable to snap install ($?)"
-  sudo snap install libreoffice || fail "Unable to snap install ($?)"
+snap::install-productivity-workstation-tools() {
   sudo snap install bitwarden || fail "Unable to snap install ($?)"
+  sudo snap install discord || fail "Unable to snap install ($?)"
+  # sudo snap install libreoffice || fail "Unable to snap install ($?)"
   sudo snap install skype --classic || fail "Unable to snap install ($?)"
+  sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
 }

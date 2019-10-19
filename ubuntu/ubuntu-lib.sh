@@ -14,8 +14,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+ubuntu::bare-metal() {
+  # "hostnamectl status" could also be used to detect that we are running insde the vm
+  if grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
+    return 1
+  else
+    return 0
+  fi
+}
+
 ubuntu::ensure-this-is-ubuntu-workstation() {
-  if [ "${DESKTOP_SESSION:-}" != "ubuntu" ] && [ "${DESKTOP_SESSION:-}" != "ubuntu-wayland" ] ; then
+  if [ "${DESKTOP_SESSION:-}" != "ubuntu" ] && [ "${DESKTOP_SESSION:-}" != "ubuntu-wayland" ] && [ "${DESKTOP_SESSION:-}" != "xubuntu" ]; then
     echo "This has to be an ubuntu workstation" >&2
     exit 1
   fi
@@ -128,36 +137,50 @@ ubuntu::configure-desktop-apps() {
   # why did I use dbus-launch? "dbus-launch gsettings set ..."
 
   # Terminal
-  gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
+  if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
+    gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
+  fi
 
-  local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-  local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
+  if gsettings get org.gnome.Terminal.ProfilesList default; then
+    local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
+    local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
-  gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
-  gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
+    gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
+    gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
+  fi
 
   # Nautilus
-  gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
-  gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
-  gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
-  gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
-  gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+  if gsettings list-keys org.gnome.nautilus; then
+    gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
+    gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
+    gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
+    gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
+    gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
 
-  # Desktop
-  gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
-  gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+    # Desktop
+    gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
+    gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+  fi
 
   # Disable screen lock
-  gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
+  if gsettings get org.gnome.desktop.session idle-delay; then
+    gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
+  fi
 
   # Auto set time zone
-  gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
+  if gsettings get org.gnome.desktop.datetime automatic-timezone; then
+    gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
+  fi
 
   # Dash
-  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
+  if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
+    gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
+  fi
 
   # Sound alerts
-  gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
+  if gsettings get org.gnome.desktop.sound event-sounds; then
+    gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
+  fi
 }
 
 ubuntu::configure-git() {
@@ -248,6 +271,9 @@ Shift_L,   Up,   Shift_L|Button4
 Shift_L,   Down, Shift_L|Button5
 SHELL
 
+  if [ ! -d "${HOME}/.config/autostart" ]; then
+    mkdir --parents "${HOME}/.config/autostart" || fail
+  fi
   local outputFile="${HOME}/.config/autostart/imwheel.desktop"
   tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
 [Desktop Entry]

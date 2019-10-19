@@ -37,36 +37,43 @@ ubuntu::deploy-workstation::as-root() {
   apt::perhaps-install-mbpfan || fail
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
-  # ruby::install-system-gems || fail
-  apt::install-tor || fail
-  apt::install-ffmpeg || fail
-  snap::install-bitwarden-cli || fail
   apt::install-dconf || fail
   apt::install-workstation-tools || fail
-  snap::install-workstation-tools || fail
 
-  # Test if it is a standalone workstation
-  # "hostnamectl status" could also be used to detect that we are running insde the vm
-  if ! grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
-    apt::install-obs-studio || fail
-    snap::install-productivity-workstation-tools || fail
-
-    apt::install-syncthing || fail
-    systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+  if [ "${LEAN_WORKSTATION:-}" != "true" ]; then
+    apt::install-tor || fail
+    apt::install-ffmpeg || fail
+    if ! ubuntu::bare-metal; then  
+      apt::install-obs-studio || fail
+    fi
   fi
 
-  vscode::snap::install || fail
+  snap::install-bitwarden-cli || fail
+  snap::install-workstation-tools || fail
+  if ubuntu::bare-metal; then
+    snap::install-productivity-workstation-tools || fail
+  fi
 
   # Add extra apt sources
   apt::add-yarn-source || fail
   apt::add-nodejs-source || fail
   sublime::apt::add-sublime-source || fail
+  if ubuntu::bare-metal; then
+    apt::add-syncthing-source || fail
+  fi
   apt::update || fail
 
   # Instal packages from added sources
   apt::install-nodejs-and-yarn || fail
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
+  if ubuntu::bare-metal; then
+    apt::install-syncthing || fail
+    systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+  fi
+
+  # Install vscode
+  vscode::snap::install || fail
 
   # Cleanup
   apt::autoremove || fail
@@ -108,7 +115,11 @@ ubuntu::deploy-workstation::as-user() {
 ubuntu::deploy-workstation() {
   ubuntu::ensure-this-is-ubuntu-workstation || fail
 
-  sudo bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    export LEAN_WORKSTATION=true
+  fi
+
+  sudo --preserve-env=LEAN_WORKSTATION bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 
