@@ -41,6 +41,8 @@ echo 'alias reboot-me="sudo efibootmgr --bootnext 0002 && sudo reboot"' | sudo t
 
 ### Drivers for "Broadcom BCM4353" (Macbook air 2012)
 
+> https://askubuntu.com/a/978626
+
 On 18.04 default driver somehow works but connection in unreliable.
 
 On 19.? you need USB network dongle first
