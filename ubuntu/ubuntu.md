@@ -4,6 +4,10 @@
 Install only LTS release as its most stable (all other releases are shaky)
 
 ## Partition
+
+* Ensure all partitions for 4k alignment
+> https://www.intel.com/content/dam/www/public/us/en/documents/technology-briefs/ssd-partition-alignment-tech-brief.pdf
+
 1) (IF MAC) MacOS partition app
 
     * Make half the edrive as APFS
