@@ -183,6 +183,13 @@ ubuntu::configure-desktop-apps() {
   fi
 }
 
+ubuntu::install-git-git-credential-libsecret() {
+  if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
+    cd /usr/share/doc/git/contrib/credential/libsecret || fail
+    sudo make || fail
+  fi
+}
+
 ubuntu::configure-git() {
   git config --global user.name "${GIT_USER_NAME}" || fail
   git config --global user.email "${GIT_USER_EMAIL}" || fail
@@ -194,11 +201,7 @@ ubuntu::configure-git() {
     test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store github personal access token"
   fi
 
-  if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
-    cd /usr/share/doc/git/contrib/credential/libsecret || fail
-    sudo make || fail
-    git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
-  fi
+  git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
 }
 
 ubuntu::perhaps-add-hgfs-automount() {

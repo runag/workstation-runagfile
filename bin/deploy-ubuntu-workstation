@@ -31,14 +31,15 @@ ubuntu::deploy-workstation::as-root() {
 
   # Update the system
   apt::update || fail
+  apt::perhaps-install-mbpfan || fail
   apt::dist-upgrade || fail
 
   # Install packages
-  apt::perhaps-install-mbpfan || fail
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
   apt::install-dconf || fail
   apt::install-workstation-tools || fail
+  ubuntu::install-git-git-credential-libsecret || fail
 
   if [ "${LEAN_WORKSTATION:-}" != "true" ]; then
     apt::install-tor || fail
