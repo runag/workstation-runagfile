@@ -170,10 +170,15 @@ guvcview
 
 ## Swap
 ```sh
-sudo swapoff /swapfile
-sudo dd if=/dev/zero of=/swapfile bs=4M count=1024 oflag=append conv=notrunc
+test -f /swapfile && sudo swapoff /swapfile
+sudo dd if=/dev/zero of=/swapfile bs=1M count=4096
+sudo chmod 0600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
+
+sudo nano /etc/fstab
+# make sure /etc/fstab contains
+/swapfile  none  swap  sw  0  0
 ```
 
 ## Grub

@@ -58,3 +58,13 @@ data-pi
 backup-data-pi shell
 borg list
 ```
+
+
+# Make sure no swap is on the flash cause it's not secure and wears off flash
+
+swapFile="${HOME}/kelly/swapfile"
+test -f "${swapFile}" && sudo swapoff "${swapFile}"
+sudo dd if=/dev/zero of="${swapFile}" bs=1M count=2048 status=progress
+sudo chmod 0600 "${swapFile}"
+sudo mkswap "${swapFile}"
+sudo swapon "${swapFile}"
