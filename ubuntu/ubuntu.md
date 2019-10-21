@@ -10,7 +10,7 @@ Install only LTS release as its most stable (all other releases are shaky)
 
 1) (IF MAC) MacOS partition app
 
-    * Make half the edrive as APFS
+    * Make half the drive as APFS
     * Make 600 mb partition for /boot (format as hfs for now)
     * Make the rest as one partition (format as hfs for now)
 
