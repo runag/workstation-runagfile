@@ -115,10 +115,7 @@ ubuntu::deploy-workstation::as-user() {
 
 ubuntu::deploy-workstation() {
   ubuntu::ensure-this-is-ubuntu-workstation || fail
-
-  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    export LEAN_WORKSTATION=true
-  fi
+  ubuntu::detect-lean-workstation || fail
 
   sudo --preserve-env=LEAN_WORKSTATION bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 

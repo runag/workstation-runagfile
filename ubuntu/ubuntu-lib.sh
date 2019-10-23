@@ -30,6 +30,14 @@ ubuntu::ensure-this-is-ubuntu-workstation() {
   fi
 }
 
+ubuntu::detect-lean-workstation() {
+  local memorySize; memorySize="$(grep MemTotal /proc/meminfo | awk '{print $2}'; test "${PIPESTATUS[*]}" = "0 0")" || fail "Unable to determine the size of the available memory"
+
+  if [ "${memorySize}" -le 4194304 ]; then
+    export LEAN_WORKSTATION=true
+  fi
+}
+
 ubuntu::set-timezone() {
   local timezone="$1"
   sudo timedatectl set-timezone "$timezone" || fail "Unable to set timezone ($?)"

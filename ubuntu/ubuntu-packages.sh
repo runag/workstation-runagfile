@@ -162,7 +162,9 @@ snap::install-workstation-tools() {
 snap::install-productivity-workstation-tools() {
   sudo snap install bitwarden || fail "Unable to snap install ($?)"
   sudo snap install discord || fail "Unable to snap install ($?)"
-  # sudo snap install libreoffice || fail "Unable to snap install ($?)"
+  if ! command -v libreoffice >/dev/null; then
+    sudo snap install libreoffice || fail "Unable to snap install ($?)"
+  fi
   sudo snap install skype --classic || fail "Unable to snap install ($?)"
   sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
 }
