@@ -39,7 +39,6 @@ apt::add-key-and-source() {
 }
 
 apt::add-nodejs-source() {
-  # Node
   # Please use only even-numbered nodejs releases here, they are LTS
   curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
