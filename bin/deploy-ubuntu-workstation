@@ -111,6 +111,11 @@ ubuntu::deploy-workstation::as-user() {
 
   # IMWhell
   ubuntu::setup-imwhell || fail
+
+  # XFCE-specific
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    ubuntu::setup-super-key-to-xfce-menu-workaround || fail
+  fi
 }
 
 ubuntu::deploy-workstation() {

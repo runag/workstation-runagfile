@@ -275,3 +275,10 @@ sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 # reboot the computer and see if you are in libvirt group
 groups
 ```
+
+## Misc commands to remember
+```sh
+# Show the system topology
+lstopo
+lstopo-no-graphics
+```

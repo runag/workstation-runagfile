@@ -69,6 +69,7 @@ apt::install-basic-tools() {
     p7zip-full \
     tmux \
     sysbench \
+    hwloc-nox \
       || fail "Unable to apt-get install ($?)"
 }
 
@@ -125,7 +126,14 @@ apt::install-workstation-tools() {
     xclip \
     imwheel \
     libsecret-tools libsecret-1-0 libsecret-1-dev \
+    hwloc \
       || fail "Unable to apt-get install ($?)"
+
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      xcape \
+        || fail "Unable to apt-get install ($?)"
+  fi
 }
 
 apt::install-ffmpeg() {
