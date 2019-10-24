@@ -122,7 +122,7 @@ ubuntu::deploy-workstation() {
   ubuntu::ensure-this-is-ubuntu-workstation || fail
   ubuntu::detect-lean-workstation || fail
 
-  sudo --preserve-env=LEAN_WORKSTATION bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  sudo --preserve-env="LEAN_WORKSTATION,DESKTOP_SESSION" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 
