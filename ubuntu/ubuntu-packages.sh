@@ -126,6 +126,7 @@ apt::install-imwhell() {
 }
 
 apt::install-workstation-tools() {
+  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff, or should I just compile it?
   # https://wiki.gnome.org/Projects/Libsecret
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     meld \
