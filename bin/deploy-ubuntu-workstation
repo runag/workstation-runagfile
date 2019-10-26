@@ -151,6 +151,8 @@ ubuntu::deploy-workstation() {
   else
     echo "ubuntu::deploy-workstation completed"
   fi
+
+  rm "${DEPLOY_FOOTNOTES}" || fail
 }
 
 "${1:-ubuntu::deploy-workstation}" "${@:2}" || fail
