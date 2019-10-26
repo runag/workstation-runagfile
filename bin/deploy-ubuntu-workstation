@@ -19,11 +19,11 @@ set -o nounset
 
 . deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
 . config.sh || fail "Unable to load config.sh"
-. data-pi/data-pi-lib.sh || fail
-. sublime/sublime-lib.sh || fail
-. ubuntu/ubuntu-lib.sh || fail
-. ubuntu/ubuntu-packages.sh || fail
-. vscode/vscode-lib.sh || fail
+. data-pi/data-pi-lib.sh || fail "Unable to load data-pi/data-pi-lib.sh"
+. sublime/sublime-lib.sh || fail "Unable to load sublime/sublime-lib.sh"
+. ubuntu/ubuntu-lib.sh || fail "Unable to load ubuntu/ubuntu-lib.sh"
+. ubuntu/ubuntu-packages.sh || fail "Unable to load ubuntu/ubuntu-packages.sh"
+. vscode/vscode-lib.sh || fail "Unable to load vscode/vscode-lib.sh"
 
 ubuntu::deploy-workstation::as-root() {
   # System configuration
@@ -38,13 +38,20 @@ ubuntu::deploy-workstation::as-root() {
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
   apt::install-dconf || fail
+  # IMWhell for GNOME and XFCE
+  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    apt::install-imwhell || fail
+  fi
   apt::install-workstation-tools || fail
-  ubuntu::install-git-git-credential-libsecret || fail
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    apt::install-xfce-related-packages || fail
+  fi
+  ubuntu::install-git-credential-libsecret || fail
 
   if [ "${LEAN_WORKSTATION:-}" != "true" ]; then
     apt::install-tor || fail
     apt::install-ffmpeg || fail
-    if ! ubuntu::bare-metal; then  
+    if ubuntu::bare-metal; then  
       apt::install-obs-studio || fail
     fi
   fi
@@ -64,13 +71,13 @@ ubuntu::deploy-workstation::as-root() {
   fi
   apt::update || fail
 
-  # Instal packages from added sources
+  # Instal packages from previously added sources
   apt::install-nodejs-and-yarn || fail
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
   if ubuntu::bare-metal; then
     apt::install-syncthing || fail
-    systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
 
   # Install vscode
@@ -94,8 +101,8 @@ ubuntu::deploy-workstation::as-user() {
 
   # Shell aliases
   ubuntu::install-bashrcd || fail
-  data-pi::install-shell-aliases || fail
   ubuntu::install-my-computer-deploy-shell-alias || fail
+  data-pi::install-shell-aliases || fail
 
   # SSH keys
   ubuntu::install-ssh-keys || fail
@@ -103,14 +110,16 @@ ubuntu::deploy-workstation::as-user() {
   # Git
   ubuntu::configure-git || fail
 
-  # User dirs
+  # Remove user dirs
   ubuntu::remove-user-dirs || fail
 
   # symlink hgfs mounts
   ubuntu::symlink-hgfs-mounts || fail
 
-  # IMWhell
-  ubuntu::setup-imwhell || fail
+  # IMWhell for GNOME and XFCE
+  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    ubuntu::setup-imwhell || fail
+  fi
 
   # XFCE-specific
   if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
@@ -119,14 +128,21 @@ ubuntu::deploy-workstation::as-user() {
 }
 
 ubuntu::deploy-workstation() {
-  ubuntu::ensure-this-is-ubuntu-workstation || fail
+  DEPLOY_FOOTNOTES="$(mktemp)" || fail "Unable to create temp file"
+  export DEPLOY_FOOTNOTES
+
   ubuntu::detect-lean-workstation || fail
 
-  sudo --preserve-env="LEAN_WORKSTATION,DESKTOP_SESSION" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 
-  echo "ubuntu::deploy-workstation completed"
+  if [ -s "${DEPLOY_FOOTNOTES}" ]; then
+    echo "ubuntu::deploy-workstation completed with the following notes:"
+    cat "${DEPLOY_FOOTNOTES}"
+  else
+    echo "ubuntu::deploy-workstation completed"
+  fi
 }
 
 "${1:-ubuntu::deploy-workstation}" "${@:2}" || fail

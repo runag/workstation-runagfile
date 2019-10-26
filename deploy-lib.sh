@@ -94,10 +94,18 @@ deploy-lib::install-config() {
 
   if [ -f "${dst}" ]; then
     if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
-      if command -v meld >/dev/null; then
-        meld "${src}" "${dst}" || fail "Unable to merge configs ${src} and ${dst} ($?)"
+      if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
+        if command -v meld >/dev/null; then
+          meld "${src}" "${dst}" || fail "Unable to merge configs ${src} and ${dst} ($?)"
+        else
+          fail "Unable to merge configs ${src} and ${dst}: meld not found"
+        fi
       else
-        fail "Unable to merge configs ${src} and ${dst}: meld not found"
+        if [ -f "${DEPLOY_FOOTNOTES}" ]; then
+          echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
+        else
+          fail "Unable to merge configs ${src} and ${dst}: display not found"
+        fi
       fi
     fi
   else
@@ -111,10 +119,18 @@ deploy-lib::merge-config() {
 
   if [ -f "${dst}" ]; then
     if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
-      if command -v meld >/dev/null; then
-        meld --newtab "${src}" "${dst}" &
+      if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
+        if command -v meld >/dev/null; then
+          meld --newtab "${src}" "${dst}" &
+        else
+          fail "Unable to merge configs ${src} and ${dst}: meld not found"
+        fi
       else
-        fail "Unable to merge configs ${src} and ${dst}: meld not found"
+        if [ -f "${DEPLOY_FOOTNOTES}" ]; then
+          echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
+        else
+          fail "Unable to merge configs ${src} and ${dst}: display not found"
+        fi
       fi
     fi
   fi

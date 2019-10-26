@@ -119,21 +119,25 @@ apt::install-dconf() {
   fi
 }
 
+apt::install-imwhell() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    imwheel \
+      || fail "Unable to apt-get install ($?)"
+}
+
 apt::install-workstation-tools() {
   # https://wiki.gnome.org/Projects/Libsecret
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     meld \
-    xclip \
-    imwheel \
     libsecret-tools libsecret-1-0 libsecret-1-dev \
     hwloc \
       || fail "Unable to apt-get install ($?)"
+}
 
-  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      xcape \
-        || fail "Unable to apt-get install ($?)"
-  fi
+apt::install-xfce-related-packages() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    xcape \
+      || fail "Unable to apt-get install ($?)"
 }
 
 apt::install-ffmpeg() {

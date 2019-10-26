@@ -23,13 +23,6 @@ ubuntu::bare-metal() {
   fi
 }
 
-ubuntu::ensure-this-is-ubuntu-workstation() {
-  if [ "${DESKTOP_SESSION:-}" != "ubuntu" ] && [ "${DESKTOP_SESSION:-}" != "ubuntu-wayland" ] && [ "${DESKTOP_SESSION:-}" != "xubuntu" ]; then
-    echo "This has to be an ubuntu workstation" >&2
-    exit 1
-  fi
-}
-
 ubuntu::detect-lean-workstation() {
   local memorySize; memorySize="$(grep MemTotal /proc/meminfo | awk '{print $2}'; test "${PIPESTATUS[*]}" = "0 0")" || fail "Unable to determine the size of the available memory"
 
@@ -120,22 +113,6 @@ ubuntu::use-nano-editor() {
 SHELL
 }
 
-ubuntu::install-ssh-keys() {
-  if [ ! -d "${HOME}/.ssh" ]; then
-    mkdir --mode=0700 "${HOME}/.ssh" || fail
-  fi
-
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
-
-  if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
-    deploy-lib::bitwarden::unlock || fail
-    bw get password "my current password for ssh private key" \
-      | secret-tool store --label="Unlock password for: ${HOME}/.ssh/id_rsa" unique "ssh-store:${HOME}/.ssh/id_rsa"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
-  fi
-}
-
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
   sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
 }
@@ -191,7 +168,23 @@ ubuntu::configure-desktop-apps() {
   fi
 }
 
-ubuntu::install-git-git-credential-libsecret() {
+ubuntu::install-ssh-keys() {
+  if [ ! -d "${HOME}/.ssh" ]; then
+    mkdir --mode=0700 "${HOME}/.ssh" || fail
+  fi
+
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
+
+  if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
+    deploy-lib::bitwarden::unlock || fail
+    bw get password "my current password for ssh private key" \
+      | secret-tool store --label="Unlock password for: ${HOME}/.ssh/id_rsa" unique "ssh-store:${HOME}/.ssh/id_rsa"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
+  fi
+}
+
+ubuntu::install-git-credential-libsecret() {
   if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
     cd /usr/share/doc/git/contrib/credential/libsecret || fail
     sudo make || fail
@@ -212,11 +205,59 @@ ubuntu::configure-git() {
   git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
 }
 
+ubuntu::remove-user-dirs() {
+  local dirsFile="${HOME}/.config/user-dirs.dirs"
+
+  if [ -f "${dirsFile}" ]; then
+    local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
+
+    if [ -d "$HOME/Desktop" ]; then
+      echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
+    fi
+
+    if [ -d "$HOME/Downloads" ]; then
+      echo 'XDG_DESKTOP_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
+    fi
+
+    mv "${tmpFile}" "${dirsFile}" || fail
+
+    echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
+
+    deploy-lib::remove-dir-if-empty "$HOME/Documents" || fail
+    deploy-lib::remove-dir-if-empty "$HOME/Music" || fail
+    deploy-lib::remove-dir-if-empty "$HOME/Pictures" || fail
+    deploy-lib::remove-dir-if-empty "$HOME/Public" || fail
+    deploy-lib::remove-dir-if-empty "$HOME/Templates" || fail
+    deploy-lib::remove-dir-if-empty "$HOME/Videos" || fail
+
+    if [ -f "$HOME/examples.desktop" ]; then
+      rm "$HOME/examples.desktop" || fail
+    fi
+
+    xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
+
+    local hiddenFile="${HOME}/.hidden"
+
+    if [ -d "$HOME/Desktop" ] && ! grep --quiet "^Desktop$" "${hiddenFile}"; then
+      echo "Desktop" >>"${hiddenFile}" || fail
+    fi
+
+    if ! grep --quiet "^snap$" "${hiddenFile}"; then
+      echo "snap" >>"${hiddenFile}" || fail
+    fi
+
+    if ! grep --quiet "^VirtualBox VMs$" "${hiddenFile}"; then
+      echo "VirtualBox VMs" >>"${hiddenFile}" || fail
+    fi
+  fi
+}
+
 ubuntu::perhaps-add-hgfs-automount() {
   # https://askubuntu.com/a/1051620
+  # TODO: Do I really need x-systemd.device-timeout here? think it works well even without it.
   if hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
     if ! grep --quiet "fuse.vmhgfs-fuse" /etc/fstab; then
-      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
+      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail,x-systemd.device-timeout=3s  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
     fi
   fi
 }
@@ -230,43 +271,6 @@ ubuntu::symlink-hgfs-mounts() {
         ln --symbolic "${dirPath}" "${HOME}/${dirName}" || fail "unable to create symlink to ${dirPath}"
       fi
     done
-  fi
-}
-
-ubuntu::remove-user-dirs() {
-  tee "${HOME}/.config/user-dirs.dirs" <<SHELL || fail "Unable to write file: ${HOME}/.config/user-dirs.dirs ($?)"
-XDG_DESKTOP_DIR="$HOME/Desktop"
-XDG_DOWNLOAD_DIR="$HOME/Downloads"
-SHELL
-
-  tee "${HOME}/.config/user-dirs.conf" <<SHELL || fail "Unable to write file: ${HOME}/.config/user-dirs.conf ($?)"
-enabled=false
-SHELL
-
-  # The script will continue on any errors in rm, so non-empty directories will be preserved.
-  deploy-lib::remove-dir-if-empty "$HOME/Documents" || fail
-  deploy-lib::remove-dir-if-empty "$HOME/Music" || fail
-  deploy-lib::remove-dir-if-empty "$HOME/Pictures" || fail
-  deploy-lib::remove-dir-if-empty "$HOME/Public" || fail
-  deploy-lib::remove-dir-if-empty "$HOME/Templates" || fail
-  deploy-lib::remove-dir-if-empty "$HOME/Videos" || fail
-
-  if [ -f "$HOME/examples.desktop" ]; then
-    rm "$HOME/examples.desktop" || fail
-  fi
-
-  xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
-
-  if ! grep --quiet "^Desktop$" "${HOME}/.hidden"; then
-    echo "Desktop" >>"${HOME}/.hidden" || fail
-  fi
-
-  if ! grep --quiet "^snap$" "${HOME}/.hidden"; then
-    echo "snap" >>"${HOME}/.hidden" || fail
-  fi
-
-  if ! grep --quiet "^VirtualBox VMs$" "${HOME}/.hidden"; then
-    echo "VirtualBox VMs" >>"${HOME}/.hidden" || fail
   fi
 }
 
@@ -303,6 +307,7 @@ SHELL
   /usr/bin/imwheel --kill
 }
 
+# requires xcape, it is installed by apt::install-xfce-related-packages
 ubuntu::setup-super-key-to-xfce-menu-workaround() {
   # Alternatives:
   #   https://github.com/hanschen/ksuperkey
