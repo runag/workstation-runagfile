@@ -37,17 +37,23 @@ ubuntu::deploy-workstation::as-root() {
   # Install packages
   apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
+  apt::install-workstation-tools || fail
   apt::install-dconf || fail
+
+  # Compile libsecret
+  ubuntu::compile-git-credential-libsecret || fail
+
   # IMWhell for GNOME and XFCE
   if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
     apt::install-imwhell || fail
   fi
-  apt::install-workstation-tools || fail
+
+  # Some stuff for XFCE
   if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
     apt::install-xfce-related-packages || fail
   fi
-  ubuntu::install-git-credential-libsecret || fail
 
+  # If I have enough RAM then I could use some extra packages
   if [ "${LEAN_WORKSTATION:-}" != "true" ]; then
     apt::install-tor || fail
     apt::install-ffmpeg || fail
@@ -56,11 +62,8 @@ ubuntu::deploy-workstation::as-root() {
     fi
   fi
 
-  snap::install-bitwarden-cli || fail
-  snap::install-workstation-tools || fail
-  if ubuntu::bare-metal; then
-    snap::install-productivity-workstation-tools || fail
-  fi
+  # open-vm-tools
+  apt::perhaps-install-open-vm-tools-desktop || fail
 
   # Add extra apt sources
   apt::add-yarn-source || fail
@@ -80,11 +83,16 @@ ubuntu::deploy-workstation::as-root() {
     sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
 
-  # Install vscode
-  vscode::snap::install || fail
-
-  # Cleanup
+  # apt cleanup
   apt::autoremove || fail
+
+  # Snap packages
+  vscode::snap::install || fail
+  snap::install-bitwarden-cli || fail
+  snap::install-workstation-tools || fail
+  if ubuntu::bare-metal; then
+    snap::install-productivity-workstation-tools || fail
+  fi
 
   # Add hgfs automount if needed
   ubuntu::perhaps-add-hgfs-automount || fail

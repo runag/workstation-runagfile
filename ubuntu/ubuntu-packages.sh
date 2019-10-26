@@ -162,6 +162,15 @@ apt::perhaps-install-mbpfan() {
   fi 
 }
 
+apt::perhaps-install-open-vm-tools-desktop() {
+  if sudo dmidecode -t system | grep --quiet "Product\\ Name\\:\\ VMware\\ Virtual\\ Platform"; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      open-vm-tools \
+      open-vm-tools-desktop \
+        || fail "Unable to apt-get install ($?)"
+  fi
+}
+
 snap::install-bitwarden-cli() {
   sudo snap install bw || fail "Unable to snap install ($?)"
 }

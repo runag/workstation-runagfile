@@ -184,7 +184,7 @@ ubuntu::install-ssh-keys() {
   fi
 }
 
-ubuntu::install-git-credential-libsecret() {
+ubuntu::compile-git-credential-libsecret() {
   if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
     cd /usr/share/doc/git/contrib/credential/libsecret || fail
     sudo make || fail
