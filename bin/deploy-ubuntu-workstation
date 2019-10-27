@@ -102,30 +102,25 @@ ubuntu::deploy-workstation::as-root() {
 }
 
 ubuntu::deploy-workstation::as-user() {
-  # Desktop configuration
-  ubuntu::configure-desktop-apps || fail
-
-  # Editors
-  vscode::install-config || fail
-  vscode::install-extensions || fail
-  sublime::install-config || fail
-
   # Shell aliases
   ubuntu::install-bashrcd || fail
   ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
   data-pi::install-bashrcd::shell-aliases || fail
 
-  # SSH keys
-  ubuntu::install-ssh-keys || fail
+  # SSH agent init for text console logins
+  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail
 
-  # Git
-  ubuntu::configure-git || fail
-
-  # Remove user dirs
-  ubuntu::remove-user-dirs || fail
+  # use-nano-editor
+  ubuntu::install-bashrcd::use-nano-editor || fail
 
   # symlink hgfs mounts
   ubuntu::symlink-hgfs-mounts || fail
+
+  # Desktop configuration
+  ubuntu::configure-desktop-apps || fail
+
+  # Remove user dirs
+  ubuntu::remove-user-dirs || fail
 
   # IMWhell for GNOME and XFCE
   if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
@@ -137,11 +132,16 @@ ubuntu::deploy-workstation::as-user() {
     ubuntu::setup-super-key-to-xfce-menu-workaround || fail
   fi
 
-  # SSH agent init for text console logins
-  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail
+  # Editors
+  vscode::install-config || fail
+  vscode::install-extensions || fail
+  sublime::install-config || fail
 
-  # use-nano-editor
-  ubuntu::install-bashrcd::use-nano-editor || fail
+  # SSH keys
+  ubuntu::install-ssh-keys || fail
+
+  # Git
+  ubuntu::configure-git || fail
 }
 
 ubuntu::deploy-workstation() {
