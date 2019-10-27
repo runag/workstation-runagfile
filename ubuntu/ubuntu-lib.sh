@@ -351,11 +351,12 @@ SHELL
 
 ubuntu::setup-gnome-keyring-pam() {
   if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/login; then
-    echo "auth      optional  pam_gnome_keyring.so" | sudo tee --append /etc/pam.d/login || fail "Unable to write file ($?)"
-    echo "session   optional  pam_gnome_keyring.so  auto_start" | sudo tee --append /etc/pam.d/login || fail "Unable to write file ($?)"
+    cat /etc/pam.d/login | ruby ubuntu/patch-pam-d-login.rb | sudo tee /etc/pam.d/login
+    test "${PIPESTATUS[*]}" = "0 0 0" || fail "Unable to patch /etc/pam.d/login"
   fi
-  if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/passwd; then
-    echo "password  optional  pam_gnome_keyring.so" | sudo tee --append /etc/pam.d/passwd || fail "Unable to write file ($?)"
+
+  if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/passwd && ! grep --quiet "pam_gnome_keyring" /etc/pam.d/common-password; then
+    fail "pam_gnome_keyring is expected to be in /etc/pam.d/passwd or /etc/pam.d/common-password"
   fi
 }
 
