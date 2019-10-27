@@ -193,8 +193,7 @@ ubuntu::install-ssh-keys() {
 
 ubuntu::compile-git-credential-libsecret() {
   if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
-    cd /usr/share/doc/git/contrib/credential/libsecret || fail
-    sudo make || fail
+    (cd /usr/share/doc/git/contrib/credential/libsecret || fail; sudo make || fail; ) || fail "Unable to compile libsecret"
   fi
 }
 
@@ -327,13 +326,12 @@ ubuntu::setup-super-key-to-xfce-menu-workaround() {
   #   https://www.linux-apps.com/p/1081256/
   #   https://github.com/JixunMoe/xfce-superkey
   #
-  if command -v xcape >/dev/null; then
-    if [ ! -d "${HOME}/.config/autostart" ]; then
-      mkdir --parents "${HOME}/.config/autostart" || fail
-    fi
+  if [ ! -d "${HOME}/.config/autostart" ]; then
+    mkdir --parents "${HOME}/.config/autostart" || fail
+  fi
 
-    local outputFile="${HOME}/.config/autostart/super-key-to-xfce-menu.desktop"
-    tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+  local outputFile="${HOME}/.config/autostart/super-key-to-xfce-menu.desktop"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/xcape -e 'Super_L=Control_L|Escape'
@@ -347,9 +345,8 @@ Comment[en_US]=Custom scroll speed
 Comment=Custom scroll speed
 SHELL
 
-    if ! pgrep -cf "/usr/bin/xcape -e Super_L=Control_L|Escape" >/dev/null; then
-      /usr/bin/xcape -e 'Super_L=Control_L|Escape' || fail
-    fi
+  if ! pgrep -cf "/usr/bin/xcape -e Super_L=Control_L|Escape" >/dev/null; then
+    /usr/bin/xcape -e 'Super_L=Control_L|Escape' || fail
   fi
 }
 
@@ -358,9 +355,13 @@ SHELL
 # https://wiki.gnome.org/Projects/GnomeKeyring/Pam
 
 ubuntu::setup-gnome-keyring-pam() {
-  if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/login; then
-    cat /etc/pam.d/login | ruby ubuntu/patch-pam-d-login.rb | sudo tee /etc/pam.d/login
-    test "${PIPESTATUS[*]}" = "0 0 0" || fail "Unable to patch /etc/pam.d/login"
+  local pamFile="/etc/pam.d/login"
+  if ! grep --quiet "pam_gnome_keyring" "${pamFile}"; then
+    local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
+    cat "${pamFile}" | ruby ubuntu/patch-pam-d-login.rb > "${tmpFile}"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to patch ${pamFile}"
+    sudo install --mode=0644 --owner=root --group=root "$tmpFile" -D "${pamFile}" || fail "Unable to install file: ${pamFile} ($?)"
+    rm "${tmpFile}" || fail
   fi
 
   if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/passwd && ! grep --quiet "pam_gnome_keyring" /etc/pam.d/common-password; then
