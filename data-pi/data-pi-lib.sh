@@ -21,7 +21,7 @@ data-pi::ensure-this-is-raspberry-pi() {
   fi
 }
 
-data-pi::install-shell-aliases() {
+data-pi::install-bashrcd::shell-aliases() {
   local outputFile="${HOME}/.bashrc.d/data-pi-shell-aliases.sh"
 
   if [ ! -f "${outputFile}" ]; then

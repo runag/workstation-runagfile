@@ -99,14 +99,14 @@ SHELL
   fi
 }
 
-ubuntu::install-my-computer-deploy-shell-alias() {
+ubuntu::install-bashrcd::my-computer-deploy-shell-alias() {
   local output="${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh"
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
     alias my-computer-deploy="${PWD}/bin/shell"
 SHELL
 }
 
-ubuntu::use-nano-editor() {
+ubuntu::install-bashrcd::use-nano-editor() {
   local output="${HOME}/.bashrc.d/use-nano-editor.sh"
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
   export EDITOR="$(which nano)"
@@ -360,8 +360,8 @@ ubuntu::setup-gnome-keyring-pam() {
   fi
 }
 
-ubuntu::add-gnome-keyring-daemon-ssh-agent-init-rc() {
-  local outputFile="${HOME}/.bashrc.d/ssh-agent-init.sh"
+ubuntu::install-bashrcd::gnome-keyring-daemon-start() {
+  local outputFile="${HOME}/.bashrc.d/gnome-keyring-daemon-start.sh"
 
   tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
   if [ "${XDG_SESSION_TYPE}" = tty ] && [ -n "${GNOME_KEYRING_CONTROL:-}" ] && [ -z "${SSH_AUTH_SOCK:-}" ]; then

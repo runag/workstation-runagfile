@@ -112,8 +112,8 @@ ubuntu::deploy-workstation::as-user() {
 
   # Shell aliases
   ubuntu::install-bashrcd || fail
-  ubuntu::install-my-computer-deploy-shell-alias || fail
-  data-pi::install-shell-aliases || fail
+  ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
+  data-pi::install-bashrcd::shell-aliases || fail
 
   # SSH keys
   ubuntu::install-ssh-keys || fail
@@ -138,7 +138,10 @@ ubuntu::deploy-workstation::as-user() {
   fi
 
   # SSH agent init for text console logins
-  ubuntu::add-gnome-keyring-daemon-ssh-agent-init-rc || fail
+  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail
+
+  # use-nano-editor
+  ubuntu::install-bashrcd::use-nano-editor || fail
 }
 
 ubuntu::deploy-workstation() {
