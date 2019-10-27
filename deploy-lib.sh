@@ -101,7 +101,7 @@ deploy-lib::install-config() {
           fail "Unable to merge configs ${src} and ${dst}: meld not found"
         fi
       else
-        if [ -f "${DEPLOY_FOOTNOTES}" ]; then
+        if [ -n "${DEPLOY_FOOTNOTES:-}" ] && [ -f "${DEPLOY_FOOTNOTES:-}" ]; then
           echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
         else
           fail "Unable to merge configs ${src} and ${dst}: display not found"
@@ -126,7 +126,7 @@ deploy-lib::merge-config() {
           fail "Unable to merge configs ${src} and ${dst}: meld not found"
         fi
       else
-        if [ -f "${DEPLOY_FOOTNOTES}" ]; then
+        if [ -n "${DEPLOY_FOOTNOTES:-}" ] && [ -f "${DEPLOY_FOOTNOTES:-}" ]; then
           echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
         else
           fail "Unable to merge configs ${src} and ${dst}: display not found"
