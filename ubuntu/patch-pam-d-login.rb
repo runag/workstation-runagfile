@@ -10,7 +10,6 @@ after_auth = lines[last_auth+1 .. -1]
 
 last_session = after_auth.rindex{|line| line =~ /^session/ }
 
-
 after_auth[0 .. last_session].each {|line| puts line }
 
 puts "session    optional   pam_gnome_keyring.so auto_start"
