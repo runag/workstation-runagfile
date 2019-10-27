@@ -176,7 +176,7 @@ ubuntu::install-ssh-keys() {
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 
-  if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
       deploy-lib::bitwarden::unlock || fail
       bw get password "my current password for ssh private key" \
@@ -197,7 +197,7 @@ ubuntu::configure-git() {
   git config --global user.name "${GIT_USER_NAME}" || fail
   git config --global user.email "${GIT_USER_EMAIL}" || fail
 
-  if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     if ! secret-tool lookup server github.com user "${GITHUB_LOGIN}" protocol https xdg:schema org.gnome.keyring.NetworkPassword >/dev/null; then
       deploy-lib::bitwarden::unlock || fail
       bw get password "my github personal access token" \
@@ -302,6 +302,7 @@ Exec=/usr/bin/imwheel
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;XFCE;
 Name[en_US]=IMWheel
 Name=IMWheel
 Comment[en_US]=Custom scroll speed
@@ -331,6 +332,7 @@ Exec=/usr/bin/xcape -e 'Super_L=Control_L|Escape'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
+OnlyShowIn=XFCE;
 Name[en_US]=super-key-to-xfce-menu
 Name=super-key-to-xfce-menu
 Comment[en_US]=Custom scroll speed
@@ -341,4 +343,30 @@ SHELL
       /usr/bin/xcape -e 'Super_L=Control_L|Escape' || fail
     fi
   fi
+}
+
+# https://wiki.archlinux.org/index.php/GNOME/Keyring
+# https://wiki.gnome.org/Projects/GnomeKeyring
+# https://wiki.gnome.org/Projects/GnomeKeyring/Pam
+
+ubuntu::setup-gnome-keyring-pam() {
+  if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/login; then
+    echo "auth      optional  pam_gnome_keyring.so" | sudo tee --append /etc/pam.d/login || fail "Unable to write file ($?)"
+    echo "session   optional  pam_gnome_keyring.so  auto_start" | sudo tee --append /etc/pam.d/login || fail "Unable to write file ($?)"
+  fi
+  if ! grep --quiet "pam_gnome_keyring" /etc/pam.d/passwd; then
+    echo "password  optional  pam_gnome_keyring.so" | sudo tee --append /etc/pam.d/passwd || fail "Unable to write file ($?)"
+  fi
+}
+
+ubuntu::add-gnome-keyring-daemon-ssh-agent-init-rc() {
+  local outputFile="${HOME}/.bashrc.d/ssh-agent-init.sh"
+
+  tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
+  if [ "${XDG_SESSION_TYPE}" = tty ] && [ -n "${GNOME_KEYRING_CONTROL:-}" ] && [ -z "${SSH_AUTH_SOCK:-}" ]; then
+    eval "$(gnome-keyring-daemon --start)"
+    export GNOME_KEYRING_CONTROL
+    export SSH_AUTH_SOCK
+  fi
+SHELL
 }

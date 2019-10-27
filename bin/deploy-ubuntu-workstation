@@ -96,6 +96,9 @@ ubuntu::deploy-workstation::as-root() {
 
   # Add hgfs automount if needed
   ubuntu::perhaps-add-hgfs-automount || fail
+
+  # Setup gnome keyring to load for text consoles
+  ubuntu::setup-gnome-keyring-pam || fail
 }
 
 ubuntu::deploy-workstation::as-user() {
@@ -133,6 +136,9 @@ ubuntu::deploy-workstation::as-user() {
   if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
     ubuntu::setup-super-key-to-xfce-menu-workaround || fail
   fi
+
+  # SSH agent init for text console logins
+  ubuntu::add-gnome-keyring-daemon-ssh-agent-init-rc || fail
 }
 
 ubuntu::deploy-workstation() {

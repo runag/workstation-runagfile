@@ -131,6 +131,7 @@ apt::install-workstation-tools() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     meld \
     libsecret-tools libsecret-1-0 libsecret-1-dev \
+    gnome-keyring \
     hwloc \
       || fail "Unable to apt-get install ($?)"
 }
