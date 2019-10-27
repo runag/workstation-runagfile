@@ -118,53 +118,55 @@ ubuntu::fix-nvidia-gpu-background-image-glitch() {
 }
 
 ubuntu::configure-desktop-apps() {
-  # use dconf-editor to determine key/value pairs
-  # why did I use dbus-launch? "dbus-launch gsettings set ..."
+  # use dconf-editor to find key/value pairs
+  # I don't use dbus-launch here because it will introduce side-effect for ubuntu::configure-git and ubuntu::install-ssh-keys
 
-  # Terminal
-  if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
-    gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
-  fi
+  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v gsettings; then
+    # Terminal
+    if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
+      gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
+    fi
 
-  if gsettings get org.gnome.Terminal.ProfilesList default; then
-    local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-    local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
+    if gsettings get org.gnome.Terminal.ProfilesList default; then
+      local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
+      local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
-    gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
-    gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
-  fi
+      gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
+      gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
+    fi
 
-  # Nautilus
-  if gsettings list-keys org.gnome.nautilus; then
-    gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
-    gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
-    gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
-    gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
-    gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+    # Nautilus
+    if gsettings list-keys org.gnome.nautilus; then
+      gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
 
-    # Desktop
-    gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
-    gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
-  fi
+      # Desktop
+      gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+    fi
 
-  # Disable screen lock
-  if gsettings get org.gnome.desktop.session idle-delay; then
-    gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
-  fi
+    # Disable screen lock
+    if gsettings get org.gnome.desktop.session idle-delay; then
+      gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
+    fi
 
-  # Auto set time zone
-  if gsettings get org.gnome.desktop.datetime automatic-timezone; then
-    gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
-  fi
+    # Auto set time zone
+    if gsettings get org.gnome.desktop.datetime automatic-timezone; then
+      gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
+    fi
 
-  # Dash
-  if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
-    gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
-  fi
+    # Dash
+    if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
+      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
+    fi
 
-  # Sound alerts
-  if gsettings get org.gnome.desktop.sound event-sounds; then
-    gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
+    # Sound alerts
+    if gsettings get org.gnome.desktop.sound event-sounds; then
+      gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
+    fi
   fi
 }
 
@@ -176,6 +178,9 @@ ubuntu::install-ssh-keys() {
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
   deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 
+  # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
+  # the login keyring is also available and already initialized properly
+  # I don't know yet how to check for login keyring specifically 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
       deploy-lib::bitwarden::unlock || fail
@@ -197,6 +202,9 @@ ubuntu::configure-git() {
   git config --global user.name "${GIT_USER_NAME}" || fail
   git config --global user.email "${GIT_USER_EMAIL}" || fail
 
+  # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
+  # the login keyring is also available and already initialized properly
+  # I don't know yet how to check for login keyring specifically 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     if ! secret-tool lookup server github.com user "${GITHUB_LOGIN}" protocol https xdg:schema org.gnome.keyring.NetworkPassword >/dev/null; then
       deploy-lib::bitwarden::unlock || fail
@@ -362,12 +370,22 @@ ubuntu::setup-gnome-keyring-pam() {
 
 ubuntu::install-bashrcd::gnome-keyring-daemon-start() {
   local outputFile="${HOME}/.bashrc.d/gnome-keyring-daemon-start.sh"
-
   tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
-  if [ "${XDG_SESSION_TYPE}" = tty ] && [ -n "${GNOME_KEYRING_CONTROL:-}" ] && [ -z "${SSH_AUTH_SOCK:-}" ]; then
-    eval "$(gnome-keyring-daemon --start)"
-    export GNOME_KEYRING_CONTROL
-    export SSH_AUTH_SOCK
-  fi
+    if [ "${XDG_SESSION_TYPE}" = tty ] && [ -n "${GNOME_KEYRING_CONTROL:-}" ] && [ -z "${SSH_AUTH_SOCK:-}" ]; then
+      eval "$(gnome-keyring-daemon --start)"
+      export GNOME_KEYRING_CONTROL
+      export SSH_AUTH_SOCK
+    fi
+SHELL
+}
+
+ubuntu::install-bashrcd::sway() {
+  local outputFile="${HOME}/.bashrc.d/sway.sh"
+  tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
+    if [ "${XDG_SESSION_TYPE}" = tty ] && hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
+      export WLR_NO_HARDWARE_CURSORS=1
+    fi
+    alias disable-gnome="sudo systemctl set-default multi-user.target"
+    alias enable-gnome="sudo systemctl set-default graphical.target"
 SHELL
 }
