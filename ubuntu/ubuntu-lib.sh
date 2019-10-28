@@ -121,7 +121,7 @@ ubuntu::configure-desktop-apps() {
   # use dconf-editor to find key/value pairs
   # I don't use dbus-launch here because it will introduce side-effect for ubuntu::configure-git and ubuntu::install-ssh-keys
 
-  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v gsettings; then
+  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
     if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
       gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
@@ -188,6 +188,8 @@ ubuntu::install-ssh-keys() {
         | secret-tool store --label="Unlock password for: ${HOME}/.ssh/id_rsa" unique "ssh-store:${HOME}/.ssh/id_rsa"
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
     fi
+  else
+    deploy-lib::footnotes::add "Unable to store ssh key password into the gnome keyring, DBUS not found"
   fi
 }
 
@@ -211,6 +213,8 @@ ubuntu::configure-git() {
         | secret-tool store --label="Git: https://github.com/" server github.com user "${GITHUB_LOGIN}" protocol https xdg:schema org.gnome.keyring.NetworkPassword
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store github personal access token"
     fi
+  else
+    deploy-lib::footnotes::add "Unable to store git credentials into the gnome keyring, DBUS not found"
   fi
 
   git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail

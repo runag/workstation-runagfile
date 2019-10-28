@@ -197,3 +197,27 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
     fi
   fi
 }
+
+deploy-lib::footnotes::init() {
+  DEPLOY_FOOTNOTES="$(mktemp)" || fail "Unable to create temp file"
+  export DEPLOY_FOOTNOTES
+}
+
+deploy-lib::footnotes::add() {
+  if [ -n "${DEPLOY_FOOTNOTES:-}" ] && [ -f "${DEPLOY_FOOTNOTES:-}" ]; then
+    echo "$1" >> "${DEPLOY_FOOTNOTES}" || fail
+  else
+    fail "$1"
+  fi
+}
+
+deploy-lib::footnotes::flush() {
+  if [ -f "${DEPLOY_FOOTNOTES}" ]; then
+    if [ -s "${DEPLOY_FOOTNOTES}" ]; then
+      cat "${DEPLOY_FOOTNOTES}" || fail
+    fi
+    rm "${DEPLOY_FOOTNOTES}" || fail
+  else
+    fail "Unable to find footnotes"
+  fi
+}

@@ -99,6 +99,12 @@ ubuntu::deploy-workstation::as-root() {
 
   # Setup gnome keyring to load for text consoles
   ubuntu::setup-gnome-keyring-pam || fail
+
+  # Gnome desktop is installed as a dependecy of meld
+  # If deploy script is run on text console disable gnome.
+  if [ "${XDG_SESSION_TYPE}" = tty ]; then
+    sudo systemctl set-default multi-user.target
+  fi
 }
 
 ubuntu::deploy-workstation::as-user() {
@@ -146,23 +152,21 @@ ubuntu::deploy-workstation::as-user() {
 }
 
 ubuntu::deploy-workstation() {
-  DEPLOY_FOOTNOTES="$(mktemp)" || fail "Unable to create temp file"
-  export DEPLOY_FOOTNOTES
+  deploy-lib::footnotes::init || fail
 
   ubuntu::detect-lean-workstation || fail
 
-  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION,XDG_SESSION_TYPE" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 
-  if [ -s "${DEPLOY_FOOTNOTES}" ]; then
-    echo "ubuntu::deploy-workstation completed with the following notes:"
-    cat "${DEPLOY_FOOTNOTES}"
-  else
-    echo "ubuntu::deploy-workstation completed"
+  if [ -x /usr/lib/update-notifier/update-motd-reboot-required ]; then
+    /usr/lib/update-notifier/update-motd-reboot-required >> "${DEPLOY_FOOTNOTES}" || fail
   fi
 
-  rm "${DEPLOY_FOOTNOTES}" || fail
+  deploy-lib::footnotes::flush || fail
+
+  echo "ubuntu::deploy-workstation completed"
 }
 
 "${1:-ubuntu::deploy-workstation}" "${@:2}" || fail

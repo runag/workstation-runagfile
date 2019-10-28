@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# system
+
 apt::update() {
   sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
 }
@@ -38,6 +40,8 @@ apt::add-key-and-source() {
   echo "${sourceString}" | sudo tee "${sourceFile}" || fail "Unable to write apt source into the ${sourceFile}"
 }
 
+# javascript
+
 apt::add-nodejs-source() {
   # Please use only even-numbered nodejs releases here, they are LTS
   curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
@@ -48,17 +52,78 @@ apt::add-yarn-source() {
   apt::add-key-and-source "https://dl.yarnpkg.com/debian/pubkey.gpg" "deb https://dl.yarnpkg.com/debian/ stable main" "yarn" || fail "Unable to add yarn apt source"
 }
 
-apt::add-syncthing-source() {
-  # following https://apt.syncthing.net/
-  apt::add-key-and-source "https://syncthing.net/release-key.txt" "deb https://apt.syncthing.net/ syncthing stable" "syncthing" || fail "Unable to add syncthing apt source"
-}
-
 apt::install-nodejs-and-yarn() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
     yarn \
     nodejs \
       || fail "Unable to apt-get install ($?)"
 }
+
+# syncthing
+
+apt::add-syncthing-source() {
+  # following https://apt.syncthing.net/
+  apt::add-key-and-source "https://syncthing.net/release-key.txt" "deb https://apt.syncthing.net/ syncthing stable" "syncthing" || fail "Unable to add syncthing apt source"
+}
+
+apt::install-syncthing() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    syncthing \
+      || fail "Unable to apt-get install ($?)"
+}
+
+# packages that sometimes needed, sometimes not
+
+apt::perhaps-install-mbpfan() {
+  if sudo dmidecode --string baseboard-version | grep --quiet "MacBookAir5\\,2"; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      mbpfan \
+        || fail "Unable to apt-get install ($?)"
+  fi 
+}
+
+apt::install-imwhell() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    imwheel \
+      || fail "Unable to apt-get install ($?)"
+}
+
+apt::install-xfce-related-packages() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    xcape \
+      || fail "Unable to apt-get install ($?)"
+}
+
+apt::perhaps-install-open-vm-tools-desktop() {
+  if sudo dmidecode -t system | grep --quiet "Product\\ Name\\:\\ VMware\\ Virtual\\ Platform"; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      open-vm-tools \
+      open-vm-tools-desktop \
+        || fail "Unable to apt-get install ($?)"
+  fi
+}
+
+apt::install-tor() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    tor \
+      || fail "Unable to apt-get install ($?)"
+}
+
+apt::install-ffmpeg() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    ffmpeg \
+      || fail "Unable to apt-get install ($?)"
+}
+
+apt::install-obs-studio() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    obs-studio \
+    guvcview \
+      || fail "Unable to apt-get install ($?)"
+}
+
+# bundles
 
 apt::install-basic-tools() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
@@ -96,15 +161,19 @@ apt::install-ruby-and-devtools() {
   # sudo gem update || fail "Unable to update gems"
 }
 
-apt::install-tor() {
+apt::install-workstation-tools() {
+  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff,
+  # or should I just compile it?
+  #
+  # https://wiki.gnome.org/Projects/Libsecret
+  #
+  # libglib2.0-bin - gsettings
+  # dbus-x11 - dbus-launch
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    tor \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-syncthing() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    syncthing \
+    meld \
+    libsecret-tools libsecret-1-0 libsecret-1-dev \
+    gnome-keyring dbus-x11 libglib2.0-bin \
+    hwloc \
       || fail "Unable to apt-get install ($?)"
 }
 
@@ -119,66 +188,12 @@ apt::install-dconf() {
   fi
 }
 
-apt::install-imwhell() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    imwheel \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-workstation-tools() {
-  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff, or should I just compile it?
-  # https://wiki.gnome.org/Projects/Libsecret
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    meld \
-    libsecret-tools libsecret-1-0 libsecret-1-dev \
-    gnome-keyring \
-    hwloc \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-xfce-related-packages() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    xcape \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-ffmpeg() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    ffmpeg \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-obs-studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    obs-studio \
-    guvcview \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::perhaps-install-mbpfan() {
-  if sudo dmidecode --string baseboard-version | grep --quiet "MacBookAir5\\,2"; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      mbpfan \
-        || fail "Unable to apt-get install ($?)"
-  fi 
-}
-
-apt::perhaps-install-open-vm-tools-desktop() {
-  if sudo dmidecode -t system | grep --quiet "Product\\ Name\\:\\ VMware\\ Virtual\\ Platform"; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      open-vm-tools \
-      open-vm-tools-desktop \
-        || fail "Unable to apt-get install ($?)"
-  fi
-}
-
 snap::install-bitwarden-cli() {
   sudo snap install bw || fail "Unable to snap install ($?)"
 }
 
 snap::install-workstation-tools() {
- sudo snap install chromium || fail "Unable to snap install ($?)"
+  sudo snap install chromium || fail "Unable to snap install ($?)"
 }
 
 snap::install-productivity-workstation-tools() {
