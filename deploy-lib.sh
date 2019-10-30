@@ -44,9 +44,29 @@ deploy-lib::remove-dir-if-empty() {
   fi
 }
 
-deploy-lib::make-latest-git-repository-clone-available() {
+deploy-lib::git::cd-to-temp-clone() {
   local repoUrl="$1"
-  local localCloneDir="$2"
+  local branch="${2:-}"
+
+  local localCloneDir; localCloneDir="$(basename "$repoUrl")" || fail
+
+  local tempDir; tempDir="$(mktemp --dry-run --tmpdir="${HOME}" "${localCloneDir}-XXXXXX")" || fail "Unable to create temp file"
+
+  deploy-lib::git::make-repository-clone-available "${repoUrl}" "${tempDir}" "${branch}" || fail
+
+  cd "${tempDir}" || fail
+
+  export DEPLOY_LIB_GIT_TEMP_CLONE_DIR="${tempDir}" || fail
+}
+
+deploy-lib::git::remove-temp-clone() {
+  rm -rf "${DEPLOY_LIB_GIT_TEMP_CLONE_DIR}" || fail
+}
+
+deploy-lib::git::make-repository-clone-available() {
+  local repoUrl="$1"
+  local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
+  local branch="${3:-}"
 
   deploy-lib::add-host-to-ssh-known-hosts bitbucket.org || fail
   deploy-lib::add-host-to-ssh-known-hosts github.com || fail
@@ -62,6 +82,10 @@ deploy-lib::make-latest-git-repository-clone-available() {
     else
       (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
     fi
+  fi
+  
+  if [ -n "${branch}" ]; then
+    (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to pull from ${repoUrl}"
   fi
 }
 

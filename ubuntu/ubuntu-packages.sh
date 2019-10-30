@@ -205,3 +205,9 @@ snap::install-productivity-workstation-tools() {
   sudo snap install skype --classic || fail "Unable to snap install ($?)"
   sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
 }
+
+ubuntu::install-senotrusov-backup-script() (
+  deploy-lib::git::cd-to-temp-clone "https://github.com/senotrusov/backup-script" || fail
+  ./backup-script install || fail
+  deploy-lib::git::remove-temp-clone || fail
+)

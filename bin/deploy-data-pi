@@ -70,8 +70,7 @@ ubuntu::deploy-data-pi::as-user() {
 }
 
 ubuntu::deploy-data-pi::backup() {
-  deploy-lib::make-latest-git-repository-clone-available "https://github.com/senotrusov/backup-script" "${HOME}/backup-script" || fail
-  ( cd "${HOME}/backup-script" && ./backup-script install ) || fail
+  ubuntu::install-senotrusov-backup-script || fail
 
   backup-script install data-pi/backup-configs/backup-data-pi || fail
   backup-data-pi init || fail
