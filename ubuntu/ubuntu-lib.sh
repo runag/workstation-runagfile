@@ -142,8 +142,10 @@ ubuntu::configure-desktop-apps() {
       gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
       gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
       gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+    fi
 
-      # Desktop
+    # Desktop
+    if gsettings list-keys org.gnome.nautilus.desktop; then
       gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
       gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
     fi
