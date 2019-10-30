@@ -245,3 +245,30 @@ deploy-lib::footnotes::flush() {
     fail "Unable to find footnotes"
   fi
 }
+
+
+deploy-lib::github::get-release-by-label() {
+  local repoPath="$1"
+  local label="$2"
+  local release="${3:-latest}"
+
+  local apiUrl="https://api.github.com/repos/${repoPath}/releases/${release}"
+  local jqFilter=".assets[] | select(.label == \"${label}\").browser_download_url"
+  local fileUrl; fileUrl="$(curl --fail --silent --show-error "${apiUrl}" | jq --raw-output --exit-status "${jqFilter}"; test "${PIPESTATUS[*]}" = "0 0")" || fail
+
+  if [ -z "${fileUrl}" ]; then
+    fail "Can't find release URL for ${repoPath} with label ${label} and release ${release}"
+  fi
+
+  local tempFile; tempFile="$(mktemp --tmpdir="${HOME}")" || fail "Unable to create temp file"
+
+  curl \
+    --location \
+    --fail \
+    --silent \
+    --show-error \
+    --output "$tempFile" \
+    "$fileUrl" >/dev/null || fail "Unable to download ${fileUrl}"
+
+  echo "${tempFile}"
+}
