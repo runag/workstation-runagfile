@@ -22,7 +22,7 @@ set -o nounset
 
 . data-pi/data-pi-lib.sh || fail "Unable to load data-pi/data-pi-lib.sh"
 . sublime/sublime-lib.sh || fail "Unable to load sublime/sublime-lib.sh"
-. ubuntu/sway.sh || fail "Unable to load ubuntu/sway.sh"
+. sway/sway-lib.sh || fail "Unable to load ubuntu/sway.sh"
 . ubuntu/ubuntu-lib.sh || fail "Unable to load ubuntu/ubuntu-lib.sh"
 . ubuntu/ubuntu-packages.sh || fail "Unable to load ubuntu/ubuntu-packages.sh"
 . vscode/vscode-lib.sh || fail "Unable to load vscode/vscode-lib.sh"
@@ -154,6 +154,7 @@ ubuntu::deploy-workstation::as-user() {
 
   # Install sway
   sway::install || fail
+  sway::install-config || fail
 }
 
 ubuntu::deploy-workstation() {

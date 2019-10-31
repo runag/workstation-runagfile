@@ -125,3 +125,11 @@ sway::install() {
     sway::install-kitty || fail
   fi
 }
+
+sway::install-config() {
+  deploy-lib::install-config sway/config "${HOME}/.config/sway/config" || fail
+}
+
+sway::merge-config() {
+  deploy-lib::merge-config sway/config "${HOME}/.config/sway/config" || fail
+}

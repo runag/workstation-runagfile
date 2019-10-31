@@ -24,5 +24,6 @@ set -o nounset
 
 vscode::merge-config || fail
 sublime::merge-config || fail
+sway::merge-config || fail
 
 wait || fail "Unable to wait for merge to complete ($?)"
