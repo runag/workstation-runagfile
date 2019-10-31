@@ -134,3 +134,19 @@ sway::install-config() {
 sway::merge-config() {
   deploy-lib::merge-config sway/config "${HOME}/.config/sway/config" || fail
 }
+
+sway::install-bashrcd() {
+  local outputFile="${HOME}/.bashrc.d/sway.sh"
+  tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
+    if [ "${XDG_SESSION_TYPE:-}" = tty ] && hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
+      export WLR_NO_HARDWARE_CURSORS=1
+    fi
+
+    if [ "${XDG_SESSION_TYPE}" = tty ]; then
+      export MOZ_ENABLE_WAYLAND=1
+    fi
+
+    alias disable-gnome="sudo systemctl set-default multi-user.target"
+    alias enable-gnome="sudo systemctl set-default graphical.target"
+SHELL
+}

@@ -131,6 +131,7 @@ apt::install-basic-tools() {
     git \
     jq \
     mc ranger ncdu \
+    htop \
     p7zip-full \
     tmux \
     sysbench \

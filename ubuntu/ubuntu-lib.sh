@@ -385,14 +385,3 @@ ubuntu::install-bashrcd::gnome-keyring-daemon-start() {
     fi
 SHELL
 }
-
-ubuntu::install-bashrcd::sway() {
-  local outputFile="${HOME}/.bashrc.d/sway.sh"
-  tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
-    if [ "${XDG_SESSION_TYPE}" = tty ] && hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
-      export WLR_NO_HARDWARE_CURSORS=1
-    fi
-    alias disable-gnome="sudo systemctl set-default multi-user.target"
-    alias enable-gnome="sudo systemctl set-default graphical.target"
-SHELL
-}

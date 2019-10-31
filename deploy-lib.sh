@@ -120,16 +120,20 @@ deploy-lib::install-config() {
     if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
       if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
         if command -v meld >/dev/null; then
-          meld "${src}" "${dst}" || fail "Unable to merge configs ${src} and ${dst} ($?)"
+          meld "${src}" "${dst}"
+          local meldExitStatus=$?
+          if [ "${meldExitStatus}" = 134 ] && [ -n "${SWAYSOCK:-}" ]; then
+            if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
+              deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: merge was not complete" || fail
+            fi
+          elif [ "${meldExitStatus}" != 0 ]; then
+            fail "Unable to merge configs ${src} and ${dst} ($?)"
+          fi
         else
           fail "Unable to merge configs ${src} and ${dst}: meld not found"
         fi
       else
-        if [ -n "${DEPLOY_FOOTNOTES:-}" ] && [ -f "${DEPLOY_FOOTNOTES:-}" ]; then
-          echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
-        else
-          fail "Unable to merge configs ${src} and ${dst}: display not found"
-        fi
+        deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: display not found" || fail
       fi
     fi
   else
@@ -150,11 +154,7 @@ deploy-lib::merge-config() {
           fail "Unable to merge configs ${src} and ${dst}: meld not found"
         fi
       else
-        if [ -n "${DEPLOY_FOOTNOTES:-}" ] && [ -f "${DEPLOY_FOOTNOTES:-}" ]; then
-          echo "Unable to merge configs ${src} and ${dst}: display not found" >> "${DEPLOY_FOOTNOTES}" || fail
-        else
-          fail "Unable to merge configs ${src} and ${dst}: display not found"
-        fi
+        deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: display not found" || fail
       fi
     fi
   fi
@@ -245,7 +245,6 @@ deploy-lib::footnotes::flush() {
     fail "Unable to find footnotes"
   fi
 }
-
 
 deploy-lib::github::get-release-by-label() {
   local repoPath="$1"

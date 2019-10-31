@@ -113,7 +113,7 @@ ubuntu::deploy-workstation::as-user() {
   # Shell aliases
   ubuntu::install-bashrcd || fail
   ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
-  ubuntu::install-bashrcd::sway || fail
+  sway::install-bashrcd || fail
   data-pi::install-bashrcd::shell-aliases || fail
 
   # SSH agent init for text console logins
