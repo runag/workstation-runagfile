@@ -14,7 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o xtrace
+if [ -n "${VERBOSE:-}" ]; then
+  set -o xtrace
+fi
+
 set -o nounset
 
 . deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
@@ -28,6 +31,10 @@ set -o nounset
 . vscode/vscode-lib.sh || fail "Unable to load vscode/vscode-lib.sh"
 
 ubuntu::deploy-workstation::as-root() {
+  if [ -n "${VERBOSE:-}" ]; then
+    set -o xtrace
+  fi
+
   # System configuration
   ubuntu::set-inotify-max-user-watches || fail
 
@@ -156,7 +163,7 @@ ubuntu::deploy-workstation() {
 
   ubuntu::detect-lean-workstation || fail
 
-  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION,XDG_SESSION_TYPE" bash -c "set -o xtrace; set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 

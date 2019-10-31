@@ -14,16 +14,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o xtrace
+if [ -n "${VERBOSE:-}" ]; then
+  set -o xtrace
+fi
+
 set -o nounset
 
 . deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
 . config.sh || fail "Unable to load config.sh"
+
 . sublime/sublime-lib.sh || fail
+. sway/sway-lib.sh || fail
 . vscode/vscode-lib.sh || fail
+
+deploy-lib::footnotes::init || fail
 
 vscode::merge-config || fail
 sublime::merge-config || fail
 sway::merge-config || fail
 
-wait || fail "Unable to wait for merge to complete ($?)"
+deploy-lib::footnotes::flush || fail

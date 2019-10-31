@@ -117,25 +117,7 @@ deploy-lib::install-config() {
   dst="$2"
 
   if [ -f "${dst}" ]; then
-    if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
-      if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
-        if command -v meld >/dev/null; then
-          meld "${src}" "${dst}"
-          local meldExitStatus=$?
-          if [ "${meldExitStatus}" = 134 ] && [ -n "${SWAYSOCK:-}" ]; then
-            if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
-              deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: merge was not complete" || fail
-            fi
-          elif [ "${meldExitStatus}" != 0 ]; then
-            fail "Unable to merge configs ${src} and ${dst} ($?)"
-          fi
-        else
-          fail "Unable to merge configs ${src} and ${dst}: meld not found"
-        fi
-      else
-        deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: display not found" || fail
-      fi
-    fi
+    deploy-lib::merge-config "${src}" "${dst}" || fail
   else
     install --mode=0644 "${src}" -D "${dst}" || fail "Unable to install config from ${src} to ${dst} ($?)"
   fi
@@ -147,14 +129,31 @@ deploy-lib::merge-config() {
 
   if [ -f "${dst}" ]; then
     if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
-      if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
-        if command -v meld >/dev/null; then
-          meld --newtab "${src}" "${dst}" &
-        else
-          fail "Unable to merge configs ${src} and ${dst}: meld not found"
-        fi
+
+      if command -v git >/dev/null; then
+        git diff --color --unified=6 --no-index "${src}" "${dst}" | tee
       else
-        deploy-lib::footnotes::add "Unable to merge configs ${src} and ${dst}: display not found" || fail
+        diff --context=6 --color "${src}" "${dst}"
+      fi
+
+      local action
+
+      echo "Files are different:"
+      echo "  ${src}"
+      echo "  ${dst}"
+      echo "Please choose the action to perform:"
+      echo "  1 - Use file from the deploy repository to replace config file on this machine"
+      echo "  2 - Do not overwrite config file on this machine, and instead put it to the repository"
+      echo "  3 or Enter - Ignore conflict"
+
+      IFS="" read -r action || fail
+
+      if [ "${action}" = 1 ]; then
+        cp "${src}" "${dst}" || fail
+      elif [ "${action}" = 2 ]; then
+        cp "${dst}" "${src}" || fail
+      else
+        deploy-lib::footnotes::add "Warning: File in the deploy repository ${src} is different from config file on this machine ${dst}" || fail
       fi
     fi
   fi
