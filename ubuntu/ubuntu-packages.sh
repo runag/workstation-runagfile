@@ -163,15 +163,15 @@ apt::install-ruby-and-devtools() {
 }
 
 apt::install-workstation-tools() {
-  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff,
-  # or should I just compile it?
+  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff.
+  # TODO: meld is not working in sway
+  # meld \
   #
   # https://wiki.gnome.org/Projects/Libsecret
   #
   # libglib2.0-bin - gsettings
   # dbus-x11 - dbus-launch
   sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    meld \
     libsecret-tools libsecret-1-0 libsecret-1-dev \
     gnome-keyring dbus-x11 libglib2.0-bin \
     hwloc \
