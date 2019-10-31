@@ -87,16 +87,32 @@ sway::install-swaybg() (
 )
 
 sway::install-kitty() {
-  local kittyRelease; kittyRelease="$(deploy-lib::github::get-release-by-label "kovidgoyal/kitty" "Linux amd64 binary bundle")" || fail
+  local releaseFile; releaseFile="$(deploy-lib::github::get-release-by-label "kovidgoyal/kitty" "Linux amd64 binary bundle")" || fail
   local installDir=/opt/kitty
 
   sudo mkdir --parents "${installDir}" || fail
-  sudo tar --extract --xz --file="${kittyRelease}" --directory="${installDir}" || fail
+  sudo tar --extract --xz --file="${releaseFile}" --directory="${installDir}" || fail
 
   sudo ln --symbolic --force /opt/kitty/bin/kitty /usr/local/bin || fail
   sudo sed --in-place=.orig "s/urxvt/kitty/g" /usr/local/etc/sway/config || fail
 
-  rm "${kittyRelease}" || fail
+  rm "${releaseFile}" || fail
+}
+
+sway::install-alacritty() {
+  if sudo add-apt-repository --yes ppa:mmstick76/alacritty; then
+    sudo apt-get install -o Acquire::ForceIPv4=true -y \
+      alacritty \
+        || fail "Unable to apt-get install ($?)"
+  else
+    sudo add-apt-repository --remove --yes ppa:mmstick76/alacritty || fail
+
+    local releaseFile; releaseFile="$(deploy-lib::github::get-release-by-name "jwilm/alacritty" "amd64.deb")" || fail
+    sudo dpkg --install "${releaseFile}" || fail
+    rm "${releaseFile}" || fail
+
+    deploy-lib::footnotes::add "Warning: alacritty is installed not from the package repository, updates needs to be manual" || fail
+  fi
 }
 
 sway::install() {
@@ -124,6 +140,10 @@ sway::install() {
 
   if [ ! -f /opt/kitty/bin/kitty ]; then
     sway::install-kitty || fail
+  fi
+
+  if ! command -v alacritty >/dev/null; then
+    sway::install-alacritty || fail
   fi
 }
 

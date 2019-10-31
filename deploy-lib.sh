@@ -131,9 +131,9 @@ deploy-lib::merge-config() {
     if ! diff "${src}" "${dst}" >/dev/null 2>&1; then
 
       if command -v git >/dev/null; then
-        git diff --color --unified=6 --no-index "${src}" "${dst}" | tee
+        git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
       else
-        diff --context=6 --color "${src}" "${dst}"
+        diff --context=6 --color "${dst}" "${src}"
       fi
 
       local action
@@ -250,12 +250,28 @@ deploy-lib::github::get-release-by-label() {
   local label="$2"
   local release="${3:-latest}"
 
+  deploy-lib::github::get-release "${repoPath}" ".label == \"${label}\"" "${release}" || fail
+}
+
+deploy-lib::github::get-release-by-name() {
+  local repoPath="$1"
+  local label="$2"
+  local release="${3:-latest}"
+
+  deploy-lib::github::get-release "${repoPath}" ".name | test(\"${label}\")" "${release}" || fail
+}
+
+deploy-lib::github::get-release() {
+  local repoPath="$1"
+  local query="$2"
+  local release="${3:-latest}"
+
   local apiUrl="https://api.github.com/repos/${repoPath}/releases/${release}"
-  local jqFilter=".assets[] | select(.label == \"${label}\").browser_download_url"
+  local jqFilter=".assets[] | select(${query}).browser_download_url"
   local fileUrl; fileUrl="$(curl --fail --silent --show-error "${apiUrl}" | jq --raw-output --exit-status "${jqFilter}"; test "${PIPESTATUS[*]}" = "0 0")" || fail
 
   if [ -z "${fileUrl}" ]; then
-    fail "Can't find release URL for ${repoPath} with label ${label} and release ${release}"
+    fail "Can't find release URL for ${repoPath} that matched ${query} and release ${release}"
   fi
 
   local tempFile; tempFile="$(mktemp --tmpdir="${HOME}")" || fail "Unable to create temp file"
