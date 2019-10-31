@@ -67,7 +67,7 @@ sway::install-scdoc() (
 )
 
 sway::install-sway() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/sway.git" 1.2 || fail
+  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/sway" 1.2 || fail
 
   meson build || fail
   ninja -C build || fail
@@ -77,7 +77,7 @@ sway::install-sway() (
 )
 
 sway::install-swaybg() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/swaybg.git" 1.0 || fail
+  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/swaybg" 1.0 || fail
 
   meson build || fail
   ninja -C build || fail
