@@ -101,12 +101,6 @@ ubuntu::deploy-workstation::as-root() {
 
   # Setup gnome keyring to load for text consoles
   ubuntu::setup-gnome-keyring-pam || fail
-
-  # Gnome desktop is installed as a dependecy of meld
-  # If deploy script is run on text console disable gnome.
-  if [ "${XDG_SESSION_TYPE}" = tty ]; then
-    sudo systemctl set-default multi-user.target
-  fi
 }
 
 ubuntu::deploy-workstation::as-user() {
