@@ -27,7 +27,7 @@ ubuntu::detect-lean-workstation() {
   local memorySize; memorySize="$(grep MemTotal /proc/meminfo | awk '{print $2}'; test "${PIPESTATUS[*]}" = "0 0")" || fail "Unable to determine the size of the available memory"
 
   if [ "${memorySize}" -le 4194304 ]; then
-    export LEAN_WORKSTATION=true
+    export DEPLOY_LEAN_WORKSTATION=true
   fi
 }
 
@@ -144,10 +144,16 @@ ubuntu::configure-desktop-apps() {
       gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
     fi
 
-    # Desktop
+    # Desktop 18.04
     if gsettings list-keys org.gnome.nautilus.desktop; then
       gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
       gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+    fi
+
+    # Desktop 19.10
+    if gsettings list-keys org.gnome.shell.extensions.desktop-icons; then
+      gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail "Unable to set gsettings ($?)"
     fi
 
     # Disable screen lock

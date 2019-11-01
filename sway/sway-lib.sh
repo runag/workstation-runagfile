@@ -170,3 +170,14 @@ sway::install-bashrcd() {
     alias enable-gnome="sudo systemctl set-default graphical.target"
 SHELL
 }
+
+sway::determine-conditional-install-flag() {
+  if [ -n "${DEPLOY_SWAY:-}" ] || [ -f "${HOME}/.config/deploy-sway" ]; then
+    if [ -z "${DEPLOY_SWAY:-}" ]; then
+      export DEPLOY_SWAY=1
+    else
+      mkdir --parents "${HOME}/.config" || fail
+      touch "${HOME}/.config/deploy-sway" || fail
+    fi
+  fi
+}

@@ -49,6 +49,11 @@ ubuntu::deploy-workstation::as-root() {
   apt::install-workstation-tools || fail
   apt::install-dconf || fail
 
+  # meld is not working properly in sway
+  if [ -z "${DEPLOY_SWAY:-}" ]; then
+    apt::install-meld || fail
+  fi
+
   # Compile libsecret
   ubuntu::compile-git-credential-libsecret || fail
 
@@ -63,7 +68,7 @@ ubuntu::deploy-workstation::as-root() {
   fi
 
   # If I have enough RAM then I could use some extra packages
-  if [ "${LEAN_WORKSTATION:-}" != "true" ]; then
+  if [ "${DEPLOY_LEAN_WORKSTATION:-}" != "true" ]; then
     apt::install-tor || fail
     apt::install-ffmpeg || fail
     if ubuntu::bare-metal; then  
@@ -149,10 +154,7 @@ ubuntu::deploy-workstation::as-user() {
   ubuntu::configure-git || fail
 
   # Install sway
-  if [ -n "${SWAY:-}" ] || [ -f "${HOME}/.config/deploy-sway" ]; then
-    mkdir --parents "${HOME}/.config" || fail
-    touch "${HOME}/.config/deploy-sway" || fail
-
+  if [ -n "${DEPLOY_SWAY:-}" ]; then
     sway::install || fail
     sway::install-config || fail
     sway::install-bashrcd || fail
@@ -161,10 +163,11 @@ ubuntu::deploy-workstation::as-user() {
 
 ubuntu::deploy-workstation() {
   deploy-lib::footnotes::init || fail
+  sway::determine-conditional-install-flag || fail
 
   ubuntu::detect-lean-workstation || fail
 
-  sudo --preserve-env="LEAN_WORKSTATION,DEPLOY_FOOTNOTES,DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+  sudo --preserve-env="DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE,DEPLOY_FOOTNOTES,DEPLOY_SWAY,DEPLOY_LEAN_WORKSTATION" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
 
   ubuntu::deploy-workstation::as-user || fail
 
