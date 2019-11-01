@@ -32,9 +32,9 @@ data-pi::install-bashrcd::shell-aliases() {
     local portMappings; portMappings="-q -L 8385:localhost:8384 -L 19998:localhost:19999" || fail
     local torProxy; torProxy="-o ProxyCommand=$(printf "%q" "nc -x localhost:9050 %h %p")" || fail
 
-    local getPassword; getPassword="BW_SESSION=\"\$(bw unlock --raw)\" bw get password $(printf "%q" "${DATA_PI_DISK_KEY}")" || fail
+    local getPassword; getPassword="BW_SESSION=\"\$(bw unlock --raw)\" || { echo \"bw unlock error\" >&2; exit 1; }; export BW_SESSION; bw get password $(printf "%q" "${DATA_PI_DISK_KEY}")" || fail
 
-    local unlockCommand; unlockCommand="$(printf "%q" "echo Trying to unlock...; if findmnt -M ~/$(printf "%q" "${DATA_PI_DISK_NAME}") >/dev/null; then echo already unlocked; else sudo cryptsetup luksOpen /dev/sda1 $(printf "%q" "${DATA_PI_DISK_NAME}") || { echo "luksOpen error" >&2; exit 1; }; sudo fsck -pf /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") || { echo "fsck error" >&2; exit 1; }; sudo mount /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") ~/$(printf "%q" "${DATA_PI_DISK_NAME}") || { echo "mount error" >&2; exit 1; }; sudo swapon ~/kelly/swapfile || { echo "swapon error" >&2; exit 1; }; sudo systemctl start $(printf "%q" "${DATA_PI_SYNCTHING_SERVICE}@${DATA_PI_USER}").service || { echo "syncthing service start error" >&2; exit 1; }; echo done; fi")" || fail
+    local unlockCommand; unlockCommand="$(printf "%q" "echo Trying to unlock...; if findmnt -M ~/$(printf "%q" "${DATA_PI_DISK_NAME}") >/dev/null; then echo already unlocked; else sudo cryptsetup luksOpen /dev/sda1 $(printf "%q" "${DATA_PI_DISK_NAME}") || { echo \"luksOpen error\" >&2; exit 1; }; sudo fsck -pf /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") || { echo \"fsck error\" >&2; exit 1; }; sudo mount /dev/mapper/$(printf "%q" "${DATA_PI_DISK_NAME}") ~/$(printf "%q" "${DATA_PI_DISK_NAME}") || { echo \"mount error\" >&2; exit 1; }; sudo swapon ~/kelly/swapfile || { echo \"swapon error\" >&2; exit 1; }; sudo systemctl start $(printf "%q" "${DATA_PI_SYNCTHING_SERVICE}@${DATA_PI_USER}").service || { echo \"syncthing service start error\" >&2; exit 1; }; echo done; fi")" || fail
     local haltCommand; haltCommand="$(printf "%q" "echo halting... && sudo halt")" || fail
     local rebootCommand; rebootCommand="$(printf "%q" "echo rebooting... && sudo reboot")" || fail
     local statusCommand; statusCommand="$(printf "%q" "uptime && date")" || fail
@@ -43,8 +43,8 @@ data-pi::install-bashrcd::shell-aliases() {
       alias data-pi='ssh ${portMappings} ${DATA_PI_USER}@${DATA_PI_LOCAL_ADDRESS}'
       alias data-pi-onion='ssh ${portMappings} ${torProxy} ${DATA_PI_USER}@${onionAddress}'
 
-      alias data-pi-unlock='${getPassword} | ssh ${DATA_PI_USER}@${DATA_PI_LOCAL_ADDRESS} ${unlockCommand}'
-      alias data-pi-onion-unlock='${getPassword} | ssh ${torProxy} ${DATA_PI_USER}@${onionAddress} ${unlockCommand}'
+      alias data-pi-unlock='${getPassword} | ssh ${DATA_PI_USER}@${DATA_PI_LOCAL_ADDRESS} ${unlockCommand}; unset BW_SESSION'
+      alias data-pi-onion-unlock='${getPassword} | ssh ${torProxy} ${DATA_PI_USER}@${onionAddress} ${unlockCommand}; unset BW_SESSION'
 
       alias data-pi-halt='ssh ${DATA_PI_USER}@${DATA_PI_LOCAL_ADDRESS} ${haltCommand}'
       alias data-pi-onion-halt='ssh ${torProxy} ${DATA_PI_USER}@${onionAddress} ${haltCommand}'
