@@ -111,26 +111,14 @@ ubuntu::deploy-workstation::as-root() {
 }
 
 ubuntu::deploy-workstation::as-user() {
-  # Shell aliases
-  ubuntu::install-bashrcd || fail
-  ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
-  sway::install-bashrcd || fail
-  data-pi::install-bashrcd::shell-aliases || fail
-
-  # SSH agent init for text console logins
-  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail
-
-  # use-nano-editor
-  ubuntu::install-bashrcd::use-nano-editor || fail
-
-  # symlink hgfs mounts
-  ubuntu::symlink-hgfs-mounts || fail
-
   # Desktop configuration
   ubuntu::configure-desktop-apps || fail
 
   # Remove user dirs
   ubuntu::remove-user-dirs || fail
+
+  # symlink hgfs mounts
+  ubuntu::symlink-hgfs-mounts || fail
 
   # IMWhell for GNOME and XFCE
   if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
@@ -141,6 +129,13 @@ ubuntu::deploy-workstation::as-user() {
   if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
     ubuntu::setup-super-key-to-xfce-menu-workaround || fail
   fi
+
+  # Shell aliases
+  ubuntu::install-bashrcd || fail
+  ubuntu::install-bashrcd::use-nano-editor || fail
+  ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
+  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
+  data-pi::install-bashrcd::shell-aliases || fail
 
   # Editors
   vscode::install-config || fail
@@ -154,8 +149,14 @@ ubuntu::deploy-workstation::as-user() {
   ubuntu::configure-git || fail
 
   # Install sway
-  sway::install || fail
-  sway::install-config || fail
+  if [ -n "${SWAY:-}" ] || [ -f "${HOME}/.config/deploy-sway" ]; then
+    mkdir --parents "${HOME}/.config" || fail
+    touch "${HOME}/.config/deploy-sway" || fail
+
+    sway::install || fail
+    sway::install-config || fail
+    sway::install-bashrcd || fail
+  fi
 }
 
 ubuntu::deploy-workstation() {

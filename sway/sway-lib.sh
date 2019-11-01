@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# This file implements instructions from
+# A part of this file implements instructions from
 # https://github.com/swaywm/sway/wiki/Debian-10-(Buster)-Installation
 
 sway::apt::install() {

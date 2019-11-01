@@ -65,6 +65,8 @@ input "2:19:VirtualPS/2_VMware_VMMouse" {
 
 ### Key bindings
 #
+# You may use XKB key names here (xev(1) is a good tool for discovering these).
+#
 # Basics:
 #
     # Start a terminal
@@ -224,3 +226,10 @@ include /usr/local/etc/sway/config.d/*
 # Move workspaces
 bindsym $mod+o move workspace to output left
 bindsym $mod+p move workspace to output right
+
+bindsym $mod+Prior workspace prev
+bindsym $mod+Next workspace next
+bindsym $mod+Tab workspace back_and_forth
+
+# bindsym $mod+Shift+Tab workspace prev
+# bindsym $mod+Tab workspace next
