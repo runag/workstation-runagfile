@@ -123,7 +123,7 @@ apt::install-obs-studio() {
       || fail "Unable to apt-get install ($?)"
 }
 
-# bundles
+# packages that are really good to have
 
 apt::install-basic-tools() {
   sudo apt-get install -o Acquire::ForceIPv4=true -y \

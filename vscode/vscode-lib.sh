@@ -52,13 +52,25 @@ vscode::sync-merge-extensions-config() {
 }
 
 vscode::install-config() {
-  deploy-lib::install-config vscode/settings.json "${HOME}/.config/Code/User/settings.json" || fail
-  deploy-lib::install-config vscode/keybindings.json "${HOME}/.config/Code/User/keybindings.json" || fail
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    local configDirectory="${HOME}/Library/Application Support/Code"
+  else
+    local configDirectory="${HOME}/.config/Code"
+  fi
+
+  deploy-lib::install-config vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::install-config vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
-  deploy-lib::merge-config vscode/settings.json "$HOME/.config/Code/User/settings.json" || fail
-  deploy-lib::merge-config vscode/keybindings.json "$HOME/.config/Code/User/keybindings.json" || fail
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    local configDirectory="${HOME}/Library/Application Support/Code"
+  else
+    local configDirectory="${HOME}/.config/Code"
+  fi
+
+  deploy-lib::merge-config vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::merge-config vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
   deploy-lib::merge-config vscode/extensions.txt "${extensionsList}" || fail

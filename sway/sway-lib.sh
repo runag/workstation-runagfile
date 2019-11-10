@@ -90,7 +90,7 @@ sway::install-kitty() {
   local releaseFile; releaseFile="$(deploy-lib::github::get-release-by-label "kovidgoyal/kitty" "Linux amd64 binary bundle")" || fail
   local installDir=/opt/kitty
 
-  sudo mkdir --parents "${installDir}" || fail
+  sudo mkdir -p "${installDir}" || fail
   sudo tar --extract --xz --file="${releaseFile}" --directory="${installDir}" || fail
 
   sudo ln --symbolic --force /opt/kitty/bin/kitty /usr/local/bin || fail
@@ -155,8 +155,8 @@ sway::merge-config() {
   deploy-lib::merge-config sway/config "${HOME}/.config/sway/config" || fail
 }
 
-sway::install-bashrcd() {
-  local outputFile="${HOME}/.bashrc.d/sway.sh"
+sway::install-shellrcd() {
+  local outputFile="${HOME}/.shellrc.d/sway.sh"
   tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
     if [ "${XDG_SESSION_TYPE:-}" = tty ] && hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
       export WLR_NO_HARDWARE_CURSORS=1
@@ -176,7 +176,7 @@ sway::determine-conditional-install-flag() {
     if [ -z "${DEPLOY_SWAY:-}" ]; then
       export DEPLOY_SWAY=1
     else
-      mkdir --parents "${HOME}/.config" || fail
+      mkdir -p "${HOME}/.config" || fail
       touch "${HOME}/.config/deploy-sway" || fail
     fi
   fi

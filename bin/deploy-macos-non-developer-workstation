@@ -14,11 +14,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o xtrace
-set -o nounset
-
-. deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
-. config.sh || fail "Unable to load config.sh"
-. macos/macos-lib.sh || fail
-
-macos::increase-maxfiles-limit || fail
+DEPLOY_NON_DEVELOPER_WORKSTATION=true bin/deploy-macos-workstation "$@"

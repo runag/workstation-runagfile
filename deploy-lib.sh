@@ -27,7 +27,7 @@ deploy-lib::sudo-write-file() {
 
   local dirName; dirName="$(dirname "${dest}")" || fail "Unable to get dirName of '${dest}' ($?)"
 
-  sudo mkdir --parents "${dirName}" || fail "Unable to mkdir --parents '${dirName}' ($?)"
+  sudo mkdir -p "${dirName}" || fail "Unable to mkdir -p '${dirName}' ($?)"
 
   cat | sudo tee "$dest"
   test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to cat or write to '$dest'"
@@ -100,7 +100,7 @@ deploy-lib::add-host-to-ssh-known-hosts() {
   if [ ! -f "${knownHosts}" ]; then
     local knownHostsDirname; knownHostsDirname="$(dirname "${knownHosts}")" || fail
 
-    mkdir --parents "${knownHostsDirname}" || fail
+    mkdir -p "${knownHostsDirname}" || fail
     chmod 700 "${knownHostsDirname}" || fail
 
     touch "${knownHosts}" || fail
@@ -119,7 +119,18 @@ deploy-lib::install-config() {
   if [ -f "${dst}" ]; then
     deploy-lib::merge-config "${src}" "${dst}" || fail
   else
-    install --mode=0644 "${src}" -D "${dst}" || fail "Unable to install config from ${src} to ${dst} ($?)"
+    local currentUserId; currentUserId="$(id -u)" || fail
+    local currentGroupId; currentGroupId="$(id -g)" || fail
+
+    local dirName; dirName="$(dirname "${dst}")" || fail "Unable to get dirName of '${dst}' ($?)"
+
+    mkdir -p "${dirName}" || fail "Unable to mkdir -p '${dirName}' ($?)"
+
+    cp "${src}" "${dst}" || fail "Unable to copy config from '${src}' to '${dst}' ($?)"
+
+    chmod 0644 "$dst" || fail "Unable to chmod '${dst}' ($?)"
+    
+    chown "$currentUserId:$currentGroupId" "$dst" || fail "Unable to chown $USER:$USER '${dst}' ($?)"
   fi
 }
 
@@ -198,7 +209,7 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
       local dirName; dirName="$(dirname "${outputFile}")" || fail
       
       if [ ! -d "${dirName}" ]; then
-        mkdir --parents "${dirName}" || fail
+        mkdir -p "${dirName}" || fail
       fi
 
       echo "${bwdata}" | jq '.notes' --raw-output --exit-status | (umask "${setUmask}" && tee "${outputFile}.tmp")
@@ -285,4 +296,67 @@ deploy-lib::github::get-release() {
     "$fileUrl" >/dev/null || fail "Unable to download ${fileUrl}"
 
   echo "${tempFile}"
+}
+
+deploy-lib::install-ssh-keys() {
+  if [ ! -d "${HOME}/.ssh" ]; then
+    mkdir -m 0700 "${HOME}/.ssh" || fail
+  fi
+
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
+}
+
+deploy-lib::configure-git() {
+  git config --global user.name "${GIT_USER_NAME}" || fail
+  git config --global user.email "${GIT_USER_EMAIL}" || fail
+}
+
+
+deploy-lib::install-shellrcd() {
+  if [ ! -d "${HOME}/.shellrc.d" ]; then
+    mkdir -p "${HOME}/.shellrc.d" || fail "Unable to create the directory: ${HOME}/.shellrc.d"
+  fi
+
+  deploy-lib::add-shellrcd-loader "${HOME}/.bashrc" || fail
+  deploy-lib::add-shellrcd-loader "${HOME}/.zshrc" || fail
+}
+
+deploy-lib::add-shellrcd-loader() {
+  local shellrcFile="$1"
+
+  if [ ! -f "${shellrcFile}" ]; then
+    touch "${shellrcFile}" || fail
+  fi
+
+  if grep --quiet "^# shellrc.d loader" "${shellrcFile}"; then
+    echo "shellrc.d loader already present"
+  else
+tee -a "${shellrcFile}" <<SHELL || fail "Unable to append to the file: ${shellrcFile}"
+
+# shellrc.d loader
+if [ -d "\${HOME}/.shellrc.d" ]; then
+  for file_bb21go6nkCN82Gk9XeY2 in "\${HOME}/.shellrc.d"/*.sh; do
+    if [ -f "\${file_bb21go6nkCN82Gk9XeY2}" ]; then
+      . "\${file_bb21go6nkCN82Gk9XeY2}" || { echo "Unable to load file \${file_bb21go6nkCN82Gk9XeY2} (\$?)"; }
+    fi
+  done
+  unset file_bb21go6nkCN82Gk9XeY2
+fi
+SHELL
+  fi
+}
+
+deploy-lib::install-shellrcd::my-computer-deploy-shell-alias() {
+  local output="${HOME}/.shellrc.d/my-computer-deploy-shell-alias.sh"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    alias my-computer-deploy="${PWD}/bin/shell"
+SHELL
+}
+
+deploy-lib::install-shellrcd::use-nano-editor() {
+  local output="${HOME}/.shellrc.d/use-nano-editor.sh"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+  export EDITOR="$(which nano)"
+SHELL
 }

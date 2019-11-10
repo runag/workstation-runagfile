@@ -68,49 +68,12 @@ ubuntu::set-inotify-max-user-watches() {
   if grep --quiet "^fs.inotify.max_user_watches" "$sysctl" && grep --quiet "^fs.inotify.max_user_instances" "$sysctl"; then
     echo "fs.inotify.max_user_watches and fs.inotify.max_user_instances are already set" >&2
   else
-    echo "fs.inotify.max_user_watches=1000000" | sudo tee --append "$sysctl" || fail "Unable to write to $sysctl ($?)"
+    echo "fs.inotify.max_user_watches=1000000" | sudo tee -a "$sysctl" || fail "Unable to write to $sysctl ($?)"
 
-    echo "fs.inotify.max_user_instances=2048" | sudo tee --append "$sysctl" || fail "Unable to write to $sysctl ($?)"
+    echo "fs.inotify.max_user_instances=2048" | sudo tee -a "$sysctl" || fail "Unable to write to $sysctl ($?)"
 
     sudo sysctl -p || fail "Unable to update sysctl config ($?)"
   fi
-}
-
-ubuntu::install-bashrcd() {
-  if [ ! -d "${HOME}/.bashrc.d" ]; then
-    mkdir --parents "${HOME}/.bashrc.d" || fail "Unable to create the directory: ${HOME}/.bashrc.d"
-  fi
-
-  if grep --quiet "^# bashrc.d loader" "${HOME}/.bashrc"; then
-    echo "bashrc.d loader already present"
-  else
-tee --append "${HOME}/.bashrc" <<SHELL || fail "Unable to append to the file: ${HOME}/.bashrc"
-
-# bashrc.d loader
-if [ -d "\${HOME}/.bashrc.d" ]; then
-  for file_bb21go6nkCN82Gk9XeY2 in "\${HOME}/.bashrc.d"/*.sh; do
-    if [ -f "\${file_bb21go6nkCN82Gk9XeY2}" ]; then
-      . "\${file_bb21go6nkCN82Gk9XeY2}" || { echo "Unable to load file \${file_bb21go6nkCN82Gk9XeY2} (\$?)"; }
-    fi
-  done
-  unset file_bb21go6nkCN82Gk9XeY2
-fi
-SHELL
-  fi
-}
-
-ubuntu::install-bashrcd::my-computer-deploy-shell-alias() {
-  local output="${HOME}/.bashrc.d/my-computer-deploy-shell-alias.sh"
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    alias my-computer-deploy="${PWD}/bin/shell"
-SHELL
-}
-
-ubuntu::install-bashrcd::use-nano-editor() {
-  local output="${HOME}/.bashrc.d/use-nano-editor.sh"
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-  export EDITOR="$(which nano)"
-SHELL
 }
 
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
@@ -179,13 +142,6 @@ ubuntu::configure-desktop-apps() {
 }
 
 ubuntu::install-ssh-keys() {
-  if [ ! -d "${HOME}/.ssh" ]; then
-    mkdir --mode=0700 "${HOME}/.ssh" || fail
-  fi
-
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
-
   # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
   # the login keyring is also available and already initialized properly
   # I don't know yet how to check for login keyring specifically 
@@ -208,9 +164,6 @@ ubuntu::compile-git-credential-libsecret() {
 }
 
 ubuntu::configure-git() {
-  git config --global user.name "${GIT_USER_NAME}" || fail
-  git config --global user.email "${GIT_USER_EMAIL}" || fail
-
   # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
   # the login keyring is also available and already initialized properly
   # I don't know yet how to check for login keyring specifically 
@@ -280,7 +233,7 @@ ubuntu::perhaps-add-hgfs-automount() {
   # TODO: Do I really need x-systemd.device-timeout here? think it works well even without it.
   if hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
     if ! grep --quiet "fuse.vmhgfs-fuse" /etc/fstab; then
-      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail,x-systemd.device-timeout=3s  0  0" | sudo tee --append /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
+      echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail,x-systemd.device-timeout=3s  0  0" | sudo tee -a /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
     fi
   fi
 }
@@ -310,7 +263,7 @@ Shift_L,   Down, Shift_L|Button5
 SHELL
 
   if [ ! -d "${HOME}/.config/autostart" ]; then
-    mkdir --parents "${HOME}/.config/autostart" || fail
+    mkdir -p "${HOME}/.config/autostart" || fail
   fi
 
   local outputFile="${HOME}/.config/autostart/imwheel.desktop"
@@ -339,7 +292,7 @@ ubuntu::setup-super-key-to-xfce-menu-workaround() {
   #   https://github.com/JixunMoe/xfce-superkey
   #
   if [ ! -d "${HOME}/.config/autostart" ]; then
-    mkdir --parents "${HOME}/.config/autostart" || fail
+    mkdir -p "${HOME}/.config/autostart" || fail
   fi
 
   local outputFile="${HOME}/.config/autostart/super-key-to-xfce-menu.desktop"
@@ -381,8 +334,8 @@ ubuntu::setup-gnome-keyring-pam() {
   fi
 }
 
-ubuntu::install-bashrcd::gnome-keyring-daemon-start() {
-  local outputFile="${HOME}/.bashrc.d/gnome-keyring-daemon-start.sh"
+ubuntu::install-shellrcd::gnome-keyring-daemon-start() {
+  local outputFile="${HOME}/.shellrc.d/gnome-keyring-daemon-start.sh"
   tee "${outputFile}" <<'SHELL' || fail "Unable to write file: ${outputFile} ($?)"
     if [ "${XDG_SESSION_TYPE}" = tty ] && [ -n "${GNOME_KEYRING_CONTROL:-}" ] && [ -z "${SSH_AUTH_SOCK:-}" ]; then
       eval "$(gnome-keyring-daemon --start)"

@@ -65,8 +65,8 @@ ubuntu::deploy-data-pi::as-root() {
 
 ubuntu::deploy-data-pi::as-user() {
   # Shell aliases
-  ubuntu::install-bashrcd || fail
-  ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
+  deploy-lib::install-shellrcd || fail
+  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
 }
 
 ubuntu::deploy-data-pi::backup() {

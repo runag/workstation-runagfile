@@ -21,11 +21,11 @@ fi
 set -o nounset
 
 . deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
-. config.sh || fail "Unable to load config.sh"
+. config.sh     || fail "Unable to load config.sh"
 
 . sublime/sublime-lib.sh || fail
-. sway/sway-lib.sh || fail
-. vscode/vscode-lib.sh || fail
+. sway/sway-lib.sh       || fail
+. vscode/vscode-lib.sh   || fail
 
 deploy-lib::footnotes::init || fail
 

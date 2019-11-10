@@ -21,8 +21,8 @@ data-pi::ensure-this-is-raspberry-pi() {
   fi
 }
 
-data-pi::install-bashrcd::shell-aliases() {
-  local outputFile="${HOME}/.bashrc.d/data-pi-shell-aliases.sh"
+data-pi::install-shellrcd::shell-aliases() {
+  local outputFile="${HOME}/.shellrc.d/data-pi-shell-aliases.sh"
 
   if [ ! -f "${outputFile}" ]; then
     deploy-lib::bitwarden::unlock || fail

@@ -32,11 +32,17 @@ sublime::apt::install-sublime-text() {
 }
 
 sublime::install-config() {
-  local installedPackages="${HOME}/.config/sublime-text-3/Installed Packages"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    local configDirectory="${HOME}/Library/Application Support/Sublime Text 3"
+  else
+    local configDirectory="${HOME}/.config/sublime-text-3"
+  fi
+
+  local installedPackages="${configDirectory}/Installed Packages"
   local packageControlPackage="${installedPackages}/Package Control.sublime-package"
 
   if [ ! -f "${packageControlPackage}" ]; then
-    mkdir --parents "${installedPackages}" || fail "Unable to create directory ${installedPackages} ($?)"
+    mkdir -p "${installedPackages}" || fail "Unable to create directory ${installedPackages} ($?)"
     
     curl --fail --silent --show-error "https://packagecontrol.io/Package%20Control.sublime-package" --output "${packageControlPackage}.tmp" || fail "Unable to download https://packagecontrol.io/Package%20Control.sublime-package ($?)"
 
@@ -47,7 +53,7 @@ sublime::install-config() {
   sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
   sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${HOME}/.config/sublime-text-3/Local/License.sublime_license" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${configDirectory}/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {
@@ -57,9 +63,21 @@ sublime::merge-config() {
 }
 
 sublime::install-config-file() {
-  deploy-lib::install-config "sublime/$1" "${HOME}/.config/sublime-text-3/Packages/User/$1" || fail "Unable to install $1 ($?)"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    local configDirectory="${HOME}/Library/Application Support/Sublime Text 3"
+  else
+    local configDirectory="${HOME}/.config/sublime-text-3"
+  fi
+
+  deploy-lib::install-config "sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to install $1 ($?)"
 }
 
 sublime::merge-config-file() {
-  deploy-lib::merge-config "sublime/$1" "${HOME}/.config/sublime-text-3/Packages/User/$1" || fail "Unable to merge $1 ($?)"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    local configDirectory="${HOME}/Library/Application Support/Sublime Text 3"
+  else
+    local configDirectory="${HOME}/.config/sublime-text-3"
+  fi
+
+  deploy-lib::merge-config "sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to merge $1 ($?)"
 }

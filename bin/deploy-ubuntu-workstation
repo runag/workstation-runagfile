@@ -136,11 +136,11 @@ ubuntu::deploy-workstation::as-user() {
   fi
 
   # Shell aliases
-  ubuntu::install-bashrcd || fail
-  ubuntu::install-bashrcd::use-nano-editor || fail
-  ubuntu::install-bashrcd::my-computer-deploy-shell-alias || fail
-  ubuntu::install-bashrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
-  data-pi::install-bashrcd::shell-aliases || fail
+  deploy-lib::install-shellrcd || fail
+  deploy-lib::install-shellrcd::use-nano-editor || fail
+  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+  ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
+  data-pi::install-shellrcd::shell-aliases || fail
 
   # Editors
   vscode::install-config || fail
@@ -148,23 +148,25 @@ ubuntu::deploy-workstation::as-user() {
   sublime::install-config || fail
 
   # SSH keys
+  deploy-lib::install-ssh-keys || fail
   ubuntu::install-ssh-keys || fail
 
   # Git
+  deploy-lib::configure-git || fail
   ubuntu::configure-git || fail
 
   # Install sway
   if [ -n "${DEPLOY_SWAY:-}" ]; then
     sway::install || fail
     sway::install-config || fail
-    sway::install-bashrcd || fail
+    sway::install-shellrcd || fail
   fi
 }
 
 ubuntu::deploy-workstation() {
   deploy-lib::footnotes::init || fail
-  sway::determine-conditional-install-flag || fail
 
+  sway::determine-conditional-install-flag || fail
   ubuntu::detect-lean-workstation || fail
 
   sudo --preserve-env="DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE,DEPLOY_FOOTNOTES,DEPLOY_SWAY,DEPLOY_LEAN_WORKSTATION" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
