@@ -1,16 +1,16 @@
 # Linux
 
-## Deploy ubuntu workstation one-liner
+## 1a) Deploy ubuntu workstation one-liner
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-ubuntu-workstation
 ```
 
-## Deploy data pi one-liner
+## 1b) Deploy data pi one-liner
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-data-pi
 ```
 
-## Clone to a new machine one-liner
+### Just clone to a new machine one-liner
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && ls -1 bin/*
 ```
@@ -23,17 +23,17 @@ cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi
 2. Type ``git``
 3. Confirm installation
 
-## deploy-macos-workstation one-liner
+## 2a) deploy-macos-workstation one-liner
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-workstation
 ```
 
-## deploy-macos-non-developer-workstation one-liner
+## 2b) deploy-macos-non-developer-workstation one-liner
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-non-developer-workstation
 ```
 
-## Macs Fan Control
+## Macs Fan Control configuration
 
 1. Configure fan to be based on PECI sensor, 60-80 temperature range
 2. In preferences enable "Autostart minimized with system"
