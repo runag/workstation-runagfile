@@ -26,7 +26,7 @@ macos::increase-maxfiles-limit() {
 
     sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} ($?)"
 
-    echo "increase-maxfiles-limit: reboot required!"
+    deploy-lib::footnotes::add "increase-maxfiles-limit: Please reboot your computer" || fail
   fi
 }
 

@@ -153,7 +153,7 @@ ubuntu::install-ssh-keys() {
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
     fi
   else
-    deploy-lib::footnotes::add "Unable to store ssh key password into the gnome keyring, DBUS not found"
+    deploy-lib::footnotes::add "Unable to store ssh key password into the gnome keyring, DBUS not found" || fail
   fi
 }
 
@@ -175,7 +175,7 @@ ubuntu::configure-git() {
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store github personal access token"
     fi
   else
-    deploy-lib::footnotes::add "Unable to store git credentials into the gnome keyring, DBUS not found"
+    deploy-lib::footnotes::add "Unable to store git credentials into the gnome keyring, DBUS not found" || fail
   fi
 
   git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
