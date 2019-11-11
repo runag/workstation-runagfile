@@ -10,7 +10,7 @@ cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-data-pi
 ```
 
-### Just clone to a new machine one-liner
+## Just clone to a new machine one-liner
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && ls -1 bin/*
 ```
