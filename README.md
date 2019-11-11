@@ -38,6 +38,7 @@ cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; el
 1. Configure fan to be based on PECI sensor, 60-80 temperature range
 2. In preferences enable "Autostart minimized with system"
 
+# What's inside
 
 ## Deployment scripts
 ```sh
@@ -82,6 +83,7 @@ The names should be as the following:
 ``data-pi onion address``  
 ``kelly disk key``  
 
+# Footnotes
 
 ## Please check shell scripts before commiting any changes
 ```sh
