@@ -50,7 +50,7 @@ bin/deploy-ubuntu-workstation
 
 ## Merge configs between the live system and the deploy repository
 ```sh
-bin/merge-ubuntu-workstation-configs
+bin/merge-workstation-configs
 ```
 
 
