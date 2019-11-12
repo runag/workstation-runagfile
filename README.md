@@ -43,12 +43,12 @@ cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi
 2. Type ``git``
 3. Confirm installation
 
-## 2a) deploy-macos-workstation
+## 2a) Deploy workstation
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-workstation
 ```
 
-## 2b) deploy-macos-non-developer-workstation
+## 2b) Deploy non-developer workstation
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-non-developer-workstation
 ```
