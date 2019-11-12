@@ -1,18 +1,38 @@
-# Linux
+# My computer deploy
 
-## 1a) Deploy ubuntu workstation one-liner
+A script to deploy my workstation on a freshly installed Linux or MacOS. Basically I run one command and after that my workstation is fully configured for me to use.
+
+The script will do the following:
+
+1. Installs the basic software I frequently use.
+2. Installs my keys, passwords, software licenses. I keep them in the bitwarden database, this script puts SSH keys to the filesystem and passwords to the linux keychain, so I could connect to my remote servers and commit to my git repositories without entering any extra passwords besides system login one. Also this script enables gnome keyring access in TTY sessions to ease the use of SSH keys and git credentials in Sway WM.
+3. Makes a few tweaks to the system and to the desktop software.
+4. Installs a few shell aliases.
+5. Installs configuration for the Sublime Text and Visual Studio Code. It also can put that configuration back from the workstation to the repository in case I changed it locally.
+6. With an extra environment flag DEPLOY_SWAY it installs Sway WM, my Sway configuration and few related software packages.
+
+This script can be run multiple times to produce a system which is up-to date with the recent software updates and my configuration changes.
+
+The file ``config.sh`` contains my name and email to use in configuration. In the unlikely event someone will fork that script to configure his own computer this is where you could put your name and email.
+
+# Linux workstation
+
+## a) Deploy ubuntu workstation
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-ubuntu-workstation
 ```
 
-## 1b) Deploy data pi one-liner
-```sh
-cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-data-pi
-```
-
-## Just clone to a new machine one-liner
+## b) Just clone this script to a new machine
 ```sh
 cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && ls -1 bin/*
+```
+
+# Syncthing node on a Raspberry PI
+
+There is also a script to deploy a Syncthing node on a Raspberry PI, but it's not yet fully complete.
+
+```sh
+cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-data-pi
 ```
 
 # MacOS
@@ -23,12 +43,12 @@ cd ~ && if ! command -v git; then sudo apt update && sudo apt install -y git; fi
 2. Type ``git``
 3. Confirm installation
 
-## 2a) deploy-macos-workstation one-liner
+## 2a) deploy-macos-workstation
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-workstation
 ```
 
-## 2b) deploy-macos-non-developer-workstation one-liner
+## 2b) deploy-macos-non-developer-workstation
 ```sh
 cd ~ && if [ -d my-computer-deploy ]; then cd my-computer-deploy && git pull; else git clone https://github.com/senotrusov/my-computer-deploy.git && cd my-computer-deploy; fi && bin/deploy-macos-non-developer-workstation
 ```
@@ -71,17 +91,17 @@ For that please keep the original directory somewhere.
 The command ``my-computer-deploy`` will be available as a shell alias after the initial deployment. Upon execution it will open a subshell that brings you to the directory that contains the initial deployment scripts. It's ``bin`` will be in that subshell's ``PATH``.
 
 
-## Secret items which are stored in Bitwarden
+## Secret items which are expected to be found in a Bitwarden
 
 The names should be as the following:
 
-``my current ssh private key``  
-``my current ssh public key``  
-``my current password for ssh private key``  
-``my github personal access token``
-``Sublime Text 3 license``  
-``data-pi onion address``  
-``kelly disk key``  
+* ``my current ssh private key``  
+* ``my current ssh public key``  
+* ``my current password for ssh private key``  
+* ``my github personal access token``  
+* ``Sublime Text 3 license``  
+* ``data-pi onion address``  
+* ``kelly disk key``  
 
 # Footnotes
 
