@@ -155,6 +155,9 @@ ubuntu::deploy-workstation::as-user() {
   deploy-lib::configure-git || fail
   ubuntu::configure-git || fail
 
+  # Gnome extensions
+  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+
   # Install sway
   if [ -n "${DEPLOY_SWAY:-}" ]; then
     sway::install || fail

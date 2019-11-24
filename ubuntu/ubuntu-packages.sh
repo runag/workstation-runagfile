@@ -170,6 +170,7 @@ apt::install-workstation-tools() {
     libsecret-tools libsecret-1-0 libsecret-1-dev \
     gnome-keyring dbus-x11 libglib2.0-bin \
     hwloc \
+    gir1.2-gtop-2.0 lm-sensors \
       || fail "Unable to apt-get install ($?)"
 }
 
@@ -214,3 +215,14 @@ ubuntu::install-senotrusov-backup-script() (
   ./backup-script install || fail
   deploy-lib::git::remove-temp-clone || fail
 )
+
+ubuntu::install-corecoding-vitals-gnome-shell-extension() {
+  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
+  local extensionUuid="Vitals@CoreCoding.com"
+
+  mkdir -p "${extensionsDir}" || fail
+
+  deploy-lib::git::make-repository-clone-available "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
+
+  gnome-extensions enable "${extensionUuid}" || fail
+}

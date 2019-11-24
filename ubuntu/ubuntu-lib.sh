@@ -141,8 +141,13 @@ ubuntu::configure-desktop-apps() {
 
     # Mouse
     # 2000 DPI
-    if gsettings get oorg.gnome.desktop.peripherals.mouse speed; then
+    if gsettings get org.gnome.desktop.peripherals.mouse speed; then
       gsettings set org.gnome.desktop.peripherals.mouse speed -0.950 || fail "Unable to set gsettings ($?)"
+    fi
+
+    # Input sources
+    if gsettings get org.gnome.desktop.input-sources sources; then
+      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru+mac')]" || fail "Unable to set gsettings ($?)"
     fi
   fi
 }
@@ -198,7 +203,7 @@ ubuntu::remove-user-dirs() {
     fi
 
     if [ -d "$HOME/Downloads" ]; then
-      echo 'XDG_DESKTOP_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
+      echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
     fi
 
     mv "${tmpFile}" "${dirsFile}" || fail
