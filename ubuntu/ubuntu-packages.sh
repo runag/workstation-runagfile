@@ -49,7 +49,6 @@ ubuntu::install-packages() {
   # Chromium
   sudo snap install chromium || fail "Unable to snap install ($?)"
 
-
   # Extra stuff for bare metal workstation
   if ubuntu::is-bare-metal; then
     apt::install syncthing || fail
