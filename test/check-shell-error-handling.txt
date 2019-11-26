@@ -1,0 +1,32 @@
+bin/shell:
+  36:   $SHELL
+deploy-lib.sh:
+  144:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
+  146:         diff --context=6 --color "${dst}" "${src}"
+data-pi/led-heartbeat.sh:
+  18:   for i in {1..5}
+  19:   do
+  21:     sleep 3
+  23:     sleep 0.5
+  29:   sleep 0.35
+  31:   sleep 0.15
+  34:   sleep 0.35
+  36:   sleep 0.15
+  39:   sleep 0.35
+  41:   sleep 0.15
+  43:   sleep 0.75
+  46: for (( ; ; ))
+  47: do
+  49:     normal
+  51:     panic
+netdata/netdata-lib.sh:
+  19:     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait --stable-channel || true # TODO: remove || true as they fix the installer
+ubuntu/background-fix.sh:
+  22:       rm /var/cache/background-fix-state
+  23:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"
+  25:       touch /var/cache/background-fix-state
+  26:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
+ubuntu/ubuntu-lib.sh:
+  368:     for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
+vscode/vscode-lib.sh:
+  35:       cat vscode/extensions.txt | while IFS="" read -r extension; do

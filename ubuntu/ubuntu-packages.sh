@@ -196,7 +196,7 @@ apt::perhaps-install-mbpfan() {
 
 apt::perhaps-install-open-vm-tools-desktop() {
   if sudo dmidecode -t system | grep --quiet "Product\\ Name\\:\\ VMware\\ Virtual\\ Platform"; then
-    apt::install open-vm-tools open-vm-tools-desktop
+    apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
 }
 

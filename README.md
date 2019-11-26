@@ -107,5 +107,5 @@ The names should be as the following:
 
 ## Please check shell scripts before commiting any changes
 ```sh
-shellcheck bin/* *.sh **/*.sh
+test/run-code-checks
 ```

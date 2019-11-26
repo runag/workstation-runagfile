@@ -185,7 +185,8 @@ ubuntu::perhaps-fix-nvidia-screen-tearing() {
   if lspci | grep --quiet "VGA.*NVIDIA Corporation"; then
     if [ ! -f "${modprobeFile}" ]; then
       echo "options nvidia_drm modeset=1" | sudo tee "${modprobeFile}"
-      sudo update-initramfs -u
+      test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to ${modprobeFile}"
+      sudo update-initramfs -u || fail
       deploy-lib::footnotes::add "Please reboot to activate screen tearing fix (ubuntu::perhaps-fix-nvidia-screen-tearing)" || fail
     fi
   fi
@@ -447,8 +448,7 @@ ubuntu::setup-gnome-keyring-pam() {
   local pamFile="/etc/pam.d/login"
   if ! grep --quiet "pam_gnome_keyring" "${pamFile}"; then
     local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
-    cat "${pamFile}" | ruby ubuntu/patch-pam-d-login.rb > "${tmpFile}"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to patch ${pamFile}"
+    ruby ubuntu/patch-pam-d-login.rb <"${pamFile}" >"${tmpFile}" || fail "Unable to patch ${pamFile}"
     sudo install --mode=0644 --owner=root --group=root "$tmpFile" -D "${pamFile}" || fail "Unable to install file: ${pamFile} ($?)"
     rm "${tmpFile}" || fail
   fi

@@ -1,0 +1,29 @@
+
+In bin/check-shell-error-handling line 1:
+#!/bin/env ruby
+^-- SC1071: ShellCheck only supports sh/bash/dash/ksh scripts. Sorry!
+
+
+In data-pi/led-heartbeat.sh line 18:
+  for i in {1..5}
+  ^-^ SC2034: i appears unused. Verify use (or export if used externally).
+
+
+In ubuntu/ubuntu-lib.sh line 314:
+      echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
+           ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
+
+
+In ubuntu/ubuntu-lib.sh line 318:
+      echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
+           ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
+
+
+In vscode/vscode-lib.sh line 35:
+      cat vscode/extensions.txt | while IFS="" read -r extension; do
+          ^-------------------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1071 -- ShellCheck only supports sh/bash/...
+  https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
+  https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...

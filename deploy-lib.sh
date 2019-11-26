@@ -38,9 +38,8 @@ deploy-lib::sudo-write-file() {
 
 deploy-lib::remove-dir-if-empty() {
   if [ -d "$1" ]; then
-    # Note: no "|| fail" here because if directory is not empty rm will set the erorr status
-    rm --dir "$1"
-    true
+    # if directory is not empty then rm exit status will be non-zero
+    rm --dir "$1" || true
   fi
 }
 
@@ -213,7 +212,6 @@ deploy-lib::bitwarden::write-notes-to-file-if-not-exists() {
       fi
 
       echo "${bwdata}" | jq '.notes' --raw-output --exit-status | (umask "${setUmask}" && tee "${outputFile}.tmp")
-
       local savedPipeStatus="${PIPESTATUS[*]}"
 
       if [ "${savedPipeStatus}" = "0 0 0" ]; then

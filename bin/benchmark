@@ -64,4 +64,8 @@ run-benchmark() (
   sysbench fileio cleanup || fail
 )
 
-run-benchmark | tee "${HOME}/$(hostname) $(date +"%Y-%m-%d %H-%M-%S") - benchmark.txt"
+current_date="$(date +"%Y-%m-%d %H-%M-%S")" || fail
+hostname_string="$(hostname)" || fail
+
+run-benchmark | tee "${HOME}/${hostname_string} ${current_date} benchmark.txt"
+test "${PIPESTATUS[*]}" = "0 0" || fail
