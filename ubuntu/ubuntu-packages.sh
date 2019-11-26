@@ -141,8 +141,6 @@ apt::install-ruby-and-devtools() {
   # sudo gem update || fail "Unable to update gems"
 }
 
-# apt
-
 apt::update() {
   sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
 }
