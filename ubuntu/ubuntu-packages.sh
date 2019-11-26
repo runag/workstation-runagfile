@@ -20,6 +20,8 @@ ubuntu::install-packages() {
   apt::perhaps-install-mbpfan || fail
   apt::dist-upgrade || fail
 
+  # Basic tools, contains curl so it have to be first
+  apt::install-basic-tools || fail
 
   # Additional sources
   apt::add-yarn-source || fail
@@ -31,15 +33,12 @@ ubuntu::install-packages() {
   fi
   apt::update || fail
 
-
   # Command-line tools
-  apt::install-basic-tools || fail
   apt::install-ruby-and-devtools || fail
   apt::install yarn nodejs || fail
   apt::install hwloc || fail
   apt::install tor || fail
   sudo snap install bw || fail
-
 
   # Editors
   vscode::snap::install || fail
