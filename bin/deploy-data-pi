@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,76 +19,14 @@ set -o nounset
 
 . deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
 . config.sh || fail "Unable to load config.sh"
-. data-pi/data-pi-lib.sh || fail
-. ubuntu/ubuntu-lib.sh || fail
-. ubuntu/ubuntu-packages.sh || fail
-# . netdata/netdata-lib.sh || fail
 
-ubuntu::deploy-data-pi::as-root() {
-  # System configuration
-  ubuntu::set-inotify-max-user-watches || fail
-  ubuntu::set-hostname "${DATA_PI_HOSTNAME}" || fail
-  ubuntu::set-timezone UTC || fail
-  ubuntu::set-locale en_US.UTF-8 || fail
+. data-pi/data-pi-lib.sh || fail "Unable to load data-pi/data-pi-lib.sh"
+. netdata/netdata-lib.sh || fail "Unable to load netdata/netdata-lib.sh"
+. ubuntu/ubuntu-lib.sh || fail "Unable to load ubuntu/ubuntu-lib.sh"
+. ubuntu/ubuntu-packages.sh || fail "Unable to load ubuntu/ubuntu-packages.sh"
 
-  # Update the system
-  apt::update || fail
-  apt::dist-upgrade || fail
-
-  # Add repositories
-  data-pi::apt::add-ubuntu-raspi2-ppa || fail
-
-  # Install packages
-  apt::install-basic-tools || fail
-  apt::install-tor || fail
-  
-  # error: snap "bw" is not available on stable for this architecture (armhf) but exists on other architectures (amd64).
-  # snap::install-bitwarden-cli || fail
-  
-  data-pi::apt::install-packages || fail
-
-  # Netdata
-  # netdata::install || fail
-  # netdata::configure || fail
-
-  # apt::install-syncthing || fail
-  # systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
-
-  # Cleanup
-  apt::autoremove || fail
-
-  # Install visual stuff
-  data-pi::install-motd || fail
-  data-pi::install-led-heartbeat || fail
-}
-
-
-ubuntu::deploy-data-pi::as-user() {
-  # Shell aliases
-  deploy-lib::install-shellrcd || fail
-  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
-}
-
-ubuntu::deploy-data-pi::backup() {
-  ubuntu::install-senotrusov-backup-script || fail
-
-  backup-script install data-pi/backup-configs/backup-data-pi || fail
-  backup-data-pi init || fail
-
-  backup-script install data-pi/backup-configs/backup-polina-files || fail
-  backup-polina-files init || fail
-}
-
-ubuntu::deploy-data-pi() {
-  data-pi::ensure-this-is-raspberry-pi || fail
-
-  sudo bash -c "set -o xtrace; set -o nounset; $(declare -f); . config.sh || fail; ubuntu::deploy-data-pi::as-root" || fail "Unable to execute ubuntu::deploy-data-pi::as-root ($?)"
-
-  ubuntu::deploy-data-pi::as-user || fail
-
-  ubuntu::deploy-data-pi::backup || fail
-
-  echo "ubuntu::deploy-data-pi completed"
-}
+if [ -n "${1:-}" ]; then
+  declare -f "$1" >/dev/null || fail "Argument must be a function name: $1"
+fi
 
 "${1:-ubuntu::deploy-data-pi}" "${@:2}" || fail

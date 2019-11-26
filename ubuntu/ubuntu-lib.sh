@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +14,106 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::bare-metal() {
+ubuntu::deploy-workstation() {
+  deploy-lib::footnotes::init || fail
+
+  sway::determine-conditional-install-flag || fail
+  ubuntu::detect-lean-workstation || fail
+
+  sudo --preserve-env="DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE,DEPLOY_FOOTNOTES,DEPLOY_SWAY,DEPLOY_LEAN_WORKSTATION" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
+
+  ubuntu::deploy-workstation::as-user || fail
+
+  if [ -x /usr/lib/update-notifier/update-motd-reboot-required ]; then
+    /usr/lib/update-notifier/update-motd-reboot-required >> "${DEPLOY_FOOTNOTES}" || fail
+  fi
+
+  deploy-lib::footnotes::flush || fail
+
+  echo "ubuntu::deploy-workstation completed"
+}
+
+ubuntu::deploy-workstation::as-root() {
+  if [ -n "${VERBOSE:-}" ]; then
+    set -o xtrace
+  fi
+
+  # Install packages
+  ubuntu::install-packages || fail
+
+  # Set inotify-max-user-watches
+  ubuntu::set-inotify-max-user-watches || fail
+
+  # Compile git credential libsecret
+  ubuntu::compile-git-credential-libsecret || fail
+
+  # Enable syncthing
+  if ubuntu::is-bare-metal; then
+    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+  fi
+
+  # Add hgfs automount if needed
+  ubuntu::perhaps-add-hgfs-automount || fail
+
+  # Setup gnome keyring to load for text consoles
+  ubuntu::setup-gnome-keyring-pam || fail
+
+  # Fix screen tearing
+  ubuntu::perhaps-fix-nvidia-screen-tearing || fail
+}
+
+ubuntu::deploy-workstation::as-user() {
+  # Desktop configuration
+  ubuntu::configure-desktop-apps || fail
+
+  # Remove user dirs
+  ubuntu::remove-user-dirs || fail
+
+  # symlink hgfs mounts
+  ubuntu::symlink-hgfs-mounts || fail
+
+  # IMWhell for GNOME and XFCE
+  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    ubuntu::setup-imwhell || fail
+  fi
+
+  # XFCE-specific
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    ubuntu::setup-super-key-to-xfce-menu-workaround || fail
+  fi
+
+  # Shell aliases
+  deploy-lib::install-shellrcd || fail
+  deploy-lib::install-shellrcd::use-nano-editor || fail
+  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+  ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
+  data-pi::install-shellrcd::shell-aliases || fail
+
+  # Editors
+  vscode::install-config || fail
+  vscode::install-extensions || fail
+  sublime::install-config || fail
+
+  # SSH keys
+  deploy-lib::install-ssh-keys || fail
+  ubuntu::add-ssh-key-password-to-keyring || fail
+
+  # Git
+  deploy-lib::configure-git || fail
+  ubuntu::add-git-credentials-to-keyring || fail
+
+  # Gnome extensions
+  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+
+  # Install sway
+  if [ -n "${DEPLOY_SWAY:-}" ]; then
+    sway::install || fail
+    sway::install-config || fail
+    sway::install-shellrcd || fail
+  fi
+}
+
+ubuntu::is-bare-metal() {
   # "hostnamectl status" could also be used to detect that we are running insde the vm
   if grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
     return 1
@@ -80,9 +179,21 @@ ubuntu::fix-nvidia-gpu-background-image-glitch() {
   sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
 }
 
+ubuntu::perhaps-fix-nvidia-screen-tearing() {
+  # based on https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
+  local modprobeFile="/etc/modprobe.d/zz-nvidia-modeset.conf"
+  if lspci | grep --quiet "VGA.*NVIDIA Corporation"; then
+    if [ ! -f "${modprobeFile}" ]; then
+      echo "options nvidia_drm modeset=1" | sudo tee "${modprobeFile}"
+      sudo update-initramfs -u
+      deploy-lib::footnotes::add "Please reboot to activate screen tearing fix (ubuntu::perhaps-fix-nvidia-screen-tearing)" || fail
+    fi
+  fi
+}
+
 ubuntu::configure-desktop-apps() {
   # use dconf-editor to find key/value pairs
-  # I don't use dbus-launch here because it will introduce side-effect for ubuntu::configure-git and ubuntu::install-ssh-keys
+  # I don't use dbus-launch here because it will introduce side-effect for ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
@@ -152,7 +263,7 @@ ubuntu::configure-desktop-apps() {
   fi
 }
 
-ubuntu::install-ssh-keys() {
+ubuntu::add-ssh-key-password-to-keyring() {
   # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
   # the login keyring is also available and already initialized properly
   # I don't know yet how to check for login keyring specifically 
@@ -168,13 +279,14 @@ ubuntu::install-ssh-keys() {
   fi
 }
 
-ubuntu::compile-git-credential-libsecret() {
+ubuntu::compile-git-credential-libsecret() (
   if [ ! -f /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret ]; then
-    (cd /usr/share/doc/git/contrib/credential/libsecret || fail; sudo make || fail; ) || fail "Unable to compile libsecret"
+    cd /usr/share/doc/git/contrib/credential/libsecret || fail
+    sudo make || fail "Unable to compile libsecret"
   fi
-}
+)
 
-ubuntu::configure-git() {
+ubuntu::add-git-credentials-to-keyring() {
   # There is an indirection here. I assume that if there is a DBUS_SESSION_BUS_ADDRESS available then 
   # the login keyring is also available and already initialized properly
   # I don't know yet how to check for login keyring specifically 
@@ -262,11 +374,12 @@ ubuntu::symlink-hgfs-mounts() {
 }
 
 ubuntu::setup-imwhell() {
+  local repetitions="2"
   local outputFile="${HOME}/.imwheelrc"
   tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
 ".*"
-None,      Up,   Button4, 3
-None,      Down, Button5, 3
+None,      Up,   Button4, ${repetitions}
+None,      Down, Button5, ${repetitions}
 Control_L, Up,   Control_L|Button4
 Control_L, Down, Control_L|Button5
 Shift_L,   Up,   Shift_L|Button4
@@ -295,7 +408,7 @@ SHELL
   /usr/bin/imwheel --kill
 }
 
-# requires xcape, it is installed by apt::install-xfce-related-packages
+# requires xcape
 ubuntu::setup-super-key-to-xfce-menu-workaround() {
   # Alternatives:
   #   https://github.com/hanschen/ksuperkey

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ sublime::install-config() {
   sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
   sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "Sublime Text 3 license" "${configDirectory}/Local/License.sublime_license" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${configDirectory}/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {

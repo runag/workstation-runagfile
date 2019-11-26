@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,6 +13,83 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+ubuntu::deploy-data-pi() {
+  data-pi::ensure-this-is-raspberry-pi || fail
+
+  sudo bash -c "set -o xtrace; set -o nounset; $(declare -f); . config.sh || fail; ubuntu::deploy-data-pi::as-root" || fail "Unable to execute ubuntu::deploy-data-pi::as-root ($?)"
+
+  ubuntu::deploy-data-pi::as-user || fail
+
+  echo "ubuntu::deploy-data-pi completed"
+}
+
+ubuntu::deploy-data-pi::as-root() {
+  # System configuration
+  ubuntu::set-inotify-max-user-watches || fail
+  ubuntu::set-hostname "${DATA_PI_HOSTNAME}" || fail
+  ubuntu::set-timezone UTC || fail
+  ubuntu::set-locale en_US.UTF-8 || fail
+
+  # Install packages
+  data-pi::install-packages || fail
+
+  # Enable syncthing
+  # systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+
+  # Install visual stuff
+  data-pi::install-motd || fail
+  data-pi::install-led-heartbeat || fail
+}
+
+ubuntu::deploy-data-pi::as-user() {
+  # Shell aliases
+  deploy-lib::install-shellrcd || fail
+  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+
+  # Backup script
+  ubuntu::install-senotrusov-backup-script || fail
+
+  backup-script install data-pi/backup-configs/backup-data-pi || fail
+  backup-data-pi init || fail
+
+  backup-script install data-pi/backup-configs/backup-polina-files || fail
+  backup-polina-files init || fail
+}
+
+data-pi::install-packages() {
+  # Update the system
+  apt::update || fail
+  apt::dist-upgrade || fail
+
+  # Add repositories
+  data-pi::apt::add-ubuntu-raspi2-ppa || fail
+
+  # Install packages
+  apt::install-basic-tools || fail
+  apt::install tor || fail
+  
+  # snap "bw" is not available on stable for this architecture (armhf)
+  # sudo snap install bw || fail
+  
+  # Netdata
+  # netdata::install || fail
+  # netdata::configure || fail
+
+  # apt::install syncthing || fail
+
+  sudo apt-get install -o Acquire::ForceIPv4=true -y \
+    smartmontools \
+    libraspberrypi-bin \
+    avahi-daemon || fail "Unable to apt-get install ($?)"
+
+  # Cleanup
+  apt::autoremove || fail
+}
+
+data-pi::apt::add-ubuntu-raspi2-ppa() {
+  sudo add-apt-repository --yes ppa:ubuntu-raspi2/ppa || fail "Unable to add-apt-repository ppa:ubuntu-raspi2/ppa ($?)"
+}
 
 data-pi::ensure-this-is-raspberry-pi() {
   if [ "$(dpkg --print-architecture)" !=  armhf ]; then
@@ -69,15 +146,4 @@ data-pi::install-led-heartbeat() {
   sudo systemctl daemon-reload || fail "Unable to systemctl daemon-reload ($?)"
   sudo systemctl reenable led-heartbeat.service || fail "Unable to systemctl reenable led-heartbeat.service ($?)"
   sudo systemctl start led-heartbeat.service || fail "Unable to systemctl start led-heartbeat.service ($?)"
-}
-
-data-pi::apt::add-ubuntu-raspi2-ppa() {
-  sudo add-apt-repository --yes ppa:ubuntu-raspi2/ppa || fail "Unable to add-apt-repository ppa:ubuntu-raspi2/ppa ($?)"
-}
-
-data-pi::apt::install-packages() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    smartmontools \
-    libraspberrypi-bin \
-    avahi-daemon || fail "Unable to apt-get install ($?)"
 }

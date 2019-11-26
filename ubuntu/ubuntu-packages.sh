@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +14,134 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# system
+ubuntu::install-packages() {
+  # Update the system
+  apt::update || fail
+  apt::perhaps-install-mbpfan || fail
+  apt::dist-upgrade || fail
+
+
+  # Additional sources
+  apt::add-yarn-source || fail
+  apt::add-nodejs-source || fail
+  sublime::apt::add-sublime-source || fail
+  if ubuntu::is-bare-metal; then
+    apt::add-syncthing-source || fail
+    apt::add-obs-studio-source || fail
+  fi
+  apt::update || fail
+
+
+  # Command-line tools
+  apt::install-basic-tools || fail
+  apt::install-ruby-and-devtools || fail
+  apt::install yarn nodejs || fail
+  apt::install hwloc || fail
+  apt::install tor || fail
+  sudo snap install bw || fail
+
+
+  # Editors
+  vscode::snap::install || fail
+  sublime::apt::install-sublime-merge || fail
+  sublime::apt::install-sublime-text || fail
+  apt::install meld || fail # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff.
+
+  # Chromium
+  sudo snap install chromium || fail "Unable to snap install ($?)"
+
+
+  # Extra stuff for bare metal workstation
+  if ubuntu::is-bare-metal; then
+    apt::install syncthing || fail
+
+    sudo snap install bitwarden || fail
+    sudo snap install discord || fail
+    sudo snap install skype --classic || fail
+    sudo snap install telegram-desktop || fail
+
+    if ! command -v libreoffice >/dev/null; then
+      sudo snap install libreoffice || fail
+    fi
+
+    apt::install ffmpeg || fail
+    apt::install obs-studio guvcview || fail
+  fi
+
+
+  # Misc tools for workstation
+
+  # dconf
+  apt::install-dconf || fail
+
+  # gsettings
+  apt::install libglib2.0-bin || fail
+
+  # https://wiki.gnome.org/Projects/Libsecret
+  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
+
+  # I no longer use dbus-launch because because it will introduce side-effect for ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
+  # apt::install dbus-x11 || fail
+
+  # open-vm-tools
+  apt::perhaps-install-open-vm-tools-desktop || fail
+
+  # for corecoding-vitals-gnome-shell-extension
+  apt::install gir1.2-gtop-2.0 lm-sensors || fail
+
+  # IMWhell for GNOME and XFCE
+  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    apt::install imwheel || fail
+  fi
+
+  # xcape for XFCE
+  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
+    apt::install xcape || fail
+  fi
+
+
+  # Cleanup
+  apt::autoremove || fail
+}
+
+apt::install-basic-tools() {
+  apt::install \
+    curl \
+    git \
+    jq \
+    mc ranger ncdu \
+    htop \
+    p7zip-full \
+    tmux \
+    sysbench \
+    hwloc-nox \
+      || fail
+}
+
+apt::install-ruby-and-devtools() {
+  apt::install \
+    apache2-utils \
+    autoconf bison libncurses-dev libffi-dev libgdbm-dev \
+    awscli \
+    build-essential libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
+    graphviz \
+    imagemagick ghostscript libgs-dev \
+    inotify-tools \
+    memcached \
+    postgresql libpq-dev postgresql-contrib python-psycopg2 \
+    python-pip \
+    redis-server \
+    ruby-full \
+    shellcheck \
+    sqlite3 libsqlite3-dev \
+      || fail
+
+  # sudo gem install rake solargraph || fail "Unable to install gems"
+  # sudo gem update --system || fail "Unable to execute gem update --system"
+  # sudo gem update || fail "Unable to update gems"
+}
+
+# apt
 
 apt::update() {
   sudo apt-get -o Acquire::ForceIPv4=true update || fail "Unable to apt-get update ($?)"
@@ -22,6 +149,10 @@ apt::update() {
 
 apt::dist-upgrade() {
   sudo apt-get -o Acquire::ForceIPv4=true -y dist-upgrade || fail "Unable to apt-get dist-upgrade ($?)"
+}
+
+apt::install() {
+  sudo apt-get install -o Acquire::ForceIPv4=true -y "$@" || fail "Unable to apt-get install $* ($?)"
 }
 
 apt::autoremove() {
@@ -40,8 +171,6 @@ apt::add-key-and-source() {
   echo "${sourceString}" | sudo tee "${sourceFile}" || fail "Unable to write apt source into the ${sourceFile}"
 }
 
-# javascript
-
 apt::add-nodejs-source() {
   # Please use only even-numbered nodejs releases here, they are LTS
   curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
@@ -52,162 +181,34 @@ apt::add-yarn-source() {
   apt::add-key-and-source "https://dl.yarnpkg.com/debian/pubkey.gpg" "deb https://dl.yarnpkg.com/debian/ stable main" "yarn" || fail "Unable to add yarn apt source"
 }
 
-apt::install-nodejs-and-yarn() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    yarn \
-    nodejs \
-      || fail "Unable to apt-get install ($?)"
-}
-
-# syncthing
-
 apt::add-syncthing-source() {
   # following https://apt.syncthing.net/
   apt::add-key-and-source "https://syncthing.net/release-key.txt" "deb https://apt.syncthing.net/ syncthing stable" "syncthing" || fail "Unable to add syncthing apt source"
 }
 
-apt::install-syncthing() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    syncthing \
-      || fail "Unable to apt-get install ($?)"
+apt::add-obs-studio-source() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
 }
-
-# packages that sometimes needed, sometimes not
 
 apt::perhaps-install-mbpfan() {
   if sudo dmidecode --string baseboard-version | grep --quiet "MacBookAir5\\,2"; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      mbpfan \
-        || fail "Unable to apt-get install ($?)"
+    apt::install mbpfan || fail
   fi 
-}
-
-apt::install-imwhell() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    imwheel \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-xfce-related-packages() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    xcape \
-      || fail "Unable to apt-get install ($?)"
 }
 
 apt::perhaps-install-open-vm-tools-desktop() {
   if sudo dmidecode -t system | grep --quiet "Product\\ Name\\:\\ VMware\\ Virtual\\ Platform"; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      open-vm-tools \
-      open-vm-tools-desktop \
-        || fail "Unable to apt-get install ($?)"
+    apt::install open-vm-tools open-vm-tools-desktop
   fi
-}
-
-apt::install-tor() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    tor \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-ffmpeg() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    ffmpeg \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-obs-studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail "Unable to add-apt-repository ppa:obsproject/obs-studio ($?)"
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    obs-studio \
-    guvcview \
-      || fail "Unable to apt-get install ($?)"
-}
-
-# packages that are really good to have
-
-apt::install-basic-tools() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    curl \
-    git \
-    jq \
-    mc ranger ncdu \
-    htop \
-    p7zip-full \
-    tmux \
-    sysbench \
-    hwloc-nox \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-ruby-and-devtools() {
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    apache2-utils \
-    autoconf bison libncurses-dev libffi-dev libgdbm-dev \
-    awscli \
-    build-essential libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
-    graphviz \
-    imagemagick ghostscript libgs-dev \
-    inotify-tools \
-    memcached \
-    postgresql libpq-dev postgresql-contrib python-psycopg2 \
-    python-pip \
-    redis-server \
-    ruby-full \
-    shellcheck \
-    sqlite3 libsqlite3-dev \
-      || fail "Unable to apt-get install ($?)"
-
-  # sudo gem install rake solargraph || fail "Unable to install gems"
-  # sudo gem update --system || fail "Unable to execute gem update --system"
-  # sudo gem update || fail "Unable to update gems"
-}
-
-apt::install-workstation-tools() {
-  # https://wiki.gnome.org/Projects/Libsecret
-  # libglib2.0-bin - gsettings
-  # dbus-x11 - dbus-launch
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    libsecret-tools libsecret-1-0 libsecret-1-dev \
-    gnome-keyring dbus-x11 libglib2.0-bin \
-    hwloc \
-    gir1.2-gtop-2.0 lm-sensors \
-      || fail "Unable to apt-get install ($?)"
-}
-
-apt::install-meld() {
-  # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff.
-  sudo apt-get install -o Acquire::ForceIPv4=true -y \
-    meld \
-      || fail "Unable to apt-get install ($?)"
 }
 
 apt::install-dconf() {
   # dconf-tools for ubuntu earlier than 19.04
   if [ "$(apt-cache search --names-only dconf-tools | wc -l)" = "0" ]; then
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-cli dconf-editor || fail "Unable to apt-get install ($?)"
+    apt::install dconf-cli dconf-editor || fail
   else
-    sudo apt-get install -o Acquire::ForceIPv4=true -y \
-      dconf-tools || fail "Unable to apt-get install ($?)"
+    apt::install dconf-tools || fail
   fi
-}
-
-snap::install-bitwarden-cli() {
-  sudo snap install bw || fail "Unable to snap install ($?)"
-}
-
-snap::install-workstation-tools() {
-  sudo snap install chromium || fail "Unable to snap install ($?)"
-}
-
-snap::install-productivity-workstation-tools() {
-  sudo snap install bitwarden || fail "Unable to snap install ($?)"
-  sudo snap install discord || fail "Unable to snap install ($?)"
-  if ! command -v libreoffice >/dev/null; then
-    sudo snap install libreoffice || fail "Unable to snap install ($?)"
-  fi
-  sudo snap install skype --classic || fail "Unable to snap install ($?)"
-  sudo snap install telegram-desktop || fail "Unable to snap install ($?)"
 }
 
 ubuntu::install-senotrusov-backup-script() (

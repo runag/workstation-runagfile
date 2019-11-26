@@ -105,23 +105,8 @@ sudo apt install psensor
 
 Just use nvidia proprietary driver + xorg
 
-
-### Laptop screen tearing
-> from https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
-
-```sh
-sudo nano /etc/modprobe.d/zz-nvidia-modeset.conf
-
-# add
-options nvidia_drm modeset=1
-
-sudo update-initramfs -u
-```
-
-
 ### My desktop NVIDIA 1060 card
 Install nvidia driver bacause nouvae can't controll the FAN
-
 
 
 ## My encrypted disks
@@ -144,18 +129,6 @@ echo "/dev/disk/by-uuid/51328ad9-023e-4d5b-8000-259a2fb9a042 /home/stan/bortus a
 echo "/dev/disk/by-uuid/9b900fbd-1435-4582-b3b0-e19f33782bb0 /home/stan/yaphit auto nosuid,nodev,nofail,x-gvfs-show 0 0" | sudo tee -a /etc/fstab
 
 sudo mount -a
-```
-
-## Desktop mouse
-> from https://askubuntu.com/questions/1067062/change-mouse-speed-on-ubuntu-18-04
-
-```sh
-xinput --list-props 'ASUS ROG SICA' | grep 'libinput Accel Speed ('
-xinput --set-prop 'ASUS ROG SICA' 'libinput Accel Speed' -0.7
-
-for (( ; ; )); do xinput --list-props 'ASUS ROG SICA' | grep 'libinput Accel Speed ('; done
-# get it close to -0.7
-# -0.699640
 ```
 
 ## Web cameras
@@ -183,7 +156,7 @@ sudo nano /etc/fstab
 
 ## Grub
 ```sh
-sudo nano /etc/defaults/grub
+sudo nano /etc/default/grub
 # change the following:
 # GRUB_TIMEOUT=1
 sudo update-grub
@@ -255,11 +228,6 @@ sudo systemctl start pgadmin4.service
 * Add server
   * localhost
   * /home/stan/.pgpass
-
-## Dropbox
-```sh
-sudo apt install python3-gpg
-```
 
 ## GPG
 ```sh

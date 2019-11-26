@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,44 +14,54 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o nounset && if ! command -v sysbench >/dev/null; then sudo apt install -y sysbench || { echo "Unable to install sysbench" >&2; exit 1; } ; fi && \
-(cd ~ && \
-\
-echo "### CPU ###" && \
-sysbench cpu run && \
-\
-echo "### THREADS ###" && \
-sysbench threads run && \
-\
-echo "### RAM ###" && \
-sysbench memory run --memory-block-size=4096 && \
-\
-sysbench fileio prepare --file-extra-flags=direct && \
-\
-echo "### SEQUENTIAL READ ###" && \
-sysbench fileio run --file-test-mode=seqrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off && \
-\
-echo "### RANDOM READ ###" && \
-sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off && \
-\
-echo "### RANDOM READ QD32 ###" && \
-sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off --file-io-mode=async --file-async-backlog=32 && \
-\
-echo "### SEQUENTIAL WRITE FSYNC EVERY 100 REQ ###" && \
-sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct && \
-\
-echo "### RANDOM WRITE FSYNC EVERY 100 REQ ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct && \
-\
-echo "### SEQUENTIAL WRITE NOSYNC ###" && \
-sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on && \
-\
-echo "### RANDOM WRITE NOSYNC ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on && \
-\
-echo "### RANDOM WRITE NOSYNC QD32 ###" && \
-sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on --file-io-mode=async --file-async-backlog=32 && \
-\
-sysbench fileio cleanup \
-\
-) | tee "${HOME}/$(hostname) $(date +"%Y-%m-%d %H-%M-%S") - benchmark.txt"
+set -o nounset
+
+. deploy-lib.sh || { echo "Unable to load deploy-lib.sh" >&2; exit 1; }
+
+if ! command -v sysbench >/dev/null; then
+  sudo apt install -y sysbench || fail "Unable to install sysbench"
+fi
+
+run-benchmark() (
+  cd "${HOME}" || fail
+
+  echo "### CPU SPEED ###"
+  sysbench cpu run || fail
+  
+  echo "### THREADS ###"
+  sysbench threads run || fail
+  
+  echo "### RAM WRITE, 4KiB BLOCKS ###"
+  sysbench memory run --memory-block-size=4096 || fail
+  
+  sysbench fileio prepare --file-extra-flags=direct || fail
+  
+  echo "### SEQUENTIAL READ ###"
+  sysbench fileio run --file-test-mode=seqrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off || fail
+  
+  echo "### RANDOM READ QD1 ###"
+  sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off || fail
+  
+  echo "### RANDOM READ QD32 ###"
+  sysbench fileio run --file-test-mode=rndrd --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=off --file-io-mode=async --file-async-backlog=32 || fail
+
+  echo "### RANDOM WRITE FSYNC EVERY 100 REQ QD1 ###"
+  sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct || fail
+  
+  echo "### RANDOM WRITE NOSYNC QD1 ###"
+  sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on || fail
+  
+  echo "### RANDOM WRITE NOSYNC QD32 ###"
+  sysbench fileio run --file-test-mode=rndwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on --file-io-mode=async --file-async-backlog=32 || fail
+
+  # this should be final tests as they truncate files  
+  echo "### SEQUENTIAL WRITE FSYNC EVERY 100 REQ ###"
+  sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct || fail
+
+  echo "### SEQUENTIAL WRITE NOSYNC ###"
+  sysbench fileio run --file-test-mode=seqwr --file-block-size=4096 --file-extra-flags=direct --file-fsync-freq=0 --file-fsync-end=on || fail
+
+  sysbench fileio cleanup || fail
+)
+
+run-benchmark | tee "${HOME}/$(hostname) $(date +"%Y-%m-%d %H-%M-%S") - benchmark.txt"

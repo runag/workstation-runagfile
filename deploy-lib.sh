@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2016 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -312,7 +312,6 @@ deploy-lib::configure-git() {
   git config --global user.email "${GIT_USER_EMAIL}" || fail
 }
 
-
 deploy-lib::install-shellrcd() {
   if [ ! -d "${HOME}/.shellrc.d" ]; then
     mkdir -p "${HOME}/.shellrc.d" || fail "Unable to create the directory: ${HOME}/.shellrc.d"
@@ -356,7 +355,9 @@ SHELL
 
 deploy-lib::install-shellrcd::use-nano-editor() {
   local output="${HOME}/.shellrc.d/use-nano-editor.sh"
+  local nanoPath; nanoPath="$(command -v nano)" || fail
+
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-  export EDITOR="$(which nano)"
+  export EDITOR="${nanoPath}"
 SHELL
 }
