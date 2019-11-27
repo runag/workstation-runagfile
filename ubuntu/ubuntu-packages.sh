@@ -169,8 +169,9 @@ apt::add-key-and-source() {
 
 apt::add-nodejs-source() {
   # Please use only even-numbered nodejs releases here, they are LTS
-  curl --location --fail --silent --show-error https://deb.nodesource.com/setup_10.x | sudo -E bash -
-  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl https://deb.nodesource.com/setup_10.x | bash"
+  local nodejsInstallerUrl="https://deb.nodesource.com/setup_12.x"
+  curl --location --fail --silent --show-error "${nodejsInstallerUrl}" | sudo -E bash -
+  test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to curl ${nodejsInstallerUrl} | bash"
 }
 
 apt::add-yarn-source() {
