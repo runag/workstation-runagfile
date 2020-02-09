@@ -98,8 +98,11 @@ macos::install-basic-packages() {
   brew cask install discord || fail
   brew cask install libreoffice || fail
   brew cask install skype || fail
-  brew cask install telegram || fail
   brew cask install the-unarchiver || fail
+  brew cask install grandperspective || fail
+
+  # please install it from the app store, as direct sources may be blocked in some countries
+  # brew cask install telegram || fail
 
   # chromium
   brew cask install chromium || fail
@@ -137,6 +140,7 @@ macos::install-developer-packages() {
 
   # tor
   brew install tor || fail
+  brew services start tor || fail
 
   # ffmpeg
   brew install ffmpeg || fail
