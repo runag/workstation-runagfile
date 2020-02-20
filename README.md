@@ -97,7 +97,7 @@ The names should be as the following:
 
 * ``my current ssh private key``  
 * ``my current ssh public key``  
-* ``my current password for ssh private key``  
+* ``password for my current ssh private key``  
 * ``my github personal access token``  
 * ``sublime text 3 license``  
 * ``data-pi onion address``  

@@ -271,7 +271,7 @@ ubuntu::add-ssh-key-password-to-keyring() {
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     if ! secret-tool lookup unique "ssh-store:${HOME}/.ssh/id_rsa" >/dev/null; then
       deploy-lib::bitwarden::unlock || fail
-      bw get password "my current password for ssh private key" \
+      bw get password "password for my current ssh private key" \
         | secret-tool store --label="Unlock password for: ${HOME}/.ssh/id_rsa" unique "ssh-store:${HOME}/.ssh/id_rsa"
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
     fi
