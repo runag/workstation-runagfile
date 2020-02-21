@@ -14,22 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-macos::increase-maxfiles-limit() {
-  # based on https://unix.stackexchange.com/questions/108174/how-to-persistently-control-maximum-system-resource-consumption-on-mac
-
-  local dst="/Library/LaunchDaemons/limit.maxfiles.plist"
-
-  if [ ! -f "${dst}" ]; then
-    sudo cp macos/limit.maxfiles.plist "${dst}" || fail "Unable to copy to $dst ($?)"
-
-    sudo chmod 0644 "${dst}" || fail "Unable to chmod ${dst} ($?)"
-
-    sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} ($?)"
-
-    deploy-lib::footnotes::add "increase-maxfiles-limit: Please reboot your computer" || fail
-  fi
-}
-
 macos::deploy-workstation() {
   # init footnotes
   deploy-lib::footnotes::init || fail
@@ -71,7 +55,23 @@ macos::deploy-workstation() {
   echo "macos::deploy-workstation completed"
 }
 
-homebrew::install-homebrew() {
+macos::increase-maxfiles-limit() {
+  # based on https://unix.stackexchange.com/questions/108174/how-to-persistently-control-maximum-system-resource-consumption-on-mac
+
+  local dst="/Library/LaunchDaemons/limit.maxfiles.plist"
+
+  if [ ! -f "${dst}" ]; then
+    sudo cp macos/limit.maxfiles.plist "${dst}" || fail "Unable to copy to $dst ($?)"
+
+    sudo chmod 0644 "${dst}" || fail "Unable to chmod ${dst} ($?)"
+
+    sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} ($?)"
+
+    deploy-lib::footnotes::add "increase-maxfiles-limit: Please reboot your computer" || fail
+  fi
+}
+
+macos::install-homebrew() {
   if ! command -v brew >/dev/null; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null || fail "Unable to install homebrew"
   fi
@@ -79,7 +79,7 @@ homebrew::install-homebrew() {
 
 macos::install-basic-packages() {
   # install homebrew
-  homebrew::install-homebrew || fail
+  macos::install-homebrew || fail
 
   # update and upgrade homebrew
   brew update || fail
