@@ -1,47 +1,47 @@
 {
-  "animation_enabled": false,
-  "atomic_save": false,
-  "auto_close_tags": false,
-  "auto_complete": false,
-  "auto_match_enabled": false,
-  "close_windows_when_empty": false,
-  "color_scheme": "Monokai.sublime-color-scheme",
-  "default_line_ending": "unix",
-  "drag_text": false,
-  "ensure_newline_at_eof_on_save": true,
-  "font_size": 12,
-  "highlight_line": true,
-  "highlight_modified_tabs": true,
-  "ignored_packages":
-  [
-    "Vintage"
-  ],
-  "indent_guide_options":
-  [
-    "draw_active"
-  ],
-  "index_files": false,
-  "line_padding_bottom": 1,
-  "line_padding_top": 1,
-  "match_brackets": false,
-  "match_brackets_angle": false,
-  "match_brackets_braces": false,
-  "match_brackets_content": false,
-  "match_brackets_square": false,
-  "match_tags": false,
-  "open_files_in_new_window": false,
-  "rulers":
-  [
-    120
-  ],
-  "shift_tab_unindent": true,
-  "show_encoding": true,
-  "show_full_path": true,
-  "spell_check": false,
-  "spelling_selector": "markup.raw, source string.quoted - punctuation - meta.preprocessor.include - string.quoted.double.sass, source comment - source comment.block.preprocessor, -(source, constant, keyword, storage, support, variable, markup.underline.link, meta.tag, meta.attribute-with-value)",
-  "tab_completion": false,
-  "tab_size": 2,
-  "translate_tabs_to_spaces": true,
-  "tree_animation_enabled": false,
-  "trim_trailing_white_space_on_save": true
+	"animation_enabled": false,
+	"atomic_save": false,
+	"auto_close_tags": false,
+	"auto_complete": false,
+	"auto_match_enabled": false,
+	"close_windows_when_empty": false,
+	"color_scheme": "Monokai.sublime-color-scheme",
+	"default_line_ending": "unix",
+	"drag_text": false,
+	"ensure_newline_at_eof_on_save": true,
+	"font_size": 16,
+	"highlight_line": true,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"indent_guide_options":
+	[
+		"draw_active"
+	],
+	"index_files": false,
+	"line_padding_bottom": 1,
+	"line_padding_top": 1,
+	"match_brackets": false,
+	"match_brackets_angle": false,
+	"match_brackets_braces": false,
+	"match_brackets_content": false,
+	"match_brackets_square": false,
+	"match_tags": false,
+	"open_files_in_new_window": false,
+	"rulers":
+	[
+		120
+	],
+	"shift_tab_unindent": true,
+	"show_encoding": true,
+	"show_full_path": true,
+	"spell_check": false,
+	"spelling_selector": "markup.raw, source string.quoted - punctuation - meta.preprocessor.include - string.quoted.double.sass, source comment - source comment.block.preprocessor, -(source, constant, keyword, storage, support, variable, markup.underline.link, meta.tag, meta.attribute-with-value)",
+	"tab_completion": false,
+	"tab_size": 2,
+	"translate_tabs_to_spaces": true,
+	"tree_animation_enabled": false,
+	"trim_trailing_white_space_on_save": true
 }

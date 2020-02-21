@@ -36,6 +36,7 @@ macos::deploy-workstation() {
 
     # SSH keys
     deploy-lib::install-ssh-keys || fail
+    macos::add-use-keychain-to-ssh-config || fail
 
     # git
     deploy-lib::configure-git || fail
@@ -74,6 +75,26 @@ macos::increase-maxfiles-limit() {
 macos::install-homebrew() {
   if ! command -v brew >/dev/null; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null || fail "Unable to install homebrew"
+  fi
+}
+
+macos::add-use-keychain-to-ssh-config() {
+  local sshConfigFile="${HOME}/.ssh/config"
+
+  if [ ! -f "${sshConfigFile}" ]; then
+    touch "${sshConfigFile}" || fail
+  fi
+
+  if grep --quiet "^# Use keychain" "${sshConfigFile}"; then
+    echo "Use keychain config already present"
+  else
+tee -a "${sshConfigFile}" <<SHELL || fail "Unable to append to the file: ${sshConfigFile}"
+
+# Use keychain
+Host *
+  UseKeychain yes
+  AddKeysToAgent yes
+SHELL
   fi
 }
 

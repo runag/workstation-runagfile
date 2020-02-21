@@ -20,7 +20,7 @@
     "editor.parameterHints.enabled": false,
     "editor.suggestOnTriggerCharacters": false,
     "editor.wordBasedSuggestions": false,
-    "search.location": "sidebar",
     "editor.cursorSurroundingLines": 2,
-    "editor.smoothScrolling": true
+    "editor.smoothScrolling": true,
+    "editor.minimap.enabled": false
 }
