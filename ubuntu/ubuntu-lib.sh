@@ -356,7 +356,7 @@ ubuntu::perhaps-add-hgfs-automount() {
   # https://askubuntu.com/a/1051620
   # TODO: Do I really need x-systemd.device-timeout here? think it works well even without it.
   if hostnamectl status | grep --quiet "Virtualization\\:.*vmware"; then
-    if ! grep --quiet "fuse.vmhgfs-fuse" /etc/fstab; then
+    if ! grep --quiet --fixed-strings "fuse.vmhgfs-fuse" /etc/fstab; then
       echo ".host:/  /mnt/hgfs  fuse.vmhgfs-fuse  defaults,allow_other,uid=1000,nofail,x-systemd.device-timeout=3s  0  0" | sudo tee -a /etc/fstab || fail "Unable to write to /etc/fstab ($?)"
     fi
   fi
