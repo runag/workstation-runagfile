@@ -37,6 +37,7 @@ macos::deploy-workstation() {
     # SSH keys
     deploy-lib::install-ssh-keys || fail
     macos::add-use-keychain-to-ssh-config || fail
+    macos::add-ssh-key-password-to-keychain || fail
 
     # git
     deploy-lib::configure-git || fail
@@ -95,6 +96,15 @@ Host *
   UseKeychain yes
   AddKeysToAgent yes
 SHELL
+  fi
+}
+
+macos::add-ssh-key-password-to-keychain() {
+  if ! ssh-add -L | grep --quiet --fixed-strings "${HOME}/.ssh/id_rsa"; then
+    deploy-lib::bitwarden::unlock || fail
+    bw get password "password for my current ssh private key" \
+      | SSH_ASKPASS=bin/cat.sh DISPLAY=1 ssh-add -K "${HOME}/.ssh/id_rsa"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
   fi
 }
 
