@@ -43,52 +43,16 @@ deploy-lib::remove-dir-if-empty() {
   fi
 }
 
-deploy-lib::git::cd-to-temp-clone() {
-  local repoUrl="$1"
-  local branch="${2:-}"
-
-  local localCloneDir; localCloneDir="$(basename "$repoUrl")" || fail
-
-  local tempDir; tempDir="$(mktemp --dry-run --tmpdir="${HOME}" "${localCloneDir}-XXXXXX")" || fail "Unable to create temp file"
-
-  deploy-lib::git::make-repository-clone-available "${repoUrl}" "${tempDir}" "${branch}" || fail
-
-  cd "${tempDir}" || fail
-
-  export DEPLOY_LIB_GIT_TEMP_CLONE_DIR="${tempDir}" || fail
-}
-
-deploy-lib::git::remove-temp-clone() {
-  rm -rf "${DEPLOY_LIB_GIT_TEMP_CLONE_DIR}" || fail
-}
-
-deploy-lib::git::make-repository-clone-available() {
-  local repoUrl="$1"
-  local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
-  local branch="${3:-}"
-
-  deploy-lib::add-host-to-ssh-known-hosts bitbucket.org || fail
-  deploy-lib::add-host-to-ssh-known-hosts github.com || fail
-
-  if [ ! -d "${localCloneDir}" ]; then
-    git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
-  else
-    local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
-
-    if [ "${existingRepoUrl}" != "${repoUrl}" ]; then
-      rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
-      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
-    else
-      (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
-    fi
+deploy-lib::ssh::install-keys() {
+  if [ ! -d "${HOME}/.ssh" ]; then
+    mkdir -m 0700 "${HOME}/.ssh" || fail
   fi
-  
-  if [ -n "${branch}" ]; then
-    (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to pull from ${repoUrl}"
-  fi
+
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
+  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
 }
 
-deploy-lib::add-host-to-ssh-known-hosts() {
+deploy-lib::ssh::add-host-known-hosts() {
   local hostName="$1"
   local knownHosts="${HOME}/.ssh/known_hosts"
 
@@ -111,12 +75,12 @@ deploy-lib::add-host-to-ssh-known-hosts() {
   fi
 }
 
-deploy-lib::install-config() {
+deploy-lib::config::install() {
   src="$1"
   dst="$2"
 
   if [ -f "${dst}" ]; then
-    deploy-lib::merge-config "${src}" "${dst}" || fail
+    deploy-lib::config::merge "${src}" "${dst}" || fail
   else
     local currentUserId; currentUserId="$(id -u)" || fail
     local currentGroupId; currentGroupId="$(id -g)" || fail
@@ -133,7 +97,7 @@ deploy-lib::install-config() {
   fi
 }
 
-deploy-lib::merge-config() {
+deploy-lib::config::merge() {
   src="$1"
   dst="$2"
 
@@ -254,6 +218,56 @@ deploy-lib::footnotes::flush() {
   fi
 }
 
+deploy-lib::git::cd-to-temp-clone() {
+  local repoUrl="$1"
+  local branch="${2:-}"
+
+  local localCloneDir; localCloneDir="$(basename "$repoUrl")" || fail
+
+  local tempDir; tempDir="$(mktemp --dry-run --tmpdir="${HOME}" "${localCloneDir}-XXXXXX")" || fail "Unable to create temp file"
+
+  deploy-lib::git::make-repository-clone-available "${repoUrl}" "${tempDir}" "${branch}" || fail
+
+  cd "${tempDir}" || fail
+
+  export DEPLOY_LIB_GIT_TEMP_CLONE_DIR="${tempDir}" || fail
+}
+
+deploy-lib::git::remove-temp-clone() {
+  rm -rf "${DEPLOY_LIB_GIT_TEMP_CLONE_DIR}" || fail
+}
+
+deploy-lib::git::make-repository-clone-available() {
+  local repoUrl="$1"
+  local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
+  local branch="${3:-}"
+
+  deploy-lib::ssh::add-host-known-hosts bitbucket.org || fail
+  deploy-lib::ssh::add-host-known-hosts github.com || fail
+
+  if [ ! -d "${localCloneDir}" ]; then
+    git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+  else
+    local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
+
+    if [ "${existingRepoUrl}" != "${repoUrl}" ]; then
+      rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
+      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+    else
+      (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
+    fi
+  fi
+  
+  if [ -n "${branch}" ]; then
+    (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to pull from ${repoUrl}"
+  fi
+}
+
+deploy-lib::git::configure() {
+  git config --global user.name "${GIT_USER_NAME}" || fail
+  git config --global user.email "${GIT_USER_EMAIL}" || fail
+}
+
 deploy-lib::github::get-release-by-label() {
   local repoPath="$1"
   local label="$2"
@@ -296,30 +310,16 @@ deploy-lib::github::get-release() {
   echo "${tempFile}"
 }
 
-deploy-lib::install-ssh-keys() {
-  if [ ! -d "${HOME}/.ssh" ]; then
-    mkdir -m 0700 "${HOME}/.ssh" || fail
-  fi
-
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "my current ssh public key" "${HOME}/.ssh/id_rsa.pub" "077" || fail
-}
-
-deploy-lib::configure-git() {
-  git config --global user.name "${GIT_USER_NAME}" || fail
-  git config --global user.email "${GIT_USER_EMAIL}" || fail
-}
-
-deploy-lib::install-shellrcd() {
+deploy-lib::shellrcd::install() {
   if [ ! -d "${HOME}/.shellrc.d" ]; then
     mkdir -p "${HOME}/.shellrc.d" || fail "Unable to create the directory: ${HOME}/.shellrc.d"
   fi
 
-  deploy-lib::add-shellrcd-loader "${HOME}/.bashrc" || fail
-  deploy-lib::add-shellrcd-loader "${HOME}/.zshrc" || fail
+  deploy-lib::shellrcd::add-loader "${HOME}/.bashrc" || fail
+  deploy-lib::shellrcd::add-loader "${HOME}/.zshrc" || fail
 }
 
-deploy-lib::add-shellrcd-loader() {
+deploy-lib::shellrcd::add-loader() {
   local shellrcFile="$1"
 
   if [ ! -f "${shellrcFile}" ]; then
@@ -344,14 +344,14 @@ SHELL
   fi
 }
 
-deploy-lib::install-shellrcd::my-computer-deploy-shell-alias() {
+deploy-lib::shellrcd::my-computer-deploy-shell-alias() {
   local output="${HOME}/.shellrc.d/my-computer-deploy-shell-alias.sh"
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
     alias my-computer-deploy="${PWD}/bin/shell"
 SHELL
 }
 
-deploy-lib::install-shellrcd::use-nano-editor() {
+deploy-lib::shellrcd::use-nano-editor() {
   local output="${HOME}/.shellrc.d/use-nano-editor.sh"
   local nanoPath; nanoPath="$(command -v nano)" || fail
 

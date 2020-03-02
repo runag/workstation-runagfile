@@ -44,8 +44,8 @@ ubuntu::deploy-data-pi::as-root() {
 
 ubuntu::deploy-data-pi::as-user() {
   # Shell aliases
-  deploy-lib::install-shellrcd || fail
-  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+  deploy-lib::shellrcd::install || fail
+  deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
 
   # Backup script
   ubuntu::install-senotrusov-backup-script || fail

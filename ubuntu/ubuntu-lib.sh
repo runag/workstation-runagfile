@@ -83,9 +83,9 @@ ubuntu::deploy-workstation::as-user() {
   fi
 
   # Shell aliases
-  deploy-lib::install-shellrcd || fail
-  deploy-lib::install-shellrcd::use-nano-editor || fail
-  deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+  deploy-lib::shellrcd::install || fail
+  deploy-lib::shellrcd::use-nano-editor || fail
+  deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
   ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
   data-pi::install-shellrcd::shell-aliases || fail
 
@@ -95,11 +95,11 @@ ubuntu::deploy-workstation::as-user() {
   sublime::install-config || fail
 
   # SSH keys
-  deploy-lib::install-ssh-keys || fail
+  deploy-lib::ssh::install-keys || fail
   ubuntu::add-ssh-key-password-to-keyring || fail
 
   # Git
-  deploy-lib::configure-git || fail
+  deploy-lib::git::configure || fail
   ubuntu::add-git-credentials-to-keyring || fail
 
   # Gnome extensions

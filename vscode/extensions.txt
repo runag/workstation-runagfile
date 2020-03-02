@@ -2,6 +2,7 @@ castwide.solargraph
 coolbear.systemd-unit-file
 hjleochen.rails-nav
 kaiwood.endwise
+mads-hartmann.bash-ide-vscode
 ms-vscode-remote.remote-containers
 ms-vscode-remote.remote-ssh
 ms-vscode-remote.remote-ssh-edit

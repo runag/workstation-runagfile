@@ -29,18 +29,18 @@ macos::deploy-workstation() {
     macos::install-developer-packages || fail
 
     # shell aliases
-    deploy-lib::install-shellrcd || fail
-    deploy-lib::install-shellrcd::use-nano-editor || fail
-    deploy-lib::install-shellrcd::my-computer-deploy-shell-alias || fail
+    deploy-lib::shellrcd::install || fail
+    deploy-lib::shellrcd::use-nano-editor || fail
+    deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
     data-pi::install-shellrcd::shell-aliases || fail
 
     # SSH keys
-    deploy-lib::install-ssh-keys || fail
-    macos::add-use-keychain-to-ssh-config || fail
-    macos::add-ssh-key-password-to-keychain || fail
+    deploy-lib::ssh::install-keys || fail
+    macos::ssh::add-use-keychain-to-ssh-config || fail
+    macos::ssh::add-ssh-key-password-to-keychain || fail
 
     # git
-    deploy-lib::configure-git || fail
+    deploy-lib::git::configure || fail
 
     # vscode
     vscode::install-config || fail
@@ -79,7 +79,7 @@ macos::install-homebrew() {
   fi
 }
 
-macos::add-use-keychain-to-ssh-config() {
+macos::ssh::add-use-keychain-to-ssh-config() {
   local sshConfigFile="${HOME}/.ssh/config"
 
   if [ ! -f "${sshConfigFile}" ]; then
@@ -99,11 +99,14 @@ SHELL
   fi
 }
 
-macos::add-ssh-key-password-to-keychain() {
-  if ! ssh-add -L | grep --quiet --fixed-strings "${HOME}/.ssh/id_rsa"; then
+macos::ssh::add-ssh-key-password-to-keychain() {
+  local keyFile="${HOME}/.ssh/id_rsa"
+  if ssh-add -L | grep --quiet --fixed-strings "${keyFile}"; then
+    echo "${keyFile} is already in the keychain"
+  else
     deploy-lib::bitwarden::unlock || fail
     bw get password "password for my current ssh private key" \
-      | SSH_ASKPASS=bin/cat.sh DISPLAY=1 ssh-add -K "${HOME}/.ssh/id_rsa"
+      | SSH_ASKPASS=bin/cat.sh DISPLAY=1 ssh-add -K "${keyFile}"
     test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
   fi
 }

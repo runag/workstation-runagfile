@@ -47,7 +47,7 @@ vscode::install-extensions() {
 
 vscode::sync-merge-extensions-config() {
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  deploy-lib::install-config vscode/extensions.txt "${extensionsList}" || fail
+  deploy-lib::config::install vscode/extensions.txt "${extensionsList}" || fail
   rm "${extensionsList}" || fail
 }
 
@@ -58,8 +58,8 @@ vscode::install-config() {
     local configDirectory="${HOME}/.config/Code"
   fi
 
-  deploy-lib::install-config vscode/settings.json "${configDirectory}/User/settings.json" || fail
-  deploy-lib::install-config vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
+  deploy-lib::config::install vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::config::install vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
@@ -69,9 +69,9 @@ vscode::merge-config() {
     local configDirectory="${HOME}/.config/Code"
   fi
 
-  deploy-lib::merge-config vscode/settings.json "${configDirectory}/User/settings.json" || fail
-  deploy-lib::merge-config vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
+  deploy-lib::config::merge vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::config::merge vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  deploy-lib::merge-config vscode/extensions.txt "${extensionsList}" || fail
+  deploy-lib::config::merge vscode/extensions.txt "${extensionsList}" || fail
 }

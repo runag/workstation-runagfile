@@ -148,11 +148,11 @@ sway::install() {
 }
 
 sway::install-config() {
-  deploy-lib::install-config sway/config "${HOME}/.config/sway/config" || fail
+  deploy-lib::config::install sway/config "${HOME}/.config/sway/config" || fail
 }
 
 sway::merge-config() {
-  deploy-lib::merge-config sway/config "${HOME}/.config/sway/config" || fail
+  deploy-lib::config::merge sway/config "${HOME}/.config/sway/config" || fail
 }
 
 sway::install-shellrcd() {
