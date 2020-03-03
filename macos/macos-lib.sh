@@ -194,4 +194,10 @@ macos::install-developer-packages() {
   
   # vscode
   brew cask install visual-studio-code || fail
+
+  # vscode
+  brew cask install iterm2 || fail
+
+  # linode-cli
+  pip3 install linode-cli --upgrade || fail
 }
