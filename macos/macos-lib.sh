@@ -27,6 +27,7 @@ macos::deploy-workstation() {
   if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
     # developer packages
     macos::install-developer-packages || fail
+    macos::shellrcd::homebrew-ruby || fail
 
     # shell aliases
     deploy-lib::shellrcd::install || fail
@@ -159,6 +160,7 @@ macos::install-developer-packages() {
   brew install p7zip || fail
   brew install sysbench || fail
   brew install hwloc || fail
+  brew install tmux || fail
 
   # dev tools
   brew install awscli || fail
@@ -200,4 +202,18 @@ macos::install-developer-packages() {
 
   # linode-cli
   pip3 install linode-cli --upgrade || fail
+
+  # direnv
+  brew install direnv || fail
+}
+
+macos::shellrcd::homebrew-ruby() {
+  local output="${HOME}/.shellrc.d/homebrew-ruby.sh"
+  local gemsPath; gemsPath="$(brew info ruby | grep -F "ruby/gems" | sed -e 's/^[[:space:]]*//')" || fail "Unable to get gemsPath"
+
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    export PATH="${gemsPath}:/usr/local/opt/ruby/bin:$PATH"
+    export LDFLAGS="-L/usr/local/opt/ruby/lib"
+    export CPPFLAGS="-I/usr/local/opt/ruby/include"
+SHELL
 }
