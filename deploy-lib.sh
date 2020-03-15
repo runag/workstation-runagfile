@@ -135,20 +135,18 @@ deploy-lib::config::merge() {
 
 deploy-lib::bitwarden::unlock() {
   if [ -z "${BW_SESSION:-}" ]; then
-    local errorString
-    if ! errorString="$(bw sync --raw 2>&1)"; then
-      if [ "${errorString}" = "You are not logged in." ]; then
-        echo "Please enter your bitwarden password to login"
-        if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
-          fail "Unable to login to bitwarden"
-        fi
-        export BW_SESSION
+    local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+    if [ "${errorString}" != "You are already logged in as ${BITWARDEN_LOGIN}." ]; then
+      echo "Please enter your bitwarden password to login"
+      if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
+        fail "Unable to login to bitwarden"
       fi
+      export BW_SESSION
     fi
   fi
 
   if [ -z "${BW_SESSION:-}" ]; then
-    echo "Please enter your bitwarden to unlock the vault"
+    echo "Please enter your bitwarden password to unlock the vault"
 
     if ! BW_SESSION="$(bw unlock --raw)"; then
       fail "Unable to unlock bitwarden database"
