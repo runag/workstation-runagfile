@@ -87,7 +87,7 @@ ubuntu::deploy-workstation::as-user() {
   deploy-lib::shellrcd::use-nano-editor || fail
   deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
   ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
-  data-pi::install-shellrcd::shell-aliases || fail
+  data-pi::shellrcd::shell-aliases || fail
 
   # Editors
   vscode::install-config || fail

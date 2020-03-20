@@ -352,8 +352,19 @@ SHELL
 deploy-lib::shellrcd::use-nano-editor() {
   local output="${HOME}/.shellrc.d/use-nano-editor.sh"
   local nanoPath; nanoPath="$(command -v nano)" || fail
-
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
   export EDITOR="${nanoPath}"
+SHELL
+}
+
+deploy-lib::shellrcd::hook-direnv() {
+  local output="${HOME}/.shellrc.d/hook-direnv.sh"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+  export DIRENV_LOG_FORMAT=""
+  if [ "\$SHELL" = "/bin/zsh" ]; then
+    eval "\$(direnv hook zsh)"
+  elif [ "\$SHELL" = "/bin/bash" ]; then
+    eval "\$(direnv hook bash)"
+  fi
 SHELL
 }

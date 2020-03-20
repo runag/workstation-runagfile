@@ -27,13 +27,14 @@ macos::deploy-workstation() {
   if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
     # developer packages
     macos::install-developer-packages || fail
-    macos::shellrcd::homebrew-ruby || fail
 
     # shell aliases
     deploy-lib::shellrcd::install || fail
     deploy-lib::shellrcd::use-nano-editor || fail
     deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
-    data-pi::install-shellrcd::shell-aliases || fail
+    deploy-lib::shellrcd::hook-direnv || fail
+    data-pi::shellrcd::shell-aliases || fail
+    macos::shellrcd::homebrew-ruby || fail
 
     # SSH keys
     deploy-lib::ssh::install-keys || fail
