@@ -213,6 +213,9 @@ macos::install-developer-packages() {
 
   # direnv
   brew install direnv || fail
+
+  # ruby
+  deploy-lib::ruby::install-gemrc || fail
 }
 
 macos::shellrcd::homebrew-ruby() {

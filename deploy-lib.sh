@@ -368,3 +368,11 @@ deploy-lib::shellrcd::hook-direnv() {
   fi
 SHELL
 }
+
+deploy-lib::ruby::install-gemrc() {
+  local output="${HOME}/.gemrc"
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+install: --no-document
+update: --no-document
+SHELL
+}

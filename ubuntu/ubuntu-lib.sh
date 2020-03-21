@@ -111,6 +111,9 @@ ubuntu::deploy-workstation::as-user() {
     sway::install-config || fail
     sway::install-shellrcd || fail
   fi
+
+  # Ruby
+  deploy-lib::ruby::install-gemrc || fail
 }
 
 ubuntu::is-bare-metal() {
