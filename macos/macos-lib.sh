@@ -174,8 +174,13 @@ macos::install-developer-packages() {
 
   # servers
   brew install memcached || fail
+  brew services start memcached || fail
+
   brew install redis || fail
+  brew services start redis || fail
+  
   brew install postgresql || fail
+  brew services start postgresql || fail
 
   # tor
   brew install tor || fail
