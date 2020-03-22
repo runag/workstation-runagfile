@@ -34,7 +34,6 @@ macos::deploy-workstation() {
     deploy-lib::shellrcd::my-computer-deploy-shell-alias || fail
     deploy-lib::shellrcd::hook-direnv || fail
     data-pi::shellrcd::shell-aliases || fail
-    macos::shellrcd::homebrew-ruby || fail
 
     # SSH keys
     deploy-lib::ssh::install-keys || fail
@@ -214,7 +213,16 @@ macos::install-developer-packages() {
   # direnv
   brew install direnv || fail
 
+
   # ruby
+
+  # a) latest ruby
+  # brew install ruby || fail
+  # macos::shellrcd::homebrew-ruby || fail
+
+  # b) rbenv
+  brew install rbenv || fail
+  macos::shellrcd::rbenv || fail
   deploy-lib::ruby::install-gemrc || fail
 }
 
@@ -226,5 +234,17 @@ macos::shellrcd::homebrew-ruby() {
     export PATH="${gemsPath}:/usr/local/opt/ruby/bin:\$PATH"
     export LDFLAGS="-L/usr/local/opt/ruby/lib"
     export CPPFLAGS="-I/usr/local/opt/ruby/include"
+SHELL
+}
+
+macos::shellrcd::rbenv() {
+  local output="${HOME}/.shellrc.d/rbenv.sh"
+
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    if [ -z \${RBENV_INITIALIZED+x} ]; then
+      export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+      export RBENV_INITIALIZED=true
+      eval "\$(rbenv init -)"
+    fi
 SHELL
 }
