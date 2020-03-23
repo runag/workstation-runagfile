@@ -251,7 +251,7 @@ macos::shellrcd::rbenv() {
     if [ -z \${RBENV_INITIALIZED+x} ]; then
       export RBENV_INITIALIZED=true
       export RUBY_CONFIGURE_OPTS="--with-openssl-dir=${openSslPrefix}"
-      eval "\$(rbenv init -)" || { echo "Unable to init rbenv" >&2; exit 1; }
+      eval "\$(rbenv init -)" || echo "Unable to init rbenv" >&2
     fi
 SHELL
 }
@@ -262,7 +262,7 @@ macos::shellrcd::nodenv() {
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
     if [ -z \${NODENV_INITIALIZED+x} ]; then
       export NODENV_INITIALIZED=true
-      eval "\$(nodenv init -)" || { echo "Unable to init nodenv" >&2; exit 1; }
+      eval "\$(nodenv init -)" || echo "Unable to init nodenv" >&2
     fi
 SHELL
 }

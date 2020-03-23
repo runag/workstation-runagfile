@@ -362,9 +362,9 @@ deploy-lib::shellrcd::hook-direnv() {
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
   export DIRENV_LOG_FORMAT=""
   if [ "\$SHELL" = "/bin/zsh" ]; then
-    eval "\$(direnv hook zsh)"
+    eval "\$(direnv hook zsh)" || echo "Unable to hook direnv" >&2
   elif [ "\$SHELL" = "/bin/bash" ]; then
-    eval "\$(direnv hook bash)"
+    eval "\$(direnv hook bash)" || echo "Unable to hook direnv" >&2
   fi
 SHELL
 }
