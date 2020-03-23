@@ -209,6 +209,9 @@ macos::install-developer-packages() {
   # direnv
   brew install direnv || fail
 
+  # gnupg
+  brew install gnupg || fail
+
   # ruby
 
   # a) latest ruby
