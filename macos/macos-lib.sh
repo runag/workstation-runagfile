@@ -188,10 +188,6 @@ macos::install-developer-packages() {
   # ffmpeg
   brew install ffmpeg || fail
 
-  # nodejs and jarn
-  brew install node || fail
-  brew install yarn || fail
-
   # meld
   brew cask install meld || fail
 
@@ -213,7 +209,6 @@ macos::install-developer-packages() {
   # direnv
   brew install direnv || fail
 
-
   # ruby
 
   # a) latest ruby
@@ -224,6 +219,16 @@ macos::install-developer-packages() {
   brew install rbenv || fail
   macos::shellrcd::rbenv || fail
   deploy-lib::ruby::install-gemrc || fail
+
+  # nodejs
+
+  # a) latest nodejs
+  # brew install node || fail
+  # brew install yarn || fail
+
+  # b) node
+  brew install nodenv || fail
+  macos::shellrcd::nodenv || fail
 }
 
 macos::shellrcd::homebrew-ruby() {
@@ -240,11 +245,24 @@ SHELL
 macos::shellrcd::rbenv() {
   local output="${HOME}/.shellrc.d/rbenv.sh"
 
+  local openSslPrefix; openSslPrefix="$(brew --prefix openssl@1.1)" || fail
+
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
     if [ -z \${RBENV_INITIALIZED+x} ]; then
-      export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
       export RBENV_INITIALIZED=true
+      export RUBY_CONFIGURE_OPTS="--with-openssl-dir=${openSslPrefix}"
       eval "\$(rbenv init -)"
+    fi
+SHELL
+}
+
+macos::shellrcd::nodenv() {
+  local output="${HOME}/.shellrc.d/nodenv.sh"
+
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    if [ -z \${NODENV_INITIALIZED+x} ]; then
+      export NODENV_INITIALIZED=true
+      eval "\$(nodenv init -)"
     fi
 SHELL
 }
