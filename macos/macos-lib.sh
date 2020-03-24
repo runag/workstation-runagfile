@@ -220,6 +220,7 @@ macos::install-developer-packages() {
 
   # b) rbenv
   brew install rbenv || fail
+  rbenv rehash || fail
   macos::shellrcd::rbenv || fail
   deploy-lib::ruby::install-gemrc || fail
 
@@ -232,6 +233,7 @@ macos::install-developer-packages() {
   # b) node
   brew install nodenv || fail
   macos::shellrcd::nodenv || fail
+  brew install yarn || fail
 }
 
 macos::shellrcd::homebrew-ruby() {
@@ -257,6 +259,8 @@ macos::shellrcd::rbenv() {
       eval "\$(rbenv init -)" || echo "Unable to init rbenv" >&2
     fi
 SHELL
+
+  . "${output}" || fail
 }
 
 macos::shellrcd::nodenv() {
@@ -268,4 +272,6 @@ macos::shellrcd::nodenv() {
       eval "\$(nodenv init -)" || echo "Unable to init nodenv" >&2
     fi
 SHELL
+
+  . "${output}" || fail
 }
