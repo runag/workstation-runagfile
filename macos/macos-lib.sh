@@ -108,7 +108,7 @@ macos::ssh::add-ssh-key-password-to-keychain() {
     deploy-lib::bitwarden::unlock || fail
 
     # I could not pipe output directly to ssh-add because "bw get password" throws a pipe error in that case
-    local password; password="$(bw get password "password for my current ssh private key")" || fail
+    local password; password="$(bw get password "my current password for ssh private key")" || fail
     echo "${password}" | SSH_ASKPASS=bin/cat.sh DISPLAY=1 ssh-add -K "${keyFile}"
     test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
   fi
