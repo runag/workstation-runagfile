@@ -378,15 +378,19 @@ deploy-lib::shellrcd::rbenv() {
   fi
 
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    if [ -z \${RBENV_INITIALIZED+x} ]; then
-      export RBENV_INITIALIZED=true
-      if [ -n "${opensslDir}" ]; then
-        export RUBY_CONFIGURE_OPTS="\${RUBY_CONFIGURE_OPTS:+"\${RUBY_CONFIGURE_OPTS} "}--with-openssl-dir=$(printf "%q" "${opensslDir}")"
-      fi
-      if [ -d "\$HOME/.rbenv/bin" ]; then
+    if [ -d "\$HOME/.rbenv/bin" ]; then
+      if ! [[ ":\$PATH:" == *":\$HOME/.rbenv/bin:"* ]]; then
         export PATH="\$HOME/.rbenv/bin:\$PATH"
       fi
-      eval "\$(rbenv init -)" || echo "Unable to init rbenv" >&2
+    fi
+    if command -v rbenv >/dev/null; then
+      if [ -z \${RBENV_INITIALIZED+x} ]; then
+        eval "\$(rbenv init -)" || { echo "Unable to init rbenv" >&2; return 1; }
+        if [ -n "${opensslDir}" ]; then
+          export RUBY_CONFIGURE_OPTS="\${RUBY_CONFIGURE_OPTS:+"\${RUBY_CONFIGURE_OPTS} "}--with-openssl-dir=$(printf "%q" "${opensslDir}")"
+        fi
+        export RBENV_INITIALIZED=true
+      fi
     fi
 SHELL
 
@@ -397,12 +401,16 @@ deploy-lib::shellrcd::nodenv() {
   local output="${HOME}/.shellrc.d/nodenv.sh"
 
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    if [ -z \${NODENV_INITIALIZED+x} ]; then
-      export NODENV_INITIALIZED=true
-      if [ -d "\$HOME/.nodenv/bin" ]; then
+    if [ -d "\$HOME/.nodenv/bin" ]; then
+      if ! [[ ":\$PATH:" == *":\$HOME/.nodenv/bin:"* ]]; then
         export PATH="\$HOME/.nodenv/bin:\$PATH"
       fi
-      eval "\$(nodenv init -)" || echo "Unable to init nodenv" >&2
+    fi
+    if command -v nodenv >/dev/null; then
+      if [ -z \${NODENV_INITIALIZED+x} ]; then
+        eval "\$(nodenv init -)" || { echo "Unable to init nodenv" >&2; return 1; }
+        export NODENV_INITIALIZED=true
+      fi
     fi
 SHELL
 
