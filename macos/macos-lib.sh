@@ -221,7 +221,7 @@ macos::install-developer-packages() {
   # b) rbenv
   brew install rbenv || fail
   rbenv rehash || fail
-  macos::shellrcd::rbenv || fail
+  deploy-lib::shellrcd::rbenv || fail
   deploy-lib::ruby::install-gemrc || fail
 
   # nodejs
@@ -232,7 +232,7 @@ macos::install-developer-packages() {
 
   # b) node
   brew install nodenv || fail
-  macos::shellrcd::nodenv || fail
+  deploy-lib::shellrcd::nodenv || fail
   brew install yarn || fail
 }
 
@@ -245,33 +245,4 @@ macos::shellrcd::homebrew-ruby() {
     export LDFLAGS="-L/usr/local/opt/ruby/lib"
     export CPPFLAGS="-I/usr/local/opt/ruby/include"
 SHELL
-}
-
-macos::shellrcd::rbenv() {
-  local output="${HOME}/.shellrc.d/rbenv.sh"
-
-  local openSslPrefix; openSslPrefix="$(brew --prefix openssl@1.1)" || fail
-
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    if [ -z \${RBENV_INITIALIZED+x} ]; then
-      export RBENV_INITIALIZED=true
-      export RUBY_CONFIGURE_OPTS="--with-openssl-dir=${openSslPrefix}"
-      eval "\$(rbenv init -)" || echo "Unable to init rbenv" >&2
-    fi
-SHELL
-
-  . "${output}" || fail
-}
-
-macos::shellrcd::nodenv() {
-  local output="${HOME}/.shellrc.d/nodenv.sh"
-
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    if [ -z \${NODENV_INITIALIZED+x} ]; then
-      export NODENV_INITIALIZED=true
-      eval "\$(nodenv init -)" || echo "Unable to init nodenv" >&2
-    fi
-SHELL
-
-  . "${output}" || fail
 }

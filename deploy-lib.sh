@@ -369,6 +369,46 @@ deploy-lib::shellrcd::hook-direnv() {
 SHELL
 }
 
+deploy-lib::shellrcd::rbenv() {
+  local output="${HOME}/.shellrc.d/rbenv.sh"
+  local opensslDir
+
+  if [[ "$OSTYPE" =~ ^darwin ]] && command -v brew >/dev/null; then
+    opensslDir="$(brew --prefix openssl@1.1)" || fail
+  fi
+
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    if [ -z \${RBENV_INITIALIZED+x} ]; then
+      export RBENV_INITIALIZED=true
+      if [ -n "${opensslDir}" ]; then
+        export RUBY_CONFIGURE_OPTS="\${RUBY_CONFIGURE_OPTS:+"\${RUBY_CONFIGURE_OPTS} "}--with-openssl-dir=$(printf "%q" "${opensslDir}")"
+      fi
+      if [ -d "\$HOME/.rbenv/bin" ]; then
+        export PATH="\$HOME/.rbenv/bin:\$PATH"
+      fi
+      eval "\$(rbenv init -)" || echo "Unable to init rbenv" >&2
+    fi
+SHELL
+
+  . "${output}" || fail
+}
+
+deploy-lib::shellrcd::nodenv() {
+  local output="${HOME}/.shellrc.d/nodenv.sh"
+
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    if [ -z \${NODENV_INITIALIZED+x} ]; then
+      export NODENV_INITIALIZED=true
+      if [ -d "\$HOME/.nodenv/bin" ]; then
+        export PATH="\$HOME/.nodenv/bin:\$PATH"
+      fi
+      eval "\$(nodenv init -)" || echo "Unable to init nodenv" >&2
+    fi
+SHELL
+
+  . "${output}" || fail
+}
+
 deploy-lib::ruby::install-gemrc() {
   local output="${HOME}/.gemrc"
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
