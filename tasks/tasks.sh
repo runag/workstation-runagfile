@@ -15,16 +15,26 @@
 #  limitations under the License.
 
 tasks::select() {
-  local actionList=(
-    deploy::data-pi
-    deploy::macos-non-developer-workstation
-    deploy::macos-workstation
-    deploy::ubuntu-workstation
-    deploy::merge-workstation-configs
-    backup::polina-archive
-    backup::stan-archive
-    benchmark
-  )
+  local actionList=()
+
+  if [[ "$OSTYPE" =~ ^linux ]]; then
+    actionList+=(deploy::ubuntu-workstation)
+    actionList+=(deploy::data-pi)
+  fi
+
+  if [[ "$OSTYPE" =~ ^darwin ]]; then
+    actionList+=(deploy::macos-workstation)
+    actionList+=(deploy::macos-non-developer-workstation)
+  fi
+  
+  actionList+=(deploy::merge-workstation-configs)
+
+  if [[ "$OSTYPE" =~ ^darwin ]]; then
+    actionList+=(backup::polina-archive)
+    actionList+=(backup::stan-archive)
+  fi
+
+  actionList+=(benchmark)
 
   echo "Please choose an action to perform:"
   for i in ${!actionList[@]}; do
