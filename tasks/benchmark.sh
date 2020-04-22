@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 benchmark() {
-  local current_date="$(date +"%Y-%m-%d %H-%M-%S")" || fail
-  local hostname_string="$(hostname)" || fail
+  local current_date; current_date="$(date +"%Y-%m-%d %H-%M-%S")" || fail
+  local hostname_string; hostname_string="$(hostname)" || fail
 
   benchmark::run | tee "${HOME}/${hostname_string} ${current_date} benchmark.txt"
   test "${PIPESTATUS[*]}" = "0 0" || fail

@@ -37,7 +37,8 @@ tasks::select() {
   actionList+=(benchmark)
 
   echo "Please choose an action to perform:"
-  for i in ${!actionList[@]}; do
+  local i
+  for i in "${!actionList[@]}"; do
     echo "  ${i}: ${actionList[$i]}"
   done
 

@@ -1,4 +1,44 @@
 
+In bin/install-and-deploy line 27:
+  fail() {
+  ^-- SC2120: fail references arguments, but none are ever passed.
+
+
+In bin/install-and-deploy line 34:
+      sudo apt update || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 35:
+      sudo apt install -y git || fail
+                                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 42:
+    cd "${clonePath}" || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 43:
+    git pull || fail
+                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 45:
+    git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
+                                                                                     ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 46:
+    cd "${clonePath}" || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In bin/install-and-deploy line 49:
+  bin/deploy || fail
+                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
 In deploy-lib.sh line 397:
   . "${output}" || fail
     ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
@@ -31,4 +71,4 @@ In vscode/vscode-lib.sh line 35:
 For more information:
   https://www.shellcheck.net/wiki/SC1090 -- Can't follow non-constant source....
   https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
-  https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...
+  https://www.shellcheck.net/wiki/SC2120 -- fail references arguments, but no...
