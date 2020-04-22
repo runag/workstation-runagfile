@@ -1,7 +1,12 @@
 
-In bin/check-shell-error-handling line 1:
-#!/bin/env ruby
-^-- SC1071: ShellCheck only supports sh/bash/dash/ksh scripts. Sorry!
+In deploy-lib.sh line 397:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In deploy-lib.sh line 417:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
 In data-pi/led-heartbeat.sh line 18:
@@ -9,12 +14,12 @@ In data-pi/led-heartbeat.sh line 18:
   ^-^ SC2034: i appears unused. Verify use (or export if used externally).
 
 
-In ubuntu/ubuntu-lib.sh line 314:
+In ubuntu/ubuntu-lib.sh line 319:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ubuntu/ubuntu-lib.sh line 318:
+In ubuntu/ubuntu-lib.sh line 323:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
@@ -24,6 +29,6 @@ In vscode/vscode-lib.sh line 35:
           ^-------------------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
 
 For more information:
-  https://www.shellcheck.net/wiki/SC1071 -- ShellCheck only supports sh/bash/...
+  https://www.shellcheck.net/wiki/SC1090 -- Can't follow non-constant source....
   https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
   https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...

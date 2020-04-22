@@ -18,4 +18,4 @@ set -o nounset
 
 shellcheck bin/* *.sh **/*.sh | tee test/shellcheck.txt
 
-bin/check-shell-error-handling bin/* *.sh **/*.sh | tee test/check-shell-error-handling.txt
+test/check-shell-error-handling bin/* *.sh **/*.sh | tee test/check-shell-error-handling.txt

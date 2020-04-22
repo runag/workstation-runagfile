@@ -1,8 +1,13 @@
+bin/cat.sh:
+  17: exec cat
 bin/shell:
-  36:   $SHELL
+  40:   $SHELL
 deploy-lib.sh:
-  144:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
-  146:         diff --context=6 --color "${dst}" "${src}"
+  108:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
+  110:         diff --context=6 --color "${dst}" "${src}"
+  138:     local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)" # the absence of error handling is intentional here
+bin/cat.sh:
+  17: exec cat
 data-pi/led-heartbeat.sh:
   18:   for i in {1..5}
   19:   do
@@ -27,6 +32,6 @@ ubuntu/background-fix.sh:
   25:       touch /var/cache/background-fix-state
   26:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
 ubuntu/ubuntu-lib.sh:
-  368:     for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
+  372:     for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
 vscode/vscode-lib.sh:
   35:       cat vscode/extensions.txt | while IFS="" read -r extension; do

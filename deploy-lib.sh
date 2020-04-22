@@ -135,7 +135,7 @@ deploy-lib::config::merge() {
 
 deploy-lib::bitwarden::unlock() {
   if [ -z "${BW_SESSION:-}" ]; then
-    local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+    local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)" # the absence of error handling is intentional here
     if [ "${errorString}" != "You are already logged in as ${BITWARDEN_LOGIN}." ]; then
       echo "Please enter your bitwarden password to login"
       if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
