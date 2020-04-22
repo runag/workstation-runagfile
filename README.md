@@ -41,7 +41,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/my-computer-deploy
 1. Configure fan to be based on PECI sensor, 70-80 temperature range
 2. In preferences enable "Autostart minimized with system"
 
-## Secret items which are expected to be found in a Bitwarden
+# Secret items which are expected to be found in a Bitwarden
 
 The names should be as the following:
 
