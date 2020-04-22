@@ -115,10 +115,10 @@ deploy-lib::config::merge() {
       echo "Files are different:"
       echo "  ${src}"
       echo "  ${dst}"
-      echo "Please choose the action to perform:"
-      echo "  1 - Use file from the deploy repository to replace config file on this machine"
-      echo "  2 - Do not overwrite config file on this machine, on the contrary put that file back to the deploy repository"
-      echo "  3 or Enter - Ignore conflict"
+      echo "Please choose an action to perform:"
+      echo "  1: Use file from the deploy repository to replace file on this machine"
+      echo "  2: Use file from this machine to save it to the deploy repository"
+      echo "  3 (or Enter): Ignore conflict"
 
       IFS="" read -r action || fail
 
@@ -342,10 +342,10 @@ SHELL
   fi
 }
 
-deploy-lib::shellrcd::my-computer-deploy-shell-alias() {
-  local output="${HOME}/.shellrc.d/my-computer-deploy-shell-alias.sh"
+deploy-lib::shellrcd::my-computer-deploy-path() {
+  local output="${HOME}/.shellrc.d/my-computer-deploy-path.sh"
   tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    alias my-computer-deploy="${PWD}/bin/shell"
+    export PATH="${PWD}/bin:\$PATH"
 SHELL
 }
 
@@ -423,4 +423,8 @@ deploy-lib::ruby::install-gemrc() {
 install: --no-document
 update: --no-document
 SHELL
+}
+
+deploy-lib::display-elapsed-time() {
+  echo "Elapsed time: $((SECONDS / 3600))h$(((SECONDS % 3600) / 60))m$((SECONDS % 60))s"
 }

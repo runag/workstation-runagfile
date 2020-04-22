@@ -23,5 +23,6 @@
     "editor.cursorSurroundingLines": 2,
     "editor.smoothScrolling": true,
     "editor.minimap.enabled": false,
-    "workbench.colorTheme": "Default Light+"
+    "workbench.colorTheme": "Default Light+",
+    "editor.multiCursorModifier": "ctrlCmd"
 }

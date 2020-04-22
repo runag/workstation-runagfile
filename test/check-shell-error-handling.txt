@@ -1,4 +1,4 @@
-bin/cat.sh:
+bin/exec-cat.sh:
   17: exec cat
 bin/shell:
   40:   $SHELL
@@ -6,7 +6,7 @@ deploy-lib.sh:
   108:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
   110:         diff --context=6 --color "${dst}" "${src}"
   138:     local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)" # the absence of error handling is intentional here
-bin/cat.sh:
+bin/exec-cat.sh:
   17: exec cat
 data-pi/led-heartbeat.sh:
   18:   for i in {1..5}

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+if [ -n "${VERBOSE:-}" ]; then
+  set -o xtrace
+fi
+
+set -o nounset
+
+fail() {
+  echo "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: in \`${FUNCNAME[1]}': Error: ${1:-"Abnormal termination"}" >&2
+  exit "${2:-1}"
+}
+
+deploy-lib::cd-to-my-computer-deploy-directory() {
+  local scriptDirname
+  local projectDirname
+
+  scriptDirname="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine scriptDirname ($?)"
+  projectDirname="$(cd "${scriptDirname}" >/dev/null 2>&1 && cd .. >/dev/null 2>&1 && pwd)" || fail "Unable to determine projectDirname ($?)"
+
+  cd "${projectDirname}" || fail "Unable to cd to ${projectDirname} ($?)"
+}
+
+deploy-lib::cd-to-my-computer-deploy-directory || fail
+
+. deploy-lib.sh || fail "Unable to load deploy-lib.sh"
+. config.sh     || fail "Unable to load config.sh"
+
+. tasks/backup.sh    || fail "Unable to load tasks/backup.sh"
+. tasks/benchmark.sh || fail "Unable to load tasks/benchmark.sh"
+. tasks/deploy.sh    || fail "Unable to load tasks/deploy.sh"
+. tasks/tasks.sh     || fail "Unable to load tasks/tasks.sh"
+
+if [ -n "${1:-}" ]; then
+  declare -f "$1" >/dev/null || fail "Argument must be a function name: $1"
+fi
+
+"${1:-tasks::select}" "${@:2}" || fail
