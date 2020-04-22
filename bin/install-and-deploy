@@ -33,7 +33,7 @@ __xVhMyefCbBnZFUQtwqCs() {
     if ! command -v git; then
       sudo apt update || fail
       sudo apt install -y git || fail
-    fi 
+    fi
   fi
 
   local clonePath="${HOME}/.my-computer-deploy"
