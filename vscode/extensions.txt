@@ -1,6 +1,7 @@
 castwide.solargraph
 coolbear.systemd-unit-file
 hjleochen.rails-nav
+jcbuisson.vue
 kaiwood.endwise
 mads-hartmann.bash-ide-vscode
 ms-vscode-remote.remote-containers
@@ -8,5 +9,7 @@ ms-vscode-remote.remote-ssh
 ms-vscode-remote.remote-ssh-edit
 ms-vscode-remote.remote-wsl
 ms-vscode-remote.vscode-remote-extensionpack
+rebornix.ruby
 sianglim.slim
 syler.sass-indented
+wingrunr21.vscode-ruby

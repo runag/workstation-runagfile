@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-fail() {
-  echo "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: in \`${FUNCNAME[1]}': Error: ${1:-"Abnormal termination"}" >&2
-  exit "${2:-1}"
-}
-
 deploy-lib::sudo-write-file() {
   local dest="$1"
   local mode="${2:-0644}"
@@ -135,12 +130,13 @@ deploy-lib::config::merge() {
 
 deploy-lib::bitwarden::unlock() {
   if [ -z "${BW_SESSION:-}" ]; then
-    local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)" # the absence of error handling is intentional here
+    # the absence of error handling is intentional here
+    local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+
     if [ "${errorString}" != "You are already logged in as ${BITWARDEN_LOGIN}." ]; then
       echo "Please enter your bitwarden password to login"
-      if ! BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)"; then
-        fail "Unable to login to bitwarden"
-      fi
+
+      BW_SESSION="$(bw login "${BITWARDEN_LOGIN}" --raw)" || fail "Unable to login to bitwarden"
       export BW_SESSION
     fi
   fi
@@ -148,11 +144,9 @@ deploy-lib::bitwarden::unlock() {
   if [ -z "${BW_SESSION:-}" ]; then
     echo "Please enter your bitwarden password to unlock the vault"
 
-    if ! BW_SESSION="$(bw unlock --raw)"; then
-      fail "Unable to unlock bitwarden database"
-    fi
-
+    BW_SESSION="$(bw unlock --raw)" || fail "Unable to unlock bitwarden database"
     export BW_SESSION
+
     bw sync || fail "Unable to sync bitwarden"
   fi
 }
@@ -415,6 +409,7 @@ deploy-lib::shellrcd::nodenv() {
 SHELL
 
   . "${output}" || fail
+  nodenv rehash || fail
 }
 
 deploy-lib::ruby::install-gemrc() {

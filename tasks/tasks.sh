@@ -19,6 +19,7 @@ tasks::select() {
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
     actionList+=(deploy::ubuntu-workstation)
+    actionList+=(deploy::ubuntu-sway-workstation)
     actionList+=(deploy::data-pi)
   fi
 
@@ -47,7 +48,7 @@ tasks::select() {
 
   if [ -n "${action:-}" ]; then
     local actionFunction="${actionList[$action]}"
-    declare -f "${actionFunction}" >/dev/null || fail "Argument must be a function name: $1"
+    declare -f "${actionFunction}" >/dev/null || fail "Argument must be a function name"
     "${actionFunction}" || fail
   fi
 }

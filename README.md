@@ -11,11 +11,9 @@ The script will do the following:
 5. Installs configuration for the Sublime Text and Visual Studio Code. It also can put that configuration back from the workstation to the repository in case I changed it locally.
 6. With an extra environment flag DEPLOY_SWAY it installs Sway WM, my Sway configuration and few related software packages.
 
-This script can be run multiple times to produce a system which is up-to date with the recent software updates and my configuration changes.
+This script is idempotent, so it can be run multiple times to produce a system which is up-to date with the recent software updates and my configuration changes.
 
 The file ``config.sh`` contains my name and email to use in configuration. In the unlikely event someone will fork that script to configure his own computer this is where you could put your name and email.
-
-Any time later after the initial deployment you may wish to run those scripts again to update the system.
 
 # Linux workstation
 

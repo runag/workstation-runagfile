@@ -23,10 +23,6 @@ deploy::data-pi() {
   ubuntu::deploy-data-pi || fail
 }
 
-deploy::macos-non-developer-workstation() {
-  DEPLOY_NON_DEVELOPER_WORKSTATION=true deploy::macos-workstation || fail
-}
-
 deploy::macos-workstation() {
   . data-pi/data-pi-lib.sh  || fail "Unable to load data-pi/data-pi-lib.sh"
   . macos/macos-lib.sh      || fail "Unable to load macos/macos-lib.sh"
@@ -34,6 +30,10 @@ deploy::macos-workstation() {
   . vscode/vscode-lib.sh    || fail "Unable to load vscode/vscode-lib.sh"
 
   macos::deploy-workstation || fail
+}
+
+deploy::macos-non-developer-workstation() {
+  DEPLOY_NON_DEVELOPER_WORKSTATION=true deploy::macos-workstation || fail
 }
 
 deploy::ubuntu-workstation() {
@@ -45,6 +45,10 @@ deploy::ubuntu-workstation() {
   . vscode/vscode-lib.sh      || fail "Unable to load vscode/vscode-lib.sh"
 
   ubuntu::deploy-workstation || fail
+}
+
+deploy::ubuntu-sway-workstation() {
+  DEPLOY_SWAY=true deploy::ubuntu-workstation || fail
 }
 
 deploy::merge-workstation-configs() {

@@ -36,6 +36,9 @@ __xVhMyefCbBnZFUQtwqCs() {
     fi
   fi
 
+  # on macos that may start git install process
+  git --version >/dev/null || fail
+
   local clonePath="${HOME}/.my-computer-deploy"
 
   if [ -d "${clonePath}" ]; then
