@@ -18,7 +18,7 @@ The file ``config.sh`` contains my name and email to use in configuration. In th
 # Linux workstation
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/my-computer-deploy/master/bin/install-and-deploy)
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/my-computer-deploy/master/deploy.sh)
 ```
 
 # MacOS
@@ -31,7 +31,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/my-computer-deploy
 
 ## 2. Deploy workstation
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/my-computer-deploy/master/bin/install-and-deploy)
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/my-computer-deploy/master/deploy.sh)
 ```
 
 ## 3. Macs Fan Control configuration
