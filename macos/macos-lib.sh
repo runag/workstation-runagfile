@@ -49,6 +49,9 @@ macos::deploy-workstation() {
 
     # sublime text
     sublime::install-config || fail
+
+    # hide folders
+    macos::hide-folders || fail
   fi
 
   # flush footnotes
@@ -245,4 +248,22 @@ macos::shellrcd::homebrew-ruby() {
     export LDFLAGS="-L/usr/local/opt/ruby/lib"
     export CPPFLAGS="-I/usr/local/opt/ruby/include"
 SHELL
+}
+
+macos::hide-folders() {
+  macos::hide-folder "${HOME}/Applications"
+  macos::hide-folder "${HOME}/Desktop"
+  macos::hide-folder "${HOME}/Documents"
+  macos::hide-folder "${HOME}/Movies"
+  macos::hide-folder "${HOME}/Music"
+  macos::hide-folder "${HOME}/Pictures"
+  macos::hide-folder "${HOME}/Public"
+  macos::hide-folder "${HOME}/Virtual Machines.localized"
+  macos::hide-folder "${HOME}/VirtualBox VMs"
+}
+
+macos::hide-folder() {
+  if [ -d "$1" ]; then
+    chflags hidden "$1" || fail
+  fi
 }

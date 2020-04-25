@@ -40,6 +40,15 @@ deploy-lib::cd-to-my-computer-deploy-directory || fail
 . deploy-lib.sh || fail "Unable to load deploy-lib.sh"
 . config.sh     || fail "Unable to load config.sh"
 
+. data-pi/data-pi-lib.sh    || fail "Unable to load data-pi/data-pi-lib.sh"
+. macos/macos-lib.sh        || fail "Unable to load macos/macos-lib.sh"
+. netdata/netdata-lib.sh    || fail "Unable to load netdata/netdata-lib.sh"
+. sublime/sublime-lib.sh    || fail "Unable to load sublime/sublime-lib.sh"
+. sway/sway-lib.sh          || fail "Unable to load sway/sway-lib.sh"
+. ubuntu/ubuntu-lib.sh      || fail "Unable to load ubuntu/ubuntu-lib.sh"
+. ubuntu/ubuntu-packages.sh || fail "Unable to load ubuntu/ubuntu-packages.sh"
+. vscode/vscode-lib.sh      || fail "Unable to load vscode/vscode-lib.sh"
+
 . tasks/backup.sh    || fail "Unable to load tasks/backup.sh"
 . tasks/benchmark.sh || fail "Unable to load tasks/benchmark.sh"
 . tasks/deploy.sh    || fail "Unable to load tasks/deploy.sh"
