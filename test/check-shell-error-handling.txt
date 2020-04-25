@@ -1,14 +1,10 @@
-bin/exec-cat.sh:
-  17: exec cat
-bin/install-and-deploy:
-  27:   fail() {
-  52: __xVhMyefCbBnZFUQtwqCs || return $?
 deploy-lib.sh:
-  108:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
-  110:         diff --context=6 --color "${dst}" "${src}"
-  138:     local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)" # the absence of error handling is intentional here
-bin/exec-cat.sh:
-  17: exec cat
+  103:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
+  105:         diff --context=6 --color "${dst}" "${src}"
+  134:     local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+deploy.sh:
+  27:   fail() {
+  55: __xVhMyefCbBnZFUQtwqCs || return $?
 data-pi/led-heartbeat.sh:
   18:   for i in {1..5}
   19:   do
@@ -25,18 +21,21 @@ data-pi/led-heartbeat.sh:
   47: do
   49:     normal
   51:     panic
+macos/exec-cat.sh:
+  17: exec cat
 netdata/netdata-lib.sh:
   19:     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait --stable-channel || true # TODO: remove || true as they fix the installer
 tasks/tasks.sh:
   21:     actionList+=(deploy::ubuntu-workstation)
-  22:     actionList+=(deploy::data-pi)
-  26:     actionList+=(deploy::macos-workstation)
-  27:     actionList+=(deploy::macos-non-developer-workstation)
-  30:   actionList+=(deploy::merge-workstation-configs)
-  33:     actionList+=(backup::polina-archive)
-  34:     actionList+=(backup::stan-archive)
-  37:   actionList+=(benchmark)
-  41:   for i in "${!actionList[@]}"; do
+  22:     actionList+=(deploy::ubuntu-sway-workstation)
+  23:     actionList+=(deploy::data-pi)
+  27:     actionList+=(deploy::macos-workstation)
+  28:     actionList+=(deploy::macos-non-developer-workstation)
+  31:   actionList+=(deploy::merge-workstation-configs)
+  34:     actionList+=(backup::polina-archive)
+  35:     actionList+=(backup::stan-archive)
+  38:   actionList+=(benchmark)
+  42:   for i in "${!actionList[@]}"; do
 ubuntu/background-fix.sh:
   22:       rm /var/cache/background-fix-state
   23:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"

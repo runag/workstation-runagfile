@@ -1,52 +1,62 @@
 
-In bin/install-and-deploy line 27:
+In deploy-lib.sh line 134:
+    local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+          ^---------^ SC2155: Declare and assign separately to avoid masking return values.
+
+
+In deploy-lib.sh line 391:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In deploy-lib.sh line 411:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In deploy.sh line 27:
   fail() {
   ^-- SC2120: fail references arguments, but none are ever passed.
 
 
-In bin/install-and-deploy line 34:
+In deploy.sh line 34:
       sudo apt update || fail
                          ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 35:
+In deploy.sh line 35:
       sudo apt install -y git || fail
                                  ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 42:
+In deploy.sh line 40:
+  git --version >/dev/null || fail
+                              ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In deploy.sh line 45:
     cd "${clonePath}" || fail
                          ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 43:
+In deploy.sh line 46:
     git pull || fail
                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 45:
+In deploy.sh line 48:
     git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
                                                                                      ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 46:
+In deploy.sh line 49:
     cd "${clonePath}" || fail
                          ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
 
 
-In bin/install-and-deploy line 49:
+In deploy.sh line 52:
   bin/deploy || fail
                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy-lib.sh line 397:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In deploy-lib.sh line 417:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
 In data-pi/led-heartbeat.sh line 18:
