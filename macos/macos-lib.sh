@@ -153,9 +153,6 @@ macos::install-basic-packages() {
 }
 
 macos::install-developer-packages() {
-  # bitwarden-cli
-  brew install bitwarden-cli || fail
-
   # basic tools
   brew install jq || fail
   brew install midnight-commander || fail
@@ -203,7 +200,7 @@ macos::install-developer-packages() {
   # vscode
   brew cask install visual-studio-code || fail
 
-  # vscode
+  # iterm2
   brew cask install iterm2 || fail
 
   # linode-cli
@@ -237,6 +234,12 @@ macos::install-developer-packages() {
   brew install nodenv || fail
   deploy-lib::shellrcd::nodenv || fail
   brew install yarn || fail
+
+  # bitwarden-cli (after nodejs)
+  brew install bitwarden-cli || fail
+
+  # sshfs
+  brew install sshfs || fail
 }
 
 macos::shellrcd::homebrew-ruby() {
