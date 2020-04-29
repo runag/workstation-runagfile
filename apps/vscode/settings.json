@@ -24,5 +24,6 @@
     "editor.smoothScrolling": true,
     "editor.minimap.enabled": false,
     "workbench.colorTheme": "Default Light+",
-    "editor.multiCursorModifier": "ctrlCmd"
+    "editor.multiCursorModifier": "ctrlCmd",
+    "git.autofetch": true
 }
