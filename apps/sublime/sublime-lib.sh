@@ -69,7 +69,7 @@ sublime::install-config-file() {
     local configDirectory="${HOME}/.config/sublime-text-3"
   fi
 
-  deploy-lib::config::install "sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to install $1 ($?)"
+  deploy-lib::config::install "apps/sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to install $1 ($?)"
 }
 
 sublime::merge-config-file() {
@@ -79,5 +79,5 @@ sublime::merge-config-file() {
     local configDirectory="${HOME}/.config/sublime-text-3"
   fi
 
-  deploy-lib::config::merge "sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to merge $1 ($?)"
+  deploy-lib::config::merge "apps/sublime/$1" "${configDirectory}/Packages/User/$1" || fail "Unable to merge $1 ($?)"
 }

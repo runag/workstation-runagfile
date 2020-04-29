@@ -1,11 +1,15 @@
-deploy-lib.sh:
-  103:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
-  105:         diff --context=6 --color "${dst}" "${src}"
-  134:     local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
-deploy.sh:
-  27:   fail() {
-  55: __xVhMyefCbBnZFUQtwqCs || return $?
-data-pi/led-heartbeat.sh:
+./menu.sh:
+  21:     actionList+=(ubuntu::deploy-workstation)
+  22:     actionList+=(ubuntu::deploy-sway-workstation)
+  23:     actionList+=(ubuntu::deploy-data-pi)
+  27:     actionList+=(macos::deploy-workstation)
+  28:     actionList+=(macos::deploy-non-developer-workstation)
+  31:   actionList+=(deploy::merge-workstation-configs)
+  34:     actionList+=(backup::polina-archive)
+  35:     actionList+=(backup::stan-archive)
+  38:   actionList+=(benchmark)
+  42:   for i in "${!actionList[@]}"; do
+./deploy-scripts/data-pi/led-heartbeat.sh:
   18:   for i in {1..5}
   19:   do
   21:     sleep 3
@@ -21,27 +25,24 @@ data-pi/led-heartbeat.sh:
   47: do
   49:     normal
   51:     panic
-macos/exec-cat.sh:
+./oses/macos/exec-cat.sh:
   17: exec cat
-netdata/netdata-lib.sh:
-  19:     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait --stable-channel || true # TODO: remove || true as they fix the installer
-tasks/tasks.sh:
-  21:     actionList+=(deploy::ubuntu-workstation)
-  22:     actionList+=(deploy::ubuntu-sway-workstation)
-  23:     actionList+=(deploy::data-pi)
-  27:     actionList+=(deploy::macos-workstation)
-  28:     actionList+=(deploy::macos-non-developer-workstation)
-  31:   actionList+=(deploy::merge-workstation-configs)
-  34:     actionList+=(backup::polina-archive)
-  35:     actionList+=(backup::stan-archive)
-  38:   actionList+=(benchmark)
-  42:   for i in "${!actionList[@]}"; do
-ubuntu/background-fix.sh:
+./oses/ubuntu/ubuntu-lib.sh:
+  150:     for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
+./oses/ubuntu/background-fix.sh:
   22:       rm /var/cache/background-fix-state
   23:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"
   25:       touch /var/cache/background-fix-state
   26:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
-ubuntu/ubuntu-lib.sh:
-  372:     for f in /mnt/hgfs/*; do echo "${f}"; done | while IFS="" read -r dirPath; do
-vscode/vscode-lib.sh:
-  35:       cat vscode/extensions.txt | while IFS="" read -r extension; do
+./lib/config-files.sh:
+  47:         git diff --color --unified=6 --no-index "${dst}" "${src}" | tee
+  49:         diff --context=6 --color "${dst}" "${src}"
+./lib/bitwarden.sh:
+  20:     local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+./deploy.sh:
+  27:   fail() {
+  55: __xVhMyefCbBnZFUQtwqCs || return $?
+./apps/netdata/netdata-lib.sh:
+  19:     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait --stable-channel || true # TODO: remove || true as they fix the installer
+./apps/vscode/vscode-lib.sh:
+  35:       cat apps/vscode/extensions.txt | while IFS="" read -r extension; do

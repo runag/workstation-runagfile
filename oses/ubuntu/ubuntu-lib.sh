@@ -14,109 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-workstation() {
-  deploy-lib::footnotes::init || fail
-
-  sway::determine-conditional-install-flag || fail
-  ubuntu::detect-lean-workstation || fail
-
-  sudo --preserve-env="DESKTOP_SESSION,XDG_SESSION_TYPE,VERBOSE,DEPLOY_FOOTNOTES,DEPLOY_SWAY,DEPLOY_LEAN_WORKSTATION" bash -c "set -o nounset; $(declare -f); ubuntu::deploy-workstation::as-root" || fail "Unable to execute ubuntu::deploy-workstation::as-root ($?)"
-
-  ubuntu::deploy-workstation::as-user || fail
-
-  if [ -x /usr/lib/update-notifier/update-motd-reboot-required ]; then
-    /usr/lib/update-notifier/update-motd-reboot-required >> "${DEPLOY_FOOTNOTES}" || fail
-  fi
-
-  deploy-lib::footnotes::flush || fail
-
-  echo "ubuntu::deploy-workstation completed"
-}
-
-ubuntu::deploy-workstation::as-root() {
-  if [ -n "${VERBOSE:-}" ]; then
-    set -o xtrace
-  fi
-
-  # Install packages
-  ubuntu::install-packages || fail
-
-  # Set inotify-max-user-watches
-  ubuntu::set-inotify-max-user-watches || fail
-
-  # Compile git credential libsecret
-  ubuntu::compile-git-credential-libsecret || fail
-
-  # Enable syncthing
-  if ubuntu::is-bare-metal; then
-    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
-  fi
-
-  # Add hgfs automount if needed
-  ubuntu::perhaps-add-hgfs-automount || fail
-
-  # Setup gnome keyring to load for text consoles
-  ubuntu::setup-gnome-keyring-pam || fail
-
-  # Fix screen tearing
-  ubuntu::perhaps-fix-nvidia-screen-tearing || fail
-}
-
-ubuntu::deploy-workstation::as-user() {
-  # Desktop configuration
-  ubuntu::configure-desktop-apps || fail
-
-  # Remove user dirs
-  ubuntu::remove-user-dirs || fail
-
-  # symlink hgfs mounts
-  ubuntu::symlink-hgfs-mounts || fail
-
-  # IMWhell for GNOME and XFCE
-  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    ubuntu::setup-imwhell || fail
-  fi
-
-  # XFCE-specific
-  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    ubuntu::setup-super-key-to-xfce-menu-workaround || fail
-  fi
-
-  # Shell aliases
-  deploy-lib::shellrcd::install || fail
-  deploy-lib::shellrcd::use-nano-editor || fail
-  deploy-lib::shellrcd::my-computer-deploy-path || fail
-  deploy-lib::shellrcd::hook-direnv || fail
-  ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
-  data-pi::shellrcd::shell-aliases || fail
-
-  # Editors
-  vscode::install-config || fail
-  vscode::install-extensions || fail
-  sublime::install-config || fail
-
-  # SSH keys
-  deploy-lib::ssh::install-keys || fail
-  ubuntu::add-ssh-key-password-to-keyring || fail
-
-  # Git
-  deploy-lib::git::configure || fail
-  ubuntu::add-git-credentials-to-keyring || fail
-
-  # Gnome extensions
-  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
-
-  # Install sway
-  if [ -n "${DEPLOY_SWAY:-}" ]; then
-    sway::install || fail
-    sway::install-config || fail
-    sway::install-shellrcd || fail
-  fi
-
-  # Ruby
-  deploy-lib::ruby::install-gemrc || fail
-}
-
 ubuntu::is-bare-metal() {
   # "hostnamectl status" could also be used to detect that we are running insde the vm
   if grep --quiet "^flags.*:.*hypervisor" /proc/cpuinfo; then
@@ -180,7 +77,7 @@ ubuntu::set-inotify-max-user-watches() {
 }
 
 ubuntu::fix-nvidia-gpu-background-image-glitch() {
-  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep ubuntu/background-fix.sh || fail "Unable to install ubuntu/background-fix.sh ($?)"
+  sudo install --mode=0755 --owner=root --group=root -D -t /usr/lib/systemd/system-sleep oses/ubuntu/background-fix.sh || fail "Unable to install background-fix.sh ($?)"
 }
 
 ubuntu::perhaps-fix-nvidia-screen-tearing() {
@@ -192,78 +89,6 @@ ubuntu::perhaps-fix-nvidia-screen-tearing() {
       test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to ${modprobeFile}"
       sudo update-initramfs -u || fail
       deploy-lib::footnotes::add "Please reboot to activate screen tearing fix (ubuntu::perhaps-fix-nvidia-screen-tearing)" || fail
-    fi
-  fi
-}
-
-ubuntu::configure-desktop-apps() {
-  # use dconf-editor to find key/value pairs
-  # I don't use dbus-launch here because it will introduce side-effect for ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
-
-  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-    # Terminal
-    if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
-      gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
-    fi
-
-    if gsettings get org.gnome.Terminal.ProfilesList default; then
-      local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-      local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
-
-      gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
-      gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Nautilus
-    if gsettings list-keys org.gnome.nautilus; then
-      gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Desktop 18.04
-    if gsettings list-keys org.gnome.nautilus.desktop; then
-      gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Desktop 19.10
-    if gsettings list-keys org.gnome.shell.extensions.desktop-icons; then
-      gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Disable screen lock
-    if gsettings get org.gnome.desktop.session idle-delay; then
-      gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Auto set time zone
-    if gsettings get org.gnome.desktop.datetime automatic-timezone; then
-      gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Dash
-    if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
-      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Sound alerts
-    if gsettings get org.gnome.desktop.sound event-sounds; then
-      gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Mouse
-    # 2000 DPI
-    if gsettings get org.gnome.desktop.peripherals.mouse speed; then
-      gsettings set org.gnome.desktop.peripherals.mouse speed -0.950 || fail "Unable to set gsettings ($?)"
-    fi
-
-    # Input sources
-    if gsettings get org.gnome.desktop.input-sources sources; then
-      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru+mac')]" || fail "Unable to set gsettings ($?)"
     fi
   fi
 }
@@ -307,53 +132,6 @@ ubuntu::add-git-credentials-to-keyring() {
   fi
 
   git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret || fail
-}
-
-ubuntu::remove-user-dirs() {
-  local dirsFile="${HOME}/.config/user-dirs.dirs"
-
-  if [ -f "${dirsFile}" ]; then
-    local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
-
-    if [ -d "$HOME/Desktop" ]; then
-      echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
-    fi
-
-    if [ -d "$HOME/Downloads" ]; then
-      echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
-    fi
-
-    mv "${tmpFile}" "${dirsFile}" || fail
-
-    echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
-
-    deploy-lib::remove-dir-if-empty "$HOME/Documents" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Music" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Pictures" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Public" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Templates" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Videos" || fail
-
-    if [ -f "$HOME/examples.desktop" ]; then
-      rm "$HOME/examples.desktop" || fail
-    fi
-
-    xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
-
-    local hiddenFile="${HOME}/.hidden"
-
-    if [ -d "$HOME/Desktop" ] && ! grep --quiet "^Desktop$" "${hiddenFile}"; then
-      echo "Desktop" >>"${hiddenFile}" || fail
-    fi
-
-    if ! grep --quiet "^snap$" "${hiddenFile}"; then
-      echo "snap" >>"${hiddenFile}" || fail
-    fi
-
-    if ! grep --quiet "^VirtualBox VMs$" "${hiddenFile}"; then
-      echo "VirtualBox VMs" >>"${hiddenFile}" || fail
-    fi
-  fi
 }
 
 ubuntu::perhaps-add-hgfs-automount() {
@@ -452,7 +230,7 @@ ubuntu::setup-gnome-keyring-pam() {
   local pamFile="/etc/pam.d/login"
   if ! grep --quiet "pam_gnome_keyring" "${pamFile}"; then
     local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
-    ruby ubuntu/patch-pam-d-login.rb <"${pamFile}" >"${tmpFile}" || fail "Unable to patch ${pamFile}"
+    ruby oses/ubuntu/patch-pam-d-login.rb <"${pamFile}" >"${tmpFile}" || fail "Unable to patch ${pamFile}"
     sudo install --mode=0644 --owner=root --group=root "$tmpFile" -D "${pamFile}" || fail "Unable to install file: ${pamFile} ($?)"
     rm "${tmpFile}" || fail
   fi

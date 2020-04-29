@@ -50,10 +50,10 @@ ubuntu::deploy-data-pi::as-user() {
   # Backup script
   ubuntu::install-senotrusov-backup-script || fail
 
-  backup-script install data-pi/backup-configs/backup-data-pi || fail
+  backup-script install deploy-scripts/data-pi/backup-configs/backup-data-pi || fail
   backup-data-pi init || fail
 
-  backup-script install data-pi/backup-configs/backup-polina-files || fail
+  backup-script install deploy-scripts/data-pi/backup-configs/backup-polina-files || fail
   backup-polina-files init || fail
 }
 
@@ -136,12 +136,12 @@ SHELL
 }
 
 data-pi::install-motd() {
-  sudo install --mode=0755 --owner=root --group=root -D -t /etc/update-motd.d data-pi/85-raspberry || fail "Unable to install /etc/update-motd.d/85-raspberry ($?)"
+  sudo install --mode=0755 --owner=root --group=root -D -t /etc/update-motd.d deploy-scripts/data-pi/85-raspberry || fail "Unable to install /etc/update-motd.d/85-raspberry ($?)"
 }
 
 data-pi::install-led-heartbeat() {
-  sudo install --mode=0644 --owner=root --group=root -D -t /etc/systemd/system data-pi/led-heartbeat.service || fail "Unable to install led-heartbeat.service ($?)"
-  sudo install --mode=0755 --owner=root --group=root -D -t /usr/local/bin data-pi/led-heartbeat.sh || fail "Unable to install led-heartbeat.sh ($?)"
+  sudo install --mode=0644 --owner=root --group=root -D -t /etc/systemd/system deploy-scripts/data-pi/led-heartbeat.service || fail "Unable to install led-heartbeat.service ($?)"
+  sudo install --mode=0755 --owner=root --group=root -D -t /usr/local/bin deploy-scripts/data-pi/led-heartbeat.sh || fail "Unable to install led-heartbeat.sh ($?)"
 
   sudo systemctl daemon-reload || fail "Unable to systemctl daemon-reload ($?)"
   sudo systemctl reenable led-heartbeat.service || fail "Unable to systemctl reenable led-heartbeat.service ($?)"

@@ -19,7 +19,7 @@ backup::polina-archive() {
   rclone sync "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || fail "rclone sync failed ($?)"
   rclone check "/Volumes/polina-backup/polina-archive" "onedrive:backups/polina-archive" --progress --bwlimit 500k || fail "rclone check failed ($?)"
 
-  deploy-lib::display-elapsed-time || fail
+  deploy-lib::footnotes::display-elapsed-time || fail
 }
 
 backup::stan-archive() {
@@ -27,5 +27,5 @@ backup::stan-archive() {
   rclone sync "/Volumes/Stan time machine/stan-archive" "onedrive:backups/stan-archive" --progress --bwlimit 500k || fail "rclone sync failed ($?)"
   rclone check "/Volumes/Stan time machine/stan-archive" "onedrive:backups/stan-archive" --progress --bwlimit 500k || fail "rclone check failed ($?)"
 
-  deploy-lib::display-elapsed-time || fail
+  deploy-lib::footnotes::display-elapsed-time || fail
 }

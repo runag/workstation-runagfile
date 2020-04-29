@@ -14,26 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-deploy::data-pi() {
-  ubuntu::deploy-data-pi || fail
-}
-
-deploy::macos-workstation() {
-  macos::deploy-workstation || fail
-}
-
-deploy::macos-non-developer-workstation() {
-  DEPLOY_NON_DEVELOPER_WORKSTATION=true deploy::macos-workstation || fail
-}
-
-deploy::ubuntu-workstation() {
-  ubuntu::deploy-workstation || fail
-}
-
-deploy::ubuntu-sway-workstation() {
-  DEPLOY_SWAY=true deploy::ubuntu-workstation || fail
-}
-
 deploy::merge-workstation-configs() {
   deploy-lib::footnotes::init || fail
 

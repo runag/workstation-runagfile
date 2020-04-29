@@ -14,18 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-tasks::select() {
+menu::select() {
   local actionList=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    actionList+=(deploy::ubuntu-workstation)
-    actionList+=(deploy::ubuntu-sway-workstation)
-    actionList+=(deploy::data-pi)
+    actionList+=(ubuntu::deploy-workstation)
+    actionList+=(ubuntu::deploy-sway-workstation)
+    actionList+=(ubuntu::deploy-data-pi)
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
-    actionList+=(deploy::macos-workstation)
-    actionList+=(deploy::macos-non-developer-workstation)
+    actionList+=(macos::deploy-workstation)
+    actionList+=(macos::deploy-non-developer-workstation)
   fi
   
   actionList+=(deploy::merge-workstation-configs)

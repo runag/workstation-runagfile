@@ -15,6 +15,9 @@
 #  limitations under the License.
 
 export BITWARDEN_LOGIN="stan@senotrusov.com"
+export GIT_USER_EMAIL="stan@senotrusov.com"
+export GIT_USER_NAME="Stanislav Senotrusov"
+export GITHUB_LOGIN="senotrusov"
 
 export DATA_PI_DISK_KEY="kelly disk key"
 export DATA_PI_DISK_NAME="kelly"
@@ -22,8 +25,3 @@ export DATA_PI_HOSTNAME="stan-data-pi"
 export DATA_PI_LOCAL_ADDRESS="stan-data-pi.local"
 export DATA_PI_SYNCTHING_SERVICE="syncthing-kelly"
 export DATA_PI_USER="ubuntu"
-
-export GIT_USER_EMAIL="stan@senotrusov.com"
-export GIT_USER_NAME="Stanislav Senotrusov"
-
-export GITHUB_LOGIN="senotrusov"

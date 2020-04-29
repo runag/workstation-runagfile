@@ -14,8 +14,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-set -o nounset
+deploy-lib::shellrcd::nodenv() {
+  local output="${HOME}/.shellrc.d/nodenv.sh"
 
-shellcheck bin/* $(find . -name '*.sh') | tee test/shellcheck.txt
+  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+    if [ -d "\$HOME/.nodenv/bin" ]; then
+      if ! [[ ":\$PATH:" == *":\$HOME/.nodenv/bin:"* ]]; then
+        export PATH="\$HOME/.nodenv/bin:\$PATH"
+      fi
+    fi
+    if command -v nodenv >/dev/null; then
+      if [ -z \${NODENV_INITIALIZED+x} ]; then
+        eval "\$(nodenv init -)" || { echo "Unable to init nodenv" >&2; return 1; }
+        export NODENV_INITIALIZED=true
+      fi
+    fi
+SHELL
 
-test/check-shell-error-handling bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+  . "${output}" || fail
+  nodenv rehash || fail
+}

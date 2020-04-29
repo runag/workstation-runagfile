@@ -1,82 +1,82 @@
 
-In deploy-lib.sh line 134:
-    local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
-          ^---------^ SC2155: Declare and assign separately to avoid masking return values.
-
-
-In deploy-lib.sh line 391:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In deploy-lib.sh line 411:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In deploy.sh line 27:
-  fail() {
-  ^-- SC2120: fail references arguments, but none are ever passed.
-
-
-In deploy.sh line 34:
-      sudo apt update || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 35:
-      sudo apt install -y git || fail
-                                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 40:
-  git --version >/dev/null || fail
-                              ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 45:
-    cd "${clonePath}" || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 46:
-    git pull || fail
-                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 48:
-    git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
-                                                                                     ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 49:
-    cd "${clonePath}" || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In deploy.sh line 52:
-  bin/deploy || fail
-                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
-
-
-In data-pi/led-heartbeat.sh line 18:
+In ./deploy-scripts/data-pi/led-heartbeat.sh line 18:
   for i in {1..5}
   ^-^ SC2034: i appears unused. Verify use (or export if used externally).
 
 
-In ubuntu/ubuntu-lib.sh line 319:
+In ./deploy-scripts/ubuntu.sh line 257:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ubuntu/ubuntu-lib.sh line 323:
+In ./deploy-scripts/ubuntu.sh line 261:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In vscode/vscode-lib.sh line 35:
-      cat vscode/extensions.txt | while IFS="" read -r extension; do
-          ^-------------------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+In ./lib/bitwarden.sh line 20:
+    local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
+          ^---------^ SC2155: Declare and assign separately to avoid masking return values.
+
+
+In ./lib/nodejs.sh line 34:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./lib/ruby.sh line 42:
+  . "${output}" || fail
+    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./deploy.sh line 27:
+  fail() {
+  ^-- SC2120: fail references arguments, but none are ever passed.
+
+
+In ./deploy.sh line 34:
+      sudo apt update || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 35:
+      sudo apt install -y git || fail
+                                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 40:
+  git --version >/dev/null || fail
+                              ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 45:
+    cd "${clonePath}" || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 46:
+    git pull || fail
+                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 48:
+    git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
+                                                                                     ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 49:
+    cd "${clonePath}" || fail
+                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./deploy.sh line 52:
+  bin/deploy || fail
+                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+
+
+In ./apps/vscode/vscode-lib.sh line 35:
+      cat apps/vscode/extensions.txt | while IFS="" read -r extension; do
+          ^------------------------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
 
 For more information:
   https://www.shellcheck.net/wiki/SC1090 -- Can't follow non-constant source....

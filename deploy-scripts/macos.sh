@@ -14,6 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+macos::deploy-non-developer-workstation() {
+  DEPLOY_NON_DEVELOPER_WORKSTATION=true macos::deploy-workstation || fail
+}
+
 macos::deploy-workstation() {
   # init footnotes
   deploy-lib::footnotes::init || fail
@@ -56,65 +60,10 @@ macos::deploy-workstation() {
 
   # flush footnotes
   deploy-lib::footnotes::flush || fail
+  deploy-lib::footnotes::display-elapsed-time || fail
 
   # communicate to the user that we have reached the end of a script without major errors
   echo "macos::deploy-workstation completed"
-}
-
-macos::increase-maxfiles-limit() {
-  # based on https://unix.stackexchange.com/questions/108174/how-to-persistently-control-maximum-system-resource-consumption-on-mac
-
-  local dst="/Library/LaunchDaemons/limit.maxfiles.plist"
-
-  if [ ! -f "${dst}" ]; then
-    sudo cp macos/limit.maxfiles.plist "${dst}" || fail "Unable to copy to $dst ($?)"
-
-    sudo chmod 0644 "${dst}" || fail "Unable to chmod ${dst} ($?)"
-
-    sudo chown root:wheel "${dst}" || fail "Unable to chown ${dst} ($?)"
-
-    deploy-lib::footnotes::add "increase-maxfiles-limit: Please reboot your computer" || fail
-  fi
-}
-
-macos::install-homebrew() {
-  if ! command -v brew >/dev/null; then
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null || fail "Unable to install homebrew"
-  fi
-}
-
-macos::ssh::add-use-keychain-to-ssh-config() {
-  local sshConfigFile="${HOME}/.ssh/config"
-
-  if [ ! -f "${sshConfigFile}" ]; then
-    touch "${sshConfigFile}" || fail
-  fi
-
-  if grep --quiet "^# Use keychain" "${sshConfigFile}"; then
-    echo "Use keychain config already present"
-  else
-tee -a "${sshConfigFile}" <<SHELL || fail "Unable to append to the file: ${sshConfigFile}"
-
-# Use keychain
-Host *
-  UseKeychain yes
-  AddKeysToAgent yes
-SHELL
-  fi
-}
-
-macos::ssh::add-ssh-key-password-to-keychain() {
-  local keyFile="${HOME}/.ssh/id_rsa"
-  if ssh-add -L | grep --quiet --fixed-strings "${keyFile}"; then
-    echo "${keyFile} is already in the keychain"
-  else
-    deploy-lib::bitwarden::unlock || fail
-
-    # I could not pipe output directly to ssh-add because "bw get password" throws a pipe error in that case
-    local password; password="$(bw get password "my current password for ssh private key")" || fail
-    echo "${password}" | SSH_ASKPASS=macos/exec-cat.sh DISPLAY=1 ssh-add -K "${keyFile}"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to obtain and store ssh key password"
-  fi
 }
 
 macos::install-basic-packages() {
@@ -242,31 +191,14 @@ macos::install-developer-packages() {
   brew install sshfs || fail
 }
 
-macos::shellrcd::homebrew-ruby() {
-  local output="${HOME}/.shellrc.d/homebrew-ruby.sh"
-  local gemsPath; gemsPath="$(brew info ruby | grep -F "ruby/gems" | sed -e 's/^[[:space:]]*//')" || fail "Unable to get gemsPath"
-
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    export PATH="${gemsPath}:/usr/local/opt/ruby/bin:\$PATH"
-    export LDFLAGS="-L/usr/local/opt/ruby/lib"
-    export CPPFLAGS="-I/usr/local/opt/ruby/include"
-SHELL
-}
-
 macos::hide-folders() {
-  macos::hide-folder "${HOME}/Applications"
-  macos::hide-folder "${HOME}/Desktop"
-  macos::hide-folder "${HOME}/Documents"
-  macos::hide-folder "${HOME}/Movies"
-  macos::hide-folder "${HOME}/Music"
-  macos::hide-folder "${HOME}/Pictures"
-  macos::hide-folder "${HOME}/Public"
-  macos::hide-folder "${HOME}/Virtual Machines.localized"
-  macos::hide-folder "${HOME}/VirtualBox VMs"
-}
-
-macos::hide-folder() {
-  if [ -d "$1" ]; then
-    chflags hidden "$1" || fail
-  fi
+  macos::hide-folder "${HOME}/Applications" || fail
+  macos::hide-folder "${HOME}/Desktop" || fail
+  macos::hide-folder "${HOME}/Documents" || fail
+  macos::hide-folder "${HOME}/Movies" || fail
+  macos::hide-folder "${HOME}/Music" || fail
+  macos::hide-folder "${HOME}/Pictures" || fail
+  macos::hide-folder "${HOME}/Public" || fail
+  macos::hide-folder "${HOME}/Virtual Machines.localized" || fail
+  macos::hide-folder "${HOME}/VirtualBox VMs" || fail
 }

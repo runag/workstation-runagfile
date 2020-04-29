@@ -26,13 +26,13 @@ vscode::list-extensions-to-temp-file() {
 }
 
 vscode::install-extensions() {
-  if [ -f vscode/extensions.txt ]; then
+  if [ -f apps/vscode/extensions.txt ]; then
     local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
 
-    if ! diff vscode/extensions.txt "${extensionsList}" >/dev/null 2>&1; then
+    if ! diff apps/vscode/extensions.txt "${extensionsList}" >/dev/null 2>&1; then
       local extension
       # TODO: how to do correct error handling here (cat | while)?
-      cat vscode/extensions.txt | while IFS="" read -r extension; do
+      cat apps/vscode/extensions.txt | while IFS="" read -r extension; do
         if [ -n "${extension}" ]; then
           code --install-extension "${extension}" || fail "Unable to install vscode extension ${extension}"
         fi
@@ -47,7 +47,7 @@ vscode::install-extensions() {
 
 vscode::sync-merge-extensions-config() {
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  deploy-lib::config::install vscode/extensions.txt "${extensionsList}" || fail
+  deploy-lib::config::install apps/vscode/extensions.txt "${extensionsList}" || fail
   rm "${extensionsList}" || fail
 }
 
@@ -58,8 +58,8 @@ vscode::install-config() {
     local configDirectory="${HOME}/.config/Code"
   fi
 
-  deploy-lib::config::install vscode/settings.json "${configDirectory}/User/settings.json" || fail
-  deploy-lib::config::install vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
+  deploy-lib::config::install apps/vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::config::install apps/vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
@@ -69,9 +69,9 @@ vscode::merge-config() {
     local configDirectory="${HOME}/.config/Code"
   fi
 
-  deploy-lib::config::merge vscode/settings.json "${configDirectory}/User/settings.json" || fail
-  deploy-lib::config::merge vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
+  deploy-lib::config::merge apps/vscode/settings.json "${configDirectory}/User/settings.json" || fail
+  deploy-lib::config::merge apps/vscode/keybindings.json "${configDirectory}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  deploy-lib::config::merge vscode/extensions.txt "${extensionsList}" || fail
+  deploy-lib::config::merge apps/vscode/extensions.txt "${extensionsList}" || fail
 }

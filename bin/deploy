@@ -37,25 +37,42 @@ deploy-lib::cd-to-my-computer-deploy-directory() {
 
 deploy-lib::cd-to-my-computer-deploy-directory || fail
 
-. deploy-lib.sh || fail "Unable to load deploy-lib.sh"
-. config.sh     || fail "Unable to load config.sh"
+. lib/bitwarden.sh || fail
+. lib/config-files.sh || fail
+. lib/filesystem.sh || fail
+. lib/footnotes.sh || fail
+. lib/git.sh || fail
+. lib/github.sh || fail
+. lib/nodejs.sh || fail
+. lib/ruby.sh || fail
+. lib/shellrcd-files.sh || fail
+. lib/shellrcd.sh || fail
+. lib/ssh.sh || fail
 
-. data-pi/data-pi-lib.sh    || fail "Unable to load data-pi/data-pi-lib.sh"
-. macos/macos-lib.sh        || fail "Unable to load macos/macos-lib.sh"
-. netdata/netdata-lib.sh    || fail "Unable to load netdata/netdata-lib.sh"
-. sublime/sublime-lib.sh    || fail "Unable to load sublime/sublime-lib.sh"
-. sway/sway-lib.sh          || fail "Unable to load sway/sway-lib.sh"
-. ubuntu/ubuntu-lib.sh      || fail "Unable to load ubuntu/ubuntu-lib.sh"
-. ubuntu/ubuntu-packages.sh || fail "Unable to load ubuntu/ubuntu-packages.sh"
-. vscode/vscode-lib.sh      || fail "Unable to load vscode/vscode-lib.sh"
+. config.sh || fail
 
-. tasks/backup.sh    || fail "Unable to load tasks/backup.sh"
-. tasks/benchmark.sh || fail "Unable to load tasks/benchmark.sh"
-. tasks/deploy.sh    || fail "Unable to load tasks/deploy.sh"
-. tasks/tasks.sh     || fail "Unable to load tasks/tasks.sh"
+. apps/netdata/netdata-lib.sh || fail
+. apps/sublime/sublime-lib.sh || fail
+. apps/sway/sway-lib.sh || fail
+. apps/vscode/vscode-lib.sh || fail
+
+. deploy-scripts/data-pi/data-pi-lib.sh || fail
+
+. deploy-scripts/macos.sh || fail
+. deploy-scripts/misc.sh || fail
+. deploy-scripts/ubuntu.sh || fail
+
+. oses/macos/macos-lib.sh || fail
+. oses/ubuntu/ubuntu-lib.sh || fail
+. oses/ubuntu/ubuntu-packages.sh || fail
+
+. scripts/backup.sh || fail
+. scripts/benchmark.sh || fail
+
+. menu.sh || fail
 
 if [ -n "${1:-}" ]; then
   declare -f "$1" >/dev/null || fail "Argument must be a function name: $1"
 fi
 
-"${1:-tasks::select}" "${@:2}" || fail
+"${1:-menu::select}" "${@:2}" || fail
