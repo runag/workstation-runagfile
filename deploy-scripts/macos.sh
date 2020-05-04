@@ -162,12 +162,6 @@ macos::install-developer-packages() {
   brew install gnupg || fail
 
   # ruby
-
-  # a) latest ruby
-  # brew install ruby || fail
-  # macos::shellrcd::homebrew-ruby || fail
-
-  # b) rbenv
   brew install rbenv || fail
   rbenv rehash || fail
   deploy-lib::shellrcd::rbenv || fail

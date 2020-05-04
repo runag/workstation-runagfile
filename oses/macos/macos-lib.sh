@@ -70,17 +70,6 @@ macos::ssh::add-ssh-key-password-to-keychain() {
   fi
 }
 
-macos::shellrcd::homebrew-ruby() {
-  local output="${HOME}/.shellrc.d/homebrew-ruby.sh"
-  local gemsPath; gemsPath="$(brew info ruby | grep -F "ruby/gems" | sed -e 's/^[[:space:]]*//')" || fail "Unable to get gemsPath"
-
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    export PATH="${gemsPath}:/usr/local/opt/ruby/bin:\$PATH"
-    export LDFLAGS="-L/usr/local/opt/ruby/lib"
-    export CPPFLAGS="-I/usr/local/opt/ruby/include"
-SHELL
-}
-
 macos::hide-folder() {
   if [ -d "$1" ]; then
     chflags hidden "$1" || fail
