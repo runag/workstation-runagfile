@@ -168,12 +168,6 @@ macos::install-developer-packages() {
   deploy-lib::ruby::install-gemrc || fail
 
   # nodejs
-
-  # a) latest nodejs
-  # brew install node || fail
-  # brew install yarn || fail
-
-  # b) node
   brew install nodenv || fail
   deploy-lib::shellrcd::nodenv || fail
   brew install yarn || fail
