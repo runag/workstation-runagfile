@@ -22,15 +22,42 @@ macos::deploy-workstation() {
   # init footnotes
   deploy-lib::footnotes::init || fail
 
-  # maxfiles limit
-  macos::increase-maxfiles-limit || fail
-
   # basic packages
   macos::install-basic-packages || fail
 
   if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
     # developer packages
     macos::install-developer-packages || fail
+  fi
+
+  macos::configure-workstation::perform-configuration || fail
+
+  # flush footnotes
+  deploy-lib::footnotes::display || fail
+}
+
+macos::configure-workstation() {
+  # init footnotes
+  deploy-lib::footnotes::init || fail
+
+  macos::configure-workstation::perform-configuration || fail
+
+  # flush footnotes
+  deploy-lib::footnotes::display || fail
+}
+
+macos::configure-workstation::perform-configuration() {
+  # maxfiles limit
+  macos::increase-maxfiles-limit || fail
+
+  if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
+    # ruby
+    rbenv rehash || fail
+    deploy-lib::shellrcd::rbenv || fail
+    deploy-lib::ruby::install-gemrc || fail
+
+    # nodejs
+    deploy-lib::shellrcd::nodenv || fail
 
     # shell aliases
     deploy-lib::shellrcd::install || fail
@@ -49,7 +76,6 @@ macos::deploy-workstation() {
 
     # vscode
     vscode::install-config || fail
-    vscode::install-extensions || fail
 
     # sublime text
     sublime::install-config || fail
@@ -57,13 +83,6 @@ macos::deploy-workstation() {
     # hide folders
     macos::hide-folders || fail
   fi
-
-  # flush footnotes
-  deploy-lib::footnotes::flush || fail
-  deploy-lib::footnotes::display-elapsed-time || fail
-
-  # communicate to the user that we have reached the end of a script without major errors
-  echo "macos::deploy-workstation completed"
 }
 
 macos::install-basic-packages() {
@@ -148,6 +167,7 @@ macos::install-developer-packages() {
   
   # vscode
   brew cask install visual-studio-code || fail
+  vscode::install-extensions || fail
 
   # iterm2
   brew cask install iterm2 || fail
@@ -163,16 +183,12 @@ macos::install-developer-packages() {
 
   # ruby
   brew install rbenv || fail
-  rbenv rehash || fail
-  deploy-lib::shellrcd::rbenv || fail
-  deploy-lib::ruby::install-gemrc || fail
 
   # nodejs
   brew install nodenv || fail
-  deploy-lib::shellrcd::nodenv || fail
   brew install yarn || fail
 
-  # bitwarden-cli (after nodejs)
+  # bitwarden-cli
   brew install bitwarden-cli || fail
 
   # sshfs

@@ -25,6 +25,7 @@ menu::select() {
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
     actionList+=(macos::deploy-workstation)
+    actionList+=(macos::configure-workstation)
     actionList+=(macos::deploy-non-developer-workstation)
   fi
   

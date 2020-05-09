@@ -41,3 +41,9 @@ deploy-lib::footnotes::flush() {
 deploy-lib::footnotes::display-elapsed-time() {
   echo "Elapsed time: $((SECONDS / 3600))h$(((SECONDS % 3600) / 60))m$((SECONDS % 60))s"
 }
+
+
+deploy-lib::footnotes::display() {
+  deploy-lib::footnotes::flush || fail
+  deploy-lib::footnotes::display-elapsed-time || fail
+}
