@@ -56,7 +56,6 @@ deploy-lib::cd-to-my-computer-deploy-directory || fail
 . apps/sway/sway-lib.sh || fail
 . apps/vscode/vscode-lib.sh || fail
 
-
 . deploy-scripts/data-pi.sh || fail
 . deploy-scripts/macos.sh || fail
 . deploy-scripts/misc.sh || fail
