@@ -15,8 +15,10 @@
 #  limitations under the License.
 
 export BITWARDEN_LOGIN="stan@senotrusov.com"
-export GIT_USER_EMAIL="stan@senotrusov.com"
+
 export GIT_USER_NAME="Stanislav Senotrusov"
+export GIT_USER_EMAIL="stan@senotrusov.com"
+
 export GITHUB_LOGIN="senotrusov"
 
 export DATA_PI_DISK_KEY="kelly disk key"

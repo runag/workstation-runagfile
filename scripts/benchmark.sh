@@ -23,7 +23,8 @@ benchmark() {
 }
 
 benchmark::run() (
-  cd "${HOME}" || fail
+  mkdir "${HOME}/.sysbench" || fail
+  cd "${HOME}/.sysbench" || fail
 
   echo "### CPU SPEED ###"
   sysbench cpu run || fail

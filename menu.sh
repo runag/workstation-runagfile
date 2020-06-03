@@ -36,7 +36,9 @@ menu::select() {
     actionList+=(backup::stan-archive)
   fi
 
-  actionList+=(benchmark)
+  if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
+    actionList+=(benchmark)
+  fi
 
   echo "Please choose an action to perform:"
   local i

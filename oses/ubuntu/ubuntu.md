@@ -1,7 +1,7 @@
 # Install
 
 ## How to choose ubuntu version
-Install only LTS release as its most stable (all other releases are shaky)
+Install only LTS release as its most stable
 
 ## Partition
 
@@ -244,7 +244,7 @@ sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 groups
 ```
 
-## Misc commands to remember
+## lstopo
 ```sh
 # Show the system topology
 lstopo
