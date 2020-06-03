@@ -14,6 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# deploy-lib::ssh::add-host-known-hosts bitbucket.org || fail
+# deploy-lib::ssh::add-host-known-hosts github.com || fail
+
 deploy-lib::git::configure() {
   git config --global user.name "${GIT_USER_NAME}" || fail
   git config --global user.email "${GIT_USER_EMAIL}" || fail
@@ -41,25 +44,26 @@ deploy-lib::git::remove-temp-clone() {
 deploy-lib::git::make-repository-clone-available() {
   local repoUrl="$1"
   local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
-  local branch="${3:-}"
-
-  deploy-lib::ssh::add-host-known-hosts bitbucket.org || fail
-  deploy-lib::ssh::add-host-known-hosts github.com || fail
+  local branch="${3:-"master"}"
 
   if [ ! -d "${localCloneDir}" ]; then
     git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
   else
     local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
 
-    if [ "${existingRepoUrl}" != "${repoUrl}" ]; then
-      rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
-      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
-    else
+    if [ "${existingRepoUrl}" = "${repoUrl}" ]; then
       (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
+    else
+      if (cd "${localCloneDir}" 2>/dev/null && git diff-index --quiet HEAD --); then
+        rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
+        git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+      else
+        fail "Local clone ${localCloneDir} is cloned from ${existingRepoUrl} and there are local changes. It is expected to be a clone of ${repoUrl}."
+      fi
     fi
   fi
   
   if [ -n "${branch}" ]; then
-    (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to pull from ${repoUrl}"
+    (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to checkout ${branch}"
   fi
 }

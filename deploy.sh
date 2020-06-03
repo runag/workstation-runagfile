@@ -14,9 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# I'm wrapping the script in the function with the random name,
-# to ensure that in case if download fails in the middle,
-# then "curl | bash" will not run some funny things
 __xVhMyefCbBnZFUQtwqCs() {
   if [ -n "${VERBOSE:-}" ]; then
     set -o xtrace
@@ -27,6 +24,33 @@ __xVhMyefCbBnZFUQtwqCs() {
   fail() {
     echo "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: in \`${FUNCNAME[1]}': Error: ${1:-"Abnormal termination"}" >&2
     exit "${2:-1}"
+  }
+
+  deploy-lib::git::make-repository-clone-available() {
+    local repoUrl="$1"
+    local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
+    local branch="${3:-"master"}"
+
+    if [ ! -d "${localCloneDir}" ]; then
+      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+    else
+      local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
+
+      if [ "${existingRepoUrl}" = "${repoUrl}" ]; then
+        (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
+      else
+        if (cd "${localCloneDir}" 2>/dev/null && git diff-index --quiet HEAD --); then
+          rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
+          git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+        else
+          fail "Local clone ${localCloneDir} is cloned from ${existingRepoUrl} and there are local changes. It is expected to be a clone of ${repoUrl}."
+        fi
+      fi
+    fi
+    
+    if [ -n "${branch}" ]; then
+      (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to checkout ${branch}"
+    fi
   }
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
@@ -41,15 +65,14 @@ __xVhMyefCbBnZFUQtwqCs() {
 
   local clonePath="${HOME}/.my-computer-deploy"
 
-  if [ -d "${clonePath}" ]; then
-    cd "${clonePath}" || fail
-    git pull || fail
-  else
-    git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
-    cd "${clonePath}" || fail
-  fi
+  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/my-computer-deploy.git" "${clonePath}" || fail
+  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/stan-deploy-lib.git" "${clonePath}/stan-deploy-lib" || fail
+
+  cd "${clonePath}" || fail
 
   bin/deploy || fail
 }
 
+# I'm wrapping the script in the function with the random name, to ensure that in case if download fails in the middle,
+# then "curl | bash" will not run some funny things
 __xVhMyefCbBnZFUQtwqCs || return $?
