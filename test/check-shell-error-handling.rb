@@ -113,7 +113,7 @@ def check_file file_name
 
     unless file_name_displayed
       file_name_displayed = true
-      puts "#{file_name}:"
+      puts "\n#{file_name}:"
     end
 
     puts "  #{index+1}: #{line}"
