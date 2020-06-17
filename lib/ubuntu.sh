@@ -146,6 +146,7 @@ ubuntu::apt::install-basic-tools() {
     tmux \
     sysbench \
     hwloc-nox \
+    direnv \
       || fail
 }
 
