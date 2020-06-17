@@ -25,50 +25,30 @@ fail() {
   exit "${2:-1}"
 }
 
-deploy-lib::cd-to-my-computer-deploy-directory() {
-  local scriptDirname
-  local projectDirname
+MY_COMPUTER_DEPLOY_DIR="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine MY_COMPUTER_DEPLOY_DIR ($?)"
+MY_COMPUTER_DEPLOY_DIR="$(cd "${MY_COMPUTER_DEPLOY_DIR}"/.. >/dev/null 2>&1 && pwd)" || fail "Unable to determine full path for MY_COMPUTER_DEPLOY_DIR ($?)"
 
-  scriptDirname="$(dirname "${BASH_SOURCE[0]}")" || fail "Unable to determine scriptDirname ($?)"
-  projectDirname="$(cd "${scriptDirname}" >/dev/null 2>&1 && cd .. >/dev/null 2>&1 && pwd)" || fail "Unable to determine projectDirname ($?)"
+export MY_COMPUTER_DEPLOY_DIR
 
-  cd "${projectDirname}" || fail "Unable to cd to ${projectDirname} ($?)"
-}
+if [ -f "${MY_COMPUTER_DEPLOY_DIR}/stan-deploy-lib/index.sh" ]; then
+  . "${MY_COMPUTER_DEPLOY_DIR}/stan-deploy-lib/index.sh" || fail
+else
+  if [ -f "${HOME}/.stan-deploy-lib/index.sh" ]; then
+    . "${HOME}/.stan-deploy-lib/index.sh" || fail
+  else
+    fail "Unable to load stan-deploy-lib"
+  fi
+fi
 
-deploy-lib::cd-to-my-computer-deploy-directory || fail
-
-. lib/bitwarden.sh || fail
-. lib/config-files.sh || fail
-. lib/filesystem.sh || fail
-. lib/footnotes.sh || fail
-. lib/git.sh || fail
-. lib/github.sh || fail
-. lib/nodejs.sh || fail
-. lib/ruby.sh || fail
-. lib/shellrcd-files.sh || fail
-. lib/shellrcd.sh || fail
-. lib/ssh.sh || fail
-
-. config.sh || fail
-
-. apps/netdata/netdata-lib.sh || fail
-. apps/sublime/sublime-lib.sh || fail
-. apps/sway/sway-lib.sh || fail
-. apps/vscode/vscode-lib.sh || fail
-
-. deploy-scripts/data-pi.sh || fail
-. deploy-scripts/macos.sh || fail
-. deploy-scripts/misc.sh || fail
-. deploy-scripts/ubuntu.sh || fail
-
-. oses/macos/macos-lib.sh || fail
-. oses/ubuntu/ubuntu-lib.sh || fail
-. oses/ubuntu/ubuntu-packages.sh || fail
-
-. scripts/backup.sh || fail
-. scripts/benchmark.sh || fail
-
-. menu.sh || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/config.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/macos.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/menu.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/misc.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/sublime.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/sway.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/ubuntu.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode.sh" || fail
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/windows.sh" || fail
 
 if [ -n "${1:-}" ]; then
   declare -f "$1" >/dev/null || fail "Argument must be a function name: $1"

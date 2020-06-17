@@ -47,7 +47,7 @@ __xVhMyefCbBnZFUQtwqCs() {
         fi
       fi
     fi
-    
+
     if [ -n "${branch}" ]; then
       (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to checkout ${branch}"
     fi
@@ -63,9 +63,9 @@ __xVhMyefCbBnZFUQtwqCs() {
   # on macos that may start git install process
   git --version >/dev/null || fail
 
-  local clonePath="${HOME}/.my-computer-deploy"
+  local clonePath="${HOME}/.stan-computer-deploy"
 
-  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/my-computer-deploy.git" "${clonePath}" || fail
+  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/stan-computer-deploy.git" "${clonePath}" || fail
   deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/stan-deploy-lib.git" "${clonePath}/stan-deploy-lib" || fail
 
   cd "${clonePath}" || fail

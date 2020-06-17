@@ -5,8 +5,6 @@
   27:     actionList+=(macos::deploy-workstation)
   28:     actionList+=(macos::deploy-non-developer-workstation)
   31:   actionList+=(deploy::merge-workstation-configs)
-  34:     actionList+=(backup::polina-archive)
-  35:     actionList+=(backup::stan-archive)
   38:   actionList+=(benchmark)
   42:   for i in "${!actionList[@]}"; do
 ./deploy-scripts/data-pi/led-heartbeat.sh:
