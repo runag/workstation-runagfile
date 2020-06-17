@@ -1,84 +1,169 @@
 
-In ./deploy-scripts/data-pi/led-heartbeat.sh line 18:
-  for i in {1..5}
-  ^-^ SC2034: i appears unused. Verify use (or export if used externally).
+In bin/deploy line 34:
+  . "${MY_COMPUTER_DEPLOY_DIR}/stan-deploy-lib/index.sh" || fail
+    ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy-scripts/ubuntu.sh line 257:
+In bin/deploy line 37:
+    . "${HOME}/.stan-deploy-lib/index.sh" || fail
+      ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 43:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/config.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 44:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/macos.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 45:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/menu.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 46:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/misc.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 47:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/sublime.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 48:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/sway.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 49:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/ubuntu.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 50:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In bin/deploy line 51:
+. "${MY_COMPUTER_DEPLOY_DIR}/lib/windows.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./lib/ubuntu.sh line 249:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./deploy-scripts/ubuntu.sh line 261:
+In ./lib/ubuntu.sh line 253:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/bitwarden.sh line 20:
-    local errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
-          ^---------^ SC2155: Declare and assign separately to avoid masking return values.
+In ./lib/vscode.sh line 52:
+      cat "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+          ^-- SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
 
 
-In ./lib/nodejs.sh line 34:
+In ./test/run-code-checks.sh line 19:
+ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+                                              ^--------------------^ SC2046: Quote this to prevent word splitting.
+
+
+In ./test/run-code-checks.sh line 21:
+shellcheck bin/* $(find . -name '*.sh') | tee test/shellcheck.txt
+                 ^--------------------^ SC2046: Quote this to prevent word splitting.
+
+
+In ./stan-deploy-lib/lib/ruby.sh line 42:
   . "${output}" || fail
     ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./lib/ruby.sh line 42:
+In ./stan-deploy-lib/lib/nodejs.sh line 34:
   . "${output}" || fail
     ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 27:
-  fail() {
-  ^-- SC2120: fail references arguments, but none are ever passed.
+In ./stan-deploy-lib/index.sh line 33:
+. "${STAN_DEPLOY_LIB_DIR}/lib/benchmark.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 34:
-      sudo apt update || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 34:
+. "${STAN_DEPLOY_LIB_DIR}/lib/bitwarden.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 35:
-      sudo apt install -y git || fail
-                                 ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 35:
+. "${STAN_DEPLOY_LIB_DIR}/lib/config-files.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 40:
-  git --version >/dev/null || fail
-                              ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 36:
+. "${STAN_DEPLOY_LIB_DIR}/lib/deploy-lib.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 45:
-    cd "${clonePath}" || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 37:
+. "${STAN_DEPLOY_LIB_DIR}/lib/filesystem.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 46:
-    git pull || fail
-                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 38:
+. "${STAN_DEPLOY_LIB_DIR}/lib/git.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 48:
-    git clone https://github.com/senotrusov/my-computer-deploy.git "${clonePath}" || fail
-                                                                                     ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 39:
+. "${STAN_DEPLOY_LIB_DIR}/lib/github.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 49:
-    cd "${clonePath}" || fail
-                         ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 40:
+. "${STAN_DEPLOY_LIB_DIR}/lib/macos.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./deploy.sh line 52:
-  bin/deploy || fail
-                ^--^ SC2119: Use fail "$@" if function's $1 should mean script's $1.
+In ./stan-deploy-lib/index.sh line 41:
+. "${STAN_DEPLOY_LIB_DIR}/lib/nodejs.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 
-In ./apps/vscode/vscode-lib.sh line 35:
-      cat apps/vscode/extensions.txt | while IFS="" read -r extension; do
-          ^------------------------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+In ./stan-deploy-lib/index.sh line 42:
+. "${STAN_DEPLOY_LIB_DIR}/lib/ruby.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./stan-deploy-lib/index.sh line 43:
+. "${STAN_DEPLOY_LIB_DIR}/lib/shellrcd-files.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./stan-deploy-lib/index.sh line 44:
+. "${STAN_DEPLOY_LIB_DIR}/lib/shellrcd.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./stan-deploy-lib/index.sh line 45:
+. "${STAN_DEPLOY_LIB_DIR}/lib/ssh.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./stan-deploy-lib/index.sh line 46:
+. "${STAN_DEPLOY_LIB_DIR}/lib/ubuntu-packages.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
+
+
+In ./stan-deploy-lib/index.sh line 47:
+. "${STAN_DEPLOY_LIB_DIR}/lib/ubuntu.sh" || fail
+  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
 
 For more information:
   https://www.shellcheck.net/wiki/SC1090 -- Can't follow non-constant source....
-  https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
-  https://www.shellcheck.net/wiki/SC2120 -- fail references arguments, but no...
+  https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
+  https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...
