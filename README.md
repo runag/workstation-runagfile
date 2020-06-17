@@ -1,6 +1,6 @@
 # My computer deploy
 
-A script to configure my workstation. I run it on a freshly installed Linux or MacOS.
+A script to configure my workstation. I run it on a freshly installed Linux, MacOS, or Windows.
 
 It will do the following:
 
