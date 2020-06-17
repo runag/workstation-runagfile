@@ -1,59 +1,4 @@
 
-In bin/deploy line 34:
-  . "${MY_COMPUTER_DEPLOY_DIR}/stan-deploy-lib/index.sh" || fail
-    ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 37:
-    . "${HOME}/.stan-deploy-lib/index.sh" || fail
-      ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 43:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/config.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 44:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/macos.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 45:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/menu.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 46:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/misc.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 47:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/sublime.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 48:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/sway.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 49:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/ubuntu.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 50:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In bin/deploy line 51:
-. "${MY_COMPUTER_DEPLOY_DIR}/lib/windows.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
 In ./lib/ubuntu.sh line 249:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
@@ -75,95 +20,10 @@ ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/
 
 
 In ./test/run-code-checks.sh line 21:
-shellcheck bin/* $(find . -name '*.sh') | tee test/shellcheck.txt
+shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
                  ^--------------------^ SC2046: Quote this to prevent word splitting.
 
-
-In ./stan-deploy-lib/lib/ruby.sh line 42:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/lib/nodejs.sh line 34:
-  . "${output}" || fail
-    ^---------^ SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 33:
-. "${STAN_DEPLOY_LIB_DIR}/lib/benchmark.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 34:
-. "${STAN_DEPLOY_LIB_DIR}/lib/bitwarden.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 35:
-. "${STAN_DEPLOY_LIB_DIR}/lib/config-files.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 36:
-. "${STAN_DEPLOY_LIB_DIR}/lib/deploy-lib.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 37:
-. "${STAN_DEPLOY_LIB_DIR}/lib/filesystem.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 38:
-. "${STAN_DEPLOY_LIB_DIR}/lib/git.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 39:
-. "${STAN_DEPLOY_LIB_DIR}/lib/github.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 40:
-. "${STAN_DEPLOY_LIB_DIR}/lib/macos.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 41:
-. "${STAN_DEPLOY_LIB_DIR}/lib/nodejs.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 42:
-. "${STAN_DEPLOY_LIB_DIR}/lib/ruby.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 43:
-. "${STAN_DEPLOY_LIB_DIR}/lib/shellrcd-files.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 44:
-. "${STAN_DEPLOY_LIB_DIR}/lib/shellrcd.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 45:
-. "${STAN_DEPLOY_LIB_DIR}/lib/ssh.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 46:
-. "${STAN_DEPLOY_LIB_DIR}/lib/ubuntu-packages.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
-
-In ./stan-deploy-lib/index.sh line 47:
-. "${STAN_DEPLOY_LIB_DIR}/lib/ubuntu.sh" || fail
-  ^-- SC1090: Can't follow non-constant source. Use a directive to specify location.
-
 For more information:
-  https://www.shellcheck.net/wiki/SC1090 -- Can't follow non-constant source....
   https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
   https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...
+  https://www.shellcheck.net/wiki/SC2002 -- Useless cat. Consider 'cmd < file...

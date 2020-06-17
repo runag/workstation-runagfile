@@ -18,4 +18,4 @@ set -o nounset
 
 ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
 
-shellcheck bin/* $(find . -name '*.sh') | tee test/shellcheck.txt
+shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt

@@ -14,7 +14,7 @@
   47:   for i in "${!actionList[@]}"; do
 ./test/run-code-checks.sh:
   19: ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
-  21: shellcheck bin/* $(find . -name '*.sh') | tee test/shellcheck.txt
+  21: shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
 ./deploy.sh:
   24:   fail() {
   29:   deploy-lib::git::make-repository-clone-available() {
