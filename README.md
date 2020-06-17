@@ -34,11 +34,13 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-depl
 
 Record names should be as the following:
 
-* ``my current ssh private key``
-* ``my current ssh public key``
-* ``my current password for ssh private key``
-* ``my github personal access token``
-* ``sublime text 3 license``
+```
+my current ssh private key
+my current ssh public key
+my current password for ssh private key
+my github personal access token
+sublime text 3 license
+```
 
 # Contributing
 
