@@ -237,6 +237,18 @@ ubuntu::configure-workstation() {
   if ubuntu::is-bare-metal; then
     sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
+
+  # Enable wayland for firefox
+  ubuntu::moz-enable-wayland || fail
+}
+
+ubuntu::moz-enable-wayland() {
+  local pamFile="${HOME}/.pam_environment"
+  touch "${pamFile}"
+
+  if ! grep --quiet "^MOZ_ENABLE_WAYLAND" "${pamFile}"; then
+    echo "MOZ_ENABLE_WAYLAND=1" >>"${pamFile}" || fail
+  fi
 }
 
 ubuntu::remove-user-dirs() {
@@ -293,68 +305,73 @@ ubuntu::configure-desktop-apps() {
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
     if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
-      gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
     fi
 
     if gsettings get org.gnome.Terminal.ProfilesList default; then
       local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
       local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
-      gsettings set "$profilePath" exit-action 'hold' || fail "Unable to set gsettings ($?)"
-      gsettings set "$profilePath" login-shell true || fail "Unable to set gsettings ($?)"
+      gsettings set "$profilePath" exit-action 'hold' || fail
+      gsettings set "$profilePath" login-shell true || fail
     fi
 
     # Nautilus
     if gsettings list-keys org.gnome.nautilus; then
-      gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.list-view use-tree-view true || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
+      gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
+      gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
+      gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail
+      gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail
     fi
 
     # Desktop 18.04
     if gsettings list-keys org.gnome.nautilus.desktop; then
-      gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.nautilus.desktop volumes-visible false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail
+      gsettings set org.gnome.nautilus.desktop volumes-visible false || fail
     fi
 
     # Desktop 19.10
     if gsettings list-keys org.gnome.shell.extensions.desktop-icons; then
-      gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail "Unable to set gsettings ($?)"
-      gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail
+      gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail
     fi
 
     # Disable screen lock
     if gsettings get org.gnome.desktop.session idle-delay; then
-      gsettings set org.gnome.desktop.session idle-delay 0 || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.desktop.session idle-delay 0 || fail
     fi
 
     # Auto set time zone
     if gsettings get org.gnome.desktop.datetime automatic-timezone; then
-      gsettings set org.gnome.desktop.datetime automatic-timezone true || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
     fi
 
     # Dash appearance
     if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
-      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail
     fi
 
     # Sound alerts
     if gsettings get org.gnome.desktop.sound event-sounds; then
-      gsettings set org.gnome.desktop.sound event-sounds false || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.desktop.sound event-sounds false || fail
     fi
 
     # Mouse
     # 2000 DPI
     # if gsettings get org.gnome.desktop.peripherals.mouse speed; then
-    #   gsettings set org.gnome.desktop.peripherals.mouse speed -0.950 || fail "Unable to set gsettings ($?)"
+    #   gsettings set org.gnome.desktop.peripherals.mouse speed -0.950 || fail
     # fi
 
     # Input sources
     # ('xkb', 'ru+mac')
     if gsettings get org.gnome.desktop.input-sources sources; then
-      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail "Unable to set gsettings ($?)"
+      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
+    fi
+
+    # Fractional scaling
+    if gsettings get org.gnome.mutter experimental-features; then
+      gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
     fi
   fi
 }
