@@ -35,8 +35,8 @@ __xVhMyefCbBnZFUQtwqCs() {
   }
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if ! command -v git; then
-      if command -v apt; then
+    if ! command -v git >/dev/null; then
+      if command -v apt >/dev/null; then
         sudo apt update || fail
         sudo apt install -y git || fail
       else
