@@ -27,10 +27,19 @@ __xVhMyefCbBnZFUQtwqCs() {
   }
 
   git::clone-or-pull() {
-    if [ -d "$2" ]; then
-      git -C "$2" pull || fail
+    local url="$1"
+    local dest="$2"
+    local branch="${3:-}"
+
+    if [ -d "$dest" ]; then
+      git -C "$dest" config remote.origin.url "${url}" || fail
+      git -C "$dest" pull || fail
     else
-      git clone "$1" "$2" || fail
+      git clone "$url" "$dest" || fail
+    fi
+
+    if [ -n "${branch:-}" ]; then
+      git -C "$dest" checkout "${branch}" || fail "Unable to checkout ${branch}"
     fi
   }
 
