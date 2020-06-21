@@ -224,3 +224,8 @@ groups
 lstopo
 lstopo-no-graphics
 ```
+
+## Firefox
+mousewheel.default.delta_multiplier_x 200
+mousewheel.default.delta_multiplier_y 200
+general.smoothScroll false
