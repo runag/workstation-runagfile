@@ -27,7 +27,7 @@ __xVhMyefCbBnZFUQtwqCs() {
   }
 
   git::clone-or-pull() {
-    if [ -d "$1" ]; then
+    if [ -d "$2" ]; then
       git -C "$2" pull || fail
     else
       git clone "$1" "$2" || fail
