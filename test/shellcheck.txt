@@ -1,27 +1,27 @@
 
-In ./lib/ubuntu.sh line 249:
+In ./lib/ubuntu.sh line 263:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/ubuntu.sh line 253:
+In ./lib/ubuntu.sh line 267:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
 In ./lib/vscode.sh line 52:
-      cat "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+      cat "${SOPKA_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
           ^-- SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
 
 
 In ./test/run-code-checks.sh line 19:
-ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
-                                              ^--------------------^ SC2046: Quote this to prevent word splitting.
+ruby test/check-shell-error-handling.rb $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+                                        ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 
 In ./test/run-code-checks.sh line 21:
-shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
-                 ^--------------------^ SC2046: Quote this to prevent word splitting.
+shellcheck $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
+           ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 For more information:
   https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...

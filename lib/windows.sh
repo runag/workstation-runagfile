@@ -20,12 +20,12 @@ windows::deploy-workstation() {
 
 windows::configure-workstation() {
   # shell aliases
-  deploy-lib::shellrcd::install || fail
-  deploy-lib::shellrcd::use-nano-editor || fail
-  deploy-lib::shellrcd::stan-computer-deploy-path || fail
+  shellrcd::install || fail
+  shellrcd::use-nano-editor || fail
+  shellrcd::sopka-src-path || fail
 
   # git
-  deploy-lib::git::configure || fail
+  git::configure || fail
 
   # sublime text
   sublime::install-config || fail
@@ -35,5 +35,5 @@ windows::configure-workstation() {
   vscode::install-extensions || fail
 
   # SSH keys
-  deploy-lib::ssh::install-keys || fail
+  ssh::install-keys || fail
 }

@@ -9,7 +9,7 @@
 	"default_line_ending": "unix",
 	"drag_text": false,
 	"ensure_newline_at_eof_on_save": true,
-	"font_size": 11,
+	"font_size": 14,
 	"highlight_line": true,
 	"highlight_modified_tabs": true,
 	"ignored_packages":
@@ -21,8 +21,8 @@
 		"draw_active"
 	],
 	"index_files": false,
-	"line_padding_bottom": 1,
-	"line_padding_top": 1,
+	"line_padding_bottom": 2,
+	"line_padding_top": 2,
 	"match_brackets": false,
 	"match_brackets_angle": false,
 	"match_brackets_braces": false,

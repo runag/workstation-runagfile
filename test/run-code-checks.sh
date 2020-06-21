@@ -16,6 +16,6 @@
 
 set -o nounset
 
-ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+ruby test/check-shell-error-handling.rb $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
 
-shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
+shellcheck $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt

@@ -14,16 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-deploy::merge-workstation-configs() {
-  vscode::merge-config || fail
-  sublime::merge-config || fail
-  sway::merge-config || fail
-}
-
-shellrcd::sopka-src-path() {
-  local output="${HOME}/.shellrc.d/sopka-src-path.sh"
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
-    export PATH="\${HOME}/.sopka-src/bin:\$PATH"
-SHELL
-}
-
+. "${SOPKA_DIR}/lib/config.sh" || fail
+. "${SOPKA_DIR}/lib/macos.sh" || fail
+. "${SOPKA_DIR}/lib/menu.sh" || fail
+. "${SOPKA_DIR}/lib/misc.sh" || fail
+. "${SOPKA_DIR}/lib/sublime.sh" || fail
+. "${SOPKA_DIR}/lib/sway.sh" || fail
+. "${SOPKA_DIR}/lib/ubuntu.sh" || fail
+. "${SOPKA_DIR}/lib/vscode.sh" || fail
+. "${SOPKA_DIR}/lib/windows.sh" || fail

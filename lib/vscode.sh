@@ -36,10 +36,10 @@ vscode::list-extensions-to-temp-file() {
 }
 
 vscode::install-extensions() {
-  if [ -f "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" ]; then
+  if [ -f "${SOPKA_DIR}/lib/vscode/extensions.txt" ]; then
     local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
 
-    if ! diff --strip-trailing-cr "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" "${extensionsList}" >/dev/null 2>&1; then
+    if ! diff --strip-trailing-cr "${SOPKA_DIR}/lib/vscode/extensions.txt" "${extensionsList}" >/dev/null 2>&1; then
       local extension
 
       if [[ "$OSTYPE" =~ ^msys ]]; then
@@ -49,7 +49,7 @@ vscode::install-extensions() {
       fi
 
       # TODO: how to do correct error handling here (cat | while)?
-      cat "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+      cat "${SOPKA_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
         if [ -n "${extension}" ]; then
           code --install-extension "${extension}" || fail "Unable to install vscode extension ${extension}"
         fi
@@ -63,17 +63,17 @@ vscode::install-extensions() {
 vscode::install-config() {
   vscode::determine-config-path || fail
 
-  deploy-lib::config::install "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  deploy-lib::config::install "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::install "${SOPKA_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::install "${SOPKA_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
   vscode::determine-config-path || fail
 
-  deploy-lib::config::merge "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  deploy-lib::config::merge "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::merge "${SOPKA_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::merge "${SOPKA_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  deploy-lib::config::merge "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" "${extensionsList}" || fail
+  config::merge "${SOPKA_DIR}/lib/vscode/extensions.txt" "${extensionsList}" || fail
   rm "${extensionsList}" || fail
 }

@@ -1,6 +1,6 @@
 
 ./lib/vscode.sh:
-  52:       cat "${MY_COMPUTER_DEPLOY_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+  52:       cat "${SOPKA_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
 
 ./lib/menu.sh:
   21:     actionList+=(ubuntu::deploy-workstation)
@@ -16,29 +16,10 @@
   47:   for i in "${!actionList[@]}"; do
 
 ./test/run-code-checks.sh:
-  19: ruby test/check-shell-error-handling.rb bin/* $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
-  21: shellcheck bin/* $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
+  19: ruby test/check-shell-error-handling.rb $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+  21: shellcheck $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
 
 ./deploy.sh:
   24:   fail() {
-  29:   deploy-lib::git::make-repository-clone-available() {
-  78: __xVhMyefCbBnZFUQtwqCs || return $?
-
-./stan-deploy-lib/lib/config-files.sh:
-  47:         git diff --ignore-cr-at-eol --color --unified=6 --no-index "${dst}" "${src}" | tee
-  49:         diff --strip-trailing-cr --context=6 --color "${dst}" "${src}"
-
-./stan-deploy-lib/lib/macos/exec-cat.sh:
-  17: exec cat
-
-./stan-deploy-lib/lib/ubuntu.sh:
-  143:     find /mnt/hgfs -maxdepth 1 -mindepth 1 -type d | while IFS="" read -r dirPath; do
-
-./stan-deploy-lib/lib/bitwarden.sh:
-  20:     local errorString; errorString="$(bw login "${BITWARDEN_LOGIN}" --raw 2>&1 </dev/null)"
-
-./stan-deploy-lib/lib/ubuntu/background-fix.sh:
-  22:       rm /var/cache/background-fix-state
-  23:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"
-  25:       touch /var/cache/background-fix-state
-  26:       su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
+  29:   git::clone-or-pull() {
+  61: __xVhMyefCbBnZFUQtwqCs || return $?

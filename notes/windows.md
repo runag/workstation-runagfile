@@ -1,7 +1,7 @@
 # Chocolatey
 
 choco feature enable -n allowGlobalConfirmation
-choco install %USERPROFILE%\.stan-computer-deploy\lib\windows\packages.config --yes
+choco install %USERPROFILE%\.sopka\lib\windows\packages.config --yes
 choco upgrade all
 
 # Manuall install

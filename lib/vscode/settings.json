@@ -1,7 +1,7 @@
 {
     "window.titleBarStyle": "custom",
     "workbench.tree.indent": 25,
-    "window.zoomLevel": 0,
+    "window.zoomLevel": 1,
     "editor.fontSize": 16,
     "solargraph.useBundler": true,
     "editor.tabSize": 2,
@@ -21,9 +21,10 @@
     "editor.suggestOnTriggerCharacters": false,
     "editor.wordBasedSuggestions": false,
     "editor.cursorSurroundingLines": 2,
-    "editor.smoothScrolling": true,
     "editor.minimap.enabled": false,
     "workbench.colorTheme": "Default Light+",
     "editor.multiCursorModifier": "ctrlCmd",
-    "git.autofetch": true
+    "git.autofetch": true,
+    "editor.mouseWheelScrollSensitivity": 2,
+    "terminal.integrated.mouseWheelScrollSensitivity": 2,
 }

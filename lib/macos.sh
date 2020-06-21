@@ -38,21 +38,21 @@ macos::configure-workstation() {
 
 macos::configure-developer-workstation() {
   # shell aliases
-  deploy-lib::shellrcd::install || fail
-  deploy-lib::shellrcd::use-nano-editor || fail
-  deploy-lib::shellrcd::stan-computer-deploy-path || fail
-  deploy-lib::shellrcd::hook-direnv || fail
+  shellrcd::install || fail
+  shellrcd::use-nano-editor || fail
+  shellrcd::sopka-src-path || fail
+  shellrcd::hook-direnv || fail
 
   # ruby
   rbenv rehash || fail
-  deploy-lib::shellrcd::rbenv || fail
-  deploy-lib::ruby::install-gemrc || fail
+  shellrcd::rbenv || fail
+  ruby::install-gemrc || fail
 
   # nodejs
-  deploy-lib::shellrcd::nodenv || fail
+  shellrcd::nodenv || fail
 
   # git
-  deploy-lib::git::configure || fail
+  git::configure || fail
 
   # vscode
   vscode::install-config || fail
@@ -64,7 +64,7 @@ macos::configure-developer-workstation() {
   macos::hide-folders || fail
 
   # SSH keys
-  deploy-lib::ssh::install-keys || fail
+  ssh::install-keys || fail
   macos::ssh::add-use-keychain-to-ssh-config || fail
   macos::ssh::add-ssh-key-password-to-keychain || fail
 }

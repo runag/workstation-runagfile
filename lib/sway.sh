@@ -34,18 +34,18 @@ sway::apt::install() {
 }
 
 sway::install-wlroots() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/wlroots" 0.7.0 || fail
+  git::cd-to-temp-clone "https://github.com/swaywm/wlroots" 0.7.0 || fail
 
   meson build || fail
   ninja -C build || fail
   sudo ninja -C build install || fail
   sudo ldconfig || fail
 
-  deploy-lib::git::remove-temp-clone || fail
+  git::remove-temp-clone || fail
 )
 
 sway::install-jsonc() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/json-c/json-c" json-c-0.13.1-20180305 || fail
+  git::cd-to-temp-clone "https://github.com/json-c/json-c" json-c-0.13.1-20180305 || fail
 
   sh autogen.sh || fail
   ./configure --enable-threading --prefix=/usr/local || fail
@@ -53,41 +53,41 @@ sway::install-jsonc() (
   sudo make install || fail
   sudo ldconfig || fail
 
-  deploy-lib::git::remove-temp-clone || fail
+  git::remove-temp-clone || fail
 )
 
 sway::install-scdoc() (
-  deploy-lib::git::cd-to-temp-clone "https://git.sr.ht/~sircmpwn/scdoc" 1.9.7 || fail
+  git::cd-to-temp-clone "https://git.sr.ht/~sircmpwn/scdoc" 1.9.7 || fail
 
   make PREFIX=/usr/local || fail
   sudo make PREFIX=/usr/local install || fail
   sudo ldconfig || fail
 
-  deploy-lib::git::remove-temp-clone || fail
+  git::remove-temp-clone || fail
 )
 
 sway::install-sway() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/sway" 1.2 || fail
+  git::cd-to-temp-clone "https://github.com/swaywm/sway" 1.2 || fail
 
   meson build || fail
   ninja -C build || fail
   sudo ninja -C build install || fail
 
-  deploy-lib::git::remove-temp-clone || fail
+  git::remove-temp-clone || fail
 )
 
 sway::install-swaybg() (
-  deploy-lib::git::cd-to-temp-clone "https://github.com/swaywm/swaybg" 1.0 || fail
+  git::cd-to-temp-clone "https://github.com/swaywm/swaybg" 1.0 || fail
 
   meson build || fail
   ninja -C build || fail
   sudo ninja -C build install || fail
 
-  deploy-lib::git::remove-temp-clone || fail
+  git::remove-temp-clone || fail
 )
 
 sway::install-kitty() {
-  local releaseFile; releaseFile="$(deploy-lib::github::get-release-by-label "kovidgoyal/kitty" "Linux amd64 binary bundle")" || fail
+  local releaseFile; releaseFile="$(github::get-release-by-label "kovidgoyal/kitty" "Linux amd64 binary bundle")" || fail
   local installDir=/opt/kitty
 
   sudo mkdir -p "${installDir}" || fail
@@ -107,7 +107,7 @@ sway::install-alacritty() {
   else
     sudo add-apt-repository --remove --yes ppa:mmstick76/alacritty || fail
 
-    local releaseFile; releaseFile="$(deploy-lib::github::get-release-by-name "jwilm/alacritty" "amd64.deb")" || fail
+    local releaseFile; releaseFile="$(github::get-release-by-name "jwilm/alacritty" "amd64.deb")" || fail
     sudo dpkg --install "${releaseFile}" || fail
     rm "${releaseFile}" || fail
 
@@ -148,11 +148,11 @@ sway::install() {
 }
 
 sway::install-config() {
-  deploy-lib::config::install "${MY_COMPUTER_DEPLOY_DIR}/lib/sway/config" "${HOME}/.config/sway/config" || fail
+  config::install "${SOPKA_DIR}/lib/sway/config" "${HOME}/.config/sway/config" || fail
 }
 
 sway::merge-config() {
-  deploy-lib::config::merge "${MY_COMPUTER_DEPLOY_DIR}/lib/sway/config" "${HOME}/.config/sway/config" || fail
+  config::merge "${SOPKA_DIR}/lib/sway/config" "${HOME}/.config/sway/config" || fail
 }
 
 sway::install-shellrcd() {

@@ -26,51 +26,34 @@ __xVhMyefCbBnZFUQtwqCs() {
     exit "${2:-1}"
   }
 
-  deploy-lib::git::make-repository-clone-available() {
-    local repoUrl="$1"
-    local localCloneDir; localCloneDir="${2:-$(basename "$repoUrl")}" || fail
-    local branch="${3:-"master"}"
-
-    if [ ! -d "${localCloneDir}" ]; then
-      git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
+  git::clone-or-pull() {
+    if [ -d "$1" ]; then
+      git -C "$2" pull || fail
     else
-      local existingRepoUrl; existingRepoUrl="$(cd "${localCloneDir}" && git config --get remote.origin.url)" || fail "Unable to get existingRepoUrl"
-
-      if [ "${existingRepoUrl}" = "${repoUrl}" ]; then
-        (cd "${localCloneDir}" && git pull) || fail "Unable to pull from ${repoUrl}"
-      else
-        if (cd "${localCloneDir}" 2>/dev/null && git diff-index --quiet HEAD --); then
-          rm -rf "${localCloneDir}" || fail "Unable to delete repository ${localCloneDir}"
-          git clone "${repoUrl}" "${localCloneDir}" || fail "Unable to clone ${repoUrl} into ${localCloneDir}"
-        else
-          fail "Local clone ${localCloneDir} is cloned from ${existingRepoUrl} and there are local changes. It is expected to be a clone of ${repoUrl}."
-        fi
-      fi
-    fi
-
-    if [ -n "${branch}" ]; then
-      (cd "${localCloneDir}" && git checkout "${branch}") || fail "Unable to checkout ${branch}"
+      git clone "$1" "$2" || fail
     fi
   }
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
     if ! command -v git; then
-      sudo apt update || fail
-      sudo apt install -y git || fail
+      if command -v apt; then
+        sudo apt update || fail
+        sudo apt install -y git || fail
+      else
+        fail "Unable to install git, apt not found"
+      fi
     fi
   fi
 
-  # on macos that may start git install process
+  # on macos that will start git install process
   git --version >/dev/null || fail
 
-  local clonePath="${HOME}/.stan-computer-deploy"
+  git::clone-or-pull "https://github.com/senotrusov/stan-computer-deploy.git" "${HOME}/.sopka" || fail
+  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka-src" || fail
 
-  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/stan-computer-deploy.git" "${clonePath}" || fail
-  deploy-lib::git::make-repository-clone-available "https://github.com/senotrusov/stan-deploy-lib.git" "${clonePath}/stan-deploy-lib" || fail
+  cd "${HOME}/.sopka-src" || fail
 
-  cd "${clonePath}" || fail
-
-  bin/deploy || fail
+  bin/sopka || fail
 }
 
 # I'm wrapping the script in the function with the random name, to ensure that in case if download fails in the middle,

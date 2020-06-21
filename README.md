@@ -46,5 +46,5 @@ sublime text 3 license
 
 ## Please check shell scripts before commiting any changes
 ```sh
-test/run-code-checks
+test/run-code-checks.sh
 ```

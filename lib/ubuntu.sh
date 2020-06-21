@@ -29,7 +29,8 @@ ubuntu::deploy-workstation() {
     /usr/lib/update-notifier/update-motd-reboot-required >&2 || fail
   fi
 
-  deploy-lib::display-elapsed-time || fail
+  sudo checkrestart || fail
+  tools::display-elapsed-time || fail
 }
 
 ubuntu::install-packages() {
@@ -147,6 +148,7 @@ ubuntu::apt::install-basic-tools() {
     sysbench \
     hwloc-nox \
     direnv \
+    debian-goodies \
       || fail
 }
 
@@ -205,10 +207,10 @@ ubuntu::configure-workstation() {
   fi
 
   # Shell aliases
-  deploy-lib::shellrcd::install || fail
-  deploy-lib::shellrcd::use-nano-editor || fail
-  deploy-lib::shellrcd::stan-computer-deploy-path || fail
-  deploy-lib::shellrcd::hook-direnv || fail
+  shellrcd::install || fail
+  shellrcd::use-nano-editor || fail
+  shellrcd::sopka-src-path || fail
+  shellrcd::hook-direnv || fail
   ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
 
   # Editors
@@ -217,11 +219,11 @@ ubuntu::configure-workstation() {
   sublime::install-config || fail
 
   # SSH keys
-  deploy-lib::ssh::install-keys || fail
+  ssh::install-keys || fail
   ubuntu::add-ssh-key-password-to-keyring || fail
 
   # Git
-  deploy-lib::git::configure || fail
+  git::configure || fail
   ubuntu::add-git-credentials-to-keyring || fail
 
   # Install sway
@@ -231,7 +233,7 @@ ubuntu::configure-workstation() {
   fi
 
   # Ruby
-  deploy-lib::ruby::install-gemrc || fail
+  ruby::install-gemrc || fail
 
   # Enable syncthing
   if ubuntu::is-bare-metal; then
@@ -244,7 +246,7 @@ ubuntu::configure-workstation() {
 
 ubuntu::moz-enable-wayland() {
   local pamFile="${HOME}/.pam_environment"
-  touch "${pamFile}"
+  touch "${pamFile}" || fail
 
   if ! grep --quiet "^MOZ_ENABLE_WAYLAND" "${pamFile}"; then
     echo "MOZ_ENABLE_WAYLAND=1" >>"${pamFile}" || fail
@@ -269,12 +271,12 @@ ubuntu::remove-user-dirs() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    deploy-lib::remove-dir-if-empty "$HOME/Documents" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Music" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Pictures" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Public" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Templates" || fail
-    deploy-lib::remove-dir-if-empty "$HOME/Videos" || fail
+    fs::remove-dir-if-empty "$HOME/Documents" || fail
+    fs::remove-dir-if-empty "$HOME/Music" || fail
+    fs::remove-dir-if-empty "$HOME/Pictures" || fail
+    fs::remove-dir-if-empty "$HOME/Public" || fail
+    fs::remove-dir-if-empty "$HOME/Templates" || fail
+    fs::remove-dir-if-empty "$HOME/Videos" || fail
 
     if [ -f "$HOME/examples.desktop" ]; then
       rm "$HOME/examples.desktop" || fail

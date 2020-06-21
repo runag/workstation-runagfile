@@ -60,7 +60,7 @@ sublime::install-config() {
   sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
   sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
-  deploy-lib::bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${SUBLIME_CONFIG_PATH}/Local/License.sublime_license" || fail
+  bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${SUBLIME_CONFIG_PATH}/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {
@@ -71,10 +71,10 @@ sublime::merge-config() {
 
 sublime::install-config-file() {
   sublime::determine-config-path || fail
-  deploy-lib::config::install "${MY_COMPUTER_DEPLOY_DIR}/lib/sublime/$1" "${SUBLIME_CONFIG_PATH}/Packages/User/$1" || fail "Unable to install $1 ($?)"
+  config::install "${SOPKA_DIR}/lib/sublime/$1" "${SUBLIME_CONFIG_PATH}/Packages/User/$1" || fail "Unable to install $1 ($?)"
 }
 
 sublime::merge-config-file() {
   sublime::determine-config-path || fail
-  deploy-lib::config::merge "${MY_COMPUTER_DEPLOY_DIR}/lib/sublime/$1" "${SUBLIME_CONFIG_PATH}/Packages/User/$1" || fail "Unable to merge $1 ($?)"
+  config::merge "${SOPKA_DIR}/lib/sublime/$1" "${SUBLIME_CONFIG_PATH}/Packages/User/$1" || fail "Unable to merge $1 ($?)"
 }
