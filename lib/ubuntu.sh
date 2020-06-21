@@ -25,11 +25,7 @@ ubuntu::deploy-workstation() {
 
   ubuntu::configure-workstation || fail
 
-  if [ -x /usr/lib/update-notifier/update-motd-reboot-required ]; then
-    /usr/lib/update-notifier/update-motd-reboot-required >&2 || fail
-  fi
-
-  sudo checkrestart || fail
+  ubuntu::display-if-restart-required || fail
   tools::display-elapsed-time || fail
 }
 
