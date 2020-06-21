@@ -12,7 +12,7 @@
   33:     actionList+=(windows::deploy-workstation)
   34:     actionList+=(windows::configure-workstation)
   37:   actionList+=(deploy::merge-workstation-configs)
-  41:       actionList+=(benchmark)
+  41:       actionList+=(benchmark::run)
   47:   for i in "${!actionList[@]}"; do
 
 ./test/run-code-checks.sh:

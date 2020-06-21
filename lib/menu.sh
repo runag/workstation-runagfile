@@ -38,7 +38,7 @@ sopka::menu() {
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
-      actionList+=(benchmark)
+      actionList+=(benchmark::run)
     fi
   fi
 
