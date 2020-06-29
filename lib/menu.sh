@@ -15,46 +15,32 @@
 #  limitations under the License.
 
 sopka::menu() {
-  local actionList=()
+  local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    actionList+=(ubuntu::deploy-workstation)
-    actionList+=(ubuntu::configure-workstation)
-    actionList+=(ubuntu::deploy-sway-workstation)
+    list+=(ubuntu::deploy-workstation)
+    list+=(ubuntu::configure-workstation)
+    list+=(ubuntu::deploy-sway-workstation)
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
-    actionList+=(macos::deploy-workstation)
-    actionList+=(macos::configure-workstation)
-    actionList+=(macos::deploy-non-developer-workstation)
+    list+=(macos::deploy-workstation)
+    list+=(macos::configure-workstation)
+    list+=(macos::deploy-non-developer-workstation)
   fi
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
-    actionList+=(windows::deploy-workstation)
-    actionList+=(windows::configure-workstation)
+    list+=(windows::deploy-workstation)
+    list+=(windows::configure-workstation)
   fi
 
-  actionList+=(deploy::merge-workstation-configs)
+  list+=(deploy::merge-workstation-configs)
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
-      actionList+=(benchmark::run)
+      list+=(benchmark::run)
     fi
   fi
 
-  echo "Please choose an action to perform:"
-  local i
-  for i in "${!actionList[@]}"; do
-    echo "  ${i}: ${actionList[$i]}"
-  done
-  echo -n "> "
-
-  local action
-  IFS="" read -r action || fail
-
-  if [ -n "${action:-}" ]; then
-    local actionFunction="${actionList[$action]}"
-    declare -f "${actionFunction}" >/dev/null || fail "Argument must be a function name"
-    "${actionFunction}" || fail
-  fi
+  menu::select-and-run "${list[@]}"
 }
