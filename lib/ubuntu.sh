@@ -63,7 +63,7 @@ ubuntu::install-packages() {
   vscode::snap::install || fail
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
-  apt::install meld || fail # TODO: meld will pull a whole gnome desktop as a dependency. I hope one day I'll find a snap package without all that stuff.
+  apt::install meld || fail # meld will pull a whole gnome desktop as a dependency
 
   # Chromium
   sudo snap install chromium || fail
@@ -172,12 +172,11 @@ ubuntu::apt::install-ruby-and-devtools() {
 }
 
 ubuntu::configure-workstation() {
-  # Set inotify-max-user-watches
   ubuntu::set-inotify-max-user-watches || fail
 
   # hgfs mounts
-  ubuntu::perhaps-add-hgfs-automount || fail
-  ubuntu::symlink-hgfs-mounts || fail
+  # ubuntu::perhaps-add-hgfs-automount || fail
+  # ubuntu::symlink-hgfs-mounts || fail
 
   # Setup gnome keyring to load for text consoles
   ubuntu::setup-gnome-keyring-pam || fail
