@@ -6,19 +6,19 @@ choco upgrade all
 
 # Manuall install
 
-* msi dragon center, audio driver
-* nvidia
-* razer synapse
-* telegram from the ms store
-* battle.net
-* vmware
-* ruby from rubyinstaller
+* MSI Dragon Center, audio driver, Nahimic
+* NVIDIA
+* Razer Synapse
+* Telegram from the Microsoft Store
+* Battle.net
+* VMware
+* Ruby using RubyInstaller
 
 # Synchting
 
-1. download synchting to some folder
+1. Download Synchting to some folder
 2. https://docs.syncthing.net/users/autostart.html#windows
-3. add syncthing exe to windows firewall
+3. Add syncthing.exe to windows firewall
 
 # Configure
 
@@ -32,7 +32,7 @@ choco upgrade all
 Get-NetConnectionProfile
 Set-NetConnectionProfile -Name "FOOBAR" -NetworkCategory Private
 
-## Check wifi speed
+## Check Wi-Fi speed
 
 netsh wlan show interfaces
 
@@ -61,7 +61,7 @@ Resize-Partition -DriveLetter C -Size 300GB
 
 PSCSI-NVME is the best performing disk configuration
 
-Disable windows firewall for host-only network (VMnet1? Check virtual network manager)
+Disable windows firewall for host-only network (VMnet1, check virtual network manager)
 
 ## Wake timers
 
