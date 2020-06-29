@@ -22,7 +22,6 @@ ubuntu::deploy-workstation() {
   sway::determine-conditional-install-flag || fail
 
   ubuntu::install-packages || fail
-
   ubuntu::configure-workstation || fail
 
   ubuntu::display-if-restart-required || fail
@@ -30,9 +29,13 @@ ubuntu::deploy-workstation() {
 }
 
 ubuntu::install-packages() {
-  # Update the system
+  # Update apt
   apt::update || fail
+
+  # Install fan control early to prevent overheating
   apt::perhaps-install-mbpfan || fail
+
+  # Upgrade
   apt::dist-upgrade || fail
 
   # Basic tools, contains curl so it have to be first
