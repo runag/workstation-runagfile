@@ -17,57 +17,71 @@
 ubuntu::deploy-workstation() {
   ubuntu::install-packages || fail
   ubuntu::configure-workstation || fail
-
   ubuntu::display-if-restart-required || fail
   tools::display-elapsed-time || fail
 }
 
 ubuntu::install-packages() {
-  # Update apt
+  # update and upgrade
   apt::update || fail
-
-  # Install fan control early to prevent overheating
-  apt::perhaps-install-mbpfan || fail
-
-  # Upgrade
   apt::dist-upgrade || fail
 
-  # Basic tools, contains curl so it have to be first
-  ubuntu::apt::install-basic-tools || fail
+  # basic tools, contains curl so it have to be first
+  ubuntu::install-packages::basic-tools || fail
 
-  # Additional sources
+  # devtools
+  ubuntu::install-packages::devtools || fail
+
+  # git credential libsecret https://wiki.gnome.org/Projects/Libsecret
+  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
+  ubuntu::compile-git-credential-libsecret || fail
+
+  # bitwarden cli
+  sudo snap install bw || fail
+
+  # nodejs
   apt::add-yarn-source || fail
   apt::add-nodejs-source || fail
-  sublime::apt::add-sublime-source || fail
+  apt::update || fail
+  apt::install yarn nodejs || fail
 
-  # Additional sources for bare metal workstation
+  # vscode
+  vscode::snap::install || fail
+
+  # sublime merge & text
+  sublime::apt::add-sublime-source || fail
+  apt::update || fail
+  sublime::apt::install-sublime-merge || fail
+  sublime::apt::install-sublime-text || fail
+
+  # meld (it will pull a whole gnome desktop as a dependency)
+  apt::install meld || fail
+
+  # chromium
+  sudo snap install chromium || fail
+
+  ## open-vm-tools
+  apt::perhaps-install-open-vm-tools-desktop || fail
+
+  # imwheel
+  apt::install imwheel || fail
+
+  # gnome configuration
+  apt::install dconf-cli dconf-editor libglib2.0-bin || fail
+
+  # corecoding-vitals-gnome-shell-extension
+  apt::install gir1.2-gtop-2.0 lm-sensors || fail
+  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+
+  # software for bare metal workstation
   if ubuntu::is-bare-metal; then
     apt::add-syncthing-source || fail
     apt::add-obs-studio-source || fail
-  fi
 
-  # Update apt
-  apt::update || fail
+    apt::update || fail
 
-  # Command-line tools
-  ubuntu::apt::install-ruby-and-devtools || fail
-  apt::install yarn nodejs || fail
-  apt::install hwloc || fail
-  apt::install tor || fail
-  sudo snap install bw || fail
-
-  # Editors
-  vscode::snap::install || fail
-  sublime::apt::install-sublime-merge || fail
-  sublime::apt::install-sublime-text || fail
-  apt::install meld || fail # meld will pull a whole gnome desktop as a dependency
-
-  # Chromium
-  sudo snap install chromium || fail
-
-  # Extra stuff for bare metal workstation
-  if ubuntu::is-bare-metal; then
     apt::install syncthing || fail
+    apt::install obs-studio guvcview || fail
 
     sudo snap install bitwarden || fail
     sudo snap install discord || fail
@@ -77,47 +91,17 @@ ubuntu::install-packages() {
     if ! command -v libreoffice >/dev/null; then
       sudo snap install libreoffice || fail
     fi
-
-    apt::install ffmpeg || fail
-    apt::install obs-studio guvcview || fail
   fi
-
-  # Misc tools for workstation
-
-  ## dconf
-  apt::install-dconf || fail
-
-  ## gsettings
-  apt::install libglib2.0-bin || fail
-
-  ## https://wiki.gnome.org/Projects/Libsecret
-  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
-
-  ## I no longer use dbus-launch because because it will introduce side-effect for ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
-  ## apt::install dbus-x11 || fail
-
-  ## open-vm-tools
-  apt::perhaps-install-open-vm-tools-desktop || fail
-
-  ## for corecoding-vitals-gnome-shell-extension
-  apt::install gir1.2-gtop-2.0 lm-sensors || fail
-
-  # IMWhell
-  apt::install imwheel || fail
 
   # Cleanup
   apt::autoremove || fail
 
-  ## The following stuff is installed as user
-
-  # Compile git credential libsecret
-  ubuntu::compile-git-credential-libsecret || fail
-
-  # Gnome extensions
-  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+  # sudo gem install rake solargraph || fail "Unable to install gems"
+  # sudo gem update --system || fail "Unable to execute gem update --system"
+  # sudo gem update || fail "Unable to update gems"
 }
 
-ubuntu::apt::install-basic-tools() {
+ubuntu::install-packages::basic-tools() {
   apt::install \
     curl \
     git \
@@ -127,89 +111,90 @@ ubuntu::apt::install-basic-tools() {
     p7zip-full \
     tmux \
     sysbench \
-    hwloc-nox \
     direnv \
     debian-goodies \
       || fail
 }
 
-ubuntu::apt::install-ruby-and-devtools() {
+ubuntu::install-packages::devtools() {
   apt::install \
-    apache2-utils \
-    autoconf bison libncurses-dev libffi-dev libgdbm-dev \
-    awscli \
-    build-essential libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
-    graphviz \
-    imagemagick ghostscript libgs-dev \
-    inotify-tools \
-    memcached \
-    postgresql libpq-dev postgresql-contrib python3-psycopg2 \
-    python3-pip \
-    redis-server \
-    ruby-full \
-    shellcheck \
+    build-essential autoconf bison libncurses-dev libffi-dev libgdbm-dev libreadline-dev libssl-dev zlib1g-dev libyaml-dev libxml2-dev libxslt-dev \
+    postgresql libpq-dev postgresql-contrib \
     sqlite3 libsqlite3-dev \
+    redis-server \
+    memcached \
+    ruby-full \
+    python3-pip python3-psycopg2 \
+    ffmpeg imagemagick ghostscript libgs-dev \
+    graphviz \
+    shellcheck \
+    apache2-utils \
+    inotify-tools \
+    awscli \
       || fail
-
-  # sudo gem install rake solargraph || fail "Unable to install gems"
-  # sudo gem update --system || fail "Unable to execute gem update --system"
-  # sudo gem update || fail "Unable to update gems"
 }
 
 ubuntu::configure-workstation() {
-  ubuntu::set-inotify-max-user-watches || fail
-
-  # hgfs mounts
-  # ubuntu::perhaps-add-hgfs-automount || fail
-  # ubuntu::symlink-hgfs-mounts || fail
-
-  # Fix screen tearing
-  ubuntu::perhaps-fix-nvidia-screen-tearing || fail
-  # ubuntu::fix-nvidia-gpu-background-image-glitch || fail
-
-  # Desktop configuration
-  ubuntu::configure-desktop || fail
-
-  # Remove user dirs
-  ubuntu::remove-user-dirs || fail
-
-  # Hide folders
-  ubuntu::hide-folder "Desktop" || fail
-  ubuntu::hide-folder "snap" || fail
-  ubuntu::hide-folder "VirtualBox VMs" || fail
-
-  # IMWhell
-  ubuntu::setup-imwhell || fail
-
-  # Shell aliases
+  # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
 
-  # Editors
-  vscode::install-config || fail
-  vscode::install-extensions || fail
-  sublime::install-config || fail
-
   # SSH keys
   ssh::install-keys || fail
   ubuntu::add-ssh-key-password-to-keyring || fail
 
-  # Git
+  # git
   git::configure || fail
   ubuntu::add-git-credentials-to-keyring || fail
 
-  # Ruby
+  # vscode
+  vscode::install-config || fail
+  vscode::install-extensions || fail
+
+  # sublime text
+  sublime::install-config || fail
+
+  # ruby
   ruby::install-gemrc || fail
 
-  # Enable syncthing
+  # increase inotify limits
+  ubuntu::set-inotify-max-user-watches || fail
+
+  # configure desktop
+  ubuntu::configure-desktop || fail
+
+  # IMWhell
+  ubuntu::setup-imwhell || fail
+
+  # enable wayland for firefox
+  ubuntu::moz-enable-wayland || fail
+
+  # NVIDIA fixes
+  if ubuntu::is-nvidia-card-installed; then
+    ubuntu::fix-nvidia-screen-tearing || fail
+    ubuntu::fix-nvidia-gpu-background-image-glitch || fail
+  fi
+
+  # remove user dirs
+  ubuntu::remove-user-dirs || fail
+
+  # hide folders
+  ubuntu::hide-folder "Desktop" || fail
+  ubuntu::hide-folder "snap" || fail
+  ubuntu::hide-folder "VirtualBox VMs" || fail
+
+  # hgfs mounts
+  if ubuntu::is-in-vmware-vm; then
+    ubuntu::perhaps-add-hgfs-automount || fail
+    ubuntu::symlink-hgfs-mounts || fail
+  fi
+
+  # enable syncthing
   if ubuntu::is-bare-metal; then
     sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
-
-  # Enable wayland for firefox
-  ubuntu::moz-enable-wayland || fail
 }
 
 ubuntu::remove-user-dirs() {
@@ -305,11 +290,10 @@ ubuntu::configure-desktop() {
       gsettings set org.gnome.desktop.sound event-sounds false || fail
     fi
 
-    # Mouse
-    # 2000 DPI
-    # if gsettings get org.gnome.desktop.peripherals.mouse speed; then
-    #   gsettings set org.gnome.desktop.peripherals.mouse speed -0.950 || fail
-    # fi
+    1600 DPI mouse
+    if gsettings get org.gnome.desktop.peripherals.mouse speed; then
+      gsettings set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
+    fi
 
     # Input sources
     # ('xkb', 'ru+mac')

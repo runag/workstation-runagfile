@@ -120,10 +120,6 @@ macos::install-developer-packages() {
   brew install postgresql || fail
   brew services start postgresql || fail
 
-  # tor
-  brew install tor || fail
-  brew services start tor || fail
-
   # ffmpeg
   brew install ffmpeg || fail
 
