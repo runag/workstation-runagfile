@@ -14,29 +14,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-macos::deploy-non-developer-workstation() {
-  DEPLOY_NON_DEVELOPER_WORKSTATION=true macos::deploy-workstation || fail
-}
-
 macos::deploy-workstation() {
   macos::install-basic-packages || fail
-
-  if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
-    macos::install-developer-packages || fail
-  fi
-
+  macos::install-developer-packages || fail
   macos::configure-workstation || fail
+  tools::display-elapsed-time || fail
 }
 
 macos::configure-workstation() {
   macos::increase-maxfiles-limit || fail
 
-  if [ "${DEPLOY_NON_DEVELOPER_WORKSTATION:-}" != "true" ]; then
-    macos::configure-developer-workstation || fail
-  fi
-}
-
-macos::configure-developer-workstation() {
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
@@ -60,13 +47,13 @@ macos::configure-developer-workstation() {
   # sublime text
   sublime::install-config || fail
 
-  # hide folders
-  macos::hide-folders || fail
-
   # SSH keys
   ssh::install-keys || fail
   macos::ssh::add-use-keychain-to-ssh-config || fail
   macos::ssh::add-ssh-key-password-to-keychain || fail
+
+  # hide folders
+  macos::hide-folders || fail
 }
 
 macos::install-basic-packages() {
@@ -88,13 +75,11 @@ macos::install-basic-packages() {
   # productivity tools
   brew cask install bitwarden || fail
   brew cask install discord || fail
+  brew cask install grandperspective || fail
   brew cask install libreoffice || fail
   brew cask install skype || fail
+  brew cask install telegram || fail
   brew cask install the-unarchiver || fail
-  brew cask install grandperspective || fail
-
-  # please install it from the app store, as direct sources may be blocked in some countries
-  # brew cask install telegram || fail
 
   # chromium
   brew cask install chromium || fail
@@ -123,13 +108,15 @@ macos::install-developer-packages() {
   brew install ghostscript || fail
   brew install shellcheck || fail
 
-  # servers
+  # memcached
   brew install memcached || fail
   brew services start memcached || fail
 
+  # redis
   brew install redis || fail
   brew services start redis || fail
 
+  # postgresql
   brew install postgresql || fail
   brew services start postgresql || fail
 

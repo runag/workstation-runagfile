@@ -25,7 +25,6 @@ sopka::menu() {
   if [[ "$OSTYPE" =~ ^darwin ]]; then
     list+=(macos::deploy-workstation)
     list+=(macos::configure-workstation)
-    list+=(macos::deploy-non-developer-workstation)
   fi
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
