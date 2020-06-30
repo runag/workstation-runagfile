@@ -47,6 +47,7 @@ ubuntu::install-packages() {
   apt::add-nodejs-source || fail
   apt::update || fail
   apt::install yarn nodejs || fail
+  nodejs::install-nodenv || fail
 
   # vscode
   vscode::snap::install || fail
@@ -145,11 +146,13 @@ ubuntu::configure-workstation() {
   shellrcd::hook-direnv || fail
 
   # ruby
-  ruby::install-gemrc || fail
+  ruby::configure-gemrc || fail
   shellrcd::rbenv || fail
   rbenv rehash || fail
 
   # nodejs
+  shellrcd::nodenv || fail
+  nodenv rehash || fail
 
   # vscode
   vscode::install-config || fail

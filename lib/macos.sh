@@ -134,12 +134,13 @@ macos::configure-workstation() {
   shellrcd::hook-direnv || fail
 
   # ruby
-  ruby::install-gemrc || fail
+  ruby::configure-gemrc || fail
   shellrcd::rbenv || fail
   rbenv rehash || fail
 
   # nodejs
   shellrcd::nodenv || fail
+  nodenv rehash || fail
 
   # vscode
   vscode::install-config || fail
