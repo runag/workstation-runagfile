@@ -23,7 +23,6 @@ bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/stan-computer-depl
 
 # MacOS / Windows
 
-## 1. Deploy workstation
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
 ```
