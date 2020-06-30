@@ -134,9 +134,9 @@ macos::configure-workstation() {
   shellrcd::hook-direnv || fail
 
   # ruby
-  rbenv rehash || fail
-  shellrcd::rbenv || fail
   ruby::install-gemrc || fail
+  shellrcd::rbenv || fail
+  rbenv rehash || fail
 
   # nodejs
   shellrcd::nodenv || fail
