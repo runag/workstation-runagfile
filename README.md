@@ -1,4 +1,4 @@
-# My computer deploy
+# 🚞 My computer deploy
 
 A script to configure my workstation. I run it on a freshly installed Linux, MacOS, or Windows.
 
