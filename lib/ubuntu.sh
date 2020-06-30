@@ -39,6 +39,9 @@ ubuntu::install-packages() {
   # bitwarden cli
   sudo snap install bw || fail
 
+  # ruby
+  ruby::install-rbenv || fail
+
   # nodejs
   apt::add-yarn-source || fail
   apt::add-nodejs-source || fail
@@ -141,15 +144,19 @@ ubuntu::configure-workstation() {
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
 
+  # ruby
+  rbenv rehash || fail
+  shellrcd::rbenv || fail
+  ruby::install-gemrc || fail
+
+  # nodejs
+
   # vscode
   vscode::install-config || fail
   vscode::install-extensions || fail
 
   # sublime text
   sublime::install-config || fail
-
-  # ruby
-  ruby::install-gemrc || fail
 
   # increase inotify limits
   ubuntu::set-inotify-max-user-watches || fail
@@ -160,14 +167,14 @@ ubuntu::configure-workstation() {
   # IMWhell
   ubuntu::setup-imwhell || fail
 
-  # enable wayland for firefox
-  ubuntu::moz-enable-wayland || fail
-
   # NVIDIA fixes
   if ubuntu::is-nvidia-card-installed; then
     ubuntu::fix-nvidia-screen-tearing || fail
     ubuntu::fix-nvidia-gpu-background-image-glitch || fail
   fi
+
+  # enable wayland for firefox
+  ubuntu::moz-enable-wayland || fail
 
   # remove user dirs
   ubuntu::remove-user-dirs || fail
@@ -290,7 +297,7 @@ ubuntu::configure-desktop() {
       gsettings set org.gnome.desktop.sound event-sounds false || fail
     fi
 
-    1600 DPI mouse
+    # 1600 DPI mouse
     if gsettings get org.gnome.desktop.peripherals.mouse speed; then
       gsettings set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
     fi

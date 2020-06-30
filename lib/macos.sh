@@ -21,41 +21,6 @@ macos::deploy-workstation() {
   tools::display-elapsed-time || fail
 }
 
-macos::configure-workstation() {
-  macos::increase-maxfiles-limit || fail
-
-  # shell aliases
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-src-path || fail
-  shellrcd::hook-direnv || fail
-
-  # ruby
-  rbenv rehash || fail
-  shellrcd::rbenv || fail
-  ruby::install-gemrc || fail
-
-  # nodejs
-  shellrcd::nodenv || fail
-
-  # git
-  git::configure || fail
-
-  # vscode
-  vscode::install-config || fail
-
-  # sublime text
-  sublime::install-config || fail
-
-  # SSH keys
-  ssh::install-keys || fail
-  macos::ssh::add-use-keychain-to-ssh-config || fail
-  macos::ssh::add-ssh-key-password-to-keychain || fail
-
-  # hide folders
-  macos::hide-folders || fail
-}
-
 macos::install-basic-packages() {
   # install homebrew
   macos::install-homebrew || fail
@@ -134,7 +99,6 @@ macos::install-developer-packages() {
 
   # vscode
   brew cask install visual-studio-code || fail
-  vscode::install-extensions || fail
 
   # iterm2
   brew cask install iterm2 || fail
@@ -160,6 +124,43 @@ macos::install-developer-packages() {
 
   # sshfs
   brew install sshfs || fail
+}
+
+macos::configure-workstation() {
+  # shell aliases
+  shellrcd::install || fail
+  shellrcd::use-nano-editor || fail
+  shellrcd::sopka-src-path || fail
+  shellrcd::hook-direnv || fail
+
+  # ruby
+  rbenv rehash || fail
+  shellrcd::rbenv || fail
+  ruby::install-gemrc || fail
+
+  # nodejs
+  shellrcd::nodenv || fail
+
+  # vscode
+  vscode::install-config || fail
+  vscode::install-extensions || fail
+
+  # sublime text
+  sublime::install-config || fail
+
+  # increase maxfiles limits
+  macos::increase-maxfiles-limit || fail
+
+  # hide folders
+  macos::hide-folders || fail
+
+  # SSH keys
+  ssh::install-keys || fail
+  macos::ssh::add-use-keychain-to-ssh-config || fail
+  macos::ssh::add-ssh-key-password-to-keychain || fail
+
+  # git
+  git::configure || fail
 }
 
 macos::hide-folders() {
