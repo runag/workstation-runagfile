@@ -168,10 +168,15 @@ ubuntu::configure-workstation() {
   # ubuntu::fix-nvidia-gpu-background-image-glitch || fail
 
   # Desktop configuration
-  ubuntu::configure-desktop-apps || fail
+  ubuntu::configure-desktop || fail
 
   # Remove user dirs
   ubuntu::remove-user-dirs || fail
+
+  # Hide folders
+  ubuntu::hide-folder "Desktop" || fail
+  ubuntu::hide-folder "snap" || fail
+  ubuntu::hide-folder "VirtualBox VMs" || fail
 
   # IMWhell
   ubuntu::setup-imwhell || fail
@@ -207,20 +212,11 @@ ubuntu::configure-workstation() {
   ubuntu::moz-enable-wayland || fail
 }
 
-ubuntu::moz-enable-wayland() {
-  local pamFile="${HOME}/.pam_environment"
-  touch "${pamFile}" || fail
-
-  if ! grep --quiet "^MOZ_ENABLE_WAYLAND" "${pamFile}"; then
-    echo "MOZ_ENABLE_WAYLAND=1" >>"${pamFile}" || fail
-  fi
-}
-
 ubuntu::remove-user-dirs() {
   local dirsFile="${HOME}/.config/user-dirs.dirs"
 
   if [ -f "${dirsFile}" ]; then
-    local tmpFile; tmpFile="$(mktemp)" || fail "Unable to create temp file"
+    local tmpFile; tmpFile="$(mktemp)" || fail
 
     if [ -d "$HOME/Desktop" ]; then
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
@@ -245,27 +241,14 @@ ubuntu::remove-user-dirs() {
       rm "$HOME/examples.desktop" || fail
     fi
 
-    xdg-user-dirs-update || fail "Unable to perform xdg-user-dirs-update"
-
-    local hiddenFile="${HOME}/.hidden"
-
-    if [ -d "$HOME/Desktop" ] && ! grep --quiet "^Desktop$" "${hiddenFile}"; then
-      echo "Desktop" >>"${hiddenFile}" || fail
-    fi
-
-    if ! grep --quiet "^snap$" "${hiddenFile}"; then
-      echo "snap" >>"${hiddenFile}" || fail
-    fi
-
-    if ! grep --quiet "^VirtualBox VMs$" "${hiddenFile}"; then
-      echo "VirtualBox VMs" >>"${hiddenFile}" || fail
-    fi
+    xdg-user-dirs-update || fail
   fi
 }
 
-ubuntu::configure-desktop-apps() {
+ubuntu::configure-desktop() {
   # use dconf-editor to find key/value pairs
-  # I don't use dbus-launch here because it will introduce side-effect for ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
+  # Don't use dbus-launch here because it will introduce side-effect to
+  # ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
@@ -334,7 +317,7 @@ ubuntu::configure-desktop-apps() {
       gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
     fi
 
-    # Fractional scaling
+    # Enable fractional scaling
     if gsettings get org.gnome.mutter experimental-features; then
       gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
     fi
