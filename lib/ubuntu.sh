@@ -141,14 +141,6 @@ ubuntu::configure-workstation() {
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
 
-  # SSH keys
-  ssh::install-keys || fail
-  ubuntu::add-ssh-key-password-to-keyring || fail
-
-  # git
-  git::configure || fail
-  ubuntu::add-git-credentials-to-keyring || fail
-
   # vscode
   vscode::install-config || fail
   vscode::install-extensions || fail
@@ -187,7 +179,7 @@ ubuntu::configure-workstation() {
 
   # hgfs mounts
   if ubuntu::is-in-vmware-vm; then
-    ubuntu::perhaps-add-hgfs-automount || fail
+    ubuntu::add-hgfs-automount || fail
     ubuntu::symlink-hgfs-mounts || fail
   fi
 
@@ -195,6 +187,14 @@ ubuntu::configure-workstation() {
   if ubuntu::is-bare-metal; then
     sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
+
+  # SSH keys
+  ssh::install-keys || fail
+  ubuntu::add-ssh-key-password-to-keyring || fail
+
+  # git
+  git::configure || fail
+  ubuntu::add-git-credentials-to-keyring || fail
 }
 
 ubuntu::remove-user-dirs() {
