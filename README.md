@@ -15,19 +15,19 @@ This script is idempotent. It can be run multiple times to produce a system whic
 
 The file ``lib/config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
 
-# Linux workstation
+## Linux workstation
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
 ```
 
-# MacOS / Windows
+## MacOS / Windows
 
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
 ```
 
-# Secret items which are expected to be found in a Bitwarden
+## Secret items which are expected to be found in a Bitwarden
 
 Record names should be as the following:
 
@@ -39,9 +39,9 @@ my github personal access token
 sublime text 3 license
 ```
 
-# Contributing
+## Contributing
 
-## Please check shell scripts before commiting any changes
+### Please check shell scripts before commiting any changes
 ```sh
 test/run-code-checks.sh
 ```
