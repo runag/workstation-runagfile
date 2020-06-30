@@ -102,15 +102,8 @@ ubuntu::install-packages() {
   ## for corecoding-vitals-gnome-shell-extension
   apt::install gir1.2-gtop-2.0 lm-sensors || fail
 
-  ## IMWhell for GNOME and XFCE
-  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    apt::install imwheel || fail
-  fi
-
-  ## xcape for XFCE
-  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    apt::install xcape || fail
-  fi
+  # IMWhell
+  apt::install imwheel || fail
 
   # Cleanup
   apt::autoremove || fail
@@ -180,15 +173,8 @@ ubuntu::configure-workstation() {
   # Remove user dirs
   ubuntu::remove-user-dirs || fail
 
-  # IMWhell for GNOME and XFCE
-  if [ "${DESKTOP_SESSION:-}" = "ubuntu" ] || [ "${DESKTOP_SESSION:-}" = "ubuntu-wayland" ] || [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    ubuntu::setup-imwhell || fail
-  fi
-
-  # XFCE-specific
-  if [ "${DESKTOP_SESSION:-}" = "xubuntu" ]; then
-    ubuntu::setup-super-key-to-xfce-menu-workaround || fail
-  fi
+  # IMWhell
+  ubuntu::setup-imwhell || fail
 
   # Shell aliases
   shellrcd::install || fail
