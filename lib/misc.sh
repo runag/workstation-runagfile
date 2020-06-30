@@ -17,7 +17,6 @@
 deploy::merge-workstation-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
-  sway::merge-config || fail
 }
 
 shellrcd::sopka-src-path() {

@@ -14,13 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-sway-workstation() {
-  DEPLOY_SWAY=true ubuntu::deploy-workstation || fail
-}
-
 ubuntu::deploy-workstation() {
-  sway::determine-conditional-install-flag || fail
-
   ubuntu::install-packages || fail
   ubuntu::configure-workstation || fail
 
@@ -128,11 +122,6 @@ ubuntu::install-packages() {
 
   # Gnome extensions
   ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
-
-  # Install sway
-  if [ -n "${DEPLOY_SWAY:-}" ]; then
-    sway::install || fail
-  fi
 }
 
 ubuntu::apt::install-basic-tools() {
@@ -181,9 +170,6 @@ ubuntu::configure-workstation() {
   # ubuntu::perhaps-add-hgfs-automount || fail
   # ubuntu::symlink-hgfs-mounts || fail
 
-  # Setup gnome keyring to load for text consoles
-  ubuntu::setup-gnome-keyring-pam || fail
-
   # Fix screen tearing
   ubuntu::perhaps-fix-nvidia-screen-tearing || fail
   # ubuntu::fix-nvidia-gpu-background-image-glitch || fail
@@ -209,7 +195,6 @@ ubuntu::configure-workstation() {
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
-  ubuntu::install-shellrcd::gnome-keyring-daemon-start || fail # SSH agent init for text console logins
 
   # Editors
   vscode::install-config || fail
@@ -223,12 +208,6 @@ ubuntu::configure-workstation() {
   # Git
   git::configure || fail
   ubuntu::add-git-credentials-to-keyring || fail
-
-  # Install sway
-  if [ -n "${DEPLOY_SWAY:-}" ]; then
-    sway::install-config || fail
-    sway::install-shellrcd || fail
-  fi
 
   # Ruby
   ruby::install-gemrc || fail

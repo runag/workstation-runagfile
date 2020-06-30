@@ -5,7 +5,6 @@
 ./lib/menu.sh:
   21:     actionList+=(ubuntu::deploy-workstation)
   22:     actionList+=(ubuntu::configure-workstation)
-  23:     actionList+=(ubuntu::deploy-sway-workstation)
   27:     actionList+=(macos::deploy-workstation)
   28:     actionList+=(macos::configure-workstation)
   29:     actionList+=(macos::deploy-non-developer-workstation)

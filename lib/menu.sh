@@ -20,7 +20,6 @@ sopka::menu() {
   if [[ "$OSTYPE" =~ ^linux ]]; then
     list+=(ubuntu::deploy-workstation)
     list+=(ubuntu::configure-workstation)
-    list+=(ubuntu::deploy-sway-workstation)
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then

@@ -7,11 +7,9 @@ It will do the following:
 1. Installs the basic software I frequently use.
 2. Installs my keys, passwords, software licenses (I keep them in the bitwarden database)
 	* Puts SSH keys to the filesystem and passwords to the linux keychain.
-	* Enables gnome keyring access in TTY sessions to ease the use of SSH keys and git credentials in Sway WM.
 3. Makes a few tweaks to the system and to the desktop software.
 4. Installs a few shell aliases.
 5. Installs configuration for the Sublime Text and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
-6. With an extra environment flag DEPLOY_SWAY it installs Sway WM, my Sway configuration and few related software packages.
 
 This script is idempotent. It can be run multiple times to produce a system which is up-to date with the recent software updates and with my configuration changes.
 
