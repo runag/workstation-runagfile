@@ -20,8 +20,7 @@ deploy::merge-workstation-configs() {
 }
 
 shellrcd::sopka-src-path() {
-  local output="${HOME}/.shellrc.d/sopka-src-path.sh"
-  tee "${output}" <<SHELL || fail "Unable to write file: ${output} ($?)"
+  fs::write-file "${HOME}/.shellrc.d/sopka-src-path.sh" <<SHELL || fail
     if [ -d "\${HOME}/.sopka-src" ]; then
       export PATH="\${HOME}/.sopka-src/bin:\$PATH"
     fi
