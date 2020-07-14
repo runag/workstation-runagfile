@@ -59,7 +59,7 @@ ubuntu::install-packages() {
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
 
-  # meld (it will pull a whole gnome desktop as a dependency)
+  # meld
   apt::install meld || fail
 
   # chromium
