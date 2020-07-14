@@ -65,7 +65,7 @@ ubuntu::install-packages() {
   # chromium
   sudo snap install chromium || fail
 
-  ## open-vm-tools
+  # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
