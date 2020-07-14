@@ -157,8 +157,8 @@ macos::configure-workstation() {
 
   # SSH keys
   ssh::install-keys || fail
-  macos::ssh::add-use-keychain-to-ssh-config || fail
-  macos::ssh::add-ssh-key-password-to-keychain || fail
+  ssh::macos::add-use-keychain-to-config || fail
+  ssh::macos::add-key-password-to-keychain || fail
 
   # git
   git::configure || fail

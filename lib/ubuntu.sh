@@ -32,9 +32,8 @@ ubuntu::install-packages() {
   # devtools
   ubuntu::install-packages::devtools || fail
 
-  # git credential libsecret https://wiki.gnome.org/Projects/Libsecret
-  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
-  ubuntu::compile-git-credential-libsecret || fail
+  # git credential libsecret
+  git::ubuntu::install-credential-libsecret || fail
 
   # bitwarden cli
   sudo snap install bw || fail
@@ -65,7 +64,9 @@ ubuntu::install-packages() {
   sudo snap install chromium || fail
 
   ## open-vm-tools
-  apt::perhaps-install-open-vm-tools-desktop || fail
+  if ubuntu::vmware::is-inside-vm; then
+    apt::install open-vm-tools open-vm-tools-desktop || fail
+  fi
 
   # imwheel
   apt::install imwheel || fail
@@ -75,8 +76,7 @@ ubuntu::install-packages() {
 
   # corecoding-vitals-gnome-shell-extension
   # disabled to see if it cause screen freeze problem or not
-  # apt::install gir1.2-gtop-2.0 lm-sensors || fail
-  # ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+  # ubuntu::desktop::install-corecoding-vitals-gnome-shell-extension || fail
 
   # software for bare metal workstation
   if ubuntu::is-bare-metal; then
@@ -169,29 +169,29 @@ ubuntu::configure-workstation() {
   ubuntu::configure-desktop || fail
 
   # IMWhell
-  ubuntu::setup-imwhell || fail
+  ubuntu::desktop::setup-imwhell || fail
 
   # NVIDIA fixes
-  if ubuntu::is-nvidia-card-installed; then
-    ubuntu::fix-nvidia-screen-tearing || fail
-    ubuntu::fix-nvidia-gpu-background-image-glitch || fail
+  if ubuntu::nvidia::is-card-present; then
+    ubuntu::nvidia::fix-screen-tearing || fail
+    ubuntu::nvidia::fix-gpu-background-image-glitch || fail
   fi
 
   # enable wayland for firefox
-  ubuntu::moz-enable-wayland || fail
+  ubuntu::desktop::moz-enable-wayland || fail
 
   # remove user dirs
   ubuntu::remove-user-dirs || fail
 
   # hide folders
-  ubuntu::hide-folder "Desktop" || fail
-  ubuntu::hide-folder "snap" || fail
-  ubuntu::hide-folder "VirtualBox VMs" || fail
+  ubuntu::desktop::hide-folder "Desktop" || fail
+  ubuntu::desktop::hide-folder "snap" || fail
+  ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
 
   # hgfs mounts
-  if ubuntu::is-in-vmware-vm; then
-    ubuntu::add-hgfs-automount || fail
-    ubuntu::symlink-hgfs-mounts || fail
+  if ubuntu::vmware::is-inside-vm; then
+    ubuntu::vmware::add-hgfs-automount || fail
+    ubuntu::vmware::symlink-hgfs-mounts || fail
   fi
 
   # enable syncthing
@@ -201,11 +201,11 @@ ubuntu::configure-workstation() {
 
   # SSH keys
   ssh::install-keys || fail
-  ubuntu::add-ssh-key-password-to-keyring || fail
+  ssh::ubuntu::add-key-password-to-keyring || fail
 
   # git
   git::configure || fail
-  ubuntu::add-git-credentials-to-keyring || fail
+  git::ubuntu::add-credentials-to-keyring || fail
 }
 
 ubuntu::remove-user-dirs() {
@@ -244,7 +244,7 @@ ubuntu::remove-user-dirs() {
 ubuntu::configure-desktop() {
   # use dconf-editor to find key/value pairs
   # Don't use dbus-launch here because it will introduce side-effect to
-  # ubuntu::add-git-credentials-to-keyring and ubuntu::add-ssh-key-password-to-keyring
+  # git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
