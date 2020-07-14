@@ -80,12 +80,12 @@ ubuntu::install-packages() {
 
   # software for bare metal workstation
   if ubuntu::is-bare-metal; then
-    apt::add-syncthing-source || fail
+    # apt::add-syncthing-source || fail
     apt::add-obs-studio-source || fail
 
     apt::update || fail
 
-    apt::install syncthing || fail
+    # apt::install syncthing || fail
     apt::install obs-studio guvcview || fail
 
     sudo snap install bitwarden || fail
@@ -195,9 +195,9 @@ ubuntu::configure-workstation() {
   fi
 
   # enable syncthing
-  if ubuntu::is-bare-metal; then
-    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
-  fi
+  # if ubuntu::is-bare-metal; then
+  #   sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+  # fi
 
   # SSH keys
   ssh::install-keys || fail

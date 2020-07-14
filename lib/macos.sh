@@ -34,8 +34,8 @@ macos::install-basic-packages() {
   brew cask install coconutbattery || fail
 
   # syncthing
-  brew install syncthing || fail
-  brew services start syncthing || fail
+  # brew install syncthing || fail
+  # brew services start syncthing || fail
 
   # productivity tools
   brew cask install bitwarden || fail
