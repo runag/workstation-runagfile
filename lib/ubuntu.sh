@@ -74,8 +74,9 @@ ubuntu::install-packages() {
   apt::install dconf-cli dconf-editor libglib2.0-bin || fail
 
   # corecoding-vitals-gnome-shell-extension
-  apt::install gir1.2-gtop-2.0 lm-sensors || fail
-  ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
+  # disabled to see if it cause screen freeze problem or not
+  # apt::install gir1.2-gtop-2.0 lm-sensors || fail
+  # ubuntu::install-corecoding-vitals-gnome-shell-extension || fail
 
   # software for bare metal workstation
   if ubuntu::is-bare-metal; then
