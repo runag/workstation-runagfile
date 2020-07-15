@@ -18,7 +18,10 @@ macos::deploy-workstation() {
   macos::install-basic-packages || fail
   macos::install-developer-packages || fail
   macos::configure-workstation || fail
-  tools::display-elapsed-time || fail
+
+  if [ -t 1 ]; then
+    tools::display-elapsed-time || fail
+  fi
 }
 
 macos::install-basic-packages() {
@@ -34,8 +37,10 @@ macos::install-basic-packages() {
   brew cask install coconutbattery || fail
 
   # syncthing
-  # brew install syncthing || fail
-  # brew services start syncthing || fail
+  if [ "${INSTALL_SYNCTHING:-}" = true ]; then
+    brew install syncthing || fail
+    brew services start syncthing || fail
+  fi
 
   # productivity tools
   brew cask install bitwarden || fail

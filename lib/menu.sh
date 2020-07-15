@@ -19,7 +19,6 @@ sopka::menu() {
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
     list+=(ubuntu::deploy-workstation)
-    list+=(ubuntu::configure-workstation)
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
@@ -29,7 +28,6 @@ sopka::menu() {
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows::deploy-workstation)
-    list+=(windows::configure-workstation)
   fi
 
   list+=(deploy::merge-workstation-configs)

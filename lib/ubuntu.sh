@@ -15,18 +15,12 @@
 #  limitations under the License.
 
 ubuntu::deploy-workstation() {
-  ubuntu::install-packages || fail
-  ubuntu::configure-workstation || fail
-  if [ -t 1 ]; then
-    ubuntu::display-if-restart-required || fail
-    tools::display-elapsed-time || fail
-  fi
-}
-
-ubuntu::install-packages() {
   # update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
+
+  # increase inotify limits
+  ubuntu::set-inotify-max-user-watches || fail
 
   # basic tools, contains curl so it have to be first
   ubuntu::packages::install-basic-tools || fail
@@ -34,14 +28,31 @@ ubuntu::install-packages() {
   # devtools
   ubuntu::packages::install-devtools || fail
 
-  # git credential libsecret
-  git::ubuntu::install-credential-libsecret || fail
-
-  # bitwarden cli
+  # bitwarden and bitwarden cli
+  sudo snap install bitwarden || fail
   sudo snap install bw || fail
 
+  # shellrcd
+  shellrcd::install || fail
+  shellrcd::use-nano-editor || fail
+  shellrcd::sopka-src-path || fail
+  shellrcd::hook-direnv || fail
+
+  # ssh
+  ssh::install-keys || fail
+  ssh::ubuntu::add-key-password-to-keyring || fail
+
+  # git
+  git::configure || fail
+  git::ubuntu::install-credential-libsecret || fail
+  git::ubuntu::add-credentials-to-keyring || fail
+
   # ruby
+  ruby::configure-gemrc || fail
   ruby::install-rbenv || fail
+  shellrcd::rbenv || fail
+  rbenv rehash || fail
+  sudo gem update || fail
 
   # nodejs
   apt::add-yarn-source || fail
@@ -49,15 +60,20 @@ ubuntu::install-packages() {
   apt::update || fail
   apt::install yarn nodejs || fail
   nodejs::install-nodenv || fail
+  shellrcd::nodenv || fail
+  nodenv rehash || fail
 
   # vscode
   vscode::snap::install || fail
+  vscode::install-config || fail
+  vscode::install-extensions || fail
 
-  # sublime merge & text
+  # sublime text and sublime merge
   sublime::apt::add-sublime-source || fail
   apt::update || fail
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
+  sublime::install-config || fail
 
   # meld
   apt::install meld || fail
@@ -68,19 +84,11 @@ ubuntu::install-packages() {
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
+    ubuntu::vmware::add-hgfs-automount || fail
+    ubuntu::vmware::symlink-hgfs-mounts || fail
   fi
 
-  # imwheel
-  apt::install imwheel || fail
-
-  # gnome configuration
-  apt::install dconf-cli dconf-editor libglib2.0-bin || fail
-
-  # vitals gnome shell extension
-  if [ "${INSTALL_VITALS:-}" = true ]; then
-    ubuntu::desktop::install-vitals || fail
-  fi
-
+  # syncthing
   if [ "${INSTALL_SYNCTHING:-}" = true ]; then
     apt::add-syncthing-source || fail
     apt::update || fail
@@ -94,77 +102,19 @@ ubuntu::install-packages() {
     apt::update || fail
     apt::install obs-studio guvcview || fail
 
-    sudo snap install bitwarden || fail
-    sudo snap install discord || fail
-    sudo snap install skype --classic || fail
     sudo snap install telegram-desktop || fail
+    sudo snap install skype --classic || fail
+    sudo snap install discord || fail
   fi
 
-  # Cleanup
+  # configure desktop
+  ubuntu::desktop::configure || fail
+
+  # cleanup
   apt::autoremove || fail
-}
 
-ubuntu::configure-workstation() {
-  # shellrcd
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-src-path || fail
-  shellrcd::hook-direnv || fail
-
-  # ruby
-  ruby::configure-gemrc || fail
-  shellrcd::rbenv || fail
-  rbenv rehash || fail
-  sudo gem update || fail
-
-  # nodejs
-  shellrcd::nodenv || fail
-  nodenv rehash || fail
-
-  # vscode
-  vscode::install-config || fail
-  vscode::install-extensions || fail
-
-  # sublime text
-  sublime::install-config || fail
-
-  # configure gnome desktop
-  ubuntu::desktop::configure-gnome || fail
-
-  # IMWhell
-  ubuntu::desktop::setup-imwhell || fail
-
-  # fixes for NVIDIA
-  if ubuntu::nvidia::is-card-present; then
-    ubuntu::nvidia::fix-screen-tearing || fail
-    ubuntu::nvidia::fix-gpu-background-image-glitch || fail
+  if [ -t 1 ]; then
+    ubuntu::display-if-restart-required || fail
+    tools::display-elapsed-time || fail
   fi
-
-  # enable wayland for firefox
-  ubuntu::desktop::moz-enable-wayland || fail
-
-  # remove user dirs
-  ubuntu::desktop::remove-user-dirs || fail
-
-  # hide folders
-  ubuntu::desktop::hide-folder "Desktop" || fail
-  ubuntu::desktop::hide-folder "snap" || fail
-  ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
-
-  # hgfs mounts
-  if ubuntu::vmware::is-inside-vm; then
-    ubuntu::vmware::add-hgfs-automount || fail
-    ubuntu::vmware::symlink-hgfs-mounts || fail
-  fi
-
-  # increase inotify limits
-  ubuntu::set-inotify-max-user-watches || fail
-
-  # SSH keys
-  ssh::install-keys || fail
-  ssh::ubuntu::add-key-password-to-keyring || fail
-
-  # git
-  git::configure || fail
-  git::ubuntu::add-credentials-to-keyring || fail
 }

@@ -14,6 +14,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+ubuntu::desktop::configure() {
+  # configure gnome desktop
+  ubuntu::desktop::configure-gnome || fail
+
+  # imwheel
+  apt::install imwheel || fail
+  ubuntu::desktop::setup-imwhell || fail
+
+  # fixes for nvidia
+  if ubuntu::nvidia::is-card-present; then
+    ubuntu::nvidia::fix-screen-tearing || fail
+    ubuntu::nvidia::fix-gpu-background-image-glitch || fail
+  fi
+
+  # enable wayland for firefox
+  ubuntu::desktop::moz-enable-wayland || fail
+
+  # remove user dirs
+  ubuntu::desktop::remove-user-dirs || fail
+
+  # hide folders
+  ubuntu::desktop::hide-folder "Desktop" || fail
+  ubuntu::desktop::hide-folder "snap" || fail
+  ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
+
+  # vitals gnome shell extension
+  if [ "${INSTALL_VITALS:-}" = true ]; then
+    ubuntu::desktop::install-vitals || fail
+  fi
+}
+
 ubuntu::desktop::remove-user-dirs() {
   local dirsFile="${HOME}/.config/user-dirs.dirs"
 
@@ -51,6 +82,8 @@ ubuntu::desktop::configure-gnome() {
   # use dconf-editor to find key/value pairs
   # Don't use dbus-launch here because it will introduce side-effect to
   # git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
+
+  apt::install dconf-cli dconf-editor libglib2.0-bin || fail
 
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
