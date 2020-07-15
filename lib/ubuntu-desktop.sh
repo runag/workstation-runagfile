@@ -47,7 +47,7 @@ ubuntu::desktop::remove-user-dirs() {
   fi
 }
 
-ubuntu::desktop::configure() {
+ubuntu::desktop::configure-gnome() {
   # use dconf-editor to find key/value pairs
   # Don't use dbus-launch here because it will introduce side-effect to
   # git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring

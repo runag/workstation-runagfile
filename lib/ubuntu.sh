@@ -105,9 +105,6 @@ ubuntu::install-packages() {
 }
 
 ubuntu::configure-workstation() {
-  # increase inotify limits
-  ubuntu::set-inotify-max-user-watches || fail
-
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
@@ -131,13 +128,13 @@ ubuntu::configure-workstation() {
   # sublime text
   sublime::install-config || fail
 
-  # configure desktop
-  ubuntu::desktop::configure || fail
+  # configure gnome desktop
+  ubuntu::desktop::configure-gnome || fail
 
   # IMWhell
   ubuntu::desktop::setup-imwhell || fail
 
-  # NVIDIA fixes
+  # fixes for NVIDIA
   if ubuntu::nvidia::is-card-present; then
     ubuntu::nvidia::fix-screen-tearing || fail
     ubuntu::nvidia::fix-gpu-background-image-glitch || fail
@@ -159,6 +156,9 @@ ubuntu::configure-workstation() {
     ubuntu::vmware::add-hgfs-automount || fail
     ubuntu::vmware::symlink-hgfs-mounts || fail
   fi
+
+  # increase inotify limits
+  ubuntu::set-inotify-max-user-watches || fail
 
   # SSH keys
   ssh::install-keys || fail
