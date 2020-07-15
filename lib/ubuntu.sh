@@ -32,6 +32,9 @@ ubuntu::deploy-workstation() {
   sudo snap install bitwarden || fail
   sudo snap install bw || fail
 
+  # gnome-keyring and libsecret (for git and ssh)
+  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
+
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
