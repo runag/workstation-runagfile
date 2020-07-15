@@ -76,18 +76,22 @@ ubuntu::install-packages() {
   # gnome configuration
   apt::install dconf-cli dconf-editor libglib2.0-bin || fail
 
-  # corecoding-vitals-gnome-shell-extension
-  # disabled to see if it cause screen freeze problem or not
-  # ubuntu::desktop::install-corecoding-vitals-gnome-shell-extension || fail
+  # vitals gnome shell extension
+  if [ "${INSTALL_VITALS:-}" = true ]; then
+    ubuntu::desktop::install-vitals || fail
+  fi
+
+  if [ "${INSTALL_SYNCTHING:-}" = true ]; then
+    apt::add-syncthing-source || fail
+    apt::update || fail
+    apt::install syncthing || fail
+    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
+  fi
 
   # software for bare metal workstation
   if ubuntu::is-bare-metal; then
-    # apt::add-syncthing-source || fail
     apt::add-obs-studio-source || fail
-
     apt::update || fail
-
-    # apt::install syncthing || fail
     apt::install obs-studio guvcview || fail
 
     sudo snap install bitwarden || fail
@@ -126,11 +130,6 @@ ubuntu::configure-workstation() {
 
   # sublime text
   sublime::install-config || fail
-
-  # enable syncthing
-  # if ubuntu::is-bare-metal; then
-  #   sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
-  # fi
 
   # configure desktop
   ubuntu::desktop::configure || fail
