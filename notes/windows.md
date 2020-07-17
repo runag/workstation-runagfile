@@ -1,3 +1,18 @@
+* Check if "Windows is activated with a digital licence linked to your Microsoft account"
+
+* Date & time
+  * Set timezone automatically
+
+* Languages
+  Set English (UK) for dates, US keyboard
+  For Russian set "Enforce strict ё"
+
+* Onedrive
+  * Disable backup of desktop, documents, and pictures
+
+* Razer
+  * Chrome connect, studio, and visualizer
+  
 # Chocolatey
 
 ```
