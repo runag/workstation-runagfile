@@ -1,4 +1,19 @@
+# Activation
 * Check if "Windows is activated with a digital licence linked to your Microsoft account"
+
+# Bitlocker
+
+* run ``gpedit.msc``
+* Local Computer Policy > Computer Configuration > Administrative Templates > Windows Components > BitLocker Drive Encryption > Operating System Drives
+* Require additional authentication at startup
+* Enabled
+* Allow BitLocker without a compatible TPM (requires a password or a startup key on a USB flash drive)
+
+# Graphics
+Intel control panel
+Power
+Plugged in
+Maximum performance
 
 * Date & time
   * Set timezone automatically
