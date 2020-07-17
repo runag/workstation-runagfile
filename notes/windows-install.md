@@ -24,9 +24,8 @@ Maximum performance
 
 # Misc
 
-* set timezone automatically
-* low touchpad sens
-* keyboard repeat delay
+* timezone: set automatically
+* touchpad sensitivity: low
 
 # Language options
 
