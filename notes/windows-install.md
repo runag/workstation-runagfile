@@ -1,7 +1,7 @@
 # Install
 
-English (US)
-Location: Russia
+* English (US)
+* Location: Russia
 
 # Activation
 
