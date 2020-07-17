@@ -42,8 +42,12 @@ Maximum performance
 # Chocolatey
 
 ```
+# open admin terminal
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# reopen terminal
+Invoke-WebRequest https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/lib/windows/packages.config -OutFile $env:USERPROFILE/packages.config
 choco feature enable -n allowGlobalConfirmation
-choco install %USERPROFILE%\.sopka\lib\windows\packages.config --yes
+choco install $env:USERPROFILE/packages.config --yes
 choco upgrade all
 ```
 
