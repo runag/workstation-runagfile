@@ -37,7 +37,7 @@ Maximum performance
 
 # Razer
 
-* Chrome connect, studio, and visualizer
+* Synapse, chrome connect, studio, and visualizer
   
 # Chocolatey
 
@@ -50,11 +50,11 @@ choco upgrade all
 # Manuall install
 
 * MSI Dragon Center, audio driver, Nahimic
-* NVIDIA
-* Razer Synapse
+* NVIDIA driver?
 * Telegram from the Microsoft Store
 * Battle.net
 * VMware
+  * Disable windows firewall for host-only network (VMnet1, check virtual network manager)
 * Ruby using RubyInstaller
 
 # Synchting
@@ -63,12 +63,8 @@ choco upgrade all
 2. https://docs.syncthing.net/users/autostart.html#windows
 3. Add syncthing.exe to windows firewall
 
-## Fullscreen optimizations
+# Fullscreen optimizations
 
 > https://devblogs.microsoft.com/directx/demystifying-full-screen-optimizations/
 
 It is ok to have it on a decent machine, do not disable it.
-
-## VMware
-
-* Disable windows firewall for host-only network (VMnet1, check virtual network manager)
