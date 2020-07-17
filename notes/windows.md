@@ -1,8 +1,10 @@
 # Chocolatey
 
+```
 choco feature enable -n allowGlobalConfirmation
 choco install %USERPROFILE%\.sopka\lib\windows\packages.config --yes
 choco upgrade all
+```
 
 # Manuall install
 
@@ -29,12 +31,16 @@ choco upgrade all
 
 ## Change network category
 
+```
 Get-NetConnectionProfile
 Set-NetConnectionProfile -Name "FOOBAR" -NetworkCategory Private
+```
 
 ## Check Wi-Fi speed
 
+```
 netsh wlan show interfaces
+```
 
 ## Fullscreen optimizations
 
@@ -46,16 +52,20 @@ It is ok to have it on a decent machine, do not disable it.
 
 In admin console:
 
+```
 bcdedit /set hypervisorlaunchtype off
 bcdedit /set hypervisorlaunchtype auto
+```
 
 ## Shrink partition
 
 > https://superuser.com/questions/1017764/how-can-i-shrink-a-windows-10-partition
 > https://superuser.com/a/1175556
 
+```
 Optimize-Volume -DriveLetter C -ReTrim -Defrag -SlabConsolidate -TierOptimize -NormalPriority
 Resize-Partition -DriveLetter C -Size 300GB
+```
 
 ## VMware
 
