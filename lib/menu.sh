@@ -27,8 +27,8 @@ sopka::menu() {
   fi
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
-    list+=(windows::deploy-workstation)
     list+=(windows::install-packages)
+    list+=(windows::deploy-workstation)
   fi
 
   list+=(deploy::merge-workstation-configs)

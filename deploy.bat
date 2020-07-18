@@ -1,3 +1,5 @@
+@echo off
+
 cd %USERPROFILE%
 
 IF NOT EXIST .PortableGit\git-bash.exe (
@@ -9,4 +11,4 @@ IF NOT EXIST .PortableGit\git-bash.exe (
   del .PortableGit.exe || echo "Unable to delete PortableGit archive" && exit /B
 )
 
-.PortableGit\git-bash.exe -c "bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)"
+.PortableGit\git-bash.exe -c "bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || echo Abnormal termination; echo Press any key to continue; read"

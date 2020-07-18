@@ -15,8 +15,6 @@
 #  limitations under the License.
 
 windows::deploy-workstation() {
-  windows::install-packages || fail
-
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
