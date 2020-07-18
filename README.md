@@ -21,10 +21,16 @@ The file ``lib/config.sh`` contains my name and email to use in configuration. I
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
 ```
 
-## MacOS / Windows
+## MacOS
 
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
+```
+
+## Windows
+
+```sh
+curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.bat -o "%USERPROFILE%\.deploy.bat" && "%USERPROFILE%\.deploy.bat"
 ```
 
 ## Secret items which are expected to be found in a Bitwarden
