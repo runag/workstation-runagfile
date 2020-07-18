@@ -30,6 +30,7 @@ windows::deploy-workstation() {
   vscode::install-config || fail
   vscode::install-extensions || fail
 
-  # SSH keys
+  # ssh
   ssh::install-keys || fail
+  windows::enable-ssh-agent || fail
 }
