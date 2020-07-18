@@ -15,6 +15,8 @@
 #  limitations under the License.
 
 windows::deploy-workstation() {
+  windows::install-packages || fail
+
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
@@ -33,4 +35,18 @@ windows::deploy-workstation() {
   # ssh
   ssh::install-keys || fail
   windows::enable-ssh-agent || fail
+}
+
+windows::install-packages() {
+  if ! command -v choco >/dev/null; then
+    windows::install-chocolatey || fail
+  fi
+
+  windows::run-admin-powershell-script "${SOPKA_WIN_DIR}\lib\windows\install-chocolatey-packages.ps1" || fail
+
+  if windows::is-bare-metal; then
+    windows::run-admin-powershell-script "${SOPKA_WIN_DIR}\lib\windows\install-chocolatey-packages-desktop.ps1" || fail
+  fi
+
+  windows::chocolatey::upgrade-all || fail
 }

@@ -22,7 +22,6 @@
     "editor.wordBasedSuggestions": false,
     "editor.cursorSurroundingLines": 2,
     "editor.minimap.enabled": false,
-    "workbench.colorTheme": "Default Light+",
     "editor.multiCursorModifier": "ctrlCmd",
     "git.autofetch": true,
     "editor.mouseWheelScrollSensitivity": 2,

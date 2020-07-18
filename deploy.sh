@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 __xVhMyefCbBnZFUQtwqCs() {
-  if [ -n "${VERBOSE:-}" ]; then
+  if [ "${VERBOSE:-}" = true ]; then
     set -o xtrace
   fi
 
