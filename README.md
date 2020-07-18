@@ -33,6 +33,10 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-depl
 curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.bat -o "%USERPROFILE%\.deploy.bat" && "%USERPROFILE%\.deploy.bat"
 ```
 
+1. Run windows::install-packages
+2. Exit all terminals
+3. Run windows::deploy-workstation
+
 ## Secret items which are expected to be found in a Bitwarden
 
 Record names should be as the following:
