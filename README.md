@@ -30,7 +30,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-depl
 ## Windows
 
 ```sh
-cd "%USERPROFILE" && curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.bat -o ".deploy.bat" && ".deploy.bat"
+cd "%USERPROFILE%" && curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.bat -o .deploy.bat && .deploy.bat
 ```
 
 ## Secret items which are expected to be found in a Bitwarden

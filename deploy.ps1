@@ -11,6 +11,10 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   }
 }
 
+if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
+  throw "Unable to find chocolatey"
+}
+
 Set-Service -Name ssh-agent -StartupType Automatic
 Set-Service -Name ssh-agent -Status Running
 
@@ -51,8 +55,11 @@ if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
 }
 
 # for some reason "<(curl" is not working in conjunction with "bash -s -"
-Start-Process "$bashPath" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -Credential "$env:USERNAME"
+$windowsDeployWorkstation = Start-Process "$bashPath" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -PassThru -Credential "$env:USERNAME"
 
+if ($windowsDeployWorkstation.ExitCode -ne 0) {
+  throw "Error running windows::deploy-workstation"
+}
 
 $installPackagesPath = "$env:USERPROFILE\.sopka\lib\windows\install-packages.ps1"
 
