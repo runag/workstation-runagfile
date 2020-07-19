@@ -13,7 +13,7 @@ if (-Not (Get-Command "bw" -ErrorAction SilentlyContinue)) {
 }
 
 if (-Not (Get-Command "jq" -ErrorAction SilentlyContinue)) {
-  choco install vscode
+  choco install jq
 }
 
 if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
