@@ -35,14 +35,24 @@ if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
   }
 }
 
+if (-not (
+  (Get-Command "bw" -ErrorAction SilentlyContinue) -and
+  (Get-Command "jq" -ErrorAction SilentlyContinue) -and
+  (Get-Command "code" -ErrorAction SilentlyContinue))) {
+  throw "Unable to find dependencies"
+}
+
 if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
   $bashPath = "C:\Program Files\Git\bin\sh.exe"
-} else {
+} elseif (Test-Path "$env:USERPROFILE\.PortableGit\bin\sh.exe") {
   $bashPath = "$env:USERPROFILE\.PortableGit\bin\sh.exe"
+} else {
+  throw "Unable to find bash executable"
 }
 
 # for some reason "<(curl" is not working in conjunction with "bash -s -"
 Start-Process "$bashPath" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -Credential "$env:USERNAME"
+
 
 $installPackagesPath = "$env:USERPROFILE\.sopka\lib\windows\install-packages.ps1"
 
