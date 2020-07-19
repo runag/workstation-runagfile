@@ -12,11 +12,15 @@ if (-Not (Get-Command "bw" -ErrorAction SilentlyContinue)) {
   choco install bitwarden-cli
 }
 
+if (-Not (Get-Command "jq" -ErrorAction SilentlyContinue)) {
+  choco install vscode
+}
+
 if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
   choco install vscode
 }
 
-if (Test-Path "C:\Program Files\Git\bin\sh.exe2") {
+if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
   $bashPath = "C:\Program Files\Git\bin\sh.exe"
 } else {
   $bashPath = "$env:USERPROFILE\.PortableGit\bin\sh.exe"
