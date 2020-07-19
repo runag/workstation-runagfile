@@ -55,7 +55,6 @@ if (-not (
   throw "Unable to find all dependencies"
 }
 
-# for some reason "<(curl" is not working in conjunction with "bash -s -"
 $windowsDeployWorkstation = Start-Process "C:\Program Files\Git\bin\sh.exe" "-c 'bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh); exitStatus=`$?; if [ `$exitStatus != 0 ]; then echo Abnormal termination >&2; fi; echo Press ENTER to close the window >&2; read; exit `$exitStatus;'" -Wait -PassThru -Credential "$env:USERNAME"
 
 if ($windowsDeployWorkstation.ExitCode -ne 0) {
