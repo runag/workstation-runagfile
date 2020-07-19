@@ -18,6 +18,13 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 Set-Service -Name ssh-agent -StartupType Automatic
 Set-Service -Name ssh-agent -Status Running
 
+if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
+  choco install git --yes
+  if ($LASTEXITCODE -ne 0) {
+    throw "Unable to install git"
+  }
+}
+
 if (-Not (Get-Command "bw" -ErrorAction SilentlyContinue)) {
   choco install bitwarden-cli --yes
   if ($LASTEXITCODE -ne 0) {
@@ -40,22 +47,15 @@ if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
 }
 
 if (-not (
+  (Test-Path "C:\Program Files\Git\bin\sh.exe") -and
   (Get-Command "bw" -ErrorAction SilentlyContinue) -and
   (Get-Command "jq" -ErrorAction SilentlyContinue) -and
   (Get-Command "code" -ErrorAction SilentlyContinue))) {
   throw "Unable to find dependencies"
 }
 
-if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
-  $bashPath = "C:\Program Files\Git\bin\sh.exe"
-} elseif (Test-Path "$env:USERPROFILE\.PortableGit\bin\sh.exe") {
-  $bashPath = "$env:USERPROFILE\.PortableGit\bin\sh.exe"
-} else {
-  throw "Unable to find bash executable"
-}
-
 # for some reason "<(curl" is not working in conjunction with "bash -s -"
-$windowsDeployWorkstation = Start-Process "$bashPath" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -PassThru -Credential "$env:USERNAME"
+$windowsDeployWorkstation = Start-Process "C:\Program Files\Git\bin\sh.exe" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -PassThru -Credential "$env:USERNAME"
 
 if ($windowsDeployWorkstation.ExitCode -ne 0) {
   throw "Error running windows::deploy-workstation"
