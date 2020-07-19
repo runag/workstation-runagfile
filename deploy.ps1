@@ -32,7 +32,7 @@ if (-Not (Get-Command "jq" -ErrorAction SilentlyContinue)) {
   }
 }
 
-if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
+if (-not (Test-Path "C:\Program Files\Microsoft VS Code\bin\code.cmd")) {
   choco install vscode --yes
   if ($LASTEXITCODE -ne 0) {
     throw "Unable to install vscode"
@@ -47,10 +47,11 @@ if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
 }
 
 if (-not (
-  (Test-Path "C:\Program Files\Git\bin\sh.exe") -and
   (Get-Command "bw" -ErrorAction SilentlyContinue) -and
   (Get-Command "jq" -ErrorAction SilentlyContinue) -and
-  (Get-Command "code" -ErrorAction SilentlyContinue))) {
+  (Test-Path "C:\Program Files\Microsoft VS Code\bin\code.cmd") -and
+  (Test-Path "C:\Program Files\Git\bin\sh.exe")
+  )) {
   throw "Unable to find all dependencies"
 }
 
