@@ -64,5 +64,6 @@ if ($windowsDeployWorkstation.ExitCode -ne 0) {
 $installPackagesPath = "$env:USERPROFILE\.sopka\lib\windows\install-packages.ps1"
 
 if (Test-Path "$installPackagesPath") {
+  # TODO: obtain exit status
   & "$installPackagesPath"
 }
