@@ -18,13 +18,6 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 Set-Service -Name ssh-agent -StartupType Automatic
 Set-Service -Name ssh-agent -Status Running
 
-if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
-  choco install git --yes
-  if ($LASTEXITCODE -ne 0) {
-    throw "Unable to install git"
-  }
-}
-
 if (-Not (Get-Command "bw" -ErrorAction SilentlyContinue)) {
   choco install bitwarden-cli --yes
   if ($LASTEXITCODE -ne 0) {
@@ -46,12 +39,19 @@ if (-Not (Get-Command "code" -ErrorAction SilentlyContinue)) {
   }
 }
 
+if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
+  choco install git --yes
+  if ($LASTEXITCODE -ne 0) {
+    throw "Unable to install git"
+  }
+}
+
 if (-not (
   (Test-Path "C:\Program Files\Git\bin\sh.exe") -and
   (Get-Command "bw" -ErrorAction SilentlyContinue) -and
   (Get-Command "jq" -ErrorAction SilentlyContinue) -and
   (Get-Command "code" -ErrorAction SilentlyContinue))) {
-  throw "Unable to find dependencies"
+  throw "Unable to find all dependencies"
 }
 
 # for some reason "<(curl" is not working in conjunction with "bash -s -"
