@@ -15,3 +15,8 @@ if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
     }
   }
 }
+
+choco upgrade all --yes
+if ($LASTEXITCODE -ne 0) {
+  throw "Unable to upgrade installed packages"
+}

@@ -1,1 +1,0 @@
-choco install $env:USERPROFILE\.sopka\lib\windows\packages-desktop.config --yes

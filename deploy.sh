@@ -62,9 +62,9 @@ __xVhMyefCbBnZFUQtwqCs() {
 
   cd "${HOME}/.sopka-src" || fail
 
-  bin/sopka || fail
+  bin/sopka "$@" || fail
 }
 
 # I'm wrapping the script in the function with the random name, to ensure that in case if download fails in the middle,
 # then "curl | bash" will not run some funny things
-__xVhMyefCbBnZFUQtwqCs || return $?
+__xVhMyefCbBnZFUQtwqCs "$@" || return $?

@@ -41,7 +41,7 @@ if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
   $bashPath = "$env:USERPROFILE\.PortableGit\bin\sh.exe"
 }
 
-Start-Process "$bashPath" "-c 'bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || echo Abnormal termination; echo Press ENTER to close the window; read'" -Wait -Credential "$env:USERNAME"
+Start-Process "$bashPath" "-c 'bash -s - windows::deploy-workstation <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || { echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; }'" -Wait -Credential "$env:USERNAME"
 
 $installPackagesPath = "$env:USERPROFILE\.sopka\lib\windows\install-packages.ps1"
 
