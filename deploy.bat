@@ -13,10 +13,6 @@ IF NOT EXIST C:\"Program Files"\Git\bin\sh.exe (
   )
 )
 
-REM Without "start" sh.exe will brake current terminal
+curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.ps1 -o .deploy.ps1 || echo "Unable to download deploy.ps1" && exit /B
 
-IF EXIST C:\"Program Files"\Git\bin\sh.exe (
-  start /wait C:\"Program Files"\Git\bin\sh.exe -c "bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || echo Abnormal termination; echo Press ENTER to continue; read"
-) ELSE (
-  start /wait .PortableGit\bin\sh.exe -c "bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || echo Abnormal termination; echo Press ENTER to continue; read"
-)
+powershell -Command "Start-Process powershell \"-ExecutionPolicy Bypass -Command %USERPROFILE%\.deploy.ps1\" -Wait -Verb RunAs"
