@@ -32,14 +32,9 @@ windows::deploy-workstation() {
 
   # ssh
   ssh::install-keys || fail
-  windows::enable-ssh-agent || fail
 }
 
 windows::install-packages() {
-  if ! command -v choco >/dev/null; then
-    windows::install-chocolatey || fail
-  fi
-
   windows::run-admin-powershell-script "${SOPKA_WIN_DIR}\lib\windows\install-chocolatey-packages.ps1" || fail
 
   if windows::is-bare-metal; then
