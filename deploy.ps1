@@ -56,7 +56,7 @@ if (-not (
 }
 
 # for some reason "<(curl" is not working in conjunction with "bash -s -"
-$windowsDeployWorkstation = Start-Process "C:\Program Files\Git\bin\sh.exe" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -PassThru -Credential "$env:USERNAME"
+$windowsDeployWorkstation = Start-Process "C:\Program Files\Git\bin\sh.exe" "-c 'bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh); if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -PassThru -Credential "$env:USERNAME"
 
 if ($windowsDeployWorkstation.ExitCode -ne 0) {
   throw "Error running windows::deploy-workstation"
