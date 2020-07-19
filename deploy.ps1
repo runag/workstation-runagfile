@@ -41,7 +41,8 @@ if (Test-Path "C:\Program Files\Git\bin\sh.exe") {
   $bashPath = "$env:USERPROFILE\.PortableGit\bin\sh.exe"
 }
 
-Start-Process "$bashPath" "-c 'bash -s - windows::deploy-workstation <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh) || { echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; }'" -Wait -Credential "$env:USERNAME"
+# for some reason "<(curl" is not working in conjunction with "bash -s -"
+Start-Process "$bashPath" "-c 'curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh | bash -s - windows::deploy-workstation; if [ `"`${PIPESTATUS[*]}`" = `"0 0`" ]; then echo Press ENTER to close the window >&2; read; else echo Abnormal termination >&2; echo Press ENTER to close the window >&2; read; exit 1; fi;'" -Wait -Credential "$env:USERNAME"
 
 $installPackagesPath = "$env:USERPROFILE\.sopka\lib\windows\install-packages.ps1"
 
