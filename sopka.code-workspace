@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "..\\.sopka-src"
+			"path": "../.sopka-src"
 		}
 	]
 }
