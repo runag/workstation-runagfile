@@ -38,5 +38,5 @@ sopka::menu() {
     fi
   fi
 
-  menu::select-and-run "${list[@]}"
+  menu::select-and-run "${list[@]}" || fail
 }
