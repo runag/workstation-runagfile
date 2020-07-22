@@ -40,6 +40,7 @@ ubuntu::deploy-workstation() {
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
+  bitwarden::shellrcd::set-bitwarden-login || fail
 
   # ssh
   ssh::install-keys || fail

@@ -19,6 +19,7 @@ windows::deploy-workstation() {
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-src-path || fail
+  bitwarden::shellrcd::set-bitwarden-login || fail
 
   # git
   git::configure || fail

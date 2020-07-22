@@ -137,6 +137,7 @@ macos::configure-workstation() {
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
+  bitwarden::shellrcd::set-bitwarden-login || fail
 
   # ruby
   ruby::configure-gemrc || fail
