@@ -56,7 +56,7 @@ ubuntu::deploy-workstation() {
   ruby::install-rbenv || fail
   shellrcd::rbenv || fail
   rbenv rehash || fail
-  sudo gem update || fail
+  gem update || fail
 
   # nodejs
   apt::add-yarn-source || fail
