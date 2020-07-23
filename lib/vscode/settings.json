@@ -24,6 +24,6 @@
     "editor.minimap.enabled": false,
     "editor.multiCursorModifier": "ctrlCmd",
     "git.autofetch": true,
-    "editor.mouseWheelScrollSensitivity": 2,
+    "editor.mouseWheelScrollSensitivity": 1,
     "terminal.integrated.mouseWheelScrollSensitivity": 2,
 }
