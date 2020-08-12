@@ -141,7 +141,7 @@ macos::configure-workstation() {
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
-  shellrcd::sopka-src-path || fail
+  shellrcd::sopka-lib-path || fail
   shellrcd::hook-direnv || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
 

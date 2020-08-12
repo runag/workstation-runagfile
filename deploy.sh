@@ -58,9 +58,9 @@ __xVhMyefCbBnZFUQtwqCs() {
   git --version >/dev/null || fail
 
   git::clone-or-pull "https://github.com/senotrusov/stan-computer-deploy.git" "${HOME}/.sopka" || fail
-  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka-src" || fail
+  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka-lib" || fail
 
-  cd "${HOME}/.sopka-src" || fail
+  cd "${HOME}/.sopka-lib" || fail
 
   bin/sopka "$@" || fail
 }

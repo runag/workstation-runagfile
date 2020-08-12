@@ -19,10 +19,10 @@ deploy::merge-workstation-configs() {
   sublime::merge-config || fail
 }
 
-shellrcd::sopka-src-path() {
-  fs::write-file "${HOME}/.shellrc.d/sopka-src-path.sh" <<SHELL || fail
-    if [ -d "\${HOME}/.sopka-src" ]; then
-      export PATH="\${HOME}/.sopka-src/bin:\$PATH"
+shellrcd::sopka-lib-path() {
+  fs::write-file "${HOME}/.shellrc.d/sopka-lib-path.sh" <<SHELL || fail
+    if [ -d "\${HOME}/.sopka-lib" ]; then
+      export PATH="\${HOME}/.sopka-lib/bin:\$PATH"
     fi
 SHELL
 }
