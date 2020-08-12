@@ -43,6 +43,10 @@ ubuntu::deploy-storage-server() {
   # avahi daemon
   apt::install avahi-daemon || fail
 
+  # ssh public key
+  apt::install ssh-import-id || fail
+  ssh-import-id gh:senotrusov || fail
+
   # cleanup
   apt::autoremove || fail
 
