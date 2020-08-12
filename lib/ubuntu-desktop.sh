@@ -15,6 +15,8 @@
 #  limitations under the License.
 
 ubuntu::desktop::configure() {
+  apt::install dconf-editor || fail
+
   # configure gnome desktop
   ubuntu::desktop::configure-gnome || fail
 
@@ -78,13 +80,12 @@ ubuntu::desktop::remove-user-dirs() {
   fi
 }
 
+# use dconf-editor to find key/value pairs
+#
+# Don't use dbus-launch here because it will introduce
+# side-effect to git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
+
 ubuntu::desktop::configure-gnome() {
-  # use dconf-editor to find key/value pairs
-  # Don't use dbus-launch here because it will introduce side-effect to
-  # git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
-
-  apt::install dconf-cli dconf-editor libglib2.0-bin || fail
-
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
     if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
@@ -120,11 +121,6 @@ ubuntu::desktop::configure-gnome() {
       gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail
     fi
 
-    # Disable screen lock
-    if gsettings get org.gnome.desktop.session idle-delay; then
-      gsettings set org.gnome.desktop.session idle-delay 0 || fail
-    fi
-
     # Auto set time zone
     if gsettings get org.gnome.desktop.datetime automatic-timezone; then
       gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
@@ -155,5 +151,11 @@ ubuntu::desktop::configure-gnome() {
     if gsettings get org.gnome.mutter experimental-features; then
       gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
     fi
+  fi
+}
+
+ubuntu::desktop::disable-screen-lock() {
+  if gsettings get org.gnome.desktop.session idle-delay; then
+    gsettings set org.gnome.desktop.session idle-delay 0 || fail
   fi
 }

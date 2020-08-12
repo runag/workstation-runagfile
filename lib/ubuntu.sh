@@ -15,6 +15,9 @@
 #  limitations under the License.
 
 ubuntu::deploy-workstation() {
+  # disable screen lock
+  ubuntu::desktop::disable-screen-lock || fail
+
   # update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
