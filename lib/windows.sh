@@ -24,12 +24,12 @@ windows::deploy-workstation() {
   # git
   git::configure || fail
 
-  # sublime text
-  sublime::install-config || fail
-
   # vscode
   vscode::install-config || fail
   vscode::install-extensions || fail
+
+  # sublime text
+  sublime::install-config || fail
 
   # ssh
   ssh::install-keys || fail

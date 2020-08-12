@@ -132,6 +132,12 @@ macos::install-developer-packages() {
 }
 
 macos::configure-workstation() {
+  # increase maxfiles limits
+  macos::increase-maxfiles-limit || fail
+
+  # hide folders
+  macos::hide-folders || fail
+
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
@@ -154,12 +160,6 @@ macos::configure-workstation() {
 
   # sublime text
   sublime::install-config || fail
-
-  # increase maxfiles limits
-  macos::increase-maxfiles-limit || fail
-
-  # hide folders
-  macos::hide-folders || fail
 
   # SSH keys
   ssh::install-keys || fail

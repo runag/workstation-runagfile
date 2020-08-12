@@ -34,6 +34,7 @@ ubuntu::deploy-workstation() {
 
   # gnome-keyring and libsecret (for git and ssh)
   apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
+  git::ubuntu::install-credential-libsecret || fail
 
   # shellrcd
   shellrcd::install || fail
@@ -41,15 +42,6 @@ ubuntu::deploy-workstation() {
   shellrcd::sopka-src-path || fail
   shellrcd::hook-direnv || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
-
-  # ssh
-  ssh::install-keys || fail
-  ssh::ubuntu::add-key-password-to-keyring || fail
-
-  # git
-  git::configure || fail
-  git::ubuntu::install-credential-libsecret || fail
-  git::ubuntu::add-credentials-to-keyring || fail
 
   # ruby
   ruby::configure-gemrc || fail
@@ -77,7 +69,6 @@ ubuntu::deploy-workstation() {
   apt::update || fail
   sublime::apt::install-sublime-merge || fail
   sublime::apt::install-sublime-text || fail
-  sublime::install-config || fail
 
   # meld
   apt::install meld || fail
@@ -116,6 +107,20 @@ ubuntu::deploy-workstation() {
 
   # cleanup
   apt::autoremove || fail
+
+  # the following commands use bitwarden and that requires password entry
+  (
+    # sublime license key
+    sublime::install-config || fail
+
+    # ssh
+    ssh::install-keys || fail
+    ssh::ubuntu::add-key-password-to-keyring || fail
+
+    # git
+    git::configure || fail
+    git::ubuntu::add-credentials-to-keyring || fail
+  ) || fail
 
   if [ -t 1 ]; then
     ubuntu::display-if-restart-required || fail
