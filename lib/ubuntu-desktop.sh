@@ -88,11 +88,11 @@ ubuntu::desktop::remove-user-dirs() {
 ubuntu::desktop::configure-gnome() {
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Terminal
-    if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled; then
+    if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled >/dev/null; then
       gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
     fi
 
-    if gsettings get org.gnome.Terminal.ProfilesList default; then
+    if gsettings get org.gnome.Terminal.ProfilesList default >/dev/null; then
       local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
       local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
@@ -101,7 +101,7 @@ ubuntu::desktop::configure-gnome() {
     fi
 
     # Nautilus
-    if gsettings list-keys org.gnome.nautilus; then
+    if gsettings list-keys org.gnome.nautilus >/dev/null; then
       gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
       gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
       gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
@@ -110,52 +110,52 @@ ubuntu::desktop::configure-gnome() {
     fi
 
     # Desktop 18.04
-    if gsettings list-keys org.gnome.nautilus.desktop; then
+    if gsettings list-keys org.gnome.nautilus.desktop >/dev/null; then
       gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail
       gsettings set org.gnome.nautilus.desktop volumes-visible false || fail
     fi
 
     # Desktop 19.10
-    if gsettings list-keys org.gnome.shell.extensions.desktop-icons; then
+    if gsettings list-keys org.gnome.shell.extensions.desktop-icons >/dev/null; then
       gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail
       gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail
     fi
 
     # Auto set time zone
-    if gsettings get org.gnome.desktop.datetime automatic-timezone; then
+    if gsettings get org.gnome.desktop.datetime automatic-timezone >/dev/null; then
       gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
     fi
 
     # Dash appearance
-    if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size; then
+    if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size >/dev/null; then
       gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail
     fi
 
     # Sound alerts
-    if gsettings get org.gnome.desktop.sound event-sounds; then
+    if gsettings get org.gnome.desktop.sound event-sounds >/dev/null; then
       gsettings set org.gnome.desktop.sound event-sounds false || fail
     fi
 
     # 1600 DPI mouse
-    if gsettings get org.gnome.desktop.peripherals.mouse speed; then
+    if gsettings get org.gnome.desktop.peripherals.mouse speed >/dev/null; then
       gsettings set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
     fi
 
     # Input sources
     # ('xkb', 'ru+mac')
-    if gsettings get org.gnome.desktop.input-sources sources; then
+    if gsettings get org.gnome.desktop.input-sources sources >/dev/null; then
       gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
     fi
 
     # Enable fractional scaling
-    if gsettings get org.gnome.mutter experimental-features; then
+    if gsettings get org.gnome.mutter experimental-features >/dev/null; then
       gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
     fi
   fi
 }
 
 ubuntu::desktop::disable-screen-lock() {
-  if gsettings get org.gnome.desktop.session idle-delay; then
+  if gsettings get org.gnome.desktop.session idle-delay >/dev/null; then
     gsettings set org.gnome.desktop.session idle-delay 0 || fail
   fi
 }
