@@ -19,6 +19,9 @@ ubuntu::deploy-storage-server() {
   apt::update || fail
   apt::dist-upgrade || fail
 
+  # hostname
+  ubuntu::set-hostname "stan-storage" || fail
+
   # basic tools, contains curl so it have to be first
   ubuntu::packages::install-basic-tools || fail
 
