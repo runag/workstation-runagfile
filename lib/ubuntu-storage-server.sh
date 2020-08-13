@@ -47,6 +47,9 @@ ubuntu::deploy-storage-server() {
   apt::install ssh-import-id || fail
   ssh-import-id gh:senotrusov || fail
 
+  # cifs
+  apt::install cifs-utils || fail
+
   # cleanup
   apt::autoremove || fail
 
