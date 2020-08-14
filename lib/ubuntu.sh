@@ -125,6 +125,8 @@ ubuntu::deploy-workstation() {
     git::ubuntu::add-credentials-to-keyring || fail
   ) || fail
 
+  touch "${HOME}/.sopka.workstation.deployed" || fail
+
   if [ -t 1 ]; then
     ubuntu::display-if-restart-required || fail
     tools::display-elapsed-time || fail

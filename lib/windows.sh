@@ -33,4 +33,6 @@ windows::deploy-workstation() {
 
   # ssh
   ssh::install-keys || fail
+
+  touch "${HOME}/.sopka.workstation.deployed" || fail
 }

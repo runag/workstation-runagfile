@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-my-storage-vm() {
+my-storage-vm::deploy() {
   # update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
@@ -62,9 +62,11 @@ ubuntu::deploy-my-storage-vm() {
 
   # storage configuration
   (
-    my-storage-vm::configure-windows-share || fail
-    my-storage-vm::configure-access-to-borg-storage || fail
+    my-storage-vm::stan-documents::mount || fail
+    my-storage-vm::stan-documents::configure-backup-credentials || fail
   ) || fail
+
+  touch "${HOME}/.sopka.my-storage-vm.deployed" || fail
 
   if [ -t 1 ]; then
     ubuntu::display-if-restart-required || fail
@@ -72,10 +74,10 @@ ubuntu::deploy-my-storage-vm() {
   fi
 }
 
-my-storage-vm::configure-windows-share() {
-  local mountPoint="${HOME}/windows-documents"
+my-storage-vm::stan-documents::mount() {
+  local mountPoint="${HOME}/stan-documents"
   local credentialsFile="${HOME}/.smbcredentials"
-  local fstabTag="# windows-documents cifs share"
+  local fstabTag="# stan-documents cifs share"
   local serverName="STAN-LAPTOP"
   local bwItem="my microsoft account"
   local cifsUsername
@@ -96,24 +98,67 @@ my-storage-vm::configure-windows-share() {
   fi
 
   sudo mount -a || fail
+
+  findmnt -M "${mountPoint}" || fail "${mountPoint} is not mounted"
 }
 
-my-storage-vm::configure-access-to-borg-storage(){
-  local bwBorgStorageItem="my borg storage"
+my-storage-vm::stan-documents::configure-backup-credentials() {
+  local credentialsFile="${HOME}/stan-documents.backup-credentials"
+  local storageBwItem="stan-documents backup storage"
+  local passphraseBwItem="stan-documents backup passphrase"
+  local backupPath="borg-backups/stan-documents"
 
-  local borgStorageUsername
-  local borgStorageUri
-  local borgStorageHost
-  local borgStoragePort
+  if [ ! -f "${credentialsFile}" ]; then
+    bitwarden::unlock || fail
 
-  bitwarden::unlock || fail
+    local storageUsername; storageUsername="$(bw get username "${storageBwItem}")" || fail
+    local storageUri; storageUri="$(bw get uri "${storageBwItem}")" || fail
+    local storageHost; storageHost="$(echo "${storageUri}" | cut -d ":" -f 1)" || fail
+    local storagePort; storagePort="$(echo "${storageUri}" | cut -d ":" -f 2)" || fail
+    local passphrase; passphrase="$(bw get password "${passphraseBwItem}")" || fail
 
-  borgStorageUsername="$(bw get username "${bwBorgStorageItem}")" || fail
-  borgStorageUri="$(bw get uri "${bwBorgStorageItem}")" || fail
+    ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
+    ssh::add-host-to-known-hosts "${storageHost}" "${storagePort}" || fail
 
-  borgStorageHost="$(echo "${borgStorageUri}" | cut -d ":" -f 1)" || fail
-  borgStoragePort="$(echo "${borgStorageUri}" | cut -d ":" -f 2)" || fail
-
-  ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
-  ssh::add-host-to-known-hosts "${borgStorageHost}" "${borgStoragePort}" || fail
+    builtin printf "export STORAGE_USERNAME=$(printf "%q" "${storageUsername}")\nexport STORAGE_HOST=$(printf "%q" "${storageHost}")\nexport STORAGE_PORT=$(printf "%q" "${storagePort}")\nexport BORG_REPO=$(printf "%q" "ssh://${storageUsername}@${storageUri}/./${backupPath}")\nexport BORG_PASSPHRASE=$(printf "%q" "${passphrase}")\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
+  fi
 }
+
+my-storage-vm::stan-documents::borg-init() {
+  . "${HOME}/stan-documents.backup-credentials" || fail
+
+  borg init --encryption keyfile-blake2 --make-parent-dirs || fail
+
+  my-storage-vm::stan-documents::export-keys || fail
+}
+
+my-storage-vm::stan-documents::export-keys() {
+  . "${HOME}/stan-documents.backup-credentials" || fail
+
+  local exportPath="${HOME}/stan-documents-$(date +"%Y%m%dT%H%M%SZ")" || fail
+
+  borg key export "${BORG_REPO}" "${exportPath}.key" || fail
+  borg key export --qr-html "${BORG_REPO}" "${exportPath}.key.html" || fail
+}
+
+my-storage-vm::stan-documents::sftp() {
+  . "${HOME}/stan-documents.backup-credentials" || fail
+
+  sftp -P "${STORAGE_PORT}" "${STORAGE_USERNAME}@${STORAGE_HOST}" || fail
+}
+
+my-storage-vm::stan-documents::perform-backup() (
+  . "${HOME}/stan-documents.backup-credentials" || fail
+
+  if [ -t 1 ]; then
+    local CREATE_VISUAL_ARGS="--stats --progress"
+    local PRUNE_VISUAL_ARGS="--stats --list"
+  fi
+
+  # The purpose of this cd is to use relative to ${FROM_PATH} paths in backup
+  cd "${HOME}/stan-documents" || fail
+
+  borg create ${CREATE_VISUAL_ARGS:-} --files-cache=ctime,size --compression zstd "::{utcnow}" distfiles educational-media notes || fail
+  borg prune ${PRUNE_VISUAL_ARGS:-} --keep-within 4d --keep-daily=7 --keep-weekly=4 --keep-monthly=24 || fail
+)
+

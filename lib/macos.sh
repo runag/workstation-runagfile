@@ -19,6 +19,8 @@ macos::deploy-workstation() {
   macos::install-developer-packages || fail
   macos::configure-workstation || fail
 
+  touch "${HOME}/.sopka.workstation.deployed" || fail
+
   if [ -t 1 ]; then
     tools::display-elapsed-time || fail
   fi
