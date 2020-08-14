@@ -64,7 +64,6 @@ ubuntu::deploy-my-storage-vm() {
 
   # storage configuration
   (
-    bitwarden::unlock || fail
     my-storage-vm::configure-windows-share || fail
     my-storage-vm::configure-access-to-borg-storage || fail
   ) || fail
@@ -108,6 +107,8 @@ my-storage-vm::configure-access-to-borg-storage(){
   local borgStorageUri
   local borgStorageHost
   local borgStoragePort
+
+  bitwarden::unlock || fail
 
   borgStorageUsername="$(bw get username "${bwBorgStorageItem}")" || fail
   borgStorageUri="$(bw get uri "${bwBorgStorageItem}")" || fail
