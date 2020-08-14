@@ -36,8 +36,6 @@ ubuntu::deploy-my-storage-vm() {
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
-    # ubuntu::vmware::add-hgfs-automount || fail
-    # ubuntu::vmware::symlink-hgfs-mounts || fail
   fi
 
   # ssh public key
