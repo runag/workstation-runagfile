@@ -27,9 +27,11 @@ sopka::menu() {
       fi
       if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ]; then
         list+=(my-storage-vm::deploy)
-        list+=(my-storage-vm::stan-documents::borg-init)
-        list+=(my-storage-vm::stan-documents::export-keys)
-        list+=(my-storage-vm::stan-documents::sftp)
+      fi
+      if [ -f "${HOME}/stan-documents.backup-credentials" ]; then
+        list+=("my-storage-vm::stan-documents borg::init")
+        list+=("my-storage-vm::stan-documents borg::export-keys")
+        list+=("my-storage-vm::stan-documents borg::connect-sftp")
         list+=(my-storage-vm::stan-documents::perform-backup)
       fi
     fi

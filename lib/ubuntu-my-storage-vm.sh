@@ -103,12 +103,13 @@ my-storage-vm::stan-documents::mount() {
 }
 
 my-storage-vm::stan-documents::configure-backup-credentials() {
-  local credentialsFile="${HOME}/stan-documents.backup-credentials"
+  local backupName="stan-documents"
+  local credentialsFile="${HOME}/${backupName}.backup-credentials"
   local privateKeyName="my borg storage ssh private key"
   local publicKeyName="my borg storage ssh public key"
-  local storageBwItem="stan-documents backup storage"
-  local passphraseBwItem="stan-documents backup passphrase"
-  local backupPath="borg-backups/stan-documents"
+  local storageBwItem="${backupName} backup storage"
+  local passphraseBwItem="${backupName} backup passphrase"
+  local backupPath="borg-backups/${backupName}"
 
   if [ ! -f "${credentialsFile}" ]; then
     bitwarden::unlock || fail
@@ -122,30 +123,28 @@ my-storage-vm::stan-documents::configure-backup-credentials() {
     ssh::install-keys "${privateKeyName}" "${publicKeyName}" || fail
     ssh::add-host-to-known-hosts "${storageHost}" "${storagePort}" || fail
 
-    builtin printf "export STORAGE_USERNAME=$(printf "%q" "${storageUsername}")\nexport STORAGE_HOST=$(printf "%q" "${storageHost}")\nexport STORAGE_PORT=$(printf "%q" "${storagePort}")\nexport BORG_REPO=$(printf "%q" "ssh://${storageUsername}@${storageUri}/./${backupPath}")\nexport BORG_PASSPHRASE=$(printf "%q" "${passphrase}")\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
+    builtin printf "export BACKUP_NAME=$(printf "%q" "${backupName}")\nexport STORAGE_USERNAME=$(printf "%q" "${storageUsername}")\nexport STORAGE_HOST=$(printf "%q" "${storageHost}")\nexport STORAGE_PORT=$(printf "%q" "${storagePort}")\nexport BORG_REPO=$(printf "%q" "ssh://${storageUsername}@${storageUri}/./${backupPath}")\nexport BORG_PASSPHRASE=$(printf "%q" "${passphrase}")\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
   fi
 }
 
-my-storage-vm::stan-documents::borg-init() {
+my-storage-vm::stan-documents() {
   . "${HOME}/stan-documents.backup-credentials" || fail
-
-  borg init --encryption keyfile-blake2 --make-parent-dirs || fail
-
-  my-storage-vm::stan-documents::export-keys || fail
+  "$@" || fail
 }
 
-my-storage-vm::stan-documents::export-keys() {
-  . "${HOME}/stan-documents.backup-credentials" || fail
+borg::init() {
+  borg init --encryption keyfile-blake2 --make-parent-dirs || fail
+  borg::export-keys || fail
+}
 
-  local exportPath="${HOME}/stan-documents-$(date +"%Y%m%dT%H%M%SZ")" || fail
+borg::export-keys() {
+  local exportPath; exportPath="${HOME}/${BACKUP_NAME}-$(date +"%Y%m%dT%H%M%SZ")" || fail
 
   borg key export "${BORG_REPO}" "${exportPath}.key" || fail
   borg key export --qr-html "${BORG_REPO}" "${exportPath}.key.html" || fail
 }
 
-my-storage-vm::stan-documents::sftp() {
-  . "${HOME}/stan-documents.backup-credentials" || fail
-
+borg::connect-sftp() {
   sftp -P "${STORAGE_PORT}" "${STORAGE_USERNAME}@${STORAGE_HOST}" || fail
 }
 
@@ -159,6 +158,8 @@ my-storage-vm::stan-documents::perform-backup() (
 
   # The purpose of this cd is to use relative to ${FROM_PATH} paths in backup
   cd "${HOME}/stan-documents" || fail
+  
+  findmnt -M . >/dev/null || fail "${mountPoint} is not mounted"
 
   borg create ${CREATE_VISUAL_ARGS:-} --files-cache=ctime,size --compression zstd "::{utcnow}" distfiles educational-media notes || fail
   borg prune ${PRUNE_VISUAL_ARGS:-} --keep-within 4d --keep-daily=7 --keep-weekly=4 --keep-monthly=24 || fail
