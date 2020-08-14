@@ -15,18 +15,15 @@
 #  limitations under the License.
 
 my-storage-vm::deploy() {
+  # hostname
+  ubuntu::set-hostname "stan-storage" || fail
+
   # update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
 
-  # hostname
-  ubuntu::set-hostname "stan-storage" || fail
-
   # basic tools, contains curl so it have to be first
   ubuntu::packages::install-basic-tools || fail
-
-  # bitwarden and bitwarden cli
-  sudo snap install bw || fail
 
   # shellrcd
   shellrcd::install || fail
@@ -37,13 +34,6 @@ my-storage-vm::deploy() {
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
   fi
-
-  # ssh public key
-  apt::install ssh-import-id || fail
-  ssh-import-id gh:senotrusov || fail
-
-  # git
-  git::configure || fail
 
   # avahi daemon
   apt::install avahi-daemon || fail
@@ -57,8 +47,20 @@ my-storage-vm::deploy() {
   # borg
   apt::install borgbackup || fail
 
+  # ssh-import-id
+  apt::install ssh-import-id || fail
+
   # cleanup
   apt::autoremove || fail
+
+  # bitwarden and bitwarden cli
+  sudo snap install bw || fail
+
+  # import ssh key
+  ssh-import-id gh:senotrusov || fail
+
+  # configure git
+  git::configure || fail
 
   # storage configuration
   (
@@ -76,12 +78,10 @@ my-storage-vm::deploy() {
 
 my-storage-vm::stan-documents::mount() {
   local mountPoint="${HOME}/stan-documents"
-  local credentialsFile="${HOME}/.smbcredentials"
-  local fstabTag="# stan-documents cifs share"
+  local credentialsFile="${HOME}/stan-documents.cifs-credentials"
+  local fstabTag="# stan-documents"
   local serverName="STAN-LAPTOP"
   local bwItem="my microsoft account"
-  local cifsUsername
-  local cifsPassword
 
   mkdir -p "${mountPoint}" || fail
 
@@ -92,18 +92,20 @@ my-storage-vm::stan-documents::mount() {
 
   if [ ! -f "${credentialsFile}" ]; then
     bitwarden::unlock || fail
-    cifsUsername="$(bw get username "${bwItem}")" || fail
-    cifsPassword="$(bw get password "${bwItem}")" || fail
+    local cifsUsername; cifsUsername="$(bw get username "${bwItem}")" || fail
+    local cifsPassword; cifsPassword="$(bw get password "${bwItem}")" || fail
     builtin printf "username=${cifsUsername}\npassword=${cifsPassword}\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
   fi
 
   sudo mount -a || fail
 
-  findmnt -M "${mountPoint}" || fail "${mountPoint} is not mounted"
+  findmnt -M "${mountPoint}" >/dev/null || fail "${mountPoint} is not mounted"
 }
 
 my-storage-vm::stan-documents::configure-backup-credentials() {
   local credentialsFile="${HOME}/stan-documents.backup-credentials"
+  local privateKeyName="my borg storage ssh private key"
+  local publicKeyName="my borg storage ssh public key"
   local storageBwItem="stan-documents backup storage"
   local passphraseBwItem="stan-documents backup passphrase"
   local backupPath="borg-backups/stan-documents"
@@ -117,7 +119,7 @@ my-storage-vm::stan-documents::configure-backup-credentials() {
     local storagePort; storagePort="$(echo "${storageUri}" | cut -d ":" -f 2)" || fail
     local passphrase; passphrase="$(bw get password "${passphraseBwItem}")" || fail
 
-    ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
+    ssh::install-keys "${privateKeyName}" "${publicKeyName}" || fail
     ssh::add-host-to-known-hosts "${storageHost}" "${storagePort}" || fail
 
     builtin printf "export STORAGE_USERNAME=$(printf "%q" "${storageUsername}")\nexport STORAGE_HOST=$(printf "%q" "${storageHost}")\nexport STORAGE_PORT=$(printf "%q" "${storagePort}")\nexport BORG_REPO=$(printf "%q" "ssh://${storageUsername}@${storageUri}/./${backupPath}")\nexport BORG_PASSPHRASE=$(printf "%q" "${passphrase}")\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
