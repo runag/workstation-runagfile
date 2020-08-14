@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-storage-server() {
+ubuntu::deploy-my-storage-vm() {
   # update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
@@ -65,8 +65,8 @@ ubuntu::deploy-storage-server() {
   # storage configuration
   (
     bitwarden::unlock || fail
-    storage::configure-windows-share || fail
-    storage::configure-access-to-borg-storage || fail
+    my-storage-vm::configure-windows-share || fail
+    my-storage-vm::configure-access-to-borg-storage || fail
   ) || fail
 
   if [ -t 1 ]; then
@@ -75,7 +75,7 @@ ubuntu::deploy-storage-server() {
   fi
 }
 
-storage::configure-windows-share() {
+my-storage-vm::configure-windows-share() {
   local mountPoint="${HOME}/windows-documents"
   local credentialsFile="${HOME}/.smbcredentials"
   local fstabTag="# windows-documents cifs share"
@@ -101,7 +101,7 @@ storage::configure-windows-share() {
   sudo mount -a || fail
 }
 
-storage::configure-access-to-borg-storage(){
+my-storage-vm::configure-access-to-borg-storage(){
   local bwBorgStorageItem="my borg storage"
 
   local borgStorageUsername

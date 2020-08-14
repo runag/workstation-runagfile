@@ -19,7 +19,7 @@ sopka::menu() {
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
     list+=(ubuntu::deploy-workstation)
-    list+=(ubuntu::deploy-storage-server)
+    list+=(ubuntu::deploy-my-storage-vm)
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
