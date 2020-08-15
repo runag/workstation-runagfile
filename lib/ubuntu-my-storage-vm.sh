@@ -62,10 +62,14 @@ my-storage-vm::deploy() {
   # configure git
   git::configure || fail
 
-  # storage configuration
+  # enable-linger
+  sudo loginctl enable-linger "${USER}" || fail
+
+  # backup configuration
   (
-    my-storage-vm::stan-documents::mount || fail
-    my-storage-vm::stan-documents::configure-backup-credentials || fail
+    ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
+    fs::mount-cifs "//STAN-LAPTOP/users/stan/Documents" "stan-documents" "my microsoft account" || fail
+    borg::configure-backup-credentials "stan-documents" || fail
   ) || fail
 
   touch "${HOME}/.sopka.my-storage-vm.deployed" || fail
@@ -76,92 +80,29 @@ my-storage-vm::deploy() {
   fi
 }
 
-my-storage-vm::stan-documents::mount() {
-  local mountPoint="${HOME}/stan-documents"
-  local credentialsFile="${HOME}/stan-documents.cifs-credentials"
-  local fstabTag="# stan-documents"
-  local serverName="STAN-LAPTOP"
-  local bwItem="my microsoft account"
-
-  mkdir -p "${mountPoint}" || fail
-
-  if ! grep --quiet --fixed-strings --line-regexp "${fstabTag}" /etc/fstab; then
-    echo "${fstabTag}" | sudo tee --append /etc/fstab || fail
-    echo "//${serverName}/users/stan/Documents ${mountPoint} cifs credentials=${credentialsFile},file_mode=0640,dir_mode=0750,uid=${USER},gid=${USER} 0 0" | sudo tee --append /etc/fstab || fail
-  fi
-
-  if [ ! -f "${credentialsFile}" ]; then
-    bitwarden::unlock || fail
-    local cifsUsername; cifsUsername="$(bw get username "${bwItem}")" || fail
-    local cifsPassword; cifsPassword="$(bw get password "${bwItem}")" || fail
-    builtin printf "username=${cifsUsername}\npassword=${cifsPassword}\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
-  fi
-
-  sudo mount -a || fail
-
-  findmnt -M "${mountPoint}" >/dev/null || fail "${mountPoint} is not mounted"
-}
-
-my-storage-vm::stan-documents::configure-backup-credentials() {
-  local backupName="stan-documents"
-  local credentialsFile="${HOME}/${backupName}.backup-credentials"
-  local privateKeyName="my borg storage ssh private key"
-  local publicKeyName="my borg storage ssh public key"
-  local storageBwItem="${backupName} backup storage"
-  local passphraseBwItem="${backupName} backup passphrase"
-  local backupPath="borg-backups/${backupName}"
-
-  if [ ! -f "${credentialsFile}" ]; then
-    bitwarden::unlock || fail
-
-    local storageUsername; storageUsername="$(bw get username "${storageBwItem}")" || fail
-    local storageUri; storageUri="$(bw get uri "${storageBwItem}")" || fail
-    local storageHost; storageHost="$(echo "${storageUri}" | cut -d ":" -f 1)" || fail
-    local storagePort; storagePort="$(echo "${storageUri}" | cut -d ":" -f 2)" || fail
-    local passphrase; passphrase="$(bw get password "${passphraseBwItem}")" || fail
-
-    ssh::install-keys "${privateKeyName}" "${publicKeyName}" || fail
-    ssh::add-host-to-known-hosts "${storageHost}" "${storagePort}" || fail
-
-    builtin printf "export BACKUP_NAME=$(printf "%q" "${backupName}")\nexport STORAGE_USERNAME=$(printf "%q" "${storageUsername}")\nexport STORAGE_HOST=$(printf "%q" "${storageHost}")\nexport STORAGE_PORT=$(printf "%q" "${storagePort}")\nexport BORG_REPO=$(printf "%q" "ssh://${storageUsername}@${storageUri}/./${backupPath}")\nexport BORG_PASSPHRASE=$(printf "%q" "${passphrase}")\n" | (umask 077 && tee "${credentialsFile}" >/dev/null) || fail
-  fi
-}
-
-my-storage-vm::stan-documents() {
-  . "${HOME}/stan-documents.backup-credentials" || fail
+backup::stan-documents() {
+  . "${HOME}/.stan-documents.backup-credentials" || fail
   "$@" || fail
 }
 
-borg::init() {
-  borg init --encryption keyfile-blake2 --make-parent-dirs || fail
-  borg::export-keys || fail
-}
+backup::stan-documents::create() (
+  . "${HOME}/.stan-documents.backup-credentials" || fail
 
-borg::export-keys() {
-  local exportPath; exportPath="${HOME}/${BACKUP_NAME}-$(date +"%Y%m%dT%H%M%SZ")" || fail
-
-  borg key export "${BORG_REPO}" "${exportPath}.key" || fail
-  borg key export --qr-html "${BORG_REPO}" "${exportPath}.key.html" || fail
-}
-
-borg::connect-sftp() {
-  sftp -P "${STORAGE_PORT}" "${STORAGE_USERNAME}@${STORAGE_HOST}" || fail
-}
-
-my-storage-vm::stan-documents::perform-backup() (
-  . "${HOME}/stan-documents.backup-credentials" || fail
-
-  if [ -t 1 ]; then
-    local CREATE_VISUAL_ARGS="--stats --progress"
-    local PRUNE_VISUAL_ARGS="--stats --list"
-  fi
-
-  # The purpose of this cd is to use relative to ${FROM_PATH} paths in backup
+  # The purpose of this is to see relative paths in backup
   cd "${HOME}/stan-documents" || fail
-  
-  findmnt -M . >/dev/null || fail "${mountPoint} is not mounted"
 
-  borg create ${CREATE_VISUAL_ARGS:-} --files-cache=ctime,size --compression zstd "::{utcnow}" distfiles educational-media notes || fail
-  borg prune ${PRUNE_VISUAL_ARGS:-} --keep-within 4d --keep-daily=7 --keep-weekly=4 --keep-monthly=24 || fail
+  # I should probably make a special user service to wait until the network is up and source directory is mounted
+  findmnt -M . >/dev/null || fail "${mountPoint} is not mounted"
+  ping -c 3 -n -q "${STORAGE_HOST}" >/dev/null 2>&1 || fail "${STORAGE_HOST} is not reachable"
+
+  local progressMaybe=""; test -t 1 && progressMaybe="--progress"
+
+  borg create $progressMaybe --stats --files-cache=ctime,size --compression zstd "::{utcnow}" distfiles educational-media notes || fail
+
+  tools::once-per-day backup::stan-documents::prune-and-check || fail
 )
 
+backup::stan-documents::prune-and-check() {
+  borg prune --stats --keep-within 4d --keep-daily=7 --keep-weekly=4 --keep-monthly=24 || fail
+  borg check --repository-only || fail
+}

@@ -18,22 +18,11 @@ sopka::menu() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if [ ! -f "${HOME}/.sopka.workstation.deployed" ] && [ ! -f "${HOME}/.sopka.my-storage-vm.deployed" ]; then
+    if [ -f "${HOME}/.sopka.workstation.deployed" ] || sopka::nothing-deployed; then
       list+=(ubuntu::deploy-workstation)
+    fi
+    if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || sopka::nothing-deployed; then
       list+=(my-storage-vm::deploy)
-    else
-      if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-        list+=(ubuntu::deploy-workstation)
-      fi
-      if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ]; then
-        list+=(my-storage-vm::deploy)
-      fi
-      if [ -f "${HOME}/stan-documents.backup-credentials" ]; then
-        list+=("my-storage-vm::stan-documents borg::init")
-        list+=("my-storage-vm::stan-documents borg::export-keys")
-        list+=("my-storage-vm::stan-documents borg::connect-sftp")
-        list+=(my-storage-vm::stan-documents::perform-backup)
-      fi
     fi
   fi
 
@@ -44,6 +33,11 @@ sopka::menu() {
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows::deploy-workstation)
+  fi
+
+  if [ -f "${HOME}/.stan-documents.backup-credentials" ]; then
+    list+=("backup::stan-documents borg::menu")
+    list+=("backup::stan-documents::create")
   fi
 
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
