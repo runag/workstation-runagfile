@@ -70,6 +70,8 @@ my-storage-vm::deploy() {
     ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
     fs::mount-cifs "//STAN-LAPTOP/users/stan/Documents" "stan-documents" "my microsoft account" || fail
     borg::configure-backup-credentials "stan-documents" || fail
+    borg::load-backup-credentials "stan-documents" || fail
+    borg::systemd::init-service || fail
   ) || fail
 
   touch "${HOME}/.sopka.my-storage-vm.deployed" || fail
@@ -81,12 +83,12 @@ my-storage-vm::deploy() {
 }
 
 backup::stan-documents() {
-  . "${HOME}/.stan-documents.backup-credentials" || fail
+  borg::load-backup-credentials "stan-documents" || fail
   "$@" || fail
 }
 
 backup::stan-documents::create() (
-  . "${HOME}/.stan-documents.backup-credentials" || fail
+  borg::load-backup-credentials "stan-documents" || fail
 
   # The purpose of this is to see relative paths in backup
   cd "${HOME}/stan-documents" || fail
