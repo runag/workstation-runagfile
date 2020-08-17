@@ -26,4 +26,5 @@
     "git.autofetch": true,
     "editor.mouseWheelScrollSensitivity": 1,
     "terminal.integrated.mouseWheelScrollSensitivity": 2,
+    "diffEditor.renderSideBySide": false,
 }
