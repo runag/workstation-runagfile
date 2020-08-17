@@ -18,7 +18,7 @@ windows::deploy-workstation() {
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
-  shellrcd::sopka-lib-path || fail
+  shellrcd::sopka-path || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
 
   # git
@@ -26,7 +26,7 @@ windows::deploy-workstation() {
 
   # vscode
   vscode::install-config || fail
-  vscode::install-extensions "${SOPKA_DIR}/lib/vscode/extensions.txt" || fail
+  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
 
   # sublime text
   sublime::install-config || fail

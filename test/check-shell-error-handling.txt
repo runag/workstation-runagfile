@@ -1,6 +1,6 @@
 
 ./lib/vscode.sh:
-  52:       cat "${SOPKA_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+  52:       cat "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
 
 ./lib/menu.sh:
   21:     actionList+=(ubuntu::deploy-workstation)

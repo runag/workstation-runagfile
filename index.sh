@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. "${SOPKA_DIR}/lib/config.sh" || fail
-. "${SOPKA_DIR}/lib/macos.sh" || fail
-. "${SOPKA_DIR}/lib/menu.sh" || fail
-. "${SOPKA_DIR}/lib/misc.sh" || fail
-. "${SOPKA_DIR}/lib/sublime.sh" || fail
-. "${SOPKA_DIR}/lib/ubuntu-desktop.sh" || fail
-. "${SOPKA_DIR}/lib/ubuntu-packages.sh" || fail
-. "${SOPKA_DIR}/lib/ubuntu-my-storage-vm.sh" || fail
-. "${SOPKA_DIR}/lib/ubuntu.sh" || fail
-. "${SOPKA_DIR}/lib/vscode.sh" || fail
-. "${SOPKA_DIR}/lib/windows.sh" || fail
+. "${SOPKAFILE_DIR}/lib/config.sh" || fail
+. "${SOPKAFILE_DIR}/lib/macos.sh" || fail
+. "${SOPKAFILE_DIR}/lib/menu.sh" || fail
+. "${SOPKAFILE_DIR}/lib/misc.sh" || fail
+. "${SOPKAFILE_DIR}/lib/sublime.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu-desktop.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu-packages.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu-my-storage-vm.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu.sh" || fail
+. "${SOPKAFILE_DIR}/lib/vscode.sh" || fail
+. "${SOPKAFILE_DIR}/lib/windows.sh" || fail

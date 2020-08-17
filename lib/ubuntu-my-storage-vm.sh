@@ -28,7 +28,7 @@ my-storage-vm::deploy() {
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
-  shellrcd::sopka-lib-path || fail
+  shellrcd::sopka-path || fail
 
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then

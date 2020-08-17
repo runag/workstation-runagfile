@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sopka::menu() {
+sopkafile::menu() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then

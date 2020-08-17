@@ -18,7 +18,7 @@ sublime::install-config() {
   sublime::determine-config-path || fail
   sublime::install-package-control || fail
 
-  local sourceDir="${SOPKA_DIR}/lib/sublime"
+  local sourceDir="${SOPKAFILE_DIR}/lib/sublime"
 
   sublime::install-config-file "${sourceDir}" "Preferences.sublime-settings" || fail "Unable to install Preferences.sublime-settings ($?)"
   sublime::install-config-file "${sourceDir}" "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
@@ -28,7 +28,7 @@ sublime::install-config() {
 }
 
 sublime::merge-config() {
-  local sourceDir="${SOPKA_DIR}/lib/sublime"
+  local sourceDir="${SOPKAFILE_DIR}/lib/sublime"
 
   sublime::merge-config-file "${sourceDir}" "Preferences.sublime-settings" || fail
   sublime::merge-config-file "${sourceDir}" "Package Control.sublime-settings" || fail

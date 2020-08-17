@@ -57,14 +57,14 @@ __xVhMyefCbBnZFUQtwqCs() {
   # on macos that will start git install process
   git --version >/dev/null || fail
 
-  git::clone-or-pull "https://github.com/senotrusov/stan-computer-deploy.git" "${HOME}/.sopka" || fail
-  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka-lib" || fail
+  git::clone-or-pull "https://github.com/senotrusov/sopkafile.git" "${HOME}/.sopkafile" || fail
+  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka" || fail
 
-  cd "${HOME}/.sopka-lib" || fail
+  cd "${HOME}/.sopka" || fail
 
   bin/sopka "$@" || fail
 }
 
 # I'm wrapping the script in the function with the random name, to ensure that in case if download fails in the middle,
-# then "curl | bash" will not run some funny things
+# then "curl | bash" hopefully will not run some funny things
 __xVhMyefCbBnZFUQtwqCs "$@" || return $?

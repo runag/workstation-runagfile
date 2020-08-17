@@ -42,7 +42,7 @@ ubuntu::deploy-workstation() {
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
-  shellrcd::sopka-lib-path || fail
+  shellrcd::sopka-path || fail
   shellrcd::hook-direnv || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
 
@@ -65,7 +65,7 @@ ubuntu::deploy-workstation() {
   # vscode
   vscode::snap::install || fail
   vscode::install-config || fail
-  vscode::install-extensions "${SOPKA_DIR}/lib/vscode/extensions.txt" || fail
+  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
 
   # sublime text and sublime merge
   sublime::apt::add-sublime-source || fail

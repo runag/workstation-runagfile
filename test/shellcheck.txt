@@ -10,7 +10,7 @@ In ./lib/ubuntu.sh line 267:
 
 
 In ./lib/vscode.sh line 52:
-      cat "${SOPKA_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+      cat "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
           ^-- SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
 
 

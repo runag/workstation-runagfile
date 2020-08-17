@@ -17,17 +17,17 @@
 vscode::install-config() {
   vscode::determine-config-path || fail
 
-  config::install "${SOPKA_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::install "${SOPKA_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::install "${SOPKAFILE_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::install "${SOPKAFILE_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
   vscode::determine-config-path || fail
 
-  config::merge "${SOPKA_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::merge "${SOPKA_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::merge "${SOPKAFILE_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::merge "${SOPKAFILE_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  config::merge "${SOPKA_DIR}/lib/vscode/extensions.txt" "${extensionsList}" || fail
+  config::merge "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" "${extensionsList}" || fail
   rm "${extensionsList}" || fail
 }
