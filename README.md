@@ -1,4 +1,4 @@
-# 🚞 Sopkafile to configure my personal computers
+# 🚞 Sopkafile to configure my workstation
 
 A script to configure my workstation. I run it on a freshly installed Linux, MacOS, or Windows.
 
