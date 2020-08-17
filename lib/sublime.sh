@@ -18,15 +18,19 @@ sublime::install-config() {
   sublime::determine-config-path || fail
   sublime::install-package-control || fail
 
-  sublime::install-config-file "Preferences.sublime-settings" || fail "Unable to install Preferences.sublime-settings ($?)"
-  sublime::install-config-file "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
-  sublime::install-config-file "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
+  local sourceDir="${SOPKA_DIR}/lib/sublime"
+
+  sublime::install-config-file "${sourceDir}" "Preferences.sublime-settings" || fail "Unable to install Preferences.sublime-settings ($?)"
+  sublime::install-config-file "${sourceDir}" "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
+  sublime::install-config-file "${sourceDir}" "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
   bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${SUBLIME_CONFIG_PATH}/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {
-  sublime::merge-config-file "Preferences.sublime-settings" || fail
-  sublime::merge-config-file "Package Control.sublime-settings" || fail
-  sublime::merge-config-file "Terminal.sublime-settings" || fail
+  local sourceDir="${SOPKA_DIR}/lib/sublime"
+
+  sublime::merge-config-file "${sourceDir}" "Preferences.sublime-settings" || fail
+  sublime::merge-config-file "${sourceDir}" "Package Control.sublime-settings" || fail
+  sublime::merge-config-file "${sourceDir}" "Terminal.sublime-settings" || fail
 }

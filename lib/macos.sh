@@ -158,7 +158,7 @@ macos::configure-workstation() {
 
   # vscode
   vscode::install-config || fail
-  vscode::install-extensions || fail
+  vscode::install-extensions "${SOPKA_DIR}/lib/vscode/extensions.txt" || fail
 
   # sublime text
   sublime::install-config || fail
