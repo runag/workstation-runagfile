@@ -8,8 +8,8 @@ if (Test-Path "$PSScriptRoot\packages.config") {
 }
 
 if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
-  if (Test-Path "$PSScriptRoot\packages-desktop.config") {
-    choco install "$PSScriptRoot\packages-desktop.config" --yes
+  if (Test-Path "$PSScriptRoot\packages-bare-metal-desktop.config") {
+    choco install "$PSScriptRoot\packages-bare-metal-desktop.config" --yes
     if ($LASTEXITCODE -ne 0) {
       throw "Unable to install desktop packages"
     }
