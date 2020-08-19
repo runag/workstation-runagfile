@@ -18,19 +18,25 @@ The file ``lib/config.sh`` contains my name and email to use in configuration. I
 ## Linux workstation
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy.sh)
 ```
 
 ## MacOS
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.sh)
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy.sh)
 ```
 
 ## Windows
 
 ```sh
-curl -Ssf https://raw.githubusercontent.com/senotrusov/stan-computer-deploy/master/deploy.bat -o .deploy.bat && .deploy.bat
+curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy.bat -o .deploy.bat && .deploy.bat
+```
+
+## Mom's Windows
+
+```sh
+curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy-mom.bat -o .deploy.bat && .deploy.bat
 ```
 
 ## Secret items which are expected to be found in a Bitwarden
