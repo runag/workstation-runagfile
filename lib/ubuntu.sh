@@ -99,6 +99,7 @@ ubuntu::deploy-workstation() {
     apt::add-obs-studio-source || fail
     apt::update || fail
     apt::install obs-studio guvcview || fail
+    apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
     sudo snap install telegram-desktop || fail
     sudo snap install skype --classic || fail
