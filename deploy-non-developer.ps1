@@ -3,9 +3,9 @@ $ErrorActionPreference = "Stop"
 $yes_no  = '&Yes', '&No'
 
 $choice_gamer = $Host.UI.PromptForChoice("Install packages: gamer?", "", $yes_no, 0)
-$choice_pdf_tools = $Host.UI.PromptForChoice("Install packages: pdf-tools?", "", $yes_no, 0)
-$choice_remote_control = $Host.UI.PromptForChoice("Install packages: remote-control?", "", $yes_no, 0)
-$choice_russian_teleconferencing = $Host.UI.PromptForChoice("Install packages: russian-teleconferencing?", "", $yes_no, 0)
+$choice_pdf_tools = $Host.UI.PromptForChoice("Install packages: pdf-tools?", "", $yes_no, 1)
+$choice_remote_control = $Host.UI.PromptForChoice("Install packages: remote-control?", "", $yes_no, 1)
+$choice_russian_teleconferencing = $Host.UI.PromptForChoice("Install packages: russian-teleconferencing?", "", $yes_no, 1)
 
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   Set-ExecutionPolicy Bypass -Scope Process -Force
