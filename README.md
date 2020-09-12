@@ -33,10 +33,10 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/d
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy.bat -o .deploy.bat && .deploy.bat
 ```
 
-## Mom's Windows
+## Non-developer Windows
 
 ```sh
-curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy-mom.bat -o .deploy.bat && .deploy.bat
+curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy-non-developer.bat -o .deploy.bat && .deploy.bat
 ```
 
 ## Secret items which are expected to be found in a Bitwarden
