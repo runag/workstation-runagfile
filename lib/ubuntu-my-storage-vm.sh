@@ -68,7 +68,7 @@ my-storage-vm::deploy() {
   # backup configuration
   (
     ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
-    fs::mount-cifs "//STAN-LAPTOP/users/stan/Documents" "stan-documents" "my microsoft account" || fail
+    fs::mount-cifs "//192.168.131.1/users/stan/Documents" "stan-documents" "my microsoft account" || fail
     borg::configure-backup-credentials "stan-documents" || fail
     borg::load-backup-credentials "stan-documents" || fail
     borg::systemd::init-service || fail
