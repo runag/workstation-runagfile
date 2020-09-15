@@ -31,10 +31,6 @@ ubuntu::deploy-workstation() {
   # devtools
   ubuntu::packages::install-devtools || fail
 
-  # bitwarden and bitwarden cli
-  sudo snap install bitwarden || fail
-  sudo snap install bw || fail
-
   # gnome-keyring and libsecret (for git and ssh)
   apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
   git::ubuntu::install-credential-libsecret || fail
@@ -62,6 +58,9 @@ ubuntu::deploy-workstation() {
   shellrcd::nodenv || fail
   nodenv rehash || fail
 
+  # bitwarden cli
+  npm install -g @bitwarden/cli || fail
+
   # vscode
   vscode::snap::install || fail
   vscode::install-config || fail
@@ -78,6 +77,9 @@ ubuntu::deploy-workstation() {
 
   # chromium
   sudo snap install chromium || fail
+
+  # bitwarden
+  sudo snap install bitwarden || fail
 
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
