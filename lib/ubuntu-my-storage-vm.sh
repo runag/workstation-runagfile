@@ -30,6 +30,19 @@ my-storage-vm::deploy() {
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-path || fail
 
+  # nodejs
+  apt::add-yarn-source || fail
+  apt::add-nodejs-source || fail
+  apt::update || fail
+  apt::install yarn nodejs || fail
+  nodejs::install-nodenv || fail
+  shellrcd::nodenv || fail
+  nodenv rehash || fail
+  sudo npm update -g || fail
+
+  # bitwarden cli
+  sudo npm install -g @bitwarden/cli || fail
+
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
@@ -52,9 +65,6 @@ my-storage-vm::deploy() {
 
   # cleanup
   apt::autoremove || fail
-
-  # bitwarden and bitwarden cli
-  sudo snap install bw || fail
 
   # import ssh key
   ssh-import-id gh:senotrusov || fail
