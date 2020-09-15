@@ -57,9 +57,10 @@ ubuntu::deploy-workstation() {
   nodejs::install-nodenv || fail
   shellrcd::nodenv || fail
   nodenv rehash || fail
+  sudo npm update -g || fail
 
   # bitwarden cli
-  npm install -g @bitwarden/cli || fail
+  sudo npm install -g @bitwarden/cli || fail
 
   # vscode
   vscode::snap::install || fail
