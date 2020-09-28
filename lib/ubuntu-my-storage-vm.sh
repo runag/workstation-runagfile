@@ -100,7 +100,7 @@ backup::stan-documents() {
 backup::stan-documents::create() (
   borg::load-backup-credentials "stan-documents" || fail
 
-  # The purpose of this is to see relative paths in backup
+  # The purpose of this is to have relative paths in backup
   cd "${HOME}/stan-documents" || fail
 
   # I should probably make a special user service to wait until the network is up and source directory is mounted
