@@ -15,55 +15,48 @@
 #  limitations under the License.
 
 my-storage-vm::deploy() {
-  # hostname
+  # set hostname
   ubuntu::set-hostname "stan-storage" || fail
 
-  # update and upgrade
+  # perform apt update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
 
-  # basic tools, contains curl so it have to be first
+  # install basic tools. curl is among them, so this line have to be on top of the script
   ubuntu::packages::install-basic-tools || fail
 
-  # shellrcd
+  # install shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-path || fail
 
-  # nodejs
-  apt::add-yarn-source || fail
-  apt::add-nodejs-source || fail
-  apt::update || fail
-  apt::install yarn nodejs || fail
-  nodejs::install-nodenv || fail
-  shellrcd::nodenv || fail
-  nodenv rehash || fail
-  sudo npm update -g || fail
+  # install nodejs
+  nodejs::ubuntu::install || fail
 
-  # bitwarden cli
+  # install bitwarden cli
   sudo npm install -g @bitwarden/cli || fail
 
-  # open-vm-tools
+  # install open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
   fi
 
-  # avahi daemon
+  # install avahi daemon
   apt::install avahi-daemon || fail
 
-  # cifs
+  # install cifs-utils
   apt::install cifs-utils || fail
 
-  # rclone
+  # install rclone
   ubuntu::install-rclone || fail
 
-  # borg
+  # install borg
   apt::install borgbackup || fail
 
-  # ssh-import-id
+  # install ssh-import-id
   apt::install ssh-import-id || fail
 
-  # cleanup
+  # perform cleanup
   apt::autoremove || fail
 
   # import ssh key
@@ -72,24 +65,30 @@ my-storage-vm::deploy() {
   # configure git
   git::configure || fail
 
-  # enable-linger
+  # enable systemd user instance without the need for the user to login
   sudo loginctl enable-linger "${USER}" || fail
 
-  # backup configuration
+  # configure backup
+  # subshell for unlocked bitwarden
   (
-    ssh::install-keys "my borg storage ssh private key" "my borg storage ssh public key" || fail
+    # BITWARDEN-OBJECT: "my borg storage ssh private key", "my borg storage ssh public key"
+    ssh::install-keys "my borg storage" || fail
+
+    # BITWARDEN-OBJECT: "my microsoft account"
     fs::mount-cifs "//192.168.131.1/users/stan/Documents" "stan-documents" "my microsoft account" || fail
+
+    # BITWARDEN-OBJECT: "stan-documents backup storage"
+    # BITWARDEN-OBJECT: "stan-documents backup passphrase"
     borg::configure-backup-credentials "stan-documents" || fail
+
     borg::load-backup-credentials "stan-documents" || fail
     borg::systemd::init-service || fail
   ) || fail
 
   touch "${HOME}/.sopka.my-storage-vm.deployed" || fail
 
-  if [ -t 1 ]; then
-    ubuntu::display-if-restart-required || fail
-    tools::display-elapsed-time || fail
-  fi
+  # display footnotes if running on interactive terminal
+  ubuntu::perhaps-display-deploy-footnotes || fail
 }
 
 backup::stan-documents() {

@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+
 sublime::install-config() {
   sublime::determine-config-path || fail
   sublime::install-package-control || fail
@@ -24,6 +26,7 @@ sublime::install-config() {
   sublime::install-config-file "${sourceDir}" "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
   sublime::install-config-file "${sourceDir}" "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
 
+  # BITWARDEN-OBJECT: "sublime text 3 license"
   bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${SUBLIME_CONFIG_PATH}/Local/License.sublime_license" || fail
 }
 

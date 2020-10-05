@@ -43,12 +43,19 @@ curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/master/deploy-n
 
 Record names should be as the following:
 
+<!-- # BITWARDEN-OBJECT: see list below -->
+
 ```
-my current ssh private key
-my current ssh public key
-my current password for ssh private key
-my github personal access token
-sublime text 3 license
+"my borg storage ssh private key"
+"my borg storage ssh public key"
+"my password for ssh private key"
+"my ssh private key"
+"my ssh public key"
+"my github personal access token"
+"my microsoft account"
+"stan-documents backup passphrase"
+"stan-documents backup storage"
+"sublime text 3 license"
 ```
 
 ## Contributing

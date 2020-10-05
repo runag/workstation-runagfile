@@ -49,15 +49,8 @@ ubuntu::deploy-workstation() {
   rbenv rehash || fail
   sudo gem update || fail
 
-  # nodejs
-  apt::add-yarn-source || fail
-  apt::add-nodejs-source || fail
-  apt::update || fail
-  apt::install yarn nodejs || fail
-  nodejs::install-nodenv || fail
-  shellrcd::nodenv || fail
-  nodenv rehash || fail
-  sudo npm update -g || fail
+  # install nodejs
+  nodejs::ubuntu::install || fail
 
   # bitwarden cli
   sudo npm install -g @bitwarden/cli || fail
@@ -115,24 +108,26 @@ ubuntu::deploy-workstation() {
   # cleanup
   apt::autoremove || fail
 
-  # the following commands use bitwarden and that requires password entry
+  # the following commands use bitwarden, that requires password entry
+  # subshell for unlocked bitwarden
   (
     # sublime license key
     sublime::install-config || fail
 
     # ssh
-    ssh::install-keys || fail
-    ssh::ubuntu::add-key-password-to-keyring || fail
+    # BITWARDEN-OBJECT: "my ssh private key", "my ssh public key"
+    ssh::install-keys "my" || fail
+    # BITWARDEN-OBJECT: "my password for ssh private key"
+    ssh::ubuntu::add-key-password-to-keyring "my" || fail
 
     # git
     git::configure || fail
-    git::ubuntu::add-credentials-to-keyring || fail
+    # BITWARDEN-OBJECT: "my github personal access token"
+    git::ubuntu::add-credentials-to-keyring "my" || fail
   ) || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
-  if [ -t 1 ]; then
-    ubuntu::display-if-restart-required || fail
-    tools::display-elapsed-time || fail
-  fi
+  # display footnotes if running on interactive terminal
+  ubuntu::perhaps-display-deploy-footnotes || fail
 }
