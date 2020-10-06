@@ -81,6 +81,8 @@ my-storage-vm::deploy() {
     borg::configure-backup-credentials "stan-documents" || fail
 
     borg::load-backup-credentials "stan-documents" || fail
+
+    # install borg service, update timer only if it was manually enabled previously
     borg::systemd::init-service || fail
   ) || fail
 
