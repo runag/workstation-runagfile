@@ -15,7 +15,6 @@
 #  limitations under the License.
 
 
-
 sublime::install-config() {
   sublime::determine-config-path || fail
   sublime::install-package-control || fail

@@ -27,4 +27,6 @@
     "editor.mouseWheelScrollSensitivity": 1,
     "terminal.integrated.mouseWheelScrollSensitivity": 2,
     "diffEditor.renderSideBySide": false,
+    "editor.smoothScrolling": true,
+    "workbench.list.smoothScrolling": true,
 }
