@@ -111,18 +111,18 @@ ubuntu::deploy-workstation() {
   # the following commands use bitwarden, that requires password entry
   # subshell for unlocked bitwarden
   (
-    # sublime license key
+    # install sublime license key and configuration
     sublime::install-config || fail
 
-    # ssh
-    # BITWARDEN-OBJECT: "my ssh private key", "my ssh public key"
+    # install ssh key, configure ssh to use it
+    # bitwarden-object: "my ssh private key", "my ssh public key"
     ssh::install-keys "my" || fail
-    # BITWARDEN-OBJECT: "my password for ssh private key"
+    # bitwarden-object: "my password for ssh private key"
     ssh::ubuntu::add-key-password-to-keyring "my" || fail
 
-    # git
+    # configure git
     git::configure || fail
-    # BITWARDEN-OBJECT: "my github personal access token"
+    # bitwarden-object: "my github personal access token"
     git::ubuntu::add-credentials-to-keyring "my" || fail
   ) || fail
 

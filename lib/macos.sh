@@ -163,11 +163,11 @@ macos::configure-workstation() {
   # sublime text
   sublime::install-config || fail
 
-  # SSH keys
-  # BITWARDEN-OBJECT: "my ssh private key", "my ssh public key"
+  # add ssh key, configure ssh to use it
+  # bitwarden-object: "my ssh private key", "my ssh public key"
   ssh::install-keys "my" || fail
   ssh::macos::add-use-keychain-to-config || fail
-  # BITWARDEN-OBJECT: "my password for ssh private key"
+  # bitwarden-object: "my password for ssh private key"
   ssh::macos::add-key-password-to-keychain "my" || fail
 
   # git

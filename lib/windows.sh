@@ -31,8 +31,8 @@ windows::deploy-workstation() {
   # sublime text
   sublime::install-config || fail
 
-  # ssh
-  # BITWARDEN-OBJECT: "my ssh private key", "my ssh public key"
+  # add ssh key
+  # bitwarden-object: "my ssh private key", "my ssh public key"
   ssh::install-keys "my" || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail

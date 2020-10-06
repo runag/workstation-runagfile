@@ -71,14 +71,13 @@ my-storage-vm::deploy() {
   # configure backup
   # subshell for unlocked bitwarden
   (
-    # BITWARDEN-OBJECT: "my borg storage ssh private key", "my borg storage ssh public key"
+    # bitwarden-object: "my borg storage ssh private key", "my borg storage ssh public key"
     ssh::install-keys "my borg storage" || fail
 
-    # BITWARDEN-OBJECT: "my microsoft account"
+    # bitwarden-object: "my microsoft account"
     fs::mount-cifs "//192.168.131.1/users/stan/Documents" "stan-documents" "my microsoft account" || fail
 
-    # BITWARDEN-OBJECT: "stan-documents backup storage"
-    # BITWARDEN-OBJECT: "stan-documents backup passphrase"
+    # bitwarden-object: "stan-documents backup storage", "stan-documents backup passphrase"
     borg::configure-backup-credentials "stan-documents" || fail
 
     borg::load-backup-credentials "stan-documents" || fail
