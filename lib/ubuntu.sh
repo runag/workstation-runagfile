@@ -75,6 +75,9 @@ ubuntu::deploy-workstation() {
   # bitwarden
   sudo snap install bitwarden || fail
 
+  # gparted
+  apt::install gparted || fail
+
   # open-vm-tools
   if ubuntu::vmware::is-inside-vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
