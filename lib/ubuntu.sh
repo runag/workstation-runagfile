@@ -92,6 +92,9 @@ ubuntu::deploy-workstation() {
     apt::install syncthing || fail
     sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
   fi
+  
+  # whois
+  apt::install whois || fail
 
   # software for bare metal workstation
   if ubuntu::is-bare-metal; then
