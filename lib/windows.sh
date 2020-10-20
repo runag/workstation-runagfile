@@ -35,5 +35,9 @@ windows::deploy-workstation() {
   # bitwarden-object: "my ssh private key", "my ssh public key"
   ssh::install-keys "my" || fail
 
+  # rubygems
+  # bitwarden-object: "my rubygems credentials"
+  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+
   touch "${HOME}/.sopka.workstation.deployed" || fail
 }

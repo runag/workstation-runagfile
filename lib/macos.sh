@@ -170,6 +170,10 @@ macos::configure-workstation() {
   # bitwarden-object: "my password for ssh private key"
   ssh::macos::add-key-password-to-keychain "my" || fail
 
+  # rubygems
+  # bitwarden-object: "my rubygems credentials"
+  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+
   # git
   git::configure || fail
 }

@@ -130,6 +130,10 @@ ubuntu::deploy-workstation() {
     git::configure || fail
     # bitwarden-object: "my github personal access token"
     git::ubuntu::add-credentials-to-keyring "my" || fail
+
+    # rubygems
+    # bitwarden-object: "my rubygems credentials"
+    bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
   ) || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
