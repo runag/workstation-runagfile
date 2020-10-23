@@ -117,6 +117,6 @@ backup::stan-documents::create() (
 backup::stan-documents::prune-and-check() {
   borg::load-backup-credentials "stan-documents" || fail
 
-  borg prune --stats --keep-within 4d --keep-daily=7 --keep-weekly=4 --keep-monthly=24 || fail
+  borg prune --stats --keep-within 4d --keep-daily=14 --keep-weekly=8 --keep-monthly=24 || fail
   borg check --repository-only || fail
 }
