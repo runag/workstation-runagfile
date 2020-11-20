@@ -25,9 +25,9 @@ ubuntu::desktop::configure() {
   ubuntu::desktop::setup-imwhell || fail
 
   # fixes for nvidia
-  if ubuntu::nvidia::is-card-present; then
-    ubuntu::nvidia::fix-screen-tearing || fail
-    ubuntu::nvidia::fix-gpu-background-image-glitch || fail
+  if nvidia::is-card-present; then
+    nvidia::fix-screen-tearing || fail
+    nvidia::fix-gpu-background-image-glitch || fail
   fi
 
   # enable wayland for firefox

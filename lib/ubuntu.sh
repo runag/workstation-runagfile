@@ -23,7 +23,7 @@ ubuntu::deploy-workstation() {
   apt::dist-upgrade || fail
 
   # increase inotify limits
-  ubuntu::set-inotify-max-user-watches || fail
+  linux::set-inotify-max-user-watches || fail
 
   # basic tools, contains curl so it have to be first
   ubuntu::packages::install-basic-tools || fail
@@ -79,10 +79,10 @@ ubuntu::deploy-workstation() {
   apt::install gparted || fail
 
   # open-vm-tools
-  if ubuntu::vmware::is-inside-vm; then
+  if vmware::linux::is-inside-vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
-    ubuntu::vmware::add-hgfs-automount || fail
-    ubuntu::vmware::symlink-hgfs-mounts || fail
+    vmware::linux::add-hgfs-automount || fail
+    vmware::linux::symlink-hgfs-mounts || fail
   fi
 
   # syncthing
@@ -97,7 +97,7 @@ ubuntu::deploy-workstation() {
   apt::install whois || fail
 
   # software for bare metal workstation
-  if ubuntu::is-bare-metal; then
+  if linux::is-bare-metal; then
     apt::add-obs-studio-source || fail
     apt::update || fail
     apt::install obs-studio guvcview || fail
@@ -139,5 +139,5 @@ ubuntu::deploy-workstation() {
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
   # display footnotes if running on interactive terminal
-  ubuntu::perhaps-display-deploy-footnotes || fail
+  tools::perhaps-display-deploy-footnotes || fail
 }

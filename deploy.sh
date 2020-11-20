@@ -26,6 +26,22 @@ __xVhMyefCbBnZFUQtwqCs() {
     exit "${2:-1}"
   }
 
+  git::install-git() {
+    if [[ "$OSTYPE" =~ ^linux ]]; then
+      if ! command -v git >/dev/null; then
+        if command -v apt >/dev/null; then
+          sudo apt update || fail
+          sudo apt install -y git || fail
+        else
+          fail "Unable to install git, apt not found"
+        fi
+      fi
+    fi
+
+    # on macos that will start git install process
+    git --version >/dev/null || fail
+  }
+
   git::clone-or-pull() {
     local url="$1"
     local dest="$2"
@@ -43,19 +59,7 @@ __xVhMyefCbBnZFUQtwqCs() {
     fi
   }
 
-  if [[ "$OSTYPE" =~ ^linux ]]; then
-    if ! command -v git >/dev/null; then
-      if command -v apt >/dev/null; then
-        sudo apt update || fail
-        sudo apt install -y git || fail
-      else
-        fail "Unable to install git, apt not found"
-      fi
-    fi
-  fi
-
-  # on macos that will start git install process
-  git --version >/dev/null || fail
+  git::install-git || fail
 
   git::clone-or-pull "https://github.com/senotrusov/sopkafile.git" "${HOME}/.sopkafile" || fail
   git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka" || fail

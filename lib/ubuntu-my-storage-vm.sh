@@ -16,7 +16,7 @@
 
 my-storage-vm::deploy() {
   # set hostname
-  ubuntu::set-hostname "stan-storage" || fail
+  linux::set-hostname "stan-storage" || fail
 
   # perform apt update and upgrade
   apt::update || fail
@@ -37,7 +37,7 @@ my-storage-vm::deploy() {
   sudo npm install -g @bitwarden/cli || fail
 
   # install open-vm-tools
-  if ubuntu::vmware::is-inside-vm; then
+  if vmware::linux::is-inside-vm; then
     apt::install open-vm-tools || fail
   fi
 
@@ -48,7 +48,7 @@ my-storage-vm::deploy() {
   apt::install cifs-utils || fail
 
   # install rclone
-  ubuntu::install-rclone || fail
+  tools::install-rclone || fail
 
   # install borg
   apt::install borgbackup || fail
@@ -89,7 +89,7 @@ my-storage-vm::deploy() {
   touch "${HOME}/.sopka.my-storage-vm.deployed" || fail
 
   # display footnotes if running on interactive terminal
-  ubuntu::perhaps-display-deploy-footnotes || fail
+  tools::perhaps-display-deploy-footnotes || fail
 }
 
 backup::stan-documents() {

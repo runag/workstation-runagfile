@@ -16,7 +16,7 @@
 
 . "${SOPKAFILE_DIR}/lib/config.sh" || fail
 . "${SOPKAFILE_DIR}/lib/macos.sh" || fail
-. "${SOPKAFILE_DIR}/lib/menu.sh" || fail
+. "${SOPKAFILE_DIR}/lib/main.sh" || fail
 . "${SOPKAFILE_DIR}/lib/misc.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu-desktop.sh" || fail

@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sopkafile::menu() {
+sopkafile::main() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if [ -f "${HOME}/.sopka.workstation.deployed" ] || sopka::nothing-deployed; then
+    if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
       list+=(ubuntu::deploy-workstation)
     fi
-    if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || sopka::nothing-deployed; then
+    if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
       list+=(my-storage-vm::deploy)
     fi
   fi
