@@ -47,6 +47,13 @@ Maximum performance
   * Disable windows firewall for host-only network (VMnet1, check virtual network manager)
 * Ruby using RubyInstaller (that one from choco can't install (compile) some gems, namely sqlite)
 * NVIDIA driver (or leave the system one?)
+* NVIDIA RTX Voice
+* Wireguard
+
+# Configuration
+
+* Copy rclone config from key storage
+* Cope wireguard config from key storage
 
 # Synchting
 
