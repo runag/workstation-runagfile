@@ -34,3 +34,9 @@ choco upgrade all --yes
 if ($LASTEXITCODE -ne 0) {
   throw "Unable to upgrade installed packages"
 }
+
+# scoop packages
+scoop install restic
+if ($LASTEXITCODE -ne 0) {
+  throw "Unable to install restic"
+}

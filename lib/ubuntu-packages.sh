@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 ubuntu::packages::install-basic-tools() {
+  # debian-goodies is here for checkrestart 
   apt::install \
     curl \
     git \
@@ -37,7 +38,7 @@ ubuntu::packages::install-devtools() {
     redis-server \
     memcached \
     ruby-full \
-    python3-pip python3-psycopg2 \
+    python3 python3-pip python3-psycopg2 \
     ffmpeg imagemagick ghostscript libgs-dev \
     graphviz \
     shellcheck \
