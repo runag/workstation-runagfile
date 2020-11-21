@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 # scoop
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
-  Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force
+  # Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force
   Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
 }
 
