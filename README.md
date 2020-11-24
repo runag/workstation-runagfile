@@ -33,7 +33,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.bat -o .deploy.bat && .deploy.bat
 ```
 
-## Non-developer Windows
+## Non-developer Windows (hi, Mom!)
 
 ```sh
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy-non-developer.bat -o .deploy.bat && .deploy.bat
