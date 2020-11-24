@@ -19,6 +19,7 @@
 
 * timezone: set automatically
 * touchpad sensitivity: low
+* mouse speed: 5 at 3200dpi
 
 # Language options
 
@@ -41,7 +42,8 @@ Maximum performance
 
 # Manuall install
 
-* MSI Dragon Center, audio driver, nahimic
+* MSI Dragon Center
+* Audio driver, nahimic
 * Battle.net
 * VMware
   * Disable windows firewall for host-only network (VMnet1, check virtual network manager)
