@@ -43,6 +43,7 @@ Maximum performance
 # Manuall install
 
 * MSI Dragon Center
+  * In each profile, remove shortcut
 * Audio driver, nahimic
 * Battle.net
 * VMware
