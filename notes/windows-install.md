@@ -14,6 +14,7 @@
 * Require additional authentication at startup
 * Enabled
 * Allow BitLocker without a compatible TPM (requires a password or a startup key on a USB flash drive)
+* Add "Add generic/text only" printer with the nul port. In powershell: ``add-printerport -Name nul``
 
 # Misc
 
