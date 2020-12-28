@@ -39,6 +39,8 @@ PSCSI-NVME is the best performing disk configuration
 
 For each VM: Options -> Guest Isolation -> Disable Drag & Drop (VM UI randomly hangs because of that).
 
+Change USB controller to version 3.1
+
 ## Wake timers (Virtualbox wakes host from sleep)
 
 Power Options -> Advanced Settings -> Sleep -> Allow wake timers
