@@ -37,6 +37,8 @@ Resize-Partition -DriveLetter C -Size 300GB
 
 PSCSI-NVME is the best performing disk configuration
 
+For each VM: Options -> Guest Isolation -> Disable Drag & Drop (VM UI randomly hangs because of that).
+
 ## Wake timers (Virtualbox wakes host from sleep)
 
 Power Options -> Advanced Settings -> Sleep -> Allow wake timers
