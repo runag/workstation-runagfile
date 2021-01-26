@@ -35,6 +35,9 @@ ubuntu::deploy-workstation() {
   apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
   git::ubuntu::install-credential-libsecret || fail
 
+  # install ssh-import-id
+  apt::install ssh-import-id || fail
+
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
@@ -81,8 +84,10 @@ ubuntu::deploy-workstation() {
   # open-vm-tools
   if vmware::linux::is-inside-vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
-    vmware::linux::add-hgfs-automount || fail
-    vmware::linux::symlink-hgfs-mounts || fail
+
+    # do not mount hgfs for now
+    # vmware::linux::add-hgfs-automount || fail
+    # vmware::linux::symlink-hgfs-mounts || fail
   fi
 
   # syncthing
@@ -108,11 +113,20 @@ ubuntu::deploy-workstation() {
     sudo snap install discord || fail
   fi
 
+  # install cifs-utils
+  apt::install cifs-utils || fail
+
+  # install rclone
+  tools::install-rclone || fail
+
   # configure desktop
   ubuntu::desktop::configure || fail
 
   # cleanup
   apt::autoremove || fail
+
+  # import ssh key
+  ssh-import-id gh:senotrusov || fail
 
   # the following commands use bitwarden, that requires password entry
   # subshell for unlocked bitwarden
@@ -134,6 +148,13 @@ ubuntu::deploy-workstation() {
     # rubygems
     # bitwarden-object: "my rubygems credentials"
     bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+
+    # mount host folder
+    if vmware::linux::is-inside-vm; then
+      local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
+      # bitwarden-object: "my microsoft account"
+      fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
+    fi
   ) || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
