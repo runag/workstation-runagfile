@@ -21,9 +21,9 @@ sopkafile::main() {
     if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
       list+=(ubuntu::deploy-workstation)
     fi
-    if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
-      list+=(my-storage-vm::deploy)
-    fi
+    # if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
+    #   list+=(my-storage-vm::deploy)
+    # fi
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then

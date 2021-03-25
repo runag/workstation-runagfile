@@ -39,6 +39,7 @@ curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.bat
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy-non-developer.bat -o .deploy.bat && .deploy.bat
 ```
 
+<!--
 ## my-storage-vm
 
 ```sh
@@ -48,6 +49,7 @@ sopka my-storage-vm::deploy
 sopka backup::stan-documents borg::import-key
 sopka backup::stan-documents borg::systemd::enable-timer
 ```
+-->
 
 ## Secret items which are expected to be found in a Bitwarden
 
