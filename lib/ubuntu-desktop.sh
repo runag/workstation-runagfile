@@ -128,7 +128,7 @@ ubuntu::desktop::configure-gnome() {
 
     # Dash appearance
     if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size >/dev/null; then
-      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 38 || fail
+      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
     fi
 
     # Sound alerts
