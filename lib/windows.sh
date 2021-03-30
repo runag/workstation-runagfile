@@ -41,3 +41,7 @@ windows::deploy-workstation() {
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 }
+
+windows::deploy-nothing() {
+  echo "nothing deployed"
+}

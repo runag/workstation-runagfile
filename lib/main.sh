@@ -33,6 +33,7 @@ sopkafile::main() {
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows::deploy-workstation)
+    list+=(windows::deploy-nothing)
   fi
 
   if [ -f "${HOME}/.stan-documents.backup-credentials" ]; then
