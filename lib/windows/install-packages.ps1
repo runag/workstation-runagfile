@@ -3,10 +3,10 @@ $ErrorActionPreference = "Stop"
 $polar_question  = '&Yes', '&No'
 
 $install_developer_tools = $Host.UI.PromptForChoice("Install developer-tools?", "", $polar_question, 0)
-$install_gamer_tools = $Host.UI.PromptForChoice("Install packages: gamer-tools?", "", $polar_question, 0)
-$install_pdf_tools = $Host.UI.PromptForChoice("Install packages: pdf-tools?", "", $polar_question, 1)
-$install_remote_control = $Host.UI.PromptForChoice("Install packages: remote-control?", "", $polar_question, 1)
-$install_russian_teleconferencing = $Host.UI.PromptForChoice("Install packages: russian-teleconferencing?", "", $polar_question, 1)
+$install_gamer_tools = $Host.UI.PromptForChoice("Install gamer-tools?", "", $polar_question, 0)
+$install_pdf_tools = $Host.UI.PromptForChoice("Install pdf-tools?", "", $polar_question, 1)
+$install_remote_control = $Host.UI.PromptForChoice("Install remote-control?", "", $polar_question, 1)
+$install_russian_teleconferencing = $Host.UI.PromptForChoice("Install russian-teleconferencing?", "", $polar_question, 1)
 
 # scoop packages
 scoop install restic
