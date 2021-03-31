@@ -24,15 +24,18 @@ ubuntu::deploy-remote-access-server() {
     apt::install open-vm-tools || fail
   fi
 
-  # install ssh-import-id
-  apt::install ssh-import-id || fail
+  # install and configure openssh-server
+  sshd::configure || fail # I do it first because ubuntu starts sshd right after install and I want it to be secured already at this point
+  apt::install openssh-server ssh-import-id || fail
+  sudo systemctl --now enable ssh || fail
+  sudo systemctl reload ssh || fail
 
   # perform cleanup
   apt::autoremove || fail
 
   # import ssh key
   ssh-import-id gh:senotrusov || fail
-
+  
   # display footnotes if running on interactive terminal
   tools::perhaps-display-deploy-footnotes || fail
 }
