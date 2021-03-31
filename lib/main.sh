@@ -18,12 +18,15 @@ sopkafile::main() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
-      list+=(ubuntu::deploy-workstation)
+    if [ -n "${DISPLAY:-}" ]; then
+      if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
+        list+=(ubuntu::deploy-workstation)
+      fi
     fi
-    # if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
-    #   list+=(my-storage-vm::deploy)
-    # fi
+
+    if tools::nothing-deployed; then
+      list+=(ubuntu::deploy-remote-access-server)
+    fi
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then

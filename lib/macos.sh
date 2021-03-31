@@ -176,6 +176,7 @@ macos::configure-workstation() {
 
   # git
   git::configure || fail
+  git::configure-user || fail
 }
 
 macos::hide-folders() {

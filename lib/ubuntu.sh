@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2019 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2020 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,6 +13,29 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+ubuntu::deploy-remote-access-server() {
+  # perform apt update and upgrade
+  apt::update || fail
+  apt::dist-upgrade || fail
+
+  # install open-vm-tools
+  if vmware::linux::is-inside-vm; then
+    apt::install open-vm-tools || fail
+  fi
+
+  # install ssh-import-id
+  apt::install ssh-import-id || fail
+
+  # perform cleanup
+  apt::autoremove || fail
+
+  # import ssh key
+  ssh-import-id gh:senotrusov || fail
+
+  # display footnotes if running on interactive terminal
+  tools::perhaps-display-deploy-footnotes || fail
+}
 
 ubuntu::deploy-workstation() {
   # disable screen lock
@@ -56,7 +79,7 @@ ubuntu::deploy-workstation() {
   nodejs::ubuntu::install || fail
 
   # bitwarden cli
-  sudo npm install -g @bitwarden/cli || fail
+  bitwarden::install-cli || fail
 
   # vscode
   vscode::snap::install || fail
@@ -141,8 +164,9 @@ ubuntu::deploy-workstation() {
     ssh::ubuntu::add-key-password-to-keyring "my" || fail
 
     # configure git
-    git::configure || fail
     # bitwarden-object: "my github personal access token"
+    git::configure || fail
+    git::configure-user || fail
     git::ubuntu::add-credentials-to-keyring "my" || fail
 
     # rubygems

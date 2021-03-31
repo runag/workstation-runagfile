@@ -42,6 +42,10 @@ __xVhMyefCbBnZFUQtwqCs() {
     git --version >/dev/null || fail
   }
 
+  git::configure() {
+    git config --global core.autocrlf input || fail
+  }
+
   git::clone-or-pull() {
     local url="$1"
     local dest="$2"
@@ -60,6 +64,7 @@ __xVhMyefCbBnZFUQtwqCs() {
   }
 
   git::install-git || fail
+  git::configure || fail
 
   git::clone-or-pull "https://github.com/senotrusov/sopkafile.git" "${HOME}/.sopkafile" || fail
   git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka" || fail

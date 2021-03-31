@@ -15,7 +15,7 @@ This script is idempotent. It can be run multiple times to produce a system whic
 
 The file ``lib/config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
 
-## Linux workstation
+## Linux
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh)

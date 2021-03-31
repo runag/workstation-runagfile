@@ -15,18 +15,18 @@
 #  limitations under the License.
 
 ubuntu::packages::install-basic-tools() {
-  # debian-goodies is here for checkrestart 
+  # debian-goodies is here for checkrestart
   apt::install \
     curl \
-    git \
-    jq \
-    mc ranger ncdu \
-    htop \
-    p7zip-full \
-    tmux \
-    sysbench \
-    direnv \
     debian-goodies \
+    direnv \
+    git \
+    htop \
+    jq \
+    mc ncdu \
+    p7zip-full \
+    sysbench \
+    tmux \
       || fail
 }
 

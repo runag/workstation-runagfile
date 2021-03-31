@@ -23,6 +23,7 @@ windows::deploy-workstation() {
 
   # git
   git::configure || fail
+  git::configure-user || fail
 
   # vscode
   vscode::install-config || fail
