@@ -42,7 +42,7 @@ ubuntu::desktop::configure() {
   ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
 
   # vitals gnome shell extension
-  if [ "${INSTALL_VITALS:-}" = true ]; then
+  if ! vmware::linux::is-inside-vm; then
     ubuntu::desktop::install-vitals || fail
   fi
 }
@@ -147,15 +147,6 @@ ubuntu::desktop::configure-gnome() {
       gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
     fi
 
-    # Enable fractional scaling
-    if gsettings get org.gnome.mutter experimental-features >/dev/null; then
-      gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
-    fi
-  fi
-}
-
-ubuntu::desktop::disable-screen-lock() {
-  if gsettings get org.gnome.desktop.session idle-delay >/dev/null; then
-    gsettings set org.gnome.desktop.session idle-delay 0 || fail
+    ubuntu::desktop::enable-fractional-scaling || fail
   fi
 }

@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-remote-access-server() {
+ubuntu::deploy-minimal-local-vm-server() {
   # perform apt update and upgrade
   apt::update || fail
   apt::dist-upgrade || fail
@@ -24,20 +24,35 @@ ubuntu::deploy-remote-access-server() {
     apt::install open-vm-tools || fail
   fi
 
-  # install and configure openssh-server
-  sshd::configure || fail # I do it first because ubuntu starts sshd right after install and I want it to be secured already at this point
-  apt::install openssh-server ssh-import-id || fail
-  sudo systemctl --now enable ssh || fail
-  sudo systemctl reload ssh || fail
+  ubuntu::deploy-sshd || fail
 
   # perform cleanup
   apt::autoremove || fail
+}
+
+ubuntu::deploy-sshd() {
+  sshd::ubuntu::install-and-configure || fail
 
   # import ssh key
   ssh-import-id gh:senotrusov || fail
-  
-  # display footnotes if running on interactive terminal
-  tools::perhaps-display-deploy-footnotes || fail
+}
+
+ubuntu::deploy-host-documents-access() {
+  # perform apt update and upgrade
+  apt::update || fail
+
+  # install cifs-utils
+  apt::install cifs-utils || fail
+
+  # install bitwarden
+  bitwarden::install-cli || fail
+
+  # the following commands use bitwarden, that requires password entry
+  # subshell for unlocked bitwarden
+  (
+    # mount host folder
+    ubuntu::perhaps-mount-host-documents || fail
+  ) || fail
 }
 
 ubuntu::deploy-workstation() {
@@ -58,30 +73,22 @@ ubuntu::deploy-workstation() {
   ubuntu::packages::install-devtools || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  apt::install gnome-keyring libsecret-tools libsecret-1-0 libsecret-1-dev || fail
-  git::ubuntu::install-credential-libsecret || fail
-
-  # install ssh-import-id
-  apt::install ssh-import-id || fail
+  ubuntu::packages::install-gnome-keyring-and-libsecret || fail
 
   # shellrcd
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-path || fail
   shellrcd::hook-direnv || fail
-  bitwarden::shellrcd::set-bitwarden-login || fail
 
-  # ruby
-  ruby::configure-gemrc || fail
-  ruby::install-rbenv || fail
-  shellrcd::rbenv || fail
-  rbenv rehash || fail
-  sudo gem update || fail
+  # install ruby
+  ruby::ubuntu::install || fail
 
   # install nodejs
   nodejs::ubuntu::install || fail
 
   # bitwarden cli
+  bitwarden::shellrcd::set-bitwarden-login || fail
   bitwarden::install-cli || fail
 
   # vscode
@@ -107,23 +114,15 @@ ubuntu::deploy-workstation() {
   # gparted
   apt::install gparted || fail
 
-  # open-vm-tools
   if vmware::linux::is-inside-vm; then
+    # open-vm-tools
     apt::install open-vm-tools open-vm-tools-desktop || fail
 
-    # do not mount hgfs for now
+    # mount hgfs
     # vmware::linux::add-hgfs-automount || fail
     # vmware::linux::symlink-hgfs-mounts || fail
   fi
 
-  # syncthing
-  if [ "${INSTALL_SYNCTHING:-}" = true ]; then
-    apt::add-syncthing-source || fail
-    apt::update || fail
-    apt::install syncthing || fail
-    sudo systemctl enable --now "syncthing@${SUDO_USER}.service" || fail
-  fi
-  
   # whois
   apt::install whois || fail
 
@@ -139,53 +138,65 @@ ubuntu::deploy-workstation() {
     sudo snap install discord || fail
   fi
 
-  # install cifs-utils
-  apt::install cifs-utils || fail
-
   # install rclone
   tools::install-rclone || fail
 
   # configure desktop
   ubuntu::desktop::configure || fail
 
-  # cleanup
-  apt::autoremove || fail
+  # deploy sshd
+  ubuntu::deploy-sshd || fail
 
-  # import ssh key
-  ssh-import-id gh:senotrusov || fail
+  # configure git
+  git::configure || fail
+  git::configure-user || fail
+
+  # install cifs-utils
+  apt::install cifs-utils || fail
 
   # the following commands use bitwarden, that requires password entry
   # subshell for unlocked bitwarden
   (
-    # install sublime license key and configuration
-    sublime::install-config || fail
-
-    # install ssh key, configure ssh to use it
-    # bitwarden-object: "my ssh private key", "my ssh public key"
-    ssh::install-keys "my" || fail
-    # bitwarden-object: "my password for ssh private key"
-    ssh::ubuntu::add-key-password-to-keyring "my" || fail
-
-    # configure git
-    # bitwarden-object: "my github personal access token"
-    git::configure || fail
-    git::configure-user || fail
-    git::ubuntu::add-credentials-to-keyring "my" || fail
-
-    # rubygems
-    # bitwarden-object: "my rubygems credentials"
-    bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+    # secrets
+    ubuntu::workstation::deploy-secrets || fail
 
     # mount host folder
-    if vmware::linux::is-inside-vm; then
-      local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
-      # bitwarden-object: "my microsoft account"
-      fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
-    fi
+    ubuntu::perhaps-mount-host-documents || fail
   ) || fail
+ 
+  # cleanup
+  apt::autoremove || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
   # display footnotes if running on interactive terminal
   tools::perhaps-display-deploy-footnotes || fail
+}
+
+ubuntu::workstation::deploy-secrets() {
+  # install ssh key, configure ssh to use it
+  # bitwarden-object: "my ssh private key", "my ssh public key"
+  ssh::install-keys "my" || fail
+  # bitwarden-object: "my password for ssh private key"
+  ssh::ubuntu::add-key-password-to-keyring "my" || fail
+
+  # git access token
+  # bitwarden-object: "my github personal access token"
+  git::ubuntu::add-credentials-to-keyring "my" || fail
+
+  # rubygems
+  # bitwarden-object: "my rubygems credentials"
+  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+
+  # install sublime license key and configuration
+  sublime::install-config || fail
+}
+
+ubuntu::perhaps-mount-host-documents() {
+  if vmware::linux::is-inside-vm; then
+    local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
+
+    # bitwarden-object: "my microsoft account"
+    fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
+  fi
 }

@@ -20,7 +20,6 @@
 . "${SOPKAFILE_DIR}/lib/misc.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu-desktop.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu-packages.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode.sh" || fail
 . "${SOPKAFILE_DIR}/lib/windows.sh" || fail

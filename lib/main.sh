@@ -25,7 +25,8 @@ sopkafile::main() {
     fi
 
     if tools::nothing-deployed; then
-      list+=(ubuntu::deploy-remote-access-server)
+      list+=(ubuntu::deploy-minimal-local-vm-server)
+      list+=(ubuntu::deploy-host-documents-access)
     fi
   fi
 
