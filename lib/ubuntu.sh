@@ -24,6 +24,7 @@ ubuntu::deploy-minimal-local-vm-server() {
     apt::install open-vm-tools || fail
   fi
 
+  # deploy sshd
   ubuntu::deploy-sshd || fail
 
   # perform cleanup
@@ -31,6 +32,7 @@ ubuntu::deploy-minimal-local-vm-server() {
 }
 
 ubuntu::deploy-sshd() {
+  # install and configure sshd
   sshd::ubuntu::install-and-configure || fail
 
   # import ssh key
@@ -57,7 +59,7 @@ ubuntu::deploy-host-documents-access() {
   # subshell for unlocked bitwarden
   (
     # mount host folder
-    ubuntu::perhaps-mount-host-documents || fail
+    ubuntu::mount-host-documents || fail
   ) || fail
 }
 
@@ -167,12 +169,15 @@ ubuntu::deploy-workstation() {
     ubuntu::workstation::deploy-secrets || fail
 
     # mount host folder
-    ubuntu::perhaps-mount-host-documents || fail
+    if vmware::linux::is-inside-vm; then
+      ubuntu::mount-host-documents || fail
+    fi
   ) || fail
  
   # cleanup
   apt::autoremove || fail
 
+  # set "deployed" flag
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
   # display footnotes if running on interactive terminal
@@ -198,11 +203,9 @@ ubuntu::workstation::deploy-secrets() {
   sublime::install-config || fail
 }
 
-ubuntu::perhaps-mount-host-documents() {
-  if vmware::linux::is-inside-vm; then
-    local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
+ubuntu::mount-host-documents() {
+  local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
 
-    # bitwarden-object: "my microsoft account"
-    fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
-  fi
+  # bitwarden-object: "my microsoft account"
+  fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
 }
