@@ -24,7 +24,7 @@ my-storage-vm::deploy() {
   linux::set-hostname "stan-storage" || fail
 
   # perform apt update and upgrade
-  apt::update || fail
+  apt::lazy-update || fail
   apt::dist-upgrade || fail
 
   # install basic tools. curl is among them, so this line have to be on top of the script

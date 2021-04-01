@@ -16,7 +16,7 @@
 
 ubuntu::deploy-minimal-local-vm-server() {
   # perform apt update and upgrade
-  apt::update || fail
+  apt::lazy-update || fail
   apt::dist-upgrade || fail
 
   # install open-vm-tools
@@ -41,7 +41,7 @@ ubuntu::deploy-sshd() {
 
 ubuntu::deploy-host-documents-access() {
   # perform apt update and upgrade
-  apt::update || fail
+  apt::lazy-update || fail
 
   # install cifs-utils
   apt::install cifs-utils || fail
@@ -68,7 +68,7 @@ ubuntu::deploy-workstation() {
   ubuntu::desktop::disable-screen-lock || fail
 
   # update and upgrade
-  apt::update || fail
+  apt::lazy-update || fail
   apt::dist-upgrade || fail
 
   # increase inotify limits
@@ -105,10 +105,7 @@ ubuntu::deploy-workstation() {
   vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
 
   # sublime text and sublime merge
-  sublime::apt::add-sublime-source || fail
-  apt::update || fail
-  sublime::apt::install-sublime-merge || fail
-  sublime::apt::install-sublime-text || fail
+  sublime::ubuntu::install-merge-and-text || fail
 
   # meld
   apt::install meld || fail
@@ -122,6 +119,15 @@ ubuntu::deploy-workstation() {
   # gparted
   apt::install gparted || fail
 
+  # install rclone
+  tools::install-rclone || fail
+
+  # whois
+  apt::install whois || fail
+
+  # install cifs-utils
+  apt::install cifs-utils || fail
+
   if vmware::linux::is-inside-vm; then
     # open-vm-tools
     apt::install open-vm-tools open-vm-tools-desktop || fail
@@ -131,23 +137,15 @@ ubuntu::deploy-workstation() {
     # vmware::linux::symlink-hgfs-mounts || fail
   fi
 
-  # whois
-  apt::install whois || fail
-
   # software for bare metal workstation
   if linux::is-bare-metal; then
-    apt::add-obs-studio-source || fail
-    apt::update || fail
-    apt::install obs-studio guvcview || fail
+    ubuntu::packages::install-obs-studio || fail
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
     sudo snap install telegram-desktop || fail
     sudo snap install skype --classic || fail
     sudo snap install discord || fail
   fi
-
-  # install rclone
-  tools::install-rclone || fail
 
   # configure desktop
   ubuntu::desktop::configure || fail
@@ -158,9 +156,6 @@ ubuntu::deploy-workstation() {
   # configure git
   git::configure || fail
   git::configure-user || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
 
   # the following commands use bitwarden, that requires password entry
   # subshell for unlocked bitwarden
