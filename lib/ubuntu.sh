@@ -71,38 +71,25 @@ ubuntu::deploy-workstation() {
   apt::lazy-update || fail
   apt::dist-upgrade || fail
 
+  # deploy minimal application server
+  ubuntu::deploy-minimal-application-server || fail
+
   # increase inotify limits
   linux::set-inotify-max-user-watches || fail
-
-  # basic tools, contains curl so it have to be first
-  ubuntu::packages::install-basic-tools || fail
-
-  # devtools
-  ubuntu::packages::install-devtools || fail
 
   # gnome-keyring and libsecret (for git and ssh)
   ubuntu::packages::install-gnome-keyring-and-libsecret || fail
 
   # shellrcd
   shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
   shellrcd::sopka-path || fail
-  shellrcd::hook-direnv || fail
-
-  # install ruby
-  ruby::ubuntu::install || fail
-
-  # install nodejs
-  nodejs::ubuntu::install || fail
 
   # bitwarden cli
   bitwarden::shellrcd::set-bitwarden-login || fail
   bitwarden::install-cli || fail
 
   # vscode
-  vscode::snap::install || fail
-  vscode::install-config || fail
-  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
+  vscode::install-and-configure || fail
 
   # sublime text and sublime merge
   sublime::ubuntu::install-merge-and-text || fail
@@ -131,15 +118,12 @@ ubuntu::deploy-workstation() {
   if vmware::linux::is-inside-vm; then
     # open-vm-tools
     apt::install open-vm-tools open-vm-tools-desktop || fail
-
-    # mount hgfs
-    # vmware::linux::add-hgfs-automount || fail
-    # vmware::linux::symlink-hgfs-mounts || fail
   fi
 
   # software for bare metal workstation
   if linux::is-bare-metal; then
     ubuntu::packages::install-obs-studio || fail
+
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
     sudo snap install telegram-desktop || fail
@@ -149,9 +133,6 @@ ubuntu::deploy-workstation() {
 
   # configure desktop
   ubuntu::desktop::configure || fail
-
-  # deploy sshd
-  ubuntu::deploy-sshd || fail
 
   # configure git
   git::configure || fail
