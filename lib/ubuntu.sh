@@ -44,6 +44,12 @@ ubuntu::deploy-host-documents-access() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
+  # shellrcd
+  shellrcd::install || fail
+
+  # install nodejs
+  nodejs::ubuntu::install || fail
+
   # install bitwarden
   bitwarden::install-cli || fail
 
