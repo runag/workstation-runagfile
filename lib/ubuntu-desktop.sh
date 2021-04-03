@@ -87,66 +87,51 @@ ubuntu::desktop::remove-user-dirs() {
 
 ubuntu::desktop::configure-gnome() {
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+    # Enable fractional scaling
+    ubuntu::desktop::enable-fractional-scaling || fail
+
+    # Automatic timezone
+    gsettings::perhaps-set org.gnome.desktop.datetime automatic-timezone true || fail
+
     # Terminal
-    if gsettings get org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled >/dev/null; then
-      gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-    fi
+    gsettings::perhaps-set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
 
     if gsettings get org.gnome.Terminal.ProfilesList default >/dev/null; then
       local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
       local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
 
-      gsettings set "$profilePath" exit-action 'hold' || fail
-      gsettings set "$profilePath" login-shell true || fail
+      gsettings::perhaps-set "$profilePath" exit-action 'hold' || fail
+      gsettings::perhaps-set "$profilePath" login-shell true || fail
     fi
 
     # Nautilus
-    if gsettings list-keys org.gnome.nautilus >/dev/null; then
-      gsettings set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
-      gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
-      gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
-      gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail
-      gsettings set org.gnome.nautilus.preferences show-hidden-files true || fail
-    fi
+    gsettings::perhaps-set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
+    gsettings::perhaps-set org.gnome.nautilus.list-view use-tree-view true || fail
+    gsettings::perhaps-set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
+    gsettings::perhaps-set org.gnome.nautilus.preferences show-delete-permanently true || fail
+    gsettings::perhaps-set org.gnome.nautilus.preferences show-hidden-files true || fail
 
-    # Desktop 18.04
-    if gsettings list-keys org.gnome.nautilus.desktop >/dev/null; then
-      gsettings set org.gnome.nautilus.desktop trash-icon-visible false || fail
-      gsettings set org.gnome.nautilus.desktop volumes-visible false || fail
-    fi
+    # Desktop
+    gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-trash false || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-home false || fail
 
-    # Desktop 19.10
-    if gsettings list-keys org.gnome.shell.extensions.desktop-icons >/dev/null; then
-      gsettings set org.gnome.shell.extensions.desktop-icons show-trash false || fail
-      gsettings set org.gnome.shell.extensions.desktop-icons show-home false || fail
-    fi
+    # Dash
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock hide-delay 0.10000000000000001 'BOTTOM' || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true 'BOTTOM' || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
-    # Auto set time zone
-    if gsettings get org.gnome.desktop.datetime automatic-timezone >/dev/null; then
-      gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
-    fi
-
-    # Dash appearance
-    if gsettings get org.gnome.shell.extensions.dash-to-dock dash-max-icon-size >/dev/null; then
-      gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-    fi
-
-    # Sound alerts
-    if gsettings get org.gnome.desktop.sound event-sounds >/dev/null; then
-      gsettings set org.gnome.desktop.sound event-sounds false || fail
-    fi
+    # Disable sound alerts
+    gsettings::perhaps-set org.gnome.desktop.sound event-sounds false || fail
 
     # 1600 DPI mouse
-    if gsettings get org.gnome.desktop.peripherals.mouse speed >/dev/null; then
-      gsettings set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
-    fi
+    gsettings::perhaps-set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
 
     # Input sources
-    # ('xkb', 'ru+mac')
-    if gsettings get org.gnome.desktop.input-sources sources >/dev/null; then
-      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
-    fi
-
-    ubuntu::desktop::enable-fractional-scaling || fail
+    # on mac host: ('xkb', 'ru+mac')
+    gsettings::perhaps-set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
   fi
 }
