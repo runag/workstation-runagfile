@@ -119,9 +119,9 @@ ubuntu::desktop::configure-gnome() {
     gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
     gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
     gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock hide-delay 0.10000000000000001 'BOTTOM' || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
     gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail
-    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true 'BOTTOM' || fail
+    gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true || fail
     gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
     # Disable sound alerts
