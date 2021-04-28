@@ -18,11 +18,3 @@ deploy::merge-workstation-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
 }
-
-shellrcd::sopka-path() {
-  fs::write-file "${HOME}/.shellrc.d/sopka-path.sh" <<SHELL || fail
-    if [ -d "\${HOME}/.sopka" ]; then
-      export PATH="\${HOME}/.sopka/bin:\$PATH"
-    fi
-SHELL
-}

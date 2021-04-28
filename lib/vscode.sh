@@ -14,6 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+vscode::install-and-configure(){
+  vscode::snap::install || fail
+  vscode::install-config || fail
+  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
+}
+
 vscode::install-config() {
   vscode::determine-config-path || fail
 

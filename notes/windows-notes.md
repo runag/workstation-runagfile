@@ -38,8 +38,13 @@ Resize-Partition -DriveLetter C -Size 300GB
 PSCSI-NVME is the best performing disk configuration
 
 For each VM: Options -> Guest Isolation -> Disable Drag & Drop (VM UI randomly hangs because of that).
+https://github.com/vmware/open-vm-tools/issues/176
+
+For 6 core 12 threads, number of CPUs must be a factor of 6: 1, 2, 3, or 6. Not 4!
 
 Change USB controller to version 3.1
+
+Windows Network location awareness. I don't know how to set private type for vmnet1, so I just disable firewall for vmware interfaces.
 
 ## Wake timers (Virtualbox wakes host from sleep)
 

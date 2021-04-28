@@ -15,7 +15,7 @@ This script is idempotent. It can be run multiple times to produce a system whic
 
 The file ``lib/config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
 
-## Linux workstation
+## Linux
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh)
@@ -33,12 +33,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.bat -o .deploy.bat && .deploy.bat
 ```
 
-## Non-developer Windows (Hi, Mom!)
-
-```sh
-curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy-non-developer.bat -o .deploy.bat && .deploy.bat
-```
-
+<!--
 ## my-storage-vm
 
 ```sh
@@ -48,6 +43,7 @@ sopka my-storage-vm::deploy
 sopka backup::stan-documents borg::import-key
 sopka backup::stan-documents borg::systemd::enable-timer
 ```
+-->
 
 ## Secret items which are expected to be found in a Bitwarden
 

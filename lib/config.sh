@@ -20,6 +20,3 @@ export GIT_USER_NAME="Stanislav Senotrusov"
 export GIT_USER_EMAIL="stan@senotrusov.com"
 
 export GITHUB_LOGIN="senotrusov"
-
-test -n "${INSTALL_SYNCTHING:-}" || INSTALL_SYNCTHING=false
-test -n "${INSTALL_VITALS:-}" || INSTALL_VITALS=false

@@ -18,11 +18,15 @@ sopkafile::main() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
-      list+=(ubuntu::deploy-workstation)
+    if [ -n "${DISPLAY:-}" ]; then
+      if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
+        list+=(ubuntu::deploy-workstation)
+      fi
     fi
-    if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
-      list+=(my-storage-vm::deploy)
+
+    if tools::nothing-deployed; then
+      list+=(ubuntu::deploy-minimal-local-vm-server)
+      list+=(ubuntu::deploy-host-documents-access)
     fi
   fi
 
@@ -33,6 +37,7 @@ sopkafile::main() {
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows::deploy-workstation)
+    list+=(windows::deploy-nothing)
   fi
 
   if [ -f "${HOME}/.stan-documents.backup-credentials" ]; then

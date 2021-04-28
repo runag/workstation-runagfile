@@ -23,6 +23,7 @@ windows::deploy-workstation() {
 
   # git
   git::configure || fail
+  git::configure-user || fail
 
   # vscode
   vscode::install-config || fail
@@ -40,4 +41,8 @@ windows::deploy-workstation() {
   bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
+}
+
+windows::deploy-nothing() {
+  echo "nothing deployed"
 }

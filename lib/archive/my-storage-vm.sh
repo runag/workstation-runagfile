@@ -14,12 +14,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+# if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
+#   list+=(my-storage-vm::deploy)
+# fi
+
 my-storage-vm::deploy() {
   # set hostname
   linux::set-hostname "stan-storage" || fail
 
   # perform apt update and upgrade
-  apt::update || fail
+  apt::lazy-update || fail
   apt::dist-upgrade || fail
 
   # install basic tools. curl is among them, so this line have to be on top of the script
@@ -34,7 +39,7 @@ my-storage-vm::deploy() {
   nodejs::ubuntu::install || fail
 
   # install bitwarden cli
-  sudo npm install -g @bitwarden/cli || fail
+  bitwarden::install-cli || fail
 
   # install open-vm-tools
   if vmware::linux::is-inside-vm; then
@@ -59,14 +64,15 @@ my-storage-vm::deploy() {
   # perform cleanup
   apt::autoremove || fail
 
+  # configure git
+  git::configure || fail
+  git::configure-user || fail
+
   # import ssh key
   ssh-import-id gh:senotrusov || fail
 
-  # configure git
-  git::configure || fail
-
   # enable systemd user instance without the need for the user to login
-  sudo loginctl enable-linger "${USER}" || fail
+  systemd::enable-linger || fail
 
   # configure backup
   # subshell for unlocked bitwarden

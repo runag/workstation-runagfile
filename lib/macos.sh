@@ -21,9 +21,7 @@ macos::deploy-workstation() {
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
-  if [ -t 1 ]; then
-    tools::display-elapsed-time || fail
-  fi
+  tools::perhaps-display-deploy-footnotes || fail
 }
 
 macos::install-basic-packages() {
@@ -37,12 +35,6 @@ macos::install-basic-packages() {
   # fan and battery
   brew cask install macs-fan-control || fail
   brew cask install coconutbattery || fail
-
-  # syncthing
-  if [ "${INSTALL_SYNCTHING:-}" = true ]; then
-    brew install syncthing || fail
-    brew services start syncthing || fail
-  fi
 
   # productivity tools
   brew cask install bitwarden || fail
@@ -176,6 +168,7 @@ macos::configure-workstation() {
 
   # git
   git::configure || fail
+  git::configure-user || fail
 }
 
 macos::hide-folders() {
