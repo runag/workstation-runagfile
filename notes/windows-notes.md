@@ -1,3 +1,5 @@
+# Unwanted languages
+https://superuser.com/a/1540185
 
 # May be useful later
 
