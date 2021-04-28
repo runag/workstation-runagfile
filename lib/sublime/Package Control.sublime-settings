@@ -6,8 +6,6 @@
 	"installed_packages":
 	[
 		"Better CoffeeScript",
-		"BracketHighlighter",
-		"Color Highlight",
 		"ColorPicker",
 		"Crontab",
 		"FileIcons",
