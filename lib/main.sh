@@ -26,7 +26,7 @@ sopkafile::main() {
 
     if tools::nothing-deployed; then
       list+=(ubuntu::deploy-minimal-local-vm-server)
-      list+=(ubuntu::deploy-host-documents-access)
+      list+=(ubuntu::deploy-my-folder-access)
     fi
   fi
 

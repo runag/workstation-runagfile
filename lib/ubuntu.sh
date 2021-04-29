@@ -39,7 +39,7 @@ ubuntu::deploy-sshd() {
   ssh-import-id gh:senotrusov || fail
 }
 
-ubuntu::deploy-host-documents-access() {
+ubuntu::deploy-my-folder-access() {
   # perform apt update and upgrade
   apt::lazy-update || fail
 
@@ -59,7 +59,7 @@ ubuntu::deploy-host-documents-access() {
   # subshell for unlocked bitwarden
   (
     # mount host folder
-    ubuntu::mount-host-documents || fail
+    ubuntu::mount-my-folder || fail
   ) || fail
 }
 
@@ -146,7 +146,7 @@ ubuntu::deploy-workstation() {
 
     # mount host folder
     if vmware::linux::is-inside-vm; then
-      ubuntu::mount-host-documents || fail
+      ubuntu::mount-my-folder || fail
     fi
   ) || fail
  
@@ -179,9 +179,9 @@ ubuntu::workstation::deploy-secrets() {
   sublime::install-config || fail
 }
 
-ubuntu::mount-host-documents() {
+ubuntu::mount-my-folder() {
   local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
-  fs::mount-cifs "//${hostIpAddress}/Users/${USER}/Documents" "host-documents" "my microsoft account" || fail
+  fs::mount-cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
 }
