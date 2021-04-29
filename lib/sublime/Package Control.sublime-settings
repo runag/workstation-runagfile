@@ -6,7 +6,6 @@
 	"installed_packages":
 	[
 		"Better CoffeeScript",
-		"ColorPicker",
 		"Crontab",
 		"FileIcons",
 		"nginx",
