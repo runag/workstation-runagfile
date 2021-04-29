@@ -106,6 +106,9 @@ ubuntu::deploy-workstation() {
   # gparted
   apt::install gparted || fail
 
+  # copyq
+  ubuntu::packages::install-copyq || fail
+
   # install rclone
   tools::install-rclone || fail
 
