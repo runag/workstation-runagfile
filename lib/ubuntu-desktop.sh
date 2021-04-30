@@ -88,7 +88,7 @@ ubuntu::desktop::remove-user-dirs() {
 ubuntu::desktop::configure-gnome() {
   if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
     # Enable fractional scaling
-    ubuntu::desktop::enable-fractional-scaling || fail
+    # ubuntu::desktop::enable-fractional-scaling || fail
 
     # Automatic timezone
     gsettings::perhaps-set org.gnome.desktop.datetime automatic-timezone true || fail
