@@ -14,9 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 # if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
 #   list+=(my-storage-vm::deploy)
+# fi
+
+# if [ -f "${HOME}/.stan-documents.backup-credentials" ]; then
+#   list+=("backup::stan-documents borg::menu")
+#   list+=("backup::stan-documents::create")
 # fi
 
 my-storage-vm::deploy() {
@@ -110,7 +114,7 @@ backup::stan-documents::create() (
   cd "${HOME}/stan-documents" || fail
 
   # I should probably make a special user service to wait until the network is up and source directory is mounted
-  findmnt -M . >/dev/null || fail "${mountPoint} is not mounted"
+  findmnt -M . >/dev/null || fail
   ping -c 3 -n -q "${STORAGE_HOST}" >/dev/null 2>&1 || fail "${STORAGE_HOST} is not reachable"
 
   local progressMaybe=""; test -t 1 && progressMaybe="--progress"

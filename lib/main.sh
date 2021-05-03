@@ -40,9 +40,10 @@ sopkafile::main() {
     list+=(windows::deploy-nothing)
   fi
 
-  if [ -f "${HOME}/.stan-documents.backup-credentials" ]; then
-    list+=("backup::stan-documents borg::menu")
-    list+=("backup::stan-documents::create")
+  if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
+    list+=("backup::vm-home-to-host restic::menu")
+    list+=("backup::vm-home-to-host::create")
+    list+=("backup::vm-home-to-host::forget-and-check")
   fi
 
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then

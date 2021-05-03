@@ -119,6 +119,9 @@ ubuntu::deploy-workstation() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
+  # install restic
+  apt::install restic || fail
+
   if vmware::linux::is-inside-vm; then
     # open-vm-tools
     apt::install open-vm-tools open-vm-tools-desktop || fail
@@ -142,6 +145,9 @@ ubuntu::deploy-workstation() {
   git::configure || fail
   git::configure-user || fail
 
+  # enable systemd user instance without the need for the user to login
+  systemd::enable-linger || fail
+
   # the following commands use bitwarden, that requires password entry
   # subshell for unlocked bitwarden
   (
@@ -153,7 +159,11 @@ ubuntu::deploy-workstation() {
       ubuntu::mount-my-folder || fail
     fi
   ) || fail
- 
+
+  if vmware::linux::is-inside-vm; then
+    backup::vm-home-to-host::setup || fail
+  fi
+
   # cleanup
   apt::autoremove || fail
 
@@ -188,4 +198,58 @@ ubuntu::mount-my-folder() {
 
   # bitwarden-object: "my microsoft account"
   fs::mount-cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
+}
+
+backup::vm-home-to-host::load-configuration() {
+  local machineUuid="$(vmware::get-machine-uuid)" || fail
+
+  export BACKUP_NAME="vm-home-to-host"
+  export RESTIC_REPOSITORY="${HOME}/my/storage/vm-home-backups/${machineUuid}"
+  export RESTIC_PASSWORD="null"
+}
+
+backup::vm-home-to-host() {
+  backup::vm-home-to-host::load-configuration || fail
+  "$@" || fail
+}
+
+backup::vm-home-to-host::setup() (
+  fs::sudo-write-file "/etc/sudoers.d/dmidecode" 0440 <<SHELL || fail
+${USER} ALL=NOPASSWD: /usr/sbin/dmidecode
+SHELL
+
+  backup::vm-home-to-host::load-configuration || fail
+
+  # install systemd service, update timer only if it was manually enabled previously
+  restic::systemd::init-service || fail
+
+  # enable timer
+  restic::systemd::enable-timer || fail
+)
+
+backup::vm-home-to-host::create() (
+  backup::vm-home-to-host::load-configuration || fail
+
+  # I should probably make a special user service to wait until the network is up and the directory is mounted
+  findmnt -M "${HOME}/my" >/dev/null || fail
+
+  if [ ! -d "${RESTIC_REPOSITORY}" ]; then
+    restic::init || fail
+  fi
+
+  # The purpose of this is to have relative paths in backup
+  cd "${HOME}" || fail
+
+  local quietMaybe=""; test -t 1 || quietMaybe="--quiet"
+
+  restic backup $quietMaybe --one-file-system . || fail
+
+  tools::once-per-day backup::vm-home-to-host::forget-and-check || fail
+)
+
+backup::vm-home-to-host::forget-and-check() {
+  backup::vm-home-to-host::load-configuration || fail
+
+  restic::forget-and-prune || fail
+  restic::check-and-read-data || fail
 }
