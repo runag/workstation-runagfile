@@ -220,11 +220,16 @@ SHELL
 
   backup::vm-home-to-host::load-configuration || fail
 
-  # install systemd service, update timer only if it was manually enabled previously
-  restic::systemd::init-service || fail
+  # install systemd service
+  declare -A serviceOptions
+  serviceOptions[NoNewPrivileges]=false
+  restic::systemd::init-service serviceOptions || fail
 
   # enable timer
-  restic::systemd::enable-timer || fail
+  declare -A timerOptions
+  timerOptions[OnCalendar]="*:00/30"
+  timerOptions[RandomizedDelaySec]="300"
+  restic::systemd::enable-timer timerOptions || fail
 )
 
 backup::vm-home-to-host::create() (
