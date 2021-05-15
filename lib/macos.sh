@@ -66,8 +66,9 @@ macos::install-developer-packages() {
   brew install tmux || fail
 
   # dev tools
-  brew unlink awscli || fail
-  brew install awscli || fail
+  if [ ! -e /usr/local/bin/aws ]; then
+    brew install awscli || fail
+  fi
 
   brew install graphviz || fail
   brew install imagemagick || fail
