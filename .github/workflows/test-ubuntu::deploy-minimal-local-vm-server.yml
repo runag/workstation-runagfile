@@ -29,7 +29,7 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - name: Wait for possible sopka repository updates
+    - name: Wait for possible 2nd repository updates
       run: sleep 30
 
     - name: Run deploy script
