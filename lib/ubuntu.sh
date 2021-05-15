@@ -152,7 +152,7 @@ ubuntu::deploy-workstation() {
   systemd::enable-linger || fail
 
   # secrets
-  if [ -t 1 ]; then
+  if [ -t 0 ]; then
     # the following commands use bitwarden, that requires password entry
     # subshell for unlocked bitwarden
     (

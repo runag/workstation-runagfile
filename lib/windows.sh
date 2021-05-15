@@ -33,7 +33,7 @@ windows::deploy-workstation() {
   sublime::install-config || fail
 
   # secrets
-  if [ -t 1 ]; then
+  if [ -t 0 ]; then
     (
       # add ssh key
       # bitwarden-object: "my ssh private key", "my ssh public key"
