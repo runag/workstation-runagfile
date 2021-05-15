@@ -126,7 +126,7 @@ macos::install-developer-packages() {
 
   # sshfs
   # That will fail in CI test environment, so I disabled error checking here. Perhaps there is a better solution for that.
-  brew install sshfs
+  brew install sshfs || true
 }
 
 macos::configure-workstation() {
