@@ -145,20 +145,26 @@ ubuntu::deploy-workstation() {
   git::configure || fail
   git::configure-user || fail
 
+  # install sublime configuration
+  sublime::install-config || fail
+
   # enable systemd user instance without the need for the user to login
   systemd::enable-linger || fail
 
-  # the following commands use bitwarden, that requires password entry
-  # subshell for unlocked bitwarden
-  (
-    # secrets
-    ubuntu::workstation::deploy-secrets || fail
+  # secrets
+  if [ -t 1 ]; then
+    # the following commands use bitwarden, that requires password entry
+    # subshell for unlocked bitwarden
+    (
+      # secrets
+      ubuntu::workstation::deploy-secrets || fail
 
-    # mount host folder
-    if vmware::linux::is-inside-vm; then
-      ubuntu::mount-my-folder || fail
-    fi
-  ) || fail
+      # mount host folder
+      if vmware::linux::is-inside-vm; then
+        ubuntu::mount-my-folder || fail
+      fi
+    ) || fail
+  fi
 
   if vmware::linux::is-inside-vm; then
     backup::vm-home-to-host::setup || fail
@@ -178,6 +184,7 @@ ubuntu::workstation::deploy-secrets() {
   # install ssh key, configure ssh to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
   ssh::install-keys "my" || fail
+
   # bitwarden-object: "my password for ssh private key"
   ssh::ubuntu::add-key-password-to-keyring "my" || fail
 
@@ -189,8 +196,8 @@ ubuntu::workstation::deploy-secrets() {
   # bitwarden-object: "my rubygems credentials"
   bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 
-  # install sublime license key and configuration
-  sublime::install-config || fail
+  # install sublime license key
+  sublime::install-license || fail
 }
 
 ubuntu::mount-my-folder() {
@@ -214,7 +221,7 @@ backup::vm-home-to-host() {
 }
 
 backup::vm-home-to-host::setup() (
-  fs::sudo-write-file "/etc/sudoers.d/dmidecode" 0440 <<SHELL || fail
+  fs::sudo-write-file "/etc/sudoers.d/dmidecode" 0440 root <<SHELL || fail
 ${USER} ALL=NOPASSWD: /usr/sbin/dmidecode
 SHELL
 

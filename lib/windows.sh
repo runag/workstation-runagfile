@@ -29,16 +29,24 @@ windows::deploy-workstation() {
   vscode::install-config || fail
   vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
 
-  # sublime text
+  # sublime text config
   sublime::install-config || fail
 
-  # add ssh key
-  # bitwarden-object: "my ssh private key", "my ssh public key"
-  ssh::install-keys "my" || fail
+  # secrets
+  if [ -t 1 ]; then
+    (
+      # add ssh key
+      # bitwarden-object: "my ssh private key", "my ssh public key"
+      ssh::install-keys "my" || fail
 
-  # rubygems
-  # bitwarden-object: "my rubygems credentials"
-  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+      # rubygems
+      # bitwarden-object: "my rubygems credentials"
+      bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+
+      # sublime text license
+      sublime::install-license || fail
+    ) || fail
+  fi
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 }
