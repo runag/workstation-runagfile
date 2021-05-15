@@ -33,24 +33,24 @@ macos::install-basic-packages() {
   brew upgrade || fail
 
   # fan and battery
-  brew cask install macs-fan-control || fail
-  brew cask install coconutbattery || fail
+  brew install --cask macs-fan-control || fail
+  brew install --cask coconutbattery || fail
 
   # productivity tools
-  brew cask install bitwarden || fail
-  brew cask install discord || fail
-  brew cask install grandperspective || fail
-  brew cask install libreoffice || fail
-  brew cask install skype || fail
-  brew cask install telegram || fail
-  brew cask install the-unarchiver || fail
+  brew install --cask bitwarden || fail
+  brew install --cask discord || fail
+  brew install --cask grandperspective || fail
+  brew install --cask libreoffice || fail
+  brew install --cask skype || fail
+  brew install --cask telegram || fail
+  brew install --cask the-unarchiver || fail
 
   # chromium
-  brew cask install chromium || fail
+  brew install --cask chromium || fail
 
   # media tools
-  brew cask install vlc || fail
-  brew cask install obs || fail
+  brew install --cask vlc || fail
+  brew install --cask obs || fail
 }
 
 macos::install-developer-packages() {
@@ -88,19 +88,19 @@ macos::install-developer-packages() {
   brew install ffmpeg || fail
 
   # meld
-  brew cask install meld || fail
+  brew install --cask meld || fail
 
   # sublime merge
-  brew cask install sublime-merge || fail
+  brew install --cask sublime-merge || fail
 
   # sublime text
-  brew cask install sublime-text || fail
+  brew install --cask sublime-text || fail
 
   # vscode
-  brew cask install visual-studio-code || fail
+  brew install --cask visual-studio-code || fail
 
   # iterm2
-  brew cask install iterm2 || fail
+  brew install --cask iterm2 || fail
 
   # linode-cli
   pip3 install linode-cli --upgrade || fail
