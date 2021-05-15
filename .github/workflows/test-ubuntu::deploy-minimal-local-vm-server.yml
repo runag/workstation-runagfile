@@ -29,5 +29,8 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
+    - name: Wait for possible sopka repository updates
+      run: sleep 30
+
     - name: Run deploy script
       run: bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu::deploy-minimal-local-vm-server
