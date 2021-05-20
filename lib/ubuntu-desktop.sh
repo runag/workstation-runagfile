@@ -20,6 +20,9 @@ ubuntu::desktop::configure() {
   # configure gnome desktop
   ubuntu::desktop::configure-gnome || fail
 
+  # firefox
+  ubuntu::desktop::firefox::configure || fail
+
   # imwheel
   apt::install imwheel || fail
   ubuntu::desktop::setup-imwhell || fail
@@ -134,4 +137,9 @@ ubuntu::desktop::configure-gnome() {
     # on mac host: ('xkb', 'ru+mac')
     gsettings::perhaps-set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
   fi
+}
+
+ubuntu::desktop::firefox::configure() {
+  ubuntu::desktop::firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
+  ubuntu::desktop::firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
 }
