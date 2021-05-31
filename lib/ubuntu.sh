@@ -151,6 +151,9 @@ ubuntu::deploy-workstation() {
   # enable systemd user instance without the need for the user to login
   systemd::enable-linger || fail
 
+  # postgresql
+  postgresql::create-superuser-for-local-account || fail
+
   # secrets
   if [ -t 0 ]; then
     # the following commands use bitwarden, that requires password entry
