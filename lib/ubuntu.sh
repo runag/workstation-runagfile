@@ -152,6 +152,7 @@ ubuntu::deploy-workstation() {
   systemd::enable-linger || fail
 
   # postgresql
+  sudo systemctl --now enable postgresql || fail
   postgresql::create-superuser-for-local-account || fail
 
   # secrets
