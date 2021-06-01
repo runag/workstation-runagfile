@@ -16,8 +16,7 @@
 
 ubuntu::deploy-minimal-local-vm-server() {
   # perform apt update and upgrade
-  apt::lazy-update || fail
-  apt::dist-upgrade || fail
+  apt::lazy-update-and-dist-upgrade || fail
 
   # install open-vm-tools
   if vmware::linux::is-inside-vm; then
@@ -68,8 +67,7 @@ ubuntu::deploy-workstation() {
   ubuntu::desktop::disable-screen-lock || fail
 
   # update and upgrade
-  apt::lazy-update || fail
-  apt::dist-upgrade || fail
+  apt::lazy-update-and-dist-upgrade || fail
 
   # deploy minimal application server
   ubuntu::deploy-minimal-application-server || fail
