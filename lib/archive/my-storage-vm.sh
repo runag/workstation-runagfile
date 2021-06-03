@@ -45,7 +45,7 @@ my-storage-vm::deploy() {
   bitwarden::install-cli || fail
 
   # install open-vm-tools
-  if vmware::linux::is-inside-vm; then
+  if vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
   fi
 

@@ -45,7 +45,7 @@ ubuntu::desktop::configure() {
   ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
 
   # vitals gnome shell extension
-  if [ -n "${DISPLAY:-}" ] && ! vmware::linux::is-inside-vm; then
+  if [ -n "${DISPLAY:-}" ] && ! vmware::is-inside-vm; then
     ubuntu::desktop::install-vitals || fail
   fi
 }

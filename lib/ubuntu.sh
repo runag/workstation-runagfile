@@ -19,7 +19,7 @@ ubuntu::deploy-minimal-local-vm-server() {
   apt::lazy-update-and-dist-upgrade || fail
 
   # install open-vm-tools
-  if vmware::linux::is-inside-vm; then
+  if vmware::is-inside-vm; then
     apt::install open-vm-tools || fail
   fi
 
@@ -123,7 +123,7 @@ ubuntu::deploy-workstation() {
   # install restic
   apt::install restic || fail
 
-  if vmware::linux::is-inside-vm; then
+  if vmware::is-inside-vm; then
     # open-vm-tools
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
@@ -165,13 +165,13 @@ ubuntu::deploy-workstation() {
       ubuntu::workstation::deploy-secrets || fail
 
       # mount host folder
-      if vmware::linux::is-inside-vm; then
+      if vmware::is-inside-vm; then
         ubuntu::mount-my-folder || fail
       fi
     ) || fail
   fi
 
-  if vmware::linux::is-inside-vm; then
+  if vmware::is-inside-vm; then
     backup::vm-home-to-host::setup || fail
   fi
 
@@ -206,7 +206,7 @@ ubuntu::workstation::deploy-secrets() {
 }
 
 ubuntu::mount-my-folder() {
-  local hostIpAddress; hostIpAddress="$(vmware::linux::get-host-ip-address)" || fail
+  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
   fs::mount-cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
