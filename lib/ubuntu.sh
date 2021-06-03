@@ -90,7 +90,7 @@ ubuntu::deploy-workstation() {
   vscode::install-and-configure || fail
 
   # sublime text and sublime merge
-  sublime::ubuntu::install-merge-and-text || fail
+  sublime::apt::install-merge-and-text || fail
 
   # meld
   apt::install meld || fail
