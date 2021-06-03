@@ -19,12 +19,12 @@ sopkafile::main() {
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
     if [ -n "${DISPLAY:-}" ]; then
-      if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::nothing-deployed; then
+      if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::is-nothing-deployed; then
         list+=(ubuntu::deploy-workstation)
       fi
     fi
 
-    if tools::nothing-deployed; then
+    if tools::is-nothing-deployed; then
       list+=(ubuntu::deploy-minimal-local-vm-server)
       list+=(ubuntu::deploy-my-folder-access)
     fi

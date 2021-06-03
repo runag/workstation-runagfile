@@ -112,7 +112,7 @@ ubuntu::deploy-workstation() {
   # ubuntu::packages::install-copyq || fail
 
   # install rclone
-  tools::install-rclone || fail
+  ubuntu::packages::install-rclone || fail
 
   # whois
   apt::install whois || fail
@@ -261,7 +261,7 @@ backup::vm-home-to-host::create() (
 
   restic backup $quietMaybe --one-file-system . || fail
 
-  tools::once-per-day backup::vm-home-to-host::forget-and-check || fail
+  tools::do-once-per-day backup::vm-home-to-host::forget-and-check || fail
 )
 
 backup::vm-home-to-host::forget-and-check() {

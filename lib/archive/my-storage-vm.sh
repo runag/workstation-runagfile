@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::nothing-deployed; then
+# if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::is-nothing-deployed; then
 #   list+=(my-storage-vm::deploy)
 # fi
 
@@ -56,7 +56,7 @@ my-storage-vm::deploy() {
   apt::install cifs-utils || fail
 
   # install rclone
-  tools::install-rclone || fail
+  ubuntu::packages::install-rclone || fail
 
   # install borg
   apt::install borgbackup || fail
@@ -120,7 +120,7 @@ backup::stan-documents::create() (
 
   borg create $progressMaybe --stats --files-cache=ctime,size --compression zstd "::{utcnow}" distfiles educational-media notes || fail
 
-  tools::once-per-day backup::stan-documents::prune-and-check || fail
+  tools::do-once-per-day backup::stan-documents::prune-and-check || fail
 )
 
 backup::stan-documents::prune-and-check() {
