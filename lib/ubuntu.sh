@@ -101,6 +101,9 @@ ubuntu::deploy-workstation() {
   # bitwarden
   sudo snap install bitwarden || fail
 
+  # GNU Privacy Assistant
+  apt::install gpa || fail
+
   # gparted
   apt::install gparted || fail
 
