@@ -209,7 +209,7 @@ ubuntu::mount-my-folder() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
-  fs::mount-cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
+  mount::cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
 }
 
 backup::vm-home-to-host::load-configuration() {
@@ -226,7 +226,7 @@ backup::vm-home-to-host() {
 }
 
 backup::vm-home-to-host::setup() (
-  fs::sudo-write-file "/etc/sudoers.d/dmidecode" 0440 root <<SHELL || fail
+  file::sudo-write "/etc/sudoers.d/dmidecode" 0440 root <<SHELL || fail
 ${USER} ALL=NOPASSWD: /usr/sbin/dmidecode
 SHELL
 

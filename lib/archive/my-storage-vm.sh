@@ -84,7 +84,7 @@ my-storage-vm::deploy() {
     ssh::install-keys "my borg storage" || fail
 
     # bitwarden-object: "my microsoft account"
-    fs::mount::cifs "//192.168.131.1/users/stan/Documents" "stan-documents" "my microsoft account" || fail
+    mount::cifs "//192.168.131.1/users/stan/Documents" "stan-documents" "my microsoft account" || fail
 
     # bitwarden-object: "stan-documents backup storage", "stan-documents backup passphrase"
     borg::configure-backup-credentials "stan-documents" || fail
