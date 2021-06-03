@@ -68,12 +68,12 @@ ubuntu::desktop::remove-user-dirs() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    fs::remove-dir-if-empty "$HOME/Documents" || fail
-    fs::remove-dir-if-empty "$HOME/Music" || fail
-    fs::remove-dir-if-empty "$HOME/Pictures" || fail
-    fs::remove-dir-if-empty "$HOME/Public" || fail
-    fs::remove-dir-if-empty "$HOME/Templates" || fail
-    fs::remove-dir-if-empty "$HOME/Videos" || fail
+    fs::dir::remove-if-empty "$HOME/Documents" || fail
+    fs::dir::remove-if-empty "$HOME/Music" || fail
+    fs::dir::remove-if-empty "$HOME/Pictures" || fail
+    fs::dir::remove-if-empty "$HOME/Public" || fail
+    fs::dir::remove-if-empty "$HOME/Templates" || fail
+    fs::dir::remove-if-empty "$HOME/Videos" || fail
 
     if [ -f "$HOME/examples.desktop" ]; then
       rm "$HOME/examples.desktop" || fail
