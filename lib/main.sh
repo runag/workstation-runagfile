@@ -46,7 +46,7 @@ sopkafile::main() {
   fi
 
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-    list+=(deploy::merge-workstation-configs)
+    list+=(misc::merge-workstation-configs)
   fi
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
