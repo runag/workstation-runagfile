@@ -14,12 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. "${SOPKAFILE_DIR}/lib/config.sh" || fail
-. "${SOPKAFILE_DIR}/lib/macos.sh" || fail
+. "${SOPKAFILE_DIR}/config.sh" || fail
+
 . "${SOPKAFILE_DIR}/lib/main.sh" || fail
 . "${SOPKAFILE_DIR}/lib/misc.sh" || fail
-. "${SOPKAFILE_DIR}/lib/sublime.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu-desktop.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu.sh" || fail
-. "${SOPKAFILE_DIR}/lib/vscode.sh" || fail
-. "${SOPKAFILE_DIR}/lib/windows.sh" || fail
+
+. "${SOPKAFILE_DIR}/lib/macos/macos.sh" || fail
+. "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu-desktop.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu.sh" || fail
+. "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
+. "${SOPKAFILE_DIR}/lib/windows/windows.sh" || fail
