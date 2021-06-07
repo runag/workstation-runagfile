@@ -120,19 +120,14 @@ Install nvidia driver bacause nouvae can't controll the FAN
 ```sh
 export BW_SESSION="$(bw unlock --raw)"
 
-bw get password "bortus disk key" | tr -d '\n' | (umask 277; sudo tee /etc/bortus.key >/dev/null)
 bw get password "yaphit disk key" | tr -d '\n' | (umask 277; sudo tee /etc/yaphit.key >/dev/null)
 
-echo "bortus UUID=053d8f94-7026-461c-9ca4-3af81c71290e /etc/bortus.key luks,discard" | sudo tee -a /etc/crypttab
 echo "yaphit UUID=6e1c941a-badc-4bd5-849b-e20296cca819 /etc/yaphit.key luks,discard" | sudo tee -a /etc/crypttab
 
-sudo cryptdisks_start bortus
 sudo cryptdisks_start yaphit
 
-mkdir /home/stan/bortus
 mkdir /home/stan/yaphit
 
-echo "/dev/disk/by-uuid/51328ad9-023e-4d5b-8000-259a2fb9a042 /home/stan/bortus auto nosuid,nodev,nofail,x-gvfs-show 0 0" | sudo tee -a /etc/fstab
 echo "/dev/disk/by-uuid/9b900fbd-1435-4582-b3b0-e19f33782bb0 /home/stan/yaphit auto nosuid,nodev,nofail,x-gvfs-show 0 0" | sudo tee -a /etc/fstab
 
 sudo mount -a
