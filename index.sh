@@ -25,3 +25,7 @@
 . "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
 . "${SOPKAFILE_DIR}/lib/windows/windows.sh" || fail
+
+sopkafile::main() {
+  sopkafile::menu || fail
+}
