@@ -28,6 +28,12 @@ sopkafile::main() {
       list+=(ubuntu::deploy-minimal-local-vm-server)
       list+=(ubuntu::deploy-my-folder-access)
     fi
+
+    if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
+      list+=("backup::vm-home-to-host restic::menu")
+      list+=("backup::vm-home-to-host::create")
+      list+=("backup::vm-home-to-host::forget-and-check")
+    fi
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
@@ -37,12 +43,6 @@ sopkafile::main() {
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows::deploy-workstation)
-  fi
-
-  if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-    list+=("backup::vm-home-to-host restic::menu")
-    list+=("backup::vm-home-to-host::create")
-    list+=("backup::vm-home-to-host::forget-and-check")
   fi
 
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
