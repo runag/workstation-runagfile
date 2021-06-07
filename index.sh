@@ -16,7 +16,7 @@
 
 . "${SOPKAFILE_DIR}/config.sh" || fail
 
-. "${SOPKAFILE_DIR}/lib/main.sh" || fail
+. "${SOPKAFILE_DIR}/lib/menu.sh" || fail
 . "${SOPKAFILE_DIR}/lib/misc.sh" || fail
 
 . "${SOPKAFILE_DIR}/lib/macos/macos.sh" || fail
