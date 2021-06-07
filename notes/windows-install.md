@@ -41,16 +41,19 @@ Power
 Plugged in
 Maximum performance
 
-# Manuall install
+# Drivers for my MSI laptop
 
 * MSI Dragon Center
   * In each profile, remove shortcut
 * Audio driver, nahimic
+
+# Manual install
+
 * Battle.net
 * VMware
   * Disable windows firewall for host-only network (VMnet1, check virtual network manager)
 * Ruby using RubyInstaller (that one from choco can't install (compile) some gems, namely sqlite)
-* NVIDIA driver (or leave the system one?)
+* NVIDIA driver
 * NVIDIA RTX Voice
 * Wireguard
 
@@ -72,5 +75,7 @@ Maximum performance
 > https://devblogs.microsoft.com/directx/demystifying-full-screen-optimizations/
 
 * It is ok to have it on a decent machine, do not disable it.
+
+`lib/windows/disable fullscreen optimizations.reg`
 
 ## Microsoft overlays (keep them?)
