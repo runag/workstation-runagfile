@@ -28,7 +28,7 @@ It will do the following:
 
 This script is idempotent. It can be run multiple times to produce a system which is up-to date with the recent software updates and with my configuration changes.
 
-The file ``lib/config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
+The file ``config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
 
 ## Linux
 
@@ -44,13 +44,13 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 
 ## Windows
 
-1. Start PowerShell as administrator, run the following:
+1. Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
 iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex
 ```
 
-2. Start Git Bash, run the following:
+2. At this point, Git Bash should be installed by the first script. Start Git Bash (regularly, as your user), and run the following:
 
 ```sh
 ~/.sopka/bin/sopka
@@ -79,5 +79,5 @@ Record names should be as the following:
 
 ### Please check shell scripts before commiting any changes
 ```sh
-test/run-code-checks.sh
+lint/lint.sh
 ```
