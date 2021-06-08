@@ -21,8 +21,11 @@
 
 . "${SOPKAFILE_DIR}/lib/macos/macos.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
+
+. "${SOPKAFILE_DIR}/lib/ubuntu/backup.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/desktop.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu.sh" || fail
+
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
 . "${SOPKAFILE_DIR}/lib/windows/windows.sh" || fail
 
