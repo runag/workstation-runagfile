@@ -48,18 +48,6 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.bat -o .deploy.bat && .deploy.bat
 ```
 
-<!--
-## my-storage-vm
-
-```sh
-sopka my-storage-vm::deploy
-# reboot
-# copy key to a home directory
-sopka backup::stan-documents borg::import-key
-sopka backup::stan-documents borg::systemd::enable-timer
-```
--->
-
 ## Secret items which are expected to be found in a Bitwarden
 
 Record names should be as the following:

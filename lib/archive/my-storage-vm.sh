@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 # if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::is-nothing-deployed; then
 #   list+=(my-storage-vm::deploy)
 # fi
@@ -22,6 +23,17 @@
 #   list+=("backup::stan-documents borg::menu")
 #   list+=("backup::stan-documents::create")
 # fi
+
+
+# ## my-storage-vm
+
+# ```sh
+# sopka my-storage-vm::deploy
+# # reboot
+# # copy key to a home directory
+# sopka backup::stan-documents borg::import-key
+# sopka backup::stan-documents borg::systemd::enable-timer
+# ```
 
 my-storage-vm::deploy() {
   # set hostname
