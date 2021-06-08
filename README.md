@@ -53,7 +53,7 @@ iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/mai
 2. Start Git Bash, run the following:
 
 ```sh
- .sopka/bin/sopka
+~/.sopka/bin/sopka
 ```
 
 ## Secret items which are expected to be found in a Bitwarden
