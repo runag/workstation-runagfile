@@ -109,5 +109,7 @@ if ($install_developer_tools -eq 0) {
 
 
 # Upgrade choco packages
-choco upgrade all --yes
-if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
+if ("$env:GITHUB_ACTIONS" -ne "true") { # I don't need to update them in CI
+  choco upgrade all --yes
+  if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
+}
