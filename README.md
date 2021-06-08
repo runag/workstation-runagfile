@@ -44,8 +44,16 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 
 ## Windows
 
+1. Start PowerShell as administrator, run the following:
+
 ```sh
-curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.bat -o .deploy.bat && .deploy.bat
+iwr -UseBasicParsing 'https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1' | iex
+```
+
+2. Start Git Bash, run the following:
+
+```sh
+ .sopka/bin/sopka
 ```
 
 ## Secret items which are expected to be found in a Bitwarden
