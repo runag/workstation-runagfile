@@ -4,6 +4,7 @@ $polar_question  = '&Yes', '&No'
 
 $install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
 
+Set-ExecutionPolicy Bypass -Scope Process -Force
 
 # install scoop
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
@@ -18,7 +19,7 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 
 # install chocolatey
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
-  Set-ExecutionPolicy Bypass -Scope Process -Force
+  # Set-ExecutionPolicy Bypass -Scope Process -Force
   [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
