@@ -33,10 +33,10 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   choco feature enable -n allowGlobalConfirmation
   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
-  if ("$env:GITHUB_ACTIONS" -eq "true") {
-    choco feature disable -n=showDownloadProgress
-    if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
-  }
+  # if ("$env:GITHUB_ACTIONS" -eq "true") {
+  #   choco feature disable -n=showDownloadProgress
+  #   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+  # }
 }
 
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
@@ -46,7 +46,7 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 
 # Install and configure git
 if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
-  choco install git --yes
+  choco install git --yes --no-progress
   if ($LASTEXITCODE -ne 0) { throw "Unable to install git" }
 }
 
@@ -92,22 +92,22 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
 # Install choco packages
 if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
   if ("$env:GITHUB_ACTIONS" -ne "true") {
-    choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes
+    choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes --no-progress
     if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
   }
 }
 
 if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes --no-progress
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
 }
 
 if ($install_developer_tools -eq 0) {
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes --no-progress
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
 
 # Upgrade choco packages
-choco upgrade all --yes
+choco upgrade all --yes --no-progress
 if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
