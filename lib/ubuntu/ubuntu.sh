@@ -213,7 +213,7 @@ ubuntu::mount-my-folder() {
 }
 
 backup::vm-home-to-host::load-configuration() {
-  local machineUuid="$(vmware::get-machine-uuid)" || fail
+  local machineUuid; machineUuid="$(vmware::get-machine-uuid)" || fail
 
   export BACKUP_NAME="vm-home-to-host"
   export RESTIC_REPOSITORY="${HOME}/my/storage/vm-home-backups/${machineUuid}"
