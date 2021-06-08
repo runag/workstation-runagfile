@@ -47,7 +47,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 1. Start PowerShell as administrator, run the following:
 
 ```sh
-iwr -UseBasicParsing 'https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1' | iex
+iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex
 ```
 
 2. Start Git Bash, run the following:

@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 # Ask a question
-$polar_question  = '&Yes', '&No'
+$polar_question  = "&Yes", "&No"
 $install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
 
 
@@ -12,7 +12,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 # Install scoop
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
   # Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force
-  Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+  Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://get.scoop.sh")
 }
 
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
@@ -24,7 +24,7 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   # Set-ExecutionPolicy Bypass -Scope Process -Force
   [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
 
   choco feature enable -n allowGlobalConfirmation
   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
