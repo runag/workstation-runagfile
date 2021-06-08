@@ -32,6 +32,11 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 
   choco feature enable -n allowGlobalConfirmation
   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+
+  if ("$env:GITHUB_ACTIONS" -eq "true") {
+    choco feature disable -n=showDownloadProgress
+    if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+  }
 }
 
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
