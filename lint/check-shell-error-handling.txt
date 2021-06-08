@@ -1,24 +1,40 @@
 
-./lib/vscode.sh:
-  52:       cat "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
+./lib/windows/windows.sh:
+  42:     (
+
+./lib/archive/my-storage-vm.sh:
+  94:   (
+
+./lib/macos/macos.sh:
+  164:     (
 
 ./lib/menu.sh:
-  21:     actionList+=(ubuntu::deploy-workstation)
-  22:     actionList+=(ubuntu::configure-workstation)
-  27:     actionList+=(macos::deploy-workstation)
-  28:     actionList+=(macos::configure-workstation)
-  29:     actionList+=(macos::deploy-non-developer-workstation)
-  33:     actionList+=(windows::deploy-workstation)
-  34:     actionList+=(windows::configure-workstation)
-  37:   actionList+=(deploy::merge-workstation-configs)
-  41:       actionList+=(benchmark::run)
-  47:   for i in "${!actionList[@]}"; do
+  23:         list+=(ubuntu::deploy-workstation)
+  28:       list+=(ubuntu::deploy-minimal-local-vm-server)
+  29:       list+=(ubuntu::deploy-my-folder-access)
+  33:       list+=("backup::vm-home-to-host restic::menu")
+  34:       list+=("backup::vm-home-to-host::create")
+  35:       list+=("backup::vm-home-to-host::forget-and-check")
+  40:     list+=(macos::deploy-workstation)
+  41:     list+=(macos::configure-workstation)
+  45:     list+=(windows::deploy-workstation)
+  49:     list+=(misc::merge-workstation-configs)
+  54:       list+=(benchmark::run)
 
-./test/run-code-checks.sh:
-  19: ruby test/check-shell-error-handling.rb $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
-  21: shellcheck $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
+./lib/ubuntu/ubuntu.sh:
+  59:   (
+  163:     (
 
 ./deploy.sh:
-  24:   fail() {
-  29:   git::clone-or-pull() {
-  61: __xVhMyefCbBnZFUQtwqCs || return $?
+  25:   fail() {
+  26:     local i perhapsDelimiter="" startFrom=$((${#BASH_LINENO[@]}-1))
+  27:     for ((i=${startFrom}; i>=1; i--)); do
+  29:         printf "\n" >&2
+  40:   git::install-git() {
+  56:   git::configure() {
+  60:   git::clone-or-pull() {
+  90: __xVhMyefCbBnZFUQtwqCs "$@" || return $?
+
+./lint/lint.sh:
+  19: ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') | tee lint/check-shell-error-handling.txt
+  21: shellcheck $(find . -name '*.sh') -e SC1090 | tee lint/shellcheck.txt

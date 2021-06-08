@@ -1,29 +1,39 @@
 
-In ./lib/ubuntu.sh line 263:
+In ./lib/ubuntu/ubuntu.sh line 237:
+  serviceOptions[NoNewPrivileges]=false
+  ^-----------------------------^ SC2034: serviceOptions appears unused. Verify use (or export if used externally).
+
+
+In ./lib/ubuntu/ubuntu.sh line 243:
+  timerOptions[RandomizedDelaySec]="300"
+  ^-- SC2034: timerOptions appears unused. Verify use (or export if used externally).
+
+
+In ./lib/ubuntu/desktop.sh line 127:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/ubuntu.sh line 267:
+In ./lib/ubuntu/desktop.sh line 131:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/vscode.sh line 52:
-      cat "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" | while IFS="${ifs_value}" read -r extension; do
-          ^-- SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+In ./deploy.sh line 27:
+    for ((i=${startFrom}; i>=1; i--)); do
+            ^----------^ SC2004: $/${} is unnecessary on arithmetic variables.
 
 
-In ./test/run-code-checks.sh line 19:
-ruby test/check-shell-error-handling.rb $(find . -name '*.sh') | tee test/check-shell-error-handling.txt
+In ./lint/lint.sh line 19:
+ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') | tee lint/check-shell-error-handling.txt
                                         ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 
-In ./test/run-code-checks.sh line 21:
-shellcheck $(find . -name '*.sh') -e SC1090 | tee test/shellcheck.txt
+In ./lint/lint.sh line 21:
+shellcheck $(find . -name '*.sh') -e SC1090 | tee lint/shellcheck.txt
            ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 For more information:
+  https://www.shellcheck.net/wiki/SC2034 -- serviceOptions appears unused. Ve...
   https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
   https://www.shellcheck.net/wiki/SC2016 -- Expressions don't expand in singl...
-  https://www.shellcheck.net/wiki/SC2002 -- Useless cat. Consider 'cmd < file...
