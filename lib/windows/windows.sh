@@ -15,6 +15,11 @@
 #  limitations under the License.
 
 windows::deploy-workstation() {
+  # check dependencies
+  tools::command-should-be-available bw
+  tools::command-should-be-available jq
+  tools::command-should-be-available code
+
   # shell aliases
   shellrcd::install || fail
   shellrcd::use-nano-editor || fail
