@@ -36,14 +36,10 @@ jobs:
       shell: powershell -command "& '{0}'"
       run: 'iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex'
 
-    - name: refreshenv
+    - name: Run Bash deploy script
       shell: powershell -command "& '{0}'"
       run: |
         $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
         Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
         refreshenv
-
-    - name: Run Bash deploy script
-      shell: powershell -command "& '{0}'"
-      run: |
         & "C:\Program Files\Git\bin\sh.exe" -c "~/.sopka/bin/sopka windows::deploy-workstation"
