@@ -35,7 +35,7 @@ jobs:
 
     - name: Run PowerShell deploy script
       shell: powershell -command "& '{0}'"
-      run: 'iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex'
+      run: 'iwr -UseBasicParsing -Headers @{"Cache-Control"="no-cache"} "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex'
 
     - name: Run Bash deploy script
       shell: powershell -command "& '{0}'"
