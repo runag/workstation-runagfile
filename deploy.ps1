@@ -1,12 +1,15 @@
 $ErrorActionPreference = "Stop"
 
+# Ask a question
 $polar_question  = '&Yes', '&No'
-
 $install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
 
+
+# Allow untrusted script execution
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
-# install scoop
+
+# Install scoop
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
   # Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force
   Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
@@ -17,88 +20,81 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 }
 
 
-# install chocolatey
+# Install chocolatey
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   # Set-ExecutionPolicy Bypass -Scope Process -Force
   [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
   choco feature enable -n allowGlobalConfirmation
-  if ($LASTEXITCODE -ne 0) {
-    throw "Unable to set chocolatey feature"
-  }
+  if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 }
 
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   throw "Unable to find choco"
 }
 
-# git
-if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
+
+# Install and configure git
+if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
   choco install git --yes
-  if ($LASTEXITCODE -ne 0) {
-    throw "Unable to install git"
-  }
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install git" }
 }
 
-if (-not (Test-Path "C:\Program Files\Git\bin\sh.exe")) {
-    throw "Unable to find git"
+if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
+  throw "Unable to find git"
 }
 
+& "C:\Program Files\Git\bin\git.exe" config --global core.autocrlf input
+if ($LASTEXITCODE -ne 0) { throw "Unable to set git config" }
+
+
+# Configure developer tools
 if ($install_developer_tools -eq 0) {
   # ssh-agent
   Set-Service -Name ssh-agent -StartupType Automatic
   Set-Service -Name ssh-agent -Status Running
-
-  # bitwarden-cli
-  if (-Not (Get-Command "bw" -ErrorAction SilentlyContinue)) {
-    choco install bitwarden-cli --yes
-    if ($LASTEXITCODE -ne 0) {
-      throw "Unable to install bitwarden-cli"
-    }
-  }
-
-  # jq
-  if (-Not (Get-Command "jq" -ErrorAction SilentlyContinue)) {
-    choco install jq --yes
-    if ($LASTEXITCODE -ne 0) {
-      throw "Unable to install jq"
-    }
-  }
-
-  # vscode
-  if (-not (Test-Path "C:\Program Files\Microsoft VS Code\bin\code.cmd")) {
-    choco install vscode --yes
-    if ($LASTEXITCODE -ne 0) {
-      throw "Unable to install vscode"
-    }
-  }
-
-  # check if required tools are all installed
-  if (-not (
-    (Get-Command "bw" -ErrorAction SilentlyContinue) -and
-    (Get-Command "jq" -ErrorAction SilentlyContinue) -and
-    (Test-Path "C:\Program Files\Microsoft VS Code\bin\code.cmd")
-    )) {
-    throw "Unable to find all dependencies"
-  }
 }
 
 
-# run shell script
-$windowsDeployWorkstation = Start-Process "C:\Program Files\Git\bin\sh.exe" "-c 'bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh); exitStatus=`$?; if [ `$exitStatus != 0 ]; then echo Abnormal termination >&2; fi; echo Press ENTER to close the window >&2; read; exit `$exitStatus;'" -Wait -PassThru -Credential "$env:USERNAME"
+# Clone repositories
+function Git-Clone-or-Pull($url, $dest){
+  if (Test-Path -Path "$dest") {
+    & "C:\Program Files\Git\bin\git.exe" -C "$dest" config remote.origin.url "$url"
+    if ($LASTEXITCODE -ne 0) { throw "Unable to change git remote origin url" }
+  
+    & "C:\Program Files\Git\bin\git.exe" -C "$dest" pull
+    if ($LASTEXITCODE -ne 0) { throw "Unable to git pull" }
+  } else {
+    & "C:\Program Files\Git\bin\git.exe" clone "$url" "$dest"
+    if ($LASTEXITCODE -ne 0) { throw "Unable to git pull" }
+  }
+}
 
-if ($windowsDeployWorkstation.ExitCode -ne 0) {
-  throw "Error running windows::deploy-workstation"
+Git-Clone-or-Pull "https://github.com/senotrusov/sopka.git" "$env:USERPROFILE\.sopka"
+Git-Clone-or-Pull "https://github.com/senotrusov/sopkafile.git" "$env:USERPROFILE\.sopkafile"
+
+
+# Install scoop packages
+scoop install restic
+if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
+
+
+# Install choco packages
+if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
+}
+
+choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
+
+if ($install_developer_tools -eq 0) {
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
 
-# install packages
-$installPackagesPath = "$env:USERPROFILE\.sopkafile\lib\windows\install-packages.ps1"
-
-if (-not (Test-Path "$installPackagesPath")) {
-  throw "Unable to find install-packages script"
-}
-
-# TODO: obtain exit status
-& "$installPackagesPath"
+# Upgrade choco packages
+choco upgrade all --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
