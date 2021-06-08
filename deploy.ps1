@@ -24,29 +24,29 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 }
 
 
-# Install chocolatey
+# Install and configure chocolatey
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   # Set-ExecutionPolicy Bypass -Scope Process -Force
   [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
-
-  choco feature enable -n allowGlobalConfirmation
-  if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
-
-  # if ("$env:GITHUB_ACTIONS" -eq "true") {
-  #   choco feature disable -n=showDownloadProgress
-  #   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
-  # }
 }
 
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   throw "Unable to find choco"
 }
 
+choco feature enable -n allowGlobalConfirmation
+if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+
+if ("$env:GITHUB_ACTIONS" -eq "true") {
+  choco feature disable -n showDownloadProgress
+  if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+}
+
 
 # Install and configure git
 if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
-  choco install git --yes --no-progress
+  choco install git --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install git" }
 }
 
@@ -92,22 +92,22 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
 # Install choco packages
 if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
   if ("$env:GITHUB_ACTIONS" -ne "true") {
-    choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes --no-progress
+    choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes
     if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
   }
 }
 
 if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes --no-progress
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
 }
 
 if ($install_developer_tools -eq 0) {
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes --no-progress
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
 
 # Upgrade choco packages
-choco upgrade all --yes --no-progress
+choco upgrade all --yes
 if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
