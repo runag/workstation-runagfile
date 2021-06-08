@@ -1,8 +1,12 @@
 $ErrorActionPreference = "Stop"
 
 # Ask a question
-$polar_question  = "&Yes", "&No"
-$install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
+if ("$env:GITHUB_ACTIONS" -eq "true") {
+  $install_developer_tools = 0
+} else {
+  $polar_question = "&Yes", "&No"
+  $install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
+}
 
 
 # Allow untrusted script execution

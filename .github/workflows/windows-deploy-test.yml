@@ -31,3 +31,6 @@ jobs:
     steps:
     - name: Display env
       run: "dir env:"
+
+    - name: Run deploy script
+      run: "iwr -UseBasicParsing 'https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1' | iex"
