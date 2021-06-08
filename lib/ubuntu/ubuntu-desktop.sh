@@ -21,7 +21,7 @@ ubuntu::desktop::configure() {
   ubuntu::desktop::configure-gnome || fail
 
   # firefox
-  ubuntu::desktop::firefox::configure || fail
+  ubuntu::desktop::configure-firefox || fail
 
   # imwheel
   apt::install imwheel || fail
@@ -139,7 +139,7 @@ ubuntu::desktop::configure-gnome() {
   fi
 }
 
-ubuntu::desktop::firefox::configure() {
+ubuntu::desktop::configure-firefox() {
   firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
   firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
 }
