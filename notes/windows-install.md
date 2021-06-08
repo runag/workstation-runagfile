@@ -76,6 +76,6 @@ Maximum performance
 
 * It is ok to have it on a decent machine, do not disable it.
 
-`lib/windows/disable fullscreen optimizations.reg`
+`lib/windows-workstation/disable fullscreen optimizations.reg`
 
 ## Microsoft overlays (keep them?)
