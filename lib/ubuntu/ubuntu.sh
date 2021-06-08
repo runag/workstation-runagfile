@@ -58,7 +58,7 @@ ubuntu::deploy-my-folder-access() {
   # subshell for unlocked bitwarden
   (
     # mount host folder
-    ubuntu::mount-my-folder || fail
+    ubuntu::setup-my-folder-mount || fail
   ) || fail
 }
 
@@ -166,7 +166,7 @@ ubuntu::deploy-workstation() {
 
       # mount host folder
       if vmware::is-inside-vm; then
-        ubuntu::mount-my-folder || fail
+        ubuntu::setup-my-folder-mount || fail
       fi
     ) || fail
   fi
@@ -205,7 +205,7 @@ ubuntu::workstation::deploy-secrets() {
   sublime::install-license || fail
 }
 
-ubuntu::mount-my-folder() {
+ubuntu::setup-my-folder-mount() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
