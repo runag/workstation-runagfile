@@ -16,9 +16,7 @@
 
 windows::deploy-workstation() {
   # check dependencies
-  tools::command-should-be-available bw || fail
-  tools::command-should-be-available jq || fail
-  tools::command-should-be-available code || fail
+  shell::fail-unless-command-is-found bw jq code || fail
 
   # shell aliases
   shellrcd::install || fail
