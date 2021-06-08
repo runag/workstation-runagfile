@@ -92,8 +92,10 @@ if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
   }
 }
 
-choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
-if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
+if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
+}
 
 if ($install_developer_tools -eq 0) {
   choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
