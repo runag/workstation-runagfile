@@ -37,4 +37,4 @@ jobs:
       run: 'iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex'
 
     - name: Run Bash deploy script
-      run: '"C:\Program Files\Git\bin\sh.exe" -c ".sopka/bin/sopka windows::deploy-workstation"'
+      run: '& "C:\Program Files\Git\bin\sh.exe" -c ".sopka/bin/sopka windows::deploy-workstation"'

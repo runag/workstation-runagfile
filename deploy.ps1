@@ -102,11 +102,22 @@ if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
 }
 
+# TEMP
+choco install bitwarden-cli --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to install bitwarden-cli" }
+
+choco install jq --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to install jq" }
+
+choco install vscode --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to install vscode" }
+
+if ("$env:GITHUB_ACTIONS" -ne "true") { # TEMP
 if ($install_developer_tools -eq 0) {
   choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
-
+}
 
 # Upgrade choco packages
 if ("$env:GITHUB_ACTIONS" -ne "true") { # I don't need to update them in CI
