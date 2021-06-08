@@ -17,7 +17,7 @@
   35:       list+=("backup::vm-home-to-host::forget-and-check")
   40:     list+=(macos::deploy-workstation)
   41:     list+=(macos::configure-workstation)
-  45:     list+=(windows::deploy-workstation)
+  45:     list+=(windows-workstation::deploy)
   49:     list+=(misc::merge-workstation-configs)
   54:       list+=(benchmark::run)
 

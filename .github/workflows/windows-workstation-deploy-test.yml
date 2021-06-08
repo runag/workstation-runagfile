@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: windows::deploy-workstation test
+name: windows-workstation::deploy test
 
 on:
   push:
@@ -42,4 +42,4 @@ jobs:
         $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
         Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
         refreshenv
-        & "C:\Program Files\Git\bin\sh.exe" -c "~/.sopka/bin/sopka windows::deploy-workstation"
+        & "C:\Program Files\Git\bin\sh.exe" -c "~/.sopka/bin/sopka windows-workstation::deploy"

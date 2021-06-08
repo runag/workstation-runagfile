@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-windows::deploy-workstation() {
+windows-workstation::deploy() {
   # check dependencies
   shell::fail-unless-command-is-found bw jq code || fail
 

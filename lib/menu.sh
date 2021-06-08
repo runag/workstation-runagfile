@@ -42,7 +42,7 @@ sopkafile::menu() {
   fi
 
   if [[ "$OSTYPE" =~ ^msys ]]; then
-    list+=(windows::deploy-workstation)
+    list+=(windows-workstation::deploy)
   fi
 
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
