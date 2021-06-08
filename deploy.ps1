@@ -5,7 +5,7 @@ if ("$env:GITHUB_ACTIONS" -eq "true") {
   $install_developer_tools = 0
 } else {
   $polar_question = "&Yes", "&No"
-  $install_developer_tools = $Host.UI.PromptForChoice("Install developer tools?", "", $polar_question, 0)
+  $install_developer_tools = $Host.UI.PromptForChoice("Would you like to install developer tools?", "", $polar_question, 0)
 }
 
 
