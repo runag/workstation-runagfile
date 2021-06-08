@@ -54,5 +54,4 @@ windows::deploy-workstation() {
   fi
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
-  fail "test"
 }
