@@ -29,9 +29,6 @@ jobs:
         os: [windows-latest]
 
     steps:
-    - name: Display env
-      run: "dir env:"
-
     - name: Wait for possible 2nd repository updates
       run: Start-Sleep -s 30
 
