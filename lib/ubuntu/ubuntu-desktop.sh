@@ -34,7 +34,7 @@ ubuntu::desktop::configure() {
   fi
 
   # enable wayland for firefox
-  ubuntu::desktop::moz-enable-wayland || fail
+  firefox::enable-wayland || fail
 
   # remove user dirs
   ubuntu::desktop::remove-user-dirs || fail
@@ -140,6 +140,6 @@ ubuntu::desktop::configure-gnome() {
 }
 
 ubuntu::desktop::firefox::configure() {
-  ubuntu::desktop::firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
-  ubuntu::desktop::firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
+  firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
+  firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
 }
