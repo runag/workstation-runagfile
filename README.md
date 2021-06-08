@@ -50,7 +50,7 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopkafile/main/dep
 iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex
 ```
 
-2. At this point, Git Bash should be installed by the first script. Start Git Bash (regularly, as your user), and run the following:
+2. At this point, Git Bash should be installed by the first script. Start Git Bash (as your regular user) and run the following:
 
 ```sh
 ~/.sopka/bin/sopka
