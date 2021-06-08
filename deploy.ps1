@@ -1,7 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-Get-Host | Select-Object Version
-
 # Ask a question
 if ("$env:GITHUB_ACTIONS" -eq "true") {
   $install_developer_tools = 0
