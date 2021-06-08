@@ -82,12 +82,12 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
 
 
 # Install choco packages
-if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever in CI
+# if ("$env:GITHUB_ACTIONS" -ne "true") { # gpg4win hangs forever in CI
   if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
     choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes
     if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
   }
-}
+# }
 
 if ($install_developer_tools -eq 0) {
   choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
