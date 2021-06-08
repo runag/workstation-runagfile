@@ -15,33 +15,32 @@
 #  limitations under the License.
 
 ubuntu::desktop::configure() {
+  # install dconf-editor
   apt::install dconf-editor || fail
 
   # configure gnome desktop
   ubuntu::desktop::configure-gnome || fail
 
-  # firefox
+  # configure firefox
   ubuntu::desktop::configure-firefox || fail
   firefox::enable-wayland || fail
 
-  # imwheel
+  # install and configure imwheel
   apt::install imwheel || fail
   ubuntu::desktop::setup-imwhell || fail
+
+  # install vitals gnome shell extension
+  if [ -n "${DISPLAY:-}" ] && ! vmware::is-inside-vm; then
+    ubuntu::desktop::install-vitals || fail
+  fi
 
   # remove user dirs
   ubuntu::desktop::remove-user-dirs || fail
 
   # hide folders
-  ubuntu::desktop::hide-folder "Desktop" || fail
-  ubuntu::desktop::hide-folder "snap" || fail
-  ubuntu::desktop::hide-folder "VirtualBox VMs" || fail
+  ubuntu::desktop::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
 
-  # vitals gnome shell extension
-  if [ -n "${DISPLAY:-}" ] && ! vmware::is-inside-vm; then
-    ubuntu::desktop::install-vitals || fail
-  fi
-
-  # fixes for nvidia
+  # apply fixes for nvidia
   if nvidia::is-card-present; then
     nvidia::fix-screen-tearing || fail
     nvidia::fix-gpu-background-image-glitch || fail
