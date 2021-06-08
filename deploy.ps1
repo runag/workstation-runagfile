@@ -100,22 +100,22 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
 # Install choco packages
 if ("$env:GITHUB_ACTIONS" -eq "true") {
   # gpg4win hangs forever in CI
-  ( Get-Content "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" |
+  ( Get-Content "$env:USERPROFILE\.sopkafile\lib\windows-workstation\packages\bare-metal-desktop.config" |
     Select-String -Pattern '"gpg4win"' -NotMatch ) |
-  Set-Content "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config"
+  Set-Content "$env:USERPROFILE\.sopkafile\lib\windows-workstation\packages\bare-metal-desktop.config"
 }
 
 if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\bare-metal-desktop.config" --yes
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows-workstation\packages\bare-metal-desktop.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
 }
 
 if ($install_developer_tools -eq 0) {
-  choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\developer-tools.config" --yes
+  choco install "$env:USERPROFILE\.sopkafile\lib\windows-workstation\packages\developer-tools.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
-choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
+choco install "$env:USERPROFILE\.sopkafile\lib\windows-workstation\packages\basic-utilities.config" --yes
 if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
 
 
