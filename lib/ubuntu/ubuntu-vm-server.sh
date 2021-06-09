@@ -44,7 +44,7 @@ ubuntu-vm-server::deploy-my-folder-access() {
   shellrcd::install || fail
 
   # install nodejs
-  nodejs::ubuntu::install || fail
+  apt::install-nodejs || fail
 
   # install bitwarden
   bitwarden::install-cli || fail

@@ -149,7 +149,7 @@ macos::configure-workstation() {
   rbenv rehash || fail
 
   # nodejs
-  shellrcd::nodenv || fail
+  nodejs::install-nodenv-shellrc || fail
   nodenv rehash || fail
 
   # vscode

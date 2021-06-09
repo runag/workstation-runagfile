@@ -54,8 +54,9 @@ my-storage-vm::deploy() {
   shellrcd::use-nano-editor || fail
   shellrcd::sopka-path || fail
 
-  # install nodejs
-  nodejs::ubuntu::install || fail
+  # install and update nodejs
+  apt::install-nodejs || fail
+  nodejs::update-globally-installed-packages || fail
 
   # install bitwarden cli
   bitwarden::install-cli || fail

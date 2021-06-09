@@ -24,6 +24,9 @@ ubuntu-workstation::deploy() {
   # deploy minimal application server
   ubuntu::deploy-minimal-application-server || fail
 
+  # update nodejs packages
+  nodejs::update-globally-installed-packages || fail
+
   # increase inotify limits
   linux::set-inotify-max-user-watches || fail
 
