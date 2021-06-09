@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-misc::merge-workstation-configs() {
+workstation::merge-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
 }
