@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-macos::deploy-workstation() {
+macos-workstation::deploy() {
   macos::install-basic-packages || fail
   macos::install-developer-packages || fail
   macos::configure-workstation || fail

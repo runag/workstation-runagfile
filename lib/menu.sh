@@ -37,7 +37,7 @@ sopkafile::menu() {
   fi
 
   if [[ "$OSTYPE" =~ ^darwin ]]; then
-    list+=(macos::deploy-workstation)
+    list+=(macos-workstation::deploy)
     list+=(macos::configure-workstation)
   fi
 

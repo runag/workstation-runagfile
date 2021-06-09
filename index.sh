@@ -19,7 +19,7 @@
 . "${SOPKAFILE_DIR}/lib/menu.sh" || fail
 . "${SOPKAFILE_DIR}/lib/misc.sh" || fail
 
-. "${SOPKAFILE_DIR}/lib/macos/macos.sh" || fail
+. "${SOPKAFILE_DIR}/lib/macos/macos-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
 
 . "${SOPKAFILE_DIR}/lib/ubuntu/backup.sh" || fail
@@ -27,7 +27,7 @@
 . "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu.sh" || fail
 
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
-. "${SOPKAFILE_DIR}/lib/windows-workstation/deploy.sh" || fail
+. "${SOPKAFILE_DIR}/lib/windows/windows-workstation.sh" || fail
 
 sopkafile::main() {
   sopkafile::menu || fail

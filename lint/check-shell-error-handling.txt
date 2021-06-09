@@ -1,11 +1,11 @@
 
-./lib/windows/windows.sh:
-  42:     (
+./lib/windows/windows-workstation.sh:
+  40:     (
 
 ./lib/archive/my-storage-vm.sh:
   94:   (
 
-./lib/macos/macos.sh:
+./lib/macos/macos-workstation.sh:
   164:     (
 
 ./lib/menu.sh:
@@ -15,7 +15,7 @@
   33:       list+=("backup::vm-home-to-host restic::menu")
   34:       list+=("backup::vm-home-to-host::create")
   35:       list+=("backup::vm-home-to-host::forget-and-check")
-  40:     list+=(macos::deploy-workstation)
+  40:     list+=(macos-workstation::deploy)
   41:     list+=(macos::configure-workstation)
   45:     list+=(windows-workstation::deploy)
   49:     list+=(misc::merge-workstation-configs)
