@@ -95,8 +95,8 @@ ubuntu-workstation::deploy() {
   ubuntu-workstation::configure-desktop || fail
 
   # configure git
-  git::configure || fail
   git::configure-user || fail
+  git config --global core.autocrlf input || fail
 
   # install sublime configuration
   sublime::install-config || fail

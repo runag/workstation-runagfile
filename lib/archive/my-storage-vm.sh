@@ -84,8 +84,8 @@ my-storage-vm::deploy() {
   apt::autoremove || fail
 
   # configure git
-  git::configure || fail
   git::configure-user || fail
+  git config --global core.autocrlf input || fail
 
   # import ssh key
   ssh-import-id gh:senotrusov || fail

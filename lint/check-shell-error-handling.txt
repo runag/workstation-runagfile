@@ -16,7 +16,7 @@
   54:       list+=(benchmark::run)
 
 ./lib/archive/my-storage-vm.sh:
-  94:   (
+  98:   (
 
 ./lib/macos/macos-workstation.sh:
   164:     (
@@ -33,9 +33,8 @@
   27:     for ((i=${startFrom}; i>=1; i--)); do
   29:         printf "\n" >&2
   40:   git::install-git() {
-  56:   git::configure() {
-  60:   git::clone-or-pull() {
-  90: __xVhMyefCbBnZFUQtwqCs "$@" || return $?
+  56:   git::clone-or-pull() {
+  85: __xVhMyefCbBnZFUQtwqCs "$@" || return $?
 
 ./lint/lint.sh:
   19: ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') | tee lint/check-shell-error-handling.txt
