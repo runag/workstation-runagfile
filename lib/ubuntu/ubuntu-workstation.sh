@@ -28,7 +28,7 @@ ubuntu-workstation::deploy() {
   nodejs::update-globally-installed-packages || fail
 
   # increase inotify limits
-  linux::set-inotify-max-user-watches || fail
+  linux::configure-inotify || fail
 
   # gnome-keyring and libsecret (for git and ssh)
   ubuntu::packages::install-gnome-keyring-and-libsecret || fail
@@ -150,8 +150,8 @@ ubuntu-workstation::deploy-secrets() {
 
   # git access token
   # bitwarden-object: "my github personal access token"
-  git::add-credential-to-keyring "my" || fail
-  git::configure-libsecret-credential-helper || fail
+  git::add-credentials-to-keyring "my" || fail
+  git::use-libsecret-credential-helper || fail
 
   # rubygems
   # bitwarden-object: "my rubygems credentials"
@@ -201,7 +201,7 @@ ubuntu-workstation::configure-desktop() {
 # use dconf-editor to find key/value pairs
 #
 # Don't use dbus-launch here because it will introduce
-# side-effect to git::add-credential-to-keyring and ssh::ubuntu::add-key-password-to-keyring
+# side-effect to git::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
 #
 ubuntu-workstation::configure-gnome() {
   # Enable fractional scaling
@@ -261,8 +261,8 @@ ubuntu-workstation::configure-gnome() {
 }
 
 ubuntu-workstation::configure-firefox() {
-  firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
-  firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
+  firefox::set-pref "mousewheel.default.delta_multiplier_x" 200 || fail
+  firefox::set-pref "mousewheel.default.delta_multiplier_y" 200 || fail
 }
 
 ubuntu-workstation::remove-user-dirs() {
