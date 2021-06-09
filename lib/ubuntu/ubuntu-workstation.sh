@@ -147,7 +147,8 @@ ubuntu-workstation::deploy-secrets() {
 
   # git access token
   # bitwarden-object: "my github personal access token"
-  git::ubuntu::add-credentials-to-keyring "my" || fail
+  git::add-credential-to-keyring "my" || fail
+  git::configure-libsecret-credential-helper || fail
 
   # rubygems
   # bitwarden-object: "my rubygems credentials"
@@ -197,7 +198,7 @@ ubuntu-workstation::configure-desktop() {
 # use dconf-editor to find key/value pairs
 #
 # Don't use dbus-launch here because it will introduce
-# side-effect to git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
+# side-effect to git::add-credential-to-keyring and ssh::ubuntu::add-key-password-to-keyring
 #
 ubuntu-workstation::configure-gnome() {
   # Enable fractional scaling
