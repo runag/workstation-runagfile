@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2020 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,55 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu::deploy-minimal-local-vm-server() {
-  # perform apt update and upgrade
-  apt::lazy-update-and-dist-upgrade || fail
-
-  # install open-vm-tools
-  if vmware::is-inside-vm; then
-    apt::install open-vm-tools || fail
-  fi
-
-  # deploy sshd
-  ubuntu::deploy-sshd || fail
-
-  # perform cleanup
-  apt::autoremove || fail
-}
-
-ubuntu::deploy-sshd() {
-  # install and configure sshd
-  sshd::ubuntu::install-and-configure || fail
-
-  # import ssh key
-  ssh-import-id gh:senotrusov || fail
-}
-
-ubuntu::deploy-my-folder-access() {
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
-
-  # shellrcd
-  shellrcd::install || fail
-
-  # install nodejs
-  nodejs::ubuntu::install || fail
-
-  # install bitwarden
-  bitwarden::install-cli || fail
-
-  # the following commands use bitwarden, that requires password entry
-  # subshell for unlocked bitwarden
-  (
-    # mount host folder
-    ubuntu::setup-my-folder-mount || fail
-  ) || fail
-}
-
-ubuntu::deploy-workstation() {
+ubuntu-workstation::deploy() {
   # disable screen lock
   ubuntu::desktop::disable-screen-lock || fail
 
@@ -162,11 +114,11 @@ ubuntu::deploy-workstation() {
     # subshell for unlocked bitwarden
     (
       # secrets
-      ubuntu::workstation::deploy-secrets || fail
+      ubuntu-workstation::deploy-secrets || fail
 
       # mount host folder
       if vmware::is-inside-vm; then
-        ubuntu::setup-my-folder-mount || fail
+        ubuntu-workstation::setup-my-folder-mount || fail
       fi
     ) || fail
   fi
@@ -185,7 +137,7 @@ ubuntu::deploy-workstation() {
   tools::perhaps-display-deploy-footnotes || fail
 }
 
-ubuntu::workstation::deploy-secrets() {
+ubuntu-workstation::deploy-secrets() {
   # install ssh key, configure ssh to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
   ssh::install-keys "my" || fail
@@ -205,7 +157,7 @@ ubuntu::workstation::deploy-secrets() {
   sublime::install-license || fail
 }
 
-ubuntu::setup-my-folder-mount() {
+ubuntu-workstation::setup-my-folder-mount() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"

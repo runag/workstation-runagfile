@@ -20,13 +20,13 @@ sopkafile::menu() {
   if [[ "$OSTYPE" =~ ^linux ]]; then
     if [ -n "${DISPLAY:-}" ]; then
       if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::is-nothing-deployed; then
-        list+=(ubuntu::deploy-workstation)
+        list+=(ubuntu-workstation::deploy)
       fi
     fi
 
     if tools::is-nothing-deployed; then
-      list+=(ubuntu::deploy-minimal-local-vm-server)
-      list+=(ubuntu::deploy-my-folder-access)
+      list+=(ubuntu-vm-server::deploy)
+      list+=(ubuntu-vm-server::deploy-my-folder-access)
     fi
 
     if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
