@@ -60,7 +60,7 @@ if ("$env:GITHUB_ACTIONS" -eq "true") {
 }
 
 
-# Install and configure git
+# Install git
 if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
   choco install git --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install git" }
@@ -69,9 +69,6 @@ if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
 if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
   throw "Unable to find git"
 }
-
-& "C:\Program Files\Git\bin\git.exe" config --global core.autocrlf input
-if ($LASTEXITCODE -ne 0) { throw "Unable to set git config" }
 
 
 # Clone repositories
