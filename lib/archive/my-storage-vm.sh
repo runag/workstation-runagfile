@@ -50,9 +50,9 @@ my-storage-vm::deploy() {
   ubuntu::packages::install-basic-tools || fail
 
   # install shellrcd
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-path || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-sopka-path-shellrc || fail
 
   # install and update nodejs
   apt::install-nodejs || fail

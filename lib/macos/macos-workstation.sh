@@ -137,10 +137,11 @@ macos::configure-workstation() {
   macos::hide-folders || fail
 
   # shell aliases
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-path || fail
-  shellrcd::hook-direnv || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-shellrc-directory-loader "${HOME}/.zshrc" || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-direnv-loader-shellrc || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
 
   # ruby

@@ -41,7 +41,7 @@ ubuntu-vm-server::deploy-my-folder-access() {
   apt::install cifs-utils || fail
 
   # shellrcd
-  shellrcd::install || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
 
   # install nodejs
   apt::install-nodejs || fail

@@ -34,8 +34,8 @@ ubuntu-workstation::deploy() {
   ubuntu::packages::install-gnome-keyring-and-libsecret || fail
 
   # shellrcd
-  shellrcd::install || fail
-  shellrcd::sopka-path || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-sopka-path-shellrc || fail
 
   # bitwarden cli
   bitwarden::shellrcd::set-bitwarden-login || fail

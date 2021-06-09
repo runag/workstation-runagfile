@@ -19,9 +19,9 @@ windows-workstation::deploy() {
   shell::fail-unless-command-is-found bw jq code || fail
 
   # shell aliases
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-path || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-sopka-path-shellrc || fail
   bitwarden::shellrcd::set-bitwarden-login || fail
 
   # git
