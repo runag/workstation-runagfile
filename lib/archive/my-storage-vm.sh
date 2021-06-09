@@ -14,6 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# "my borg storage ssh private key"
+# "my borg storage ssh public key"
+# "stan-documents backup passphrase"
+# "stan-documents backup storage"
 
 # if [ -f "${HOME}/.sopka.my-storage-vm.deployed" ] || tools::is-nothing-deployed; then
 #   list+=(my-storage-vm::deploy)
