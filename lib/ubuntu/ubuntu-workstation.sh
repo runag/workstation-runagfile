@@ -38,7 +38,7 @@ ubuntu-workstation::deploy() {
   shell::install-sopka-path-shellrc || fail
 
   # bitwarden cli
-  bitwarden::shellrcd::set-bitwarden-login || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
   bitwarden::install-cli || fail
 
   # vscode

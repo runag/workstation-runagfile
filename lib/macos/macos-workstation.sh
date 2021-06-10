@@ -142,11 +142,11 @@ macos::configure-workstation() {
   shell::install-nano-editor-shellrc || fail
   shell::install-sopka-path-shellrc || fail
   shell::install-direnv-loader-shellrc || fail
-  bitwarden::shellrcd::set-bitwarden-login || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
 
   # ruby
   ruby::configure-gemrc || fail
-  shellrcd::rbenv || fail
+  ruby::install-rbenv-shellrc || fail
   rbenv rehash || fail
 
   # nodejs
