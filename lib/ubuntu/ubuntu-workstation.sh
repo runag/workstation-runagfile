@@ -149,7 +149,7 @@ ubuntu-workstation::deploy-secrets() {
   ssh::install-keys "my" || fail
 
   # bitwarden-object: "my password for ssh private key"
-  ssh::ubuntu::add-key-password-to-keyring "my" || fail
+  ssh::add-key-password-to-gnome-keyring "my" || fail
 
   # git access token
   # bitwarden-object: "my github personal access token"
@@ -204,7 +204,7 @@ ubuntu-workstation::configure-desktop() {
 # use dconf-editor to find key/value pairs
 #
 # Don't use dbus-launch here because it will introduce
-# side-effect to git::add-credentials-to-gnome-keyring and ssh::ubuntu::add-key-password-to-keyring
+# side-effect to git::add-credentials-to-gnome-keyring and ssh::add-key-password-to-gnome-keyring
 #
 ubuntu-workstation::configure-gnome() {
   # Enable fractional scaling

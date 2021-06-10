@@ -167,9 +167,9 @@ macos::configure-workstation() {
       # add ssh key, configure ssh to use it
       # bitwarden-object: "my ssh private key", "my ssh public key"
       ssh::install-keys "my" || fail
-      ssh::macos::add-use-keychain-to-config || fail
+      ssh::add-use-macos-keychain-to-config || fail
       # bitwarden-object: "my password for ssh private key"
-      ssh::macos::add-key-password-to-keychain "my" || fail
+      ssh::add-key-password-to-macos-keychain "my" || fail
 
       # rubygems
       # bitwarden-object: "my rubygems credentials"
