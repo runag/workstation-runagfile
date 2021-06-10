@@ -151,6 +151,7 @@ macos::configure-workstation() {
 
   # nodejs
   nodejs::install-nodenv-shellrc || fail
+  nodejs::configure-mismatched-binaries-workaround || fail
   nodejs::load-nodenv || fail
 
   # vscode
