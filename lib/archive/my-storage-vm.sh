@@ -55,7 +55,7 @@ my-storage-vm::deploy() {
   shell::install-sopka-path-shellrc || fail
 
   # install and update nodejs
-  apt::install-nodejs || fail
+  nodejs::apt::install || fail
   nodejs::update-globally-installed-packages || fail
 
   # install bitwarden cli

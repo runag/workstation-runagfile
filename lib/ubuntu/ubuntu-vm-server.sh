@@ -44,7 +44,7 @@ ubuntu-vm-server::deploy-my-folder-access() {
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
 
   # install nodejs
-  apt::install-nodejs || fail
+  nodejs::apt::install || fail
 
   # install bitwarden
   bitwarden::install-cli || fail
