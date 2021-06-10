@@ -151,7 +151,7 @@ macos::configure-workstation() {
 
   # nodejs
   nodejs::install-nodenv-shellrc || fail
-  nodenv rehash || fail
+  nodejs::load-nodenv || fail
 
   # vscode
   vscode::install-config || fail
