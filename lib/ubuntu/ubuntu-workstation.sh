@@ -16,7 +16,7 @@
 
 ubuntu-workstation::deploy() {
   # disable screen lock
-  ubuntu::desktop::disable-screen-lock || fail
+  gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # update and upgrade
   apt::lazy-update-and-dist-upgrade || fail
@@ -206,62 +206,55 @@ ubuntu-workstation::configure-desktop() {
 # Don't use dbus-launch here because it will introduce
 # side-effect to git::add-credentials-to-gnome-keyring and ssh::add-key-password-to-gnome-keyring
 #
-ubuntu-workstation::configure-gnome() {
-  # Enable fractional scaling
-  # ubuntu::desktop::enable-fractional-scaling || fail
-
-
-  # Automatic timezone
-  gsettings::perhaps-set org.gnome.desktop.datetime automatic-timezone true || fail
-
+ubuntu-workstation::configure-gnome() (
+  gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
+  gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
 
   # Terminal
-  gsettings::perhaps-set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-
-  if gsettings get org.gnome.Terminal.ProfilesList default >/dev/null; then
-    local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-    local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
-
-    gsettings::perhaps-set "$profilePath" exit-action 'hold' || fail
-    gsettings::perhaps-set "$profilePath" login-shell true || fail
+  local profileId profilePath
+  if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
+    local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
+    gnome-set "${profilePath}" exit-action 'hold' || fail
+    gnome-set "${profilePath}" login-shell true || fail
   fi
-
-
-  # Nautilus
-  gsettings::perhaps-set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
-  gsettings::perhaps-set org.gnome.nautilus.list-view use-tree-view true || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences show-delete-permanently true || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences show-hidden-files true || fail
-
+  gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
 
   # Desktop
-  gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-trash false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-home false || fail
-
+  gnome-set shell.extensions.desktop-icons show-trash false || fail
+  gnome-set shell.extensions.desktop-icons show-home false || fail
 
   # Dash
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
+  gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
+  gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
+  gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
+  gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
+  gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
+  gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
+  # Nautilus
+  gnome-set nautilus.list-view default-zoom-level 'small' || fail
+  gnome-set nautilus.list-view use-tree-view true || fail
+  gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
+  gnome-set nautilus.preferences show-delete-permanently true || fail
+  gnome-set nautilus.preferences show-hidden-files true || fail
 
-  # Disable sound alerts
-  gsettings::perhaps-set org.gnome.desktop.sound event-sounds false || fail
-
-
-  # 1600 DPI mouse
-  gsettings::perhaps-set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
-
+  # Automatic timezone
+  gnome-set desktop.datetime automatic-timezone true || fail
 
   # Input sources
   # on mac host: ('xkb', 'ru+mac')
-  gsettings::perhaps-set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
-}
+  gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
+
+  # Disable sound alerts
+  gnome-set desktop.sound event-sounds false || fail
+
+  # Enable fractional scaling
+  # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
+
+  # 1600 DPI mouse
+  gnome-set desktop.peripherals.mouse speed -0.75 || fail
+)
 
 ubuntu-workstation::configure-firefox() {
   firefox::set-pref "mousewheel.default.delta_multiplier_x" 200 || fail
