@@ -27,6 +27,9 @@ ubuntu-workstation::deploy() {
   # update nodejs packages
   nodejs::update-globally-installed-packages || fail
 
+  # update ruby packages
+  ruby::update-globally-installed-gems || fail
+
   # increase inotify limits
   linux::configure-inotify || fail
 

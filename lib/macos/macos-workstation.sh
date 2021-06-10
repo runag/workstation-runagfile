@@ -145,9 +145,9 @@ macos::configure-workstation() {
   bitwarden::install-bitwarden-login-shellrc || fail
 
   # ruby
-  ruby::configure-gemrc || fail
+  ruby::dangerously-append-nodocument-to-gemrc || fail
   ruby::install-rbenv-shellrc || fail
-  rbenv rehash || fail
+  ruby::load-rbenv || fail
 
   # nodejs
   nodejs::install-nodenv-shellrc || fail
