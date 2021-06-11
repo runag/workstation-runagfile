@@ -34,7 +34,8 @@ ubuntu-workstation::deploy() {
   linux::configure-inotify || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  ubuntu::packages::install-gnome-keyring-and-libsecret || fail
+  packages::install-gnome-keyring-and-libsecret || fail
+  git::install-libsecret-credential-helper || fail
 
   # shellrcd
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
@@ -66,7 +67,7 @@ ubuntu-workstation::deploy() {
   apt::install gparted || fail
 
   # install rclone
-  ubuntu::packages::install-rclone || fail
+  packages::install-rclone || fail
 
   # whois
   apt::install whois || fail
