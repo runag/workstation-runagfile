@@ -179,12 +179,12 @@ ubuntu-workstation::configure-desktop() {
 
   # install and configure imwheel
   apt::install imwheel || fail
-  ubuntu::desktop::setup-imwhell || fail
+  ubuntu-workstation::configure-imwhell || fail
 
   # install vitals gnome shell extension
   if ! vmware::is-inside-vm; then
     if [ -n "${DISPLAY:-}" ]; then
-      ubuntu::desktop::install-vitals || fail
+      ubuntu-workstation::install-vitals || fail
     fi
   fi
 
@@ -192,7 +192,7 @@ ubuntu-workstation::configure-desktop() {
   ubuntu-workstation::remove-user-dirs || fail
 
   # hide folders
-  ubuntu::desktop::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
+  ubuntu-workstation::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
 
   # apply fixes for nvidia
   if nvidia::is-card-present; then
@@ -300,4 +300,59 @@ ubuntu-workstation::setup-my-folder-mount() {
 
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
+}
+
+ubuntu-workstation::hide-folder() {
+  local folder
+  for folder in "$@"; do
+    file::append-line-unless-present "${folder}" "${HOME}/.hidden" || fail
+  done
+}
+
+ubuntu-workstation::configure-imwhell() {
+  local repetitions="2"
+  local outputFile="${HOME}/.imwheelrc"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+".*"
+None,      Up,   Button4, ${repetitions}
+None,      Down, Button5, ${repetitions}
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+SHELL
+
+  if [ ! -d "${HOME}/.config/autostart" ]; then
+    mkdir -p "${HOME}/.config/autostart" || fail
+  fi
+
+  local outputFile="${HOME}/.config/autostart/imwheel.desktop"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/imwheel
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;XFCE;
+Name[en_US]=IMWheel
+Name=IMWheel
+Comment[en_US]=Custom scroll speed
+Comment=Custom scroll speed
+SHELL
+
+  /usr/bin/imwheel --kill
+}
+
+ubuntu-workstation::install-vitals() {
+  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
+  local extensionUuid="Vitals@CoreCoding.com"
+
+  apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
+
+  mkdir -p "${extensionsDir}" || fail
+
+  git::clone-or-pull "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
+
+  gnome-extensions enable "${extensionUuid}" || fail
 }
