@@ -65,10 +65,6 @@ ubuntu-workstation::deploy() {
   # gparted
   apt::install gparted || fail
 
-  # copyq
-  # TODO: Check later
-  # ubuntu::packages::install-copyq || fail
-
   # install rclone
   ubuntu::packages::install-rclone || fail
 
@@ -88,7 +84,8 @@ ubuntu-workstation::deploy() {
 
   # software for bare metal workstation
   if linux::is-bare-metal; then
-    ubuntu::packages::install-obs-studio || fail
+    ubuntu-workstation::install-obs-studio || fail
+    ubuntu-workstation::install-copyq || fail
 
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
@@ -355,4 +352,16 @@ ubuntu-workstation::install-vitals() {
   git::clone-or-pull "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
 
   gnome-extensions enable "${extensionUuid}" || fail
+}
+
+ubuntu-workstation::install-obs-studio() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+  apt::update || fail
+  apt::install obs-studio guvcview || fail
+}
+
+ubuntu-workstation::install-copyq() {
+  sudo add-apt-repository --yes ppa:hluk/copyq || fail
+  apt::update || fail
+  apt::install copyq || fail
 }
