@@ -21,25 +21,42 @@ ubuntu-workstation::deploy() {
   # update and upgrade
   apt::lazy-update-and-dist-upgrade || fail
 
-  # deploy minimal application server
-  ubuntu::deploy-minimal-application-server || fail
+  # install tools to use by the rest of the script
+  apt::install-tools || fail
 
-  # update nodejs packages
-  nodejs::update-globally-installed-packages || fail
+  # install basic tools
+  ubuntu-workstation::install-basic-tools || fail
+
+  # devtools
+  ubuntu-workstation::install-developer-tools || fail
+
+  # install rbenv, configure ruby
+  ruby::apt::install || fail
+  ruby::install-and-load-rbenv || fail
+  ruby::dangerously-append-nodocument-to-gemrc || fail
 
   # update ruby packages
   ruby::update-globally-installed-gems || fail
+
+  # install nodejs
+  nodejs::apt::install || fail
+  nodejs::install-and-load-nodenv || fail
+
+  # update nodejs packages
+  nodejs::update-globally-installed-packages || fail
 
   # increase inotify limits
   linux::configure-inotify || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  packages::install-gnome-keyring-and-libsecret || fail
+  apt::install-gnome-keyring-and-libsecret || fail
   git::install-libsecret-credential-helper || fail
 
   # shellrcd
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
   shell::install-sopka-path-shellrc || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-direnv-loader-shellrc || fail
 
   # bitwarden cli
   bitwarden::install-bitwarden-login-shellrc || fail
@@ -372,4 +389,55 @@ ubuntu-workstation::install-rclone() {
     curl --fail --silent --show-error https://rclone.org/install.sh | sudo bash
     test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to install rclone"
   fi
+}
+
+ubuntu-workstation::install-basic-tools() {
+  apt::install \
+    htop \
+    mc \
+    ncdu \
+    p7zip-full \
+    tmux \
+      || fail
+}
+
+ubuntu-workstation::install-developer-tools() {
+  apt::install \
+    apache2-utils \
+    autoconf \
+    awscli \
+    bison \
+    build-essential \
+    cloud-guest-utils \
+    ffmpeg \
+    ghostscript \
+    graphviz \
+    imagemagick \
+    inotify-tools \
+    letsencrypt \
+    libffi-dev \
+    libgdbm-dev \
+    libgs-dev \
+    libncurses-dev \
+    libpq-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libyaml-dev \
+    memcached \
+    nginx \
+    postgresql \
+    postgresql-contrib \
+    python-is-python3 \
+    python3 \
+    python3-pip \
+    python3-psycopg2 \
+    redis-server \
+    shellcheck \
+    sqlite3 \
+    zlib1g-dev \
+    zsh \
+      || fail
 }
