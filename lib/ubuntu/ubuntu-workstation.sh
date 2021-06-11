@@ -279,12 +279,13 @@ ubuntu-workstation::remove-user-dirs() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    dir::remove-if-empty "$HOME/Documents" || fail
-    dir::remove-if-empty "$HOME/Music" || fail
-    dir::remove-if-empty "$HOME/Pictures" || fail
-    dir::remove-if-empty "$HOME/Public" || fail
-    dir::remove-if-empty "$HOME/Templates" || fail
-    dir::remove-if-empty "$HOME/Videos" || fail
+    dir::remove-if-empty \
+      "$HOME/Documents" \
+      "$HOME/Music" \
+      "$HOME/Pictures" \
+      "$HOME/Public" \
+      "$HOME/Templates" \
+      "$HOME/Videos" || fail
 
     if [ -f "$HOME/examples.desktop" ]; then
       rm "$HOME/examples.desktop" || fail
