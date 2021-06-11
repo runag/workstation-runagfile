@@ -112,8 +112,8 @@ if ($install_developer_tools -eq 0) {
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
-choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-utilities.config" --yes
-if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-utilities" }
+choco install "$env:USERPROFILE\.sopkafile\lib\windows\packages\basic-tools.config" --yes
+if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-tools" }
 
 
 # Upgrade choco packages
