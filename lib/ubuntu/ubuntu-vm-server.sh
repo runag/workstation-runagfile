@@ -33,6 +33,9 @@ ubuntu-vm-server::deploy() {
   apt::install ssh-import-id || fail
   ssh-import-id gh:senotrusov || fail
 
+  # install avahi daemon
+  apt::install avahi-daemon || fail
+
   # perform cleanup
   apt::autoremove || fail
 }
