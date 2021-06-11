@@ -293,18 +293,18 @@ ubuntu-workstation::remove-user-dirs() {
   fi
 }
 
-ubuntu-workstation::setup-my-folder-mount() {
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
-
-  # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
-}
-
 ubuntu-workstation::hide-folder() {
   local folder
   for folder in "$@"; do
     file::append-line-unless-present "${folder}" "${HOME}/.hidden" || fail
   done
+}
+
+ubuntu-workstation::setup-my-folder-mount() {
+  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+
+  # bitwarden-object: "my microsoft account"
+  mount::cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
 }
 
 ubuntu-workstation::configure-imwhell() {
