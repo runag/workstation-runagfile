@@ -108,7 +108,7 @@ ubuntu-workstation::deploy() {
   sublime::install-config || fail
 
   # enable systemd user instance without the need for the user to login
-  systemd::enable-linger || fail
+  sudo loginctl enable-linger "${USER}" || fail
 
   # postgresql
   sudo systemctl --now enable postgresql || fail
