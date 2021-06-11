@@ -67,7 +67,7 @@ ubuntu-workstation::deploy() {
   apt::install gparted || fail
 
   # install rclone
-  packages::install-rclone || fail
+  ubuntu-workstation::install-rclone || fail
 
   # whois
   apt::install whois || fail
@@ -365,4 +365,11 @@ ubuntu-workstation::install-copyq() {
   sudo add-apt-repository --yes ppa:hluk/copyq || fail
   apt::update || fail
   apt::install copyq || fail
+}
+
+ubuntu-workstation::install-rclone() {
+  if ! command -v rclone >/dev/null; then
+    curl --fail --silent --show-error https://rclone.org/install.sh | sudo bash
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to install rclone"
+  fi
 }
