@@ -79,3 +79,8 @@ Maximum performance
 `lib/windows/disable fullscreen optimizations.reg`
 
 ## Microsoft overlays (keep them?)
+
+# Disable Sharing Wizard
+
+File explorer options -> View
+Uncheck "Use Sharing Wizard"
