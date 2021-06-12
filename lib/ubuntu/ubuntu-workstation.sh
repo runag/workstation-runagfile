@@ -139,7 +139,7 @@ ubuntu-workstation::deploy() {
 
       # mount host folder
       if vmware::is-inside-vm; then
-        ubuntu-workstation::setup-my-folder-mount || fail
+        ubuntu-workstation::configure-my-folder-mount || fail
       fi
     ) || fail
   fi
@@ -317,11 +317,18 @@ ubuntu-workstation::hide-folder() {
   done
 }
 
-ubuntu-workstation::setup-my-folder-mount() {
+ubuntu-workstation::configure-my-folder-mount() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
+}
+
+ubuntu-workstation::configure-backups-folder-mount() {
+  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+
+  # bitwarden-object: "my microsoft account"
+  mount::cifs "//${hostIpAddress}/backups" "backups" "my microsoft account" || fail
 }
 
 ubuntu-workstation::configure-imwhell() {

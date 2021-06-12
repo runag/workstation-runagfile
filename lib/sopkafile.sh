@@ -33,6 +33,7 @@ sopkafile::menu() {
       list+=("backup::vm-home-to-host restic::menu")
       list+=("backup::vm-home-to-host::create")
       list+=("backup::vm-home-to-host::forget-and-check")
+      list+=("ubuntu-workstation::configure-backups-folder-mount")
     fi
   fi
 

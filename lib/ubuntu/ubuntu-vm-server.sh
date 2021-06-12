@@ -57,6 +57,6 @@ ubuntu-vm-server::deploy-my-folder-access() {
   # subshell for unlocked bitwarden
   (
     # mount host folder
-    ubuntu-workstation::setup-my-folder-mount || fail
+    ubuntu-workstation::configure-my-folder-mount || fail
   ) || fail
 }
