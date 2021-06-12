@@ -19,14 +19,14 @@ windows-workstation::deploy() {
   shell::fail-unless-command-is-found bw jq code || fail
 
   # shell aliases
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-path || fail
-  bitwarden::shellrcd::set-bitwarden-login || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-sopka-path-shellrc || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
 
   # git
-  git::configure || fail
   git::configure-user || fail
+  git config --global core.autocrlf input || fail
 
   # vscode
   vscode::install-config || fail

@@ -24,10 +24,17 @@ ubuntu-vm-server::deploy() {
   fi
 
   # install and configure sshd
-  sshd::ubuntu::install-and-configure || fail
+  echo "PasswordAuthentication no" | file::sudo-write "/etc/ssh/sshd_config.d/disable-password-authentication.conf" || fail
+  apt::install openssh-server || fail
+  sudo systemctl --now enable ssh || fail
+  sudo systemctl reload ssh || fail
 
   # import ssh key
+  apt::install ssh-import-id || fail
   ssh-import-id gh:senotrusov || fail
+
+  # install avahi daemon
+  apt::install avahi-daemon || fail
 
   # perform cleanup
   apt::autoremove || fail
@@ -40,11 +47,8 @@ ubuntu-vm-server::deploy-my-folder-access() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
-  # shellrcd
-  shellrcd::install || fail
-
   # install nodejs
-  nodejs::ubuntu::install || fail
+  nodejs::apt::install || fail
 
   # install bitwarden
   bitwarden::install-cli || fail

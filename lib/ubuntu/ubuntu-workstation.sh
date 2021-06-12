@@ -16,26 +16,50 @@
 
 ubuntu-workstation::deploy() {
   # disable screen lock
-  ubuntu::desktop::disable-screen-lock || fail
+  gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # update and upgrade
   apt::lazy-update-and-dist-upgrade || fail
 
-  # deploy minimal application server
-  ubuntu::deploy-minimal-application-server || fail
+  # install tools to use by the rest of the script
+  apt::install-tools || fail
+
+  # install basic tools
+  ubuntu-workstation::install-basic-tools || fail
+
+  # devtools
+  ubuntu-workstation::install-developer-tools || fail
+
+  # install rbenv, configure ruby
+  ruby::apt::install || fail
+  ruby::install-and-load-rbenv || fail
+  ruby::dangerously-append-nodocument-to-gemrc || fail
+
+  # update ruby packages
+  ruby::update-globally-installed-gems || fail
+
+  # install nodejs
+  nodejs::apt::install || fail
+  nodejs::install-and-load-nodenv || fail
+
+  # update nodejs packages
+  nodejs::update-globally-installed-packages || fail
 
   # increase inotify limits
-  linux::set-inotify-max-user-watches || fail
+  linux::configure-inotify || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  ubuntu::packages::install-gnome-keyring-and-libsecret || fail
+  apt::install-gnome-keyring-and-libsecret || fail
+  git::install-libsecret-credential-helper || fail
 
   # shellrcd
-  shellrcd::install || fail
-  shellrcd::sopka-path || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-direnv-loader-shellrc || fail
 
   # bitwarden cli
-  bitwarden::shellrcd::set-bitwarden-login || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
   bitwarden::install-cli || fail
 
   # vscode
@@ -59,12 +83,8 @@ ubuntu-workstation::deploy() {
   # gparted
   apt::install gparted || fail
 
-  # copyq
-  # TODO: Check later
-  # ubuntu::packages::install-copyq || fail
-
   # install rclone
-  ubuntu::packages::install-rclone || fail
+  ubuntu-workstation::install-rclone || fail
 
   # whois
   apt::install whois || fail
@@ -82,7 +102,8 @@ ubuntu-workstation::deploy() {
 
   # software for bare metal workstation
   if linux::is-bare-metal; then
-    ubuntu::packages::install-obs-studio || fail
+    ubuntu-workstation::install-obs-studio || fail
+    ubuntu-workstation::install-copyq || fail
 
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
@@ -95,14 +116,14 @@ ubuntu-workstation::deploy() {
   ubuntu-workstation::configure-desktop || fail
 
   # configure git
-  git::configure || fail
   git::configure-user || fail
+  git config --global core.autocrlf input || fail
 
   # install sublime configuration
   sublime::install-config || fail
 
   # enable systemd user instance without the need for the user to login
-  systemd::enable-linger || fail
+  sudo loginctl enable-linger "${USER}" || fail
 
   # postgresql
   sudo systemctl --now enable postgresql || fail
@@ -143,11 +164,12 @@ ubuntu-workstation::deploy-secrets() {
   ssh::install-keys "my" || fail
 
   # bitwarden-object: "my password for ssh private key"
-  ssh::ubuntu::add-key-password-to-keyring "my" || fail
+  ssh::add-key-password-to-gnome-keyring "my" || fail
 
   # git access token
   # bitwarden-object: "my github personal access token"
-  git::ubuntu::add-credentials-to-keyring "my" || fail
+  git::add-credentials-to-gnome-keyring "my" || fail
+  git::use-libsecret-credential-helper || fail
 
   # rubygems
   # bitwarden-object: "my rubygems credentials"
@@ -172,12 +194,12 @@ ubuntu-workstation::configure-desktop() {
 
   # install and configure imwheel
   apt::install imwheel || fail
-  ubuntu::desktop::setup-imwhell || fail
+  ubuntu-workstation::configure-imwhell || fail
 
   # install vitals gnome shell extension
   if ! vmware::is-inside-vm; then
     if [ -n "${DISPLAY:-}" ]; then
-      ubuntu::desktop::install-vitals || fail
+      ubuntu-workstation::install-vitals || fail
     fi
   fi
 
@@ -185,7 +207,7 @@ ubuntu-workstation::configure-desktop() {
   ubuntu-workstation::remove-user-dirs || fail
 
   # hide folders
-  ubuntu::desktop::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
+  ubuntu-workstation::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
 
   # apply fixes for nvidia
   if nvidia::is-card-present; then
@@ -197,68 +219,61 @@ ubuntu-workstation::configure-desktop() {
 # use dconf-editor to find key/value pairs
 #
 # Don't use dbus-launch here because it will introduce
-# side-effect to git::ubuntu::add-credentials-to-keyring and ssh::ubuntu::add-key-password-to-keyring
+# side-effect to git::add-credentials-to-gnome-keyring and ssh::add-key-password-to-gnome-keyring
 #
-ubuntu-workstation::configure-gnome() {
-  # Enable fractional scaling
-  # ubuntu::desktop::enable-fractional-scaling || fail
-
-
-  # Automatic timezone
-  gsettings::perhaps-set org.gnome.desktop.datetime automatic-timezone true || fail
-
+ubuntu-workstation::configure-gnome() (
+  gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
+  gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
 
   # Terminal
-  gsettings::perhaps-set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-
-  if gsettings get org.gnome.Terminal.ProfilesList default >/dev/null; then
-    local terminalProfile; terminalProfile="$(gsettings get org.gnome.Terminal.ProfilesList default)" || fail "Unable to determine terminalProfile ($?)"
-    local profilePath="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${terminalProfile:1:-1}/"
-
-    gsettings::perhaps-set "$profilePath" exit-action 'hold' || fail
-    gsettings::perhaps-set "$profilePath" login-shell true || fail
+  local profileId profilePath
+  if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
+    local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
+    gnome-set "${profilePath}" exit-action 'hold' || fail
+    gnome-set "${profilePath}" login-shell true || fail
   fi
-
-
-  # Nautilus
-  gsettings::perhaps-set org.gnome.nautilus.list-view default-zoom-level 'small' || fail
-  gsettings::perhaps-set org.gnome.nautilus.list-view use-tree-view true || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences show-delete-permanently true || fail
-  gsettings::perhaps-set org.gnome.nautilus.preferences show-hidden-files true || fail
-
+  gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
 
   # Desktop
-  gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-trash false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.desktop-icons show-home false || fail
-
+  gnome-set shell.extensions.desktop-icons show-trash false || fail
+  gnome-set shell.extensions.desktop-icons show-home false || fail
 
   # Dash
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true || fail
-  gsettings::perhaps-set org.gnome.shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
+  gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
+  gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
+  gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
+  gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
+  gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
+  gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
+  # Nautilus
+  gnome-set nautilus.list-view default-zoom-level 'small' || fail
+  gnome-set nautilus.list-view use-tree-view true || fail
+  gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
+  gnome-set nautilus.preferences show-delete-permanently true || fail
+  gnome-set nautilus.preferences show-hidden-files true || fail
 
-  # Disable sound alerts
-  gsettings::perhaps-set org.gnome.desktop.sound event-sounds false || fail
-
-
-  # 1600 DPI mouse
-  gsettings::perhaps-set org.gnome.desktop.peripherals.mouse speed -0.75 || fail
-
+  # Automatic timezone
+  gnome-set desktop.datetime automatic-timezone true || fail
 
   # Input sources
   # on mac host: ('xkb', 'ru+mac')
-  gsettings::perhaps-set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
-}
+  gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
+
+  # Disable sound alerts
+  gnome-set desktop.sound event-sounds false || fail
+
+  # Enable fractional scaling
+  # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
+
+  # 1600 DPI mouse
+  gnome-set desktop.peripherals.mouse speed -0.75 || fail
+)
 
 ubuntu-workstation::configure-firefox() {
-  firefox::set-prefs "mousewheel.default.delta_multiplier_x" 200 || fail
-  firefox::set-prefs "mousewheel.default.delta_multiplier_y" 200 || fail
+  firefox::set-pref "mousewheel.default.delta_multiplier_x" 200 || fail
+  firefox::set-pref "mousewheel.default.delta_multiplier_y" 200 || fail
 }
 
 ubuntu-workstation::remove-user-dirs() {
@@ -279,12 +294,13 @@ ubuntu-workstation::remove-user-dirs() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    dir::remove-if-empty "$HOME/Documents" || fail
-    dir::remove-if-empty "$HOME/Music" || fail
-    dir::remove-if-empty "$HOME/Pictures" || fail
-    dir::remove-if-empty "$HOME/Public" || fail
-    dir::remove-if-empty "$HOME/Templates" || fail
-    dir::remove-if-empty "$HOME/Videos" || fail
+    dir::remove-if-empty \
+      "$HOME/Documents" \
+      "$HOME/Music" \
+      "$HOME/Pictures" \
+      "$HOME/Public" \
+      "$HOME/Templates" \
+      "$HOME/Videos" || fail
 
     if [ -f "$HOME/examples.desktop" ]; then
       rm "$HOME/examples.desktop" || fail
@@ -294,9 +310,134 @@ ubuntu-workstation::remove-user-dirs() {
   fi
 }
 
+ubuntu-workstation::hide-folder() {
+  local folder
+  for folder in "$@"; do
+    file::append-line-unless-present "${folder}" "${HOME}/.hidden" || fail
+  done
+}
+
 ubuntu-workstation::setup-my-folder-mount() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/Users/${USER}/my" "my" "my microsoft account" || fail
+}
+
+ubuntu-workstation::configure-imwhell() {
+  local repetitions="2"
+  local outputFile="${HOME}/.imwheelrc"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+".*"
+None,      Up,   Button4, ${repetitions}
+None,      Down, Button5, ${repetitions}
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+SHELL
+
+  if [ ! -d "${HOME}/.config/autostart" ]; then
+    mkdir -p "${HOME}/.config/autostart" || fail
+  fi
+
+  local outputFile="${HOME}/.config/autostart/imwheel.desktop"
+  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/imwheel
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;XFCE;
+Name[en_US]=IMWheel
+Name=IMWheel
+Comment[en_US]=Custom scroll speed
+Comment=Custom scroll speed
+SHELL
+
+  /usr/bin/imwheel --kill
+}
+
+ubuntu-workstation::install-vitals() {
+  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
+  local extensionUuid="Vitals@CoreCoding.com"
+
+  apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
+
+  mkdir -p "${extensionsDir}" || fail
+
+  git::clone-or-pull "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
+
+  gnome-extensions enable "${extensionUuid}" || fail
+}
+
+ubuntu-workstation::install-obs-studio() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+  apt::update || fail
+  apt::install obs-studio guvcview || fail
+}
+
+ubuntu-workstation::install-copyq() {
+  sudo add-apt-repository --yes ppa:hluk/copyq || fail
+  apt::update || fail
+  apt::install copyq || fail
+}
+
+ubuntu-workstation::install-rclone() {
+  if ! command -v rclone >/dev/null; then
+    curl --fail --silent --show-error https://rclone.org/install.sh | sudo bash
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to install rclone"
+  fi
+}
+
+ubuntu-workstation::install-basic-tools() {
+  apt::install \
+    htop \
+    mc \
+    ncdu \
+    p7zip-full \
+    tmux \
+      || fail
+}
+
+ubuntu-workstation::install-developer-tools() {
+  apt::install \
+    apache2-utils \
+    autoconf \
+    awscli \
+    bison \
+    build-essential \
+    cloud-guest-utils \
+    ffmpeg \
+    ghostscript \
+    graphviz \
+    imagemagick \
+    inotify-tools \
+    letsencrypt \
+    libffi-dev \
+    libgdbm-dev \
+    libgs-dev \
+    libncurses-dev \
+    libpq-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libyaml-dev \
+    memcached \
+    nginx \
+    postgresql \
+    postgresql-contrib \
+    python-is-python3 \
+    python3 \
+    python3-pip \
+    python3-psycopg2 \
+    redis-server \
+    shellcheck \
+    sqlite3 \
+    zlib1g-dev \
+    zsh \
+      || fail
 }

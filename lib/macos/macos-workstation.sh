@@ -137,20 +137,22 @@ macos::configure-workstation() {
   macos::hide-folders || fail
 
   # shell aliases
-  shellrcd::install || fail
-  shellrcd::use-nano-editor || fail
-  shellrcd::sopka-path || fail
-  shellrcd::hook-direnv || fail
-  bitwarden::shellrcd::set-bitwarden-login || fail
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-shellrc-directory-loader "${HOME}/.zshrc" || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-direnv-loader-shellrc || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
 
   # ruby
-  ruby::configure-gemrc || fail
-  shellrcd::rbenv || fail
-  rbenv rehash || fail
+  ruby::dangerously-append-nodocument-to-gemrc || fail
+  ruby::install-rbenv-shellrc || fail
+  ruby::load-rbenv || fail
 
   # nodejs
-  shellrcd::nodenv || fail
-  nodenv rehash || fail
+  nodejs::install-nodenv-shellrc || fail
+  nodejs::configure-mismatched-binaries-workaround || fail
+  nodejs::load-nodenv || fail
 
   # vscode
   vscode::install-config || fail
@@ -165,9 +167,9 @@ macos::configure-workstation() {
       # add ssh key, configure ssh to use it
       # bitwarden-object: "my ssh private key", "my ssh public key"
       ssh::install-keys "my" || fail
-      ssh::macos::add-use-keychain-to-config || fail
+      ssh::add-use-macos-keychain-to-config || fail
       # bitwarden-object: "my password for ssh private key"
-      ssh::macos::add-key-password-to-keychain "my" || fail
+      ssh::add-key-password-to-macos-keychain "my" || fail
 
       # rubygems
       # bitwarden-object: "my rubygems credentials"
@@ -179,8 +181,8 @@ macos::configure-workstation() {
   fi
 
   # git
-  git::configure || fail
   git::configure-user || fail
+  git config --global core.autocrlf input || fail
 }
 
 macos::hide-folders() {

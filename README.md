@@ -63,15 +63,11 @@ Record names should be as the following:
 <!-- # bitwarden-object: see list below -->
 
 ```
-"my borg storage ssh private key"
-"my borg storage ssh public key"
 "my github personal access token"
 "my microsoft account"
 "my password for ssh private key"
 "my ssh private key"
 "my ssh public key"
-"stan-documents backup passphrase"
-"stan-documents backup storage"
 "sublime text 3 license"
 ```
 
