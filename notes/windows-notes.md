@@ -46,6 +46,9 @@ Change USB controller to version 3.1
 
 Windows Network location awareness. I don't know how to set private type for vmnet1, so I just disable firewall for vmware interfaces.
 
+https://kb.vmware.com/s/article/1004813
+I did "Redefine the VMware virtual NICs as endpoint devices" step but it didn't help me.
+
 ## Wake timers (Virtualbox wakes host from sleep)
 
 Power Options -> Advanced Settings -> Sleep -> Allow wake timers
