@@ -50,7 +50,7 @@ backup::vm-home-to-host::create() (
   backup::vm-home-to-host::load-configuration || fail
 
   # I should probably make a special user service to wait until the network is up and the directory is mounted
-  findmnt -M "${HOME}/my" >/dev/null || fail
+  findmnt --mountpoint "${HOME}/my" >/dev/null || fail
 
   if [ ! -d "${RESTIC_REPOSITORY}" ]; then
     restic::init || fail
