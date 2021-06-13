@@ -30,7 +30,7 @@ sopkafile::menu() {
     fi
 
     if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-      list+=("backup::vm-home-to-host restic::menu")
+      list+=("backup::vm-home-to-host restic::menu with-systemd")
       list+=("backup::vm-home-to-host::create")
       list+=("backup::vm-home-to-host::forget-and-check")
       list+=("ubuntu-workstation::configure-backups-folder-mount")
