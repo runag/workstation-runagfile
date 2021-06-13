@@ -25,10 +25,10 @@ ubuntu-workstation::deploy() {
   apt::install-tools || fail
 
   # install basic tools
-  ubuntu-workstation::install-basic-tools || fail
+  packages::install-basic-tools || fail
 
   # devtools
-  ubuntu-workstation::install-developer-tools || fail
+  packages::install-developer-tools || fail
 
   # install rbenv, configure ruby
   ruby::apt::install || fail
@@ -84,7 +84,7 @@ ubuntu-workstation::deploy() {
   apt::install gparted || fail
 
   # install rclone
-  ubuntu-workstation::install-rclone || fail
+  packages::install-rclone || fail
 
   # whois
   apt::install whois || fail
@@ -102,8 +102,8 @@ ubuntu-workstation::deploy() {
 
   # software for bare metal workstation
   if linux::is-bare-metal; then
-    ubuntu-workstation::install-obs-studio || fail
-    ubuntu-workstation::install-copyq || fail
+    packages::install-obs-studio || fail
+    packages::install-copyq || fail
 
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
@@ -199,7 +199,7 @@ ubuntu-workstation::configure-desktop() {
   # install vitals gnome shell extension
   if ! vmware::is-inside-vm; then
     if [ -n "${DISPLAY:-}" ]; then
-      ubuntu-workstation::install-vitals || fail
+      packages::install-vitals || fail
     fi
   fi
 
@@ -364,87 +364,4 @@ Comment=Custom scroll speed
 SHELL
 
   /usr/bin/imwheel --kill
-}
-
-ubuntu-workstation::install-vitals() {
-  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
-  local extensionUuid="Vitals@CoreCoding.com"
-
-  apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
-
-  mkdir -p "${extensionsDir}" || fail
-
-  git::clone-or-pull "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
-
-  gnome-extensions enable "${extensionUuid}" || fail
-}
-
-ubuntu-workstation::install-obs-studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-  apt::update || fail
-  apt::install obs-studio guvcview || fail
-}
-
-ubuntu-workstation::install-copyq() {
-  sudo add-apt-repository --yes ppa:hluk/copyq || fail
-  apt::update || fail
-  apt::install copyq || fail
-}
-
-ubuntu-workstation::install-rclone() {
-  if ! command -v rclone >/dev/null; then
-    curl --fail --silent --show-error https://rclone.org/install.sh | sudo bash
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to install rclone"
-  fi
-}
-
-ubuntu-workstation::install-basic-tools() {
-  apt::install \
-    htop \
-    mc \
-    ncdu \
-    p7zip-full \
-    tmux \
-      || fail
-}
-
-ubuntu-workstation::install-developer-tools() {
-  apt::install \
-    apache2-utils \
-    autoconf \
-    awscli \
-    bison \
-    build-essential \
-    cloud-guest-utils \
-    ffmpeg \
-    ghostscript \
-    graphviz \
-    imagemagick \
-    inotify-tools \
-    letsencrypt \
-    libffi-dev \
-    libgdbm-dev \
-    libgs-dev \
-    libncurses-dev \
-    libpq-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    libssl-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libyaml-dev \
-    memcached \
-    nginx \
-    postgresql \
-    postgresql-contrib \
-    python-is-python3 \
-    python3 \
-    python3-pip \
-    python3-psycopg2 \
-    redis-server \
-    shellcheck \
-    sqlite3 \
-    zlib1g-dev \
-    zsh \
-      || fail
 }

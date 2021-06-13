@@ -23,6 +23,7 @@
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/backup.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/nvidia.sh" || fail
+. "${SOPKAFILE_DIR}/lib/ubuntu/packages.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu-vm-server.sh" || fail
 . "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
