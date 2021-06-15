@@ -62,6 +62,7 @@ packages::install-developer-tools() {
     graphviz \
     imagemagick \
     inotify-tools \
+    iperf3 \
     letsencrypt \
     libffi-dev \
     libgdbm-dev \
