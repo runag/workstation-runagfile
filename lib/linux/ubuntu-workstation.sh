@@ -47,7 +47,8 @@ ubuntu-workstation::deploy() {
   ubuntu-workstation::install-build-tools || fail
 
   # install and configure servers
-  ubuntu-workstation::install-and-configure-servers || fail
+  ubuntu-workstation::install-servers || fail
+  ubuntu-workstation::configure-servers || fail
 
   # programming languages
   ubuntu-workstation::install-and-update-nodejs || fail

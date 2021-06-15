@@ -27,6 +27,12 @@ ubuntu-workstation::configure-git() {
   git config --global core.autocrlf input || fail
 }
 
+ubuntu-workstation::configure-servers() {
+  # postgresql
+  sudo systemctl --now enable postgresql || fail
+  postgresql::create-superuser-for-local-account || fail
+}
+
 ubuntu-workstation::configure-desktop-software() {
   if [ -n "${DISPLAY:-}" ]; then
     # configure firefox

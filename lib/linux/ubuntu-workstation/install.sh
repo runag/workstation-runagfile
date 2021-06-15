@@ -116,15 +116,11 @@ ubuntu-workstation::install-build-tools() {
       || fail
 }
 
-ubuntu-workstation::install-and-configure-servers() {
+ubuntu-workstation::install-servers() {
   apt::install memcached || fail
-  apt::install redis-server || fail
   apt::install nginx || fail
-
-  # postgresql
   apt::install postgresql postgresql-contrib || fail
-  sudo systemctl --now enable postgresql || fail
-  postgresql::create-superuser-for-local-account || fail
+  apt::install redis-server || fail
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
