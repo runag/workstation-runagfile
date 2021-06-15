@@ -25,6 +25,7 @@ sopkafile::menu() {
     fi
 
     if tools::is-nothing-deployed; then
+      list+=(ubuntu-workstation::install-shellrc)
       list+=(ubuntu-vm-server::deploy)
       list+=(ubuntu-vm-server::deploy-my-folder-access)
     fi
