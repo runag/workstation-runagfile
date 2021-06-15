@@ -60,11 +60,11 @@ jobs:
     - name: Wait for possible 2nd repository updates
       run: sleep 30
 
-    - name: Install xvfb
-      run: sudo apt-get update && sudo apt-get install -y xvfb
+    - name: Install xvfb and dbus-x11
+      run: sudo apt-get update && sudo apt-get install -y xvfb dbus-x11
 
     - name: Run deploy script
-      run: DISPLAY=:42 xvfb-run --server-num 42 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu-workstation::deploy
+      run: DISPLAY=:42 dbus-launch xvfb-run --server-num 42 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu-workstation::deploy
 
   windows-workstation:
     name: windows-workstation::deploy
