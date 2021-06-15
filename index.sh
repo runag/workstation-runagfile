@@ -18,16 +18,23 @@
 
 . "${SOPKAFILE_DIR}/lib/sopkafile.sh" || fail
 . "${SOPKAFILE_DIR}/lib/workstation.sh" || fail
-
-. "${SOPKAFILE_DIR}/lib/macos/macos-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
-. "${SOPKAFILE_DIR}/lib/linux/backup.sh" || fail
-. "${SOPKAFILE_DIR}/lib/linux/nvidia.sh" || fail
-. "${SOPKAFILE_DIR}/lib/linux/packages.sh" || fail
-. "${SOPKAFILE_DIR}/lib/linux/ubuntu-vm-server.sh" || fail
-. "${SOPKAFILE_DIR}/lib/linux/ubuntu-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
-. "${SOPKAFILE_DIR}/lib/windows/windows-workstation.sh" || fail
+
+if [[ "$OSTYPE" =~ ^linux ]]; then
+  . "${SOPKAFILE_DIR}/lib/linux/backup.sh" || fail
+  . "${SOPKAFILE_DIR}/lib/linux/nvidia.sh" || fail
+  . "${SOPKAFILE_DIR}/lib/linux/ubuntu-vm-server.sh" || fail
+  . "${SOPKAFILE_DIR}/lib/linux/ubuntu-workstation.sh" || fail
+  . "${SOPKAFILE_DIR}/lib/linux/ubuntu-workstation/configure.sh" || fail
+  . "${SOPKAFILE_DIR}/lib/linux/ubuntu-workstation/install.sh" || fail
+
+elif [[ "$OSTYPE" =~ ^darwin ]]; then
+  . "${SOPKAFILE_DIR}/lib/macos/macos-workstation.sh" || fail
+
+elif [[ "$OSTYPE" =~ ^msys ]]; then
+  . "${SOPKAFILE_DIR}/lib/windows/windows-workstation.sh" || fail
+fi
 
 sopkafile::main() {
   sopkafile::menu || fail

@@ -24,129 +24,52 @@ ubuntu-workstation::deploy() {
   # install tools to use by the rest of the script
   apt::install-tools || fail
 
-  # install basic tools
-  packages::install-basic-tools || fail
+  # shellrc
+  ubuntu-workstation::install-shellrc || fail
 
-  # devtools
-  packages::install-developer-tools || fail
+  # install system software
+  ubuntu-workstation::install-system-software || fail
 
-  # install rbenv, configure ruby
-  ruby::apt::install || fail
-  ruby::install-and-load-rbenv || fail
-  ruby::dangerously-append-nodocument-to-gemrc || fail
+  # configure system
+  ubuntu-workstation::configure-system || fail
 
-  # update ruby packages
-  ruby::update-globally-installed-gems || fail
-
-  # install nodejs
-  nodejs::apt::install || fail
-  nodejs::install-and-load-nodenv || fail
-
-  # update nodejs packages
-  nodejs::update-globally-installed-packages || fail
-
-  # increase inotify limits
-  linux::configure-inotify || fail
-
-  # gnome-keyring and libsecret (for git and ssh)
-  apt::install-gnome-keyring-and-libsecret || fail
-  git::install-libsecret-credential-helper || fail
-
-  # shellrcd
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-sopka-path-shellrc || fail
-  shell::install-nano-editor-shellrc || fail
-  shell::install-direnv-loader-shellrc || fail
-
-  # bitwarden cli
-  bitwarden::install-bitwarden-login-shellrc || fail
-  bitwarden::install-cli || fail
-
-  # vscode
-  vscode::install-and-configure || fail
-
-  # sublime text and sublime merge
-  sublime::apt::install-merge-and-text || fail
-
-  # meld
-  apt::install meld || fail
-
-  # chromium
-  sudo snap install chromium || fail
-
-  # bitwarden
-  sudo snap install bitwarden || fail
-
-  # GNU Privacy Assistant
-  apt::install gpa || fail
-
-  # gparted
-  apt::install gparted || fail
-
-  # install rclone
-  rclone::install || fail
-
-  # whois
-  apt::install whois || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
-
-  # install restic
-  apt::install restic || fail
-
-  # open-vm-tools
-  if vmware::is-inside-vm; then
-    apt::install open-vm-tools open-vm-tools-desktop || fail
-  fi
-
-  # software for bare metal workstation
-  if linux::is-bare-metal; then
-    packages::install-obs-studio || fail
-    packages::install-copyq || fail
-
-    apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-
-    sudo snap install telegram-desktop || fail
-    sudo snap install skype --classic || fail
-    sudo snap install discord || fail
-  fi
-
-  # configure desktop
-  ubuntu-workstation::configure-desktop || fail
+  # install terminal software
+  ubuntu-workstation::install-terminal-software || fail
 
   # configure git
-  git::configure-user || fail
-  git config --global core.autocrlf input || fail
+  ubuntu-workstation::configure-git || fail
 
-  # install sublime configuration
-  sublime::install-config || fail
+  # install build tools
+  ubuntu-workstation::install-build-tools || fail
 
-  # enable systemd user instance without the need for the user to login
-  sudo loginctl enable-linger "${USER}" || fail
+  # install and configure servers
+  ubuntu-workstation::install-and-configure-servers || fail
 
-  # postgresql
-  sudo systemctl --now enable postgresql || fail
-  postgresql::create-superuser-for-local-account || fail
+  # programming languages
+  ubuntu-workstation::install-and-update-nodejs || fail
+  ubuntu-workstation::install-and-update-ruby || fail
+  ubuntu-workstation::install-and-update-python || fail
 
-  # secrets
-  if [ -t 0 ]; then
-    # the following commands use bitwarden, that requires password entry
-    # subshell for unlocked bitwarden
-    (
-      # secrets
+  # install & configure desktop software
+  ubuntu-workstation::install-desktop-software || fail
+  ubuntu-workstation::configure-desktop-software || fail
+
+  # install secrets software
+  ubuntu-workstation::install-secrets-software || fail
+
+  # subshell to deploy secrets
+  ( 
+    if [ -t 0 ]; then
+      # deploy secrets
       ubuntu-workstation::deploy-secrets || fail
 
       # mount host folder
       if vmware::is-inside-vm; then
         ubuntu-workstation::configure-my-folder-mount || fail
+        backup::vm-home-to-host::setup || fail
       fi
-    ) || fail
-  fi
-
-  if vmware::is-inside-vm; then
-    backup::vm-home-to-host::setup || fail
-  fi
+    fi
+  ) || fail
 
   # cleanup
   apt::autoremove || fail
@@ -177,191 +100,4 @@ ubuntu-workstation::deploy-secrets() {
 
   # install sublime license key
   sublime::install-license || fail
-}
-
-ubuntu-workstation::configure-desktop() {
-  # install dconf-editor
-  apt::install dconf-editor || fail
-
-  # configure gnome desktop
-  if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-    ubuntu-workstation::configure-gnome || fail
-  fi
-
-  # configure firefox
-  ubuntu-workstation::configure-firefox || fail
-  firefox::enable-wayland || fail
-
-  # install and configure imwheel
-  apt::install imwheel || fail
-  ubuntu-workstation::configure-imwhell || fail
-
-  # install vitals gnome shell extension
-  if ! vmware::is-inside-vm; then
-    if [ -n "${DISPLAY:-}" ]; then
-      packages::install-vitals || fail
-    fi
-  fi
-
-  # remove user dirs
-  ubuntu-workstation::remove-user-dirs || fail
-
-  # hide folders
-  ubuntu-workstation::hide-folder "Desktop" "snap" "VirtualBox VMs" || fail
-
-  # apply fixes for nvidia
-  if nvidia::is-card-present; then
-    nvidia::fix-screen-tearing || fail
-    nvidia::fix-gpu-background-image-glitch || fail
-  fi
-}
-
-# use dconf-editor to find key/value pairs
-#
-# Don't use dbus-launch here because it will introduce
-# side-effect to git::add-credentials-to-gnome-keyring and ssh::add-key-password-to-gnome-keyring
-#
-ubuntu-workstation::configure-gnome() (
-  gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
-  gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
-
-  # Terminal
-  local profileId profilePath
-  if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
-    local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
-    gnome-set "${profilePath}" exit-action 'hold' || fail
-    gnome-set "${profilePath}" login-shell true || fail
-  fi
-  gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-
-  # Desktop
-  gnome-set shell.extensions.desktop-icons show-trash false || fail
-  gnome-set shell.extensions.desktop-icons show-home false || fail
-
-  # Dash
-  gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-  gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
-  gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-  gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
-  gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
-  gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
-  gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
-
-  # Nautilus
-  gnome-set nautilus.list-view default-zoom-level 'small' || fail
-  gnome-set nautilus.list-view use-tree-view true || fail
-  gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
-  gnome-set nautilus.preferences show-delete-permanently true || fail
-  gnome-set nautilus.preferences show-hidden-files true || fail
-
-  # Automatic timezone
-  gnome-set desktop.datetime automatic-timezone true || fail
-
-  # Input sources
-  # on mac host: ('xkb', 'ru+mac')
-  gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
-
-  # Disable sound alerts
-  gnome-set desktop.sound event-sounds false || fail
-
-  # Enable fractional scaling
-  # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
-
-  # 1600 DPI mouse
-  gnome-set desktop.peripherals.mouse speed -0.75 || fail
-)
-
-ubuntu-workstation::configure-firefox() {
-  firefox::set-pref "mousewheel.default.delta_multiplier_x" 200 || fail
-  firefox::set-pref "mousewheel.default.delta_multiplier_y" 200 || fail
-}
-
-ubuntu-workstation::remove-user-dirs() {
-  local dirsFile="${HOME}/.config/user-dirs.dirs"
-
-  if [ -f "${dirsFile}" ]; then
-    local tmpFile; tmpFile="$(mktemp)" || fail
-
-    if [ -d "$HOME/Desktop" ]; then
-      echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
-    fi
-
-    if [ -d "$HOME/Downloads" ]; then
-      echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
-    fi
-
-    mv "${tmpFile}" "${dirsFile}" || fail
-
-    echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
-
-    dir::remove-if-empty \
-      "$HOME/Documents" \
-      "$HOME/Music" \
-      "$HOME/Pictures" \
-      "$HOME/Public" \
-      "$HOME/Templates" \
-      "$HOME/Videos" || fail
-
-    if [ -f "$HOME/examples.desktop" ]; then
-      rm "$HOME/examples.desktop" || fail
-    fi
-
-    xdg-user-dirs-update || fail
-  fi
-}
-
-ubuntu-workstation::hide-folder() {
-  local folder
-  for folder in "$@"; do
-    file::append-line-unless-present "${folder}" "${HOME}/.hidden" || fail
-  done
-}
-
-ubuntu-workstation::configure-my-folder-mount() {
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
-
-  # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
-}
-
-ubuntu-workstation::configure-backups-folder-mount() {
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
-
-  # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/backups" "backups" "my microsoft account" || fail
-}
-
-ubuntu-workstation::configure-imwhell() {
-  local repetitions="2"
-  local outputFile="${HOME}/.imwheelrc"
-  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
-".*"
-None,      Up,   Button4, ${repetitions}
-None,      Down, Button5, ${repetitions}
-Control_L, Up,   Control_L|Button4
-Control_L, Down, Control_L|Button5
-Shift_L,   Up,   Shift_L|Button4
-Shift_L,   Down, Shift_L|Button5
-SHELL
-
-  if [ ! -d "${HOME}/.config/autostart" ]; then
-    mkdir -p "${HOME}/.config/autostart" || fail
-  fi
-
-  local outputFile="${HOME}/.config/autostart/imwheel.desktop"
-  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
-[Desktop Entry]
-Type=Application
-Exec=/usr/bin/imwheel
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-OnlyShowIn=GNOME;XFCE;
-Name[en_US]=IMWheel
-Name=IMWheel
-Comment[en_US]=Custom scroll speed
-Comment=Custom scroll speed
-SHELL
-
-  /usr/bin/imwheel --kill
 }
