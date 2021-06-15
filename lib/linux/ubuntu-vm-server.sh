@@ -16,7 +16,11 @@
 
 ubuntu-vm-server::deploy() {
   # perform apt update and upgrade
-  apt::lazy-update-and-dist-upgrade || fail
+  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+    apt::lazy-update || fail
+  else
+    apt::lazy-update-and-dist-upgrade || fail
+  fi
 
   # install open-vm-tools
   if vmware::is-inside-vm; then

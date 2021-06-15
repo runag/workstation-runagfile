@@ -19,7 +19,11 @@ ubuntu-workstation::deploy() {
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # update and upgrade
-  apt::lazy-update-and-dist-upgrade || fail
+  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+    apt::lazy-update || fail
+  else
+    apt::lazy-update-and-dist-upgrade || fail
+  fi
 
   # install tools to use by the rest of the script
   apt::install-tools || fail
