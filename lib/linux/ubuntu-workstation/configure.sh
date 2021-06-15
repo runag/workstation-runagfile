@@ -28,27 +28,29 @@ ubuntu-workstation::configure-git() {
 }
 
 ubuntu-workstation::configure-desktop-software() {
-  # configure firefox
-  ubuntu-workstation::configure-firefox || fail
-  firefox::enable-wayland || fail
+  if [ -n "${DISPLAY:-}" ]; then
+    # configure firefox
+    ubuntu-workstation::configure-firefox || fail
+    firefox::enable-wayland || fail
 
-  # install sublime configuration
-  sublime::install-config || fail
+    # install sublime configuration
+    sublime::install-config || fail
 
-  # configure imwheel
-  ubuntu-workstation::configure-imwhell || fail
+    # configure imwheel
+    ubuntu-workstation::configure-imwhell || fail
 
-  # configure home folders
-  ubuntu-workstation::configure-home-folders || fail
+    # configure home folders
+    ubuntu-workstation::configure-home-folders || fail
 
-  # apply fixes for nvidia
-  if nvidia::is-card-present; then
-    nvidia::fix-screen-tearing || fail
-    nvidia::fix-gpu-background-image-glitch || fail
+    # apply fixes for nvidia
+    if nvidia::is-card-present; then
+      nvidia::fix-screen-tearing || fail
+      nvidia::fix-gpu-background-image-glitch || fail
+    fi
+
+    # configure gnome desktop
+    ubuntu-workstation::configure-gnome || fail
   fi
-
-  # configure gnome desktop
-  ubuntu-workstation::configure-gnome || fail
 }
 
 ubuntu-workstation::configure-firefox() {
