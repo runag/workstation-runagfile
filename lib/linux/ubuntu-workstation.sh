@@ -84,7 +84,7 @@ ubuntu-workstation::deploy() {
   apt::install gparted || fail
 
   # install rclone
-  packages::install-rclone || fail
+  rclone::install || fail
 
   # whois
   apt::install whois || fail

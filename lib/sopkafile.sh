@@ -35,14 +35,12 @@ sopkafile::menu() {
       list+=("backup::vm-home-to-host::forget-and-check")
       list+=("ubuntu-workstation::configure-backups-folder-mount")
     fi
-  fi
 
-  if [[ "$OSTYPE" =~ ^darwin ]]; then
+  elif [[ "$OSTYPE" =~ ^darwin ]]; then
     list+=(macos-workstation::deploy)
     list+=(macos::configure-workstation)
-  fi
 
-  if [[ "$OSTYPE" =~ ^msys ]]; then
+  elif [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows-workstation::deploy)
   fi
 

@@ -39,13 +39,6 @@ packages::install-copyq() {
   apt::install copyq || fail
 }
 
-packages::install-rclone() {
-  if ! command -v rclone >/dev/null; then
-    curl --fail --silent --show-error https://rclone.org/install.sh | sudo bash
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to install rclone"
-  fi
-}
-
 packages::install-basic-tools() {
   apt::install \
     htop \

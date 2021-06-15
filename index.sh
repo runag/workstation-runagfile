@@ -21,11 +21,11 @@
 
 . "${SOPKAFILE_DIR}/lib/macos/macos-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu/backup.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu/nvidia.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu/packages.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu-vm-server.sh" || fail
-. "${SOPKAFILE_DIR}/lib/ubuntu/ubuntu-workstation.sh" || fail
+. "${SOPKAFILE_DIR}/lib/linux/backup.sh" || fail
+. "${SOPKAFILE_DIR}/lib/linux/nvidia.sh" || fail
+. "${SOPKAFILE_DIR}/lib/linux/packages.sh" || fail
+. "${SOPKAFILE_DIR}/lib/linux/ubuntu-vm-server.sh" || fail
+. "${SOPKAFILE_DIR}/lib/linux/ubuntu-workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
 . "${SOPKAFILE_DIR}/lib/windows/windows-workstation.sh" || fail
 
