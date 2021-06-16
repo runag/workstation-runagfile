@@ -38,59 +38,28 @@ ubuntu-workstation::install-shellrc() {
 }
 
 ubuntu-workstation::install-terminal-software() {
-  # install git
-  apt::install git || fail
+  apt::install \
+    apache2-utils \
+    awscli \
+    ffmpeg \
+    git \
+    graphviz \
+    htop \
+    imagemagick \
+    iperf3 \
+    letsencrypt \
+    mc \
+    ncdu \
+    p7zip-full \
+    restic \
+    shellcheck \
+    sqlite3 \
+    tmux \
+    whois \
+    zsh \
+      || fail
 
-  # install rclone
   rclone::install || fail
-
-  # install restic
-  apt::install restic || fail
-
-  # file managers
-  apt::install mc ncdu || fail
-  
-  # p7zip
-  apt::install p7zip-full || fail
-
-  # htop
-  apt::install htop || fail
-
-  # tmux
-  apt::install tmux || fail
-
-  # iperf3, network speed test
-  apt::install iperf3 || fail
-
-  # whois
-  apt::install whois || fail
-
-  # apache2-utils
-  apt::install apache2-utils || fail
-
-  # awscli
-  apt::install awscli || fail
-
-  # ffmpeg
-  apt::install ffmpeg || fail
-
-  # graphviz
-  apt::install graphviz || fail
-
-  # imagemagick
-  apt::install imagemagick || fail
-
-  # letsencrypt
-  apt::install letsencrypt || fail
-
-  # shellcheck
-  apt::install shellcheck || fail
-
-  # sqlite3
-  apt::install sqlite3 || fail
-
-  # zsh
-  apt::install zsh || fail
 }
 
 ubuntu-workstation::install-build-tools() {
