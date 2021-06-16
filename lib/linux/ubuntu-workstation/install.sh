@@ -73,7 +73,6 @@ ubuntu-workstation::install-build-tools() {
 
 ubuntu-workstation::install-servers() {
   apt::install memcached || fail
-  apt::install nginx || fail
   apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
 }
