@@ -18,3 +18,8 @@ workstation::merge-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
 }
+
+workstation::git-pull-dotsopkas() {
+  git -C "${HOME}/.sopkafile" pull || fail
+  git -C "${HOME}/.sopka" pull || fail
+}

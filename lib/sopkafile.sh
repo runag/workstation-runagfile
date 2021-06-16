@@ -48,6 +48,8 @@ sopkafile::menu() {
     list+=(workstation::merge-configs)
   fi
 
+  list+=(workstation::git-pull-dotsopkas)
+
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
       list+=(benchmark::run)
