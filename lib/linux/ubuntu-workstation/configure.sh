@@ -157,7 +157,8 @@ ubuntu-workstation::configure-gnome() {
     fi
 
     gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-
+    gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
+    gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
 
     # Desktop
     gnome-set shell.extensions.desktop-icons show-trash false || fail
