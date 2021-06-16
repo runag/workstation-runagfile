@@ -16,6 +16,16 @@
 
 nvidia::is-card-present() {
   lspci | grep --quiet "VGA.*NVIDIA Corporation"
+
+  local savedPipeStatus="${PIPESTATUS[*]}"
+
+  if [ "${savedPipeStatus}" = "0 0" ]; then
+    return 0
+  elif [ "${savedPipeStatus}" = "0 1" ]; then
+    return 1
+  else
+    fail "Error calling lspci"
+  fi
 }
 
 nvidia::fix-screen-tearing() {

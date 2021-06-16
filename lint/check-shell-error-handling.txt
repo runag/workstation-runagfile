@@ -1,4 +1,6 @@
 
+./lib/linux/nvidia.sh:
+  18:   lspci | grep --quiet "VGA.*NVIDIA Corporation"
 
 ./lib/linux/ubuntu-vm-server.sh:
   62:   (
