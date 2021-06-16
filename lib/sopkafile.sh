@@ -50,6 +50,10 @@ sopkafile::menu() {
 
   list+=(workstation::git-pull-dotsopkas)
 
+  if [[ "$OSTYPE" =~ ^linux ]]; then
+    list+=(sopkafile::change-hostname)
+  fi
+
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
       list+=(benchmark::run)
@@ -57,4 +61,14 @@ sopkafile::menu() {
   fi
 
   menu::select-and-run "${list[@]}" || fail
+}
+
+sopkafile::change-hostname() {
+  local hostname
+  echo "Please enter new hostname:"
+  IFS="" read -r hostname || fail
+
+  linux::dangerously-set-hostname "${hostname}" || fail
+
+  sopkafile::menu || fail
 }
