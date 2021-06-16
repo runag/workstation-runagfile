@@ -60,6 +60,7 @@ ubuntu-workstation::install-terminal-software() {
       || fail
 
   rclone::install || fail
+  tailscale::install || fail
 }
 
 ubuntu-workstation::install-build-tools() {

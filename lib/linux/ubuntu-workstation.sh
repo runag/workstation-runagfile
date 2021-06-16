@@ -76,6 +76,10 @@ ubuntu-workstation::deploy() {
         ubuntu-workstation::configure-my-folder-mount || fail
         backup::vm-home-to-host::setup || fail
       fi
+
+      if tailscale::is-logged-out; then
+        ubuntu-workstation::configure-tailscale || fail
+      fi
     fi
   ) || fail
 

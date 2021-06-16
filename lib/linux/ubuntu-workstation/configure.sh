@@ -204,3 +204,16 @@ ubuntu-workstation::configure-my-folder-mount() {
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
 }
+
+ubuntu-workstation::configure-tailscale() {
+  local tailscaleKey
+
+  bitwarden::unlock || fail
+
+  # bitwarden-object: "my tailscale reusable key"
+  tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
+
+  sudo tailscale up \
+    --authkey "${tailscaleKey}" \
+    || fail
+}

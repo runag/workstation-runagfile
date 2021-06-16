@@ -68,6 +68,7 @@ Record names should be as the following:
 "my password for ssh private key"
 "my ssh private key"
 "my ssh public key"
+"my tailscale reusable key"
 "sublime text 3 license"
 ```
 
