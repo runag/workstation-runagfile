@@ -1,20 +1,20 @@
 
-In ./lib/ubuntu/backup.sh line 39:
+In ./lib/linux/backup.sh line 39:
   serviceOptions[NoNewPrivileges]=false
   ^-----------------------------^ SC2034: serviceOptions appears unused. Verify use (or export if used externally).
 
 
-In ./lib/ubuntu/backup.sh line 45:
+In ./lib/linux/backup.sh line 45:
   timerOptions[RandomizedDelaySec]="300"
   ^-- SC2034: timerOptions appears unused. Verify use (or export if used externally).
 
 
-In ./lib/ubuntu/ubuntu-workstation.sh line 271:
+In ./lib/linux/ubuntu-workstation/configure.sh line 109:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/ubuntu/ubuntu-workstation.sh line 275:
+In ./lib/linux/ubuntu-workstation/configure.sh line 113:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
