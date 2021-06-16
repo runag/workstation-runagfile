@@ -15,6 +15,9 @@
 #  limitations under the License.
 
 ubuntu-vm-server::deploy() {
+  # perform cleanup
+  apt::autoremove || fail
+
   # perform apt update and upgrade
   if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
     apt::lazy-update || fail
@@ -39,9 +42,6 @@ ubuntu-vm-server::deploy() {
 
   # install avahi daemon
   apt::install avahi-daemon || fail
-
-  # perform cleanup
-  apt::autoremove || fail
 }
 
 ubuntu-vm-server::deploy-my-folder-access() {

@@ -18,6 +18,9 @@ ubuntu-workstation::deploy() {
   # disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
+  # perform cleanup
+  apt::autoremove || fail
+
   # update and upgrade
   if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
     apt::lazy-update || fail
@@ -75,9 +78,6 @@ ubuntu-workstation::deploy() {
       fi
     fi
   ) || fail
-
-  # cleanup
-  apt::autoremove || fail
 
   # set "deployed" flag
   touch "${HOME}/.sopka.workstation.deployed" || fail
