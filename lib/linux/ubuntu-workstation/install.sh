@@ -74,9 +74,6 @@ ubuntu-workstation::install-terminal-software() {
   # ffmpeg
   apt::install ffmpeg || fail
 
-  # ghostscript
-  apt::install ghostscript || fail
-
   # graphviz
   apt::install graphviz || fail
 
@@ -98,28 +95,16 @@ ubuntu-workstation::install-terminal-software() {
 
 ubuntu-workstation::install-build-tools() {
   apt::install \
-    autoconf \
-    bison \
     build-essential \
-    libffi-dev \
-    libgdbm-dev \
-    libgs-dev \
-    libncurses-dev \
-    libpq-dev \
-    libreadline-dev \
     libsqlite3-dev \
     libssl-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libyaml-dev \
-    zlib1g-dev \
       || fail
 }
 
 ubuntu-workstation::install-servers() {
   apt::install memcached || fail
   apt::install nginx || fail
-  apt::install postgresql postgresql-contrib || fail
+  apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
 }
 
