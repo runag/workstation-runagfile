@@ -54,6 +54,7 @@ ubuntu-workstation::install-terminal-software() {
     restic \
     shellcheck \
     sqlite3 \
+    ssh-import-id \
     tmux \
     whois \
     zsh \
