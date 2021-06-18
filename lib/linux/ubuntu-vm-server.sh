@@ -44,7 +44,7 @@ ubuntu-vm-server::deploy() {
   apt::install avahi-daemon || fail
 }
 
-ubuntu-vm-server::deploy-my-folder-access() {
+ubuntu-vm-server::deploy-host-folders-access() {
   # perform apt update and upgrade
   apt::lazy-update || fail
 
@@ -61,6 +61,6 @@ ubuntu-vm-server::deploy-my-folder-access() {
   # subshell for unlocked bitwarden
   (
     # mount host folder
-    ubuntu-workstation::configure-my-folder-mount || fail
+    ubuntu-workstation::configure-host-folders-mount || fail
   ) || fail
 }

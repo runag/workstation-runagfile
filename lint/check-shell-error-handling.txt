@@ -15,7 +15,7 @@
   23:         list+=(ubuntu-workstation::deploy)
   28:       list+=(ubuntu-workstation::install-shellrc)
   29:       list+=(ubuntu-vm-server::deploy)
-  30:       list+=(ubuntu-vm-server::deploy-my-folder-access)
+  30:       list+=(ubuntu-vm-server::deploy-host-folders-access)
   34:       list+=("backup::vm-home-to-host restic::menu with-systemd")
   35:       list+=("backup::vm-home-to-host::create")
   36:       list+=("backup::vm-home-to-host::forget-and-check")

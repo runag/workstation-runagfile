@@ -198,11 +198,12 @@ ubuntu-workstation::configure-gnome() {
   ) || fail
 }
 
-ubuntu-workstation::configure-my-folder-mount() {
+ubuntu-workstation::configure-host-folders-mount() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
+  mount::cifs "//${hostIpAddress}/ephemeral-data" "ephemeral-data" "my microsoft account" || fail
 }
 
 ubuntu-workstation::configure-tailscale() {

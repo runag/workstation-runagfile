@@ -73,7 +73,7 @@ ubuntu-workstation::deploy() {
 
       # mount host folder
       if vmware::is-inside-vm; then
-        ubuntu-workstation::configure-my-folder-mount || fail
+        ubuntu-workstation::configure-host-folders-mount || fail
         backup::vm-home-to-host::setup || fail
       fi
 

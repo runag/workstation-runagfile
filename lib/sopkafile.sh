@@ -27,7 +27,7 @@ sopkafile::menu() {
     if tools::is-nothing-deployed; then
       list+=(ubuntu-workstation::install-shellrc)
       list+=(ubuntu-vm-server::deploy)
-      list+=(ubuntu-vm-server::deploy-my-folder-access)
+      list+=(ubuntu-vm-server::deploy-host-folders-access)
     fi
 
     if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
