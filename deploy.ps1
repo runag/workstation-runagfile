@@ -120,6 +120,9 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-tools" }
 if ("$env:GITHUB_ACTIONS" -ne "true") { # I don't need to update them in CI
   choco upgrade all --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
+
+  scoop update *
+  if ($LASTEXITCODE -ne 0) { throw "Unable to update scoop packages" }
 }
 
 
