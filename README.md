@@ -56,6 +56,12 @@ iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/mai
 ~/.sopka/bin/sopka
 ```
 
+3. Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
+
+```sh
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
+```
+
 ## Secret items which are expected to be found in a Bitwarden
 
 Record names should be as the following:
