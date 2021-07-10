@@ -78,12 +78,18 @@ sudo reboot
 
 
 ### Scrolling on Mac
-> from https://www.reddit.com/r/linux/comments/72mfv8/psa_for_firefox_users_set_moz_use_xinput21_to/
-> Run this command: echo export MOZ_USE_XINPUT2=1 | sudo tee /etc/profile.d/use-xinput2.sh
-> Log out and back in.
-> Firefox should now use xinput 2.
-> (optional) Open Firefox and go to about:preferences -> Advanced (or about:preferences -> Browsing for Firefox Nightly), and uncheck Use smooth scrolling. This disables the old style smooth scrolling, which just causes an annoying delay when using xinput2 style scrolling imo.
 
+> based on https://www.reddit.com/r/linux/comments/72mfv8/psa_for_firefox_users_set_moz_use_xinput21_to/
+
+1. Make the following file:
+
+```sh
+echo export MOZ_USE_XINPUT2=1 | sudo tee /etc/profile.d/moz_use_xinput2.sh
+```
+
+2. Log out, log in
+
+3. Disable smooth scrolling in firefox preferences
 
 ### Macbook fan control
 ```sh
