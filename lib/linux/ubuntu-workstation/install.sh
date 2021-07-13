@@ -47,7 +47,7 @@ ubuntu-workstation::install-terminal-software() {
     htop \
     imagemagick \
     iperf3 \
-    letsencrypt \
+    certbot \
     mc \
     ncdu \
     p7zip-full \
