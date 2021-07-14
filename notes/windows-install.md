@@ -7,7 +7,7 @@
 
 * Check if "Windows is activated with a digital licence linked to your Microsoft account"
 
-# Bitlocker
+# Bitlocker if I dont have TPM chip in my computer
 
 * run ``gpedit.msc``
 * Local Computer Policy > Computer Configuration > Administrative Templates > Windows Components > BitLocker Drive Encryption > Operating System Drives
@@ -55,12 +55,6 @@ Maximum performance
 * Ruby using RubyInstaller (that one from choco can't install (compile) some gems, namely sqlite)
 * NVIDIA driver
 * NVIDIA RTX Voice
-* Wireguard
-
-# Configuration
-
-* Copy rclone config from key storage
-* Cope wireguard config from key storage
 
 # Synchting
 
