@@ -12,12 +12,12 @@ Install only LTS release as its most stable
 1) (IF MAC) MacOS partition app
 
     * Make half the drive as APFS
-    * Make 600 mb partition for /boot (format as hfs for now)
+    * Make 1024 mb partition for /boot (format as hfs for now)
     * Make the rest as one partition (format as hfs for now)
 
 2) Ubuntu installer
 
-    * Format first, /boot, ext4 journalling, 600 MB
+    * Format first, /boot, ext4 journalling, 1024 MB
     * Second use as encrypted
     * Make / inside encrypted
     * Install boot loader on /boot partition, not to the /sda (tho whole drive)
