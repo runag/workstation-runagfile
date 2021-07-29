@@ -28,9 +28,9 @@ sopkafile::menu() {
     list+=(ubuntu-vm-server::deploy)
     list+=(ubuntu-vm-server::deploy-host-folders-access)
 
-    list+=("backup::vm-home-to-host restic::menu with-systemd")
-    list+=(backup::vm-home-to-host::create)
-    list+=(backup::vm-home-to-host::forget-and-check)
+    # list+=("backup::vm-home-to-host restic::menu with-systemd")
+    # list+=(backup::vm-home-to-host::create)
+    # list+=(backup::vm-home-to-host::forget-and-check)
 
   elif [[ "$OSTYPE" =~ ^darwin ]]; then
     list+=(macos-workstation::deploy)

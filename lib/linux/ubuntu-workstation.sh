@@ -74,7 +74,7 @@ ubuntu-workstation::deploy() {
       # mount host folder
       if vmware::is-inside-vm; then
         ubuntu-workstation::configure-host-folders-mount || fail
-        backup::vm-home-to-host::setup || fail
+        # backup::vm-home-to-host::setup || fail
       fi
 
       if tailscale::is-logged-out; then
