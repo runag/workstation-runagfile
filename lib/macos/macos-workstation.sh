@@ -17,7 +17,7 @@
 macos-workstation::deploy() {
   macos::install-basic-packages || fail
   macos::install-developer-packages || fail
-  macos::configure-workstation || fail
+  macos-workstation::configure || fail
 
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
@@ -129,7 +129,7 @@ macos::install-developer-packages() {
   brew install sshfs || true
 }
 
-macos::configure-workstation() {
+macos-workstation::configure() {
   # increase maxfiles limits
   macos::increase-maxfiles-limit || fail
 

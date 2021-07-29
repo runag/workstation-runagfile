@@ -20,7 +20,7 @@
   35:       list+=("backup::vm-home-to-host::create")
   36:       list+=("backup::vm-home-to-host::forget-and-check")
   40:     list+=(macos-workstation::deploy)
-  41:     list+=(macos::configure-workstation)
+  41:     list+=(macos-workstation::configure)
   44:     list+=(windows-workstation::deploy)
   48:     list+=(workstation::merge-configs)
   51:   list+=(workstation::update-home-sopka)

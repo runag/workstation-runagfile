@@ -18,39 +18,32 @@ sopkafile::menu() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    if [ -n "${DISPLAY:-}" ]; then
-      if [ -f "${HOME}/.sopka.workstation.deployed" ] || tools::is-nothing-deployed; then
-        list+=(ubuntu-workstation::deploy)
-      fi
-    fi
-
-    if tools::is-nothing-deployed; then
-      list+=(ubuntu-workstation::install-shellrc)
-      list+=(ubuntu-vm-server::deploy)
-      list+=(ubuntu-vm-server::deploy-host-folders-access)
-    fi
-
-    if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-      list+=("backup::vm-home-to-host restic::menu with-systemd")
-      list+=("backup::vm-home-to-host::create")
-      list+=("backup::vm-home-to-host::forget-and-check")
-    fi
-
     list+=(sopkafile::change-hostname)
+
+    if [ -n "${DISPLAY:-}" ]; then
+      list+=(ubuntu-workstation::deploy)
+    fi
+    list+=(ubuntu-workstation::install-shellrc)
+
+    list+=(ubuntu-vm-server::deploy)
+    list+=(ubuntu-vm-server::deploy-host-folders-access)
+
+    list+=("backup::vm-home-to-host restic::menu with-systemd")
+    list+=(backup::vm-home-to-host::create)
+    list+=(backup::vm-home-to-host::forget-and-check)
 
   elif [[ "$OSTYPE" =~ ^darwin ]]; then
     list+=(macos-workstation::deploy)
-    list+=(macos::configure-workstation)
+    list+=(macos-workstation::configure)
 
   elif [[ "$OSTYPE" =~ ^msys ]]; then
     list+=(windows-workstation::deploy)
   fi
 
+  list+=(workstation::update-home-sopka)
   if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
     list+=(workstation::merge-configs)
   fi
-
-  list+=(workstation::update-home-sopka)
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
