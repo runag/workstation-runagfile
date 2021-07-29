@@ -23,7 +23,7 @@
   41:     list+=(macos::configure-workstation)
   44:     list+=(windows-workstation::deploy)
   48:     list+=(workstation::merge-configs)
-  51:   list+=(workstation::git-pull-dotsopkas)
+  51:   list+=(workstation::update-home-sopka)
   54:     list+=(sopkafile::change-hostname)
   59:       list+=(benchmark::run)
 

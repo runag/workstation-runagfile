@@ -19,7 +19,12 @@ workstation::merge-configs() {
   sublime::merge-config || fail
 }
 
-workstation::git-pull-dotsopkas() {
-  git -C "${HOME}/.sopkafile" pull || fail
-  git -C "${HOME}/.sopka" pull || fail
+workstation::update-home-sopka() {
+  if [ -d "${HOME}/.sopkafile" ]; then
+    git -C "${HOME}/.sopkafile" pull || fail
+  fi
+
+  if [ -d "${HOME}/.sopka" ]; then
+    git -C "${HOME}/.sopka" pull || fail
+  fi
 }

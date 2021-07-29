@@ -36,6 +36,8 @@ sopkafile::menu() {
       list+=("backup::vm-home-to-host::forget-and-check")
     fi
 
+    list+=(sopkafile::change-hostname)
+
   elif [[ "$OSTYPE" =~ ^darwin ]]; then
     list+=(macos-workstation::deploy)
     list+=(macos::configure-workstation)
@@ -48,11 +50,7 @@ sopkafile::menu() {
     list+=(workstation::merge-configs)
   fi
 
-  list+=(workstation::git-pull-dotsopkas)
-
-  if [[ "$OSTYPE" =~ ^linux ]]; then
-    list+=(sopkafile::change-hostname)
-  fi
+  list+=(workstation::update-home-sopka)
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
