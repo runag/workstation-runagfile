@@ -1,44 +1,13 @@
 
-./lib/linux/nvidia.sh:
-  18:   lspci | grep --quiet "VGA.*NVIDIA Corporation"
-
-./lib/linux/ubuntu-vm-server.sh:
-  62:   (
-
-./lib/linux/ubuntu-workstation.sh:
-  69:   ( 
-
-./lib/windows/windows-workstation.sh:
-  40:     (
-
-./lib/sopkafile.sh:
-  23:         list+=(ubuntu-workstation::deploy)
-  28:       list+=(ubuntu-workstation::install-shellrc)
-  29:       list+=(ubuntu-vm-server::deploy)
-  30:       list+=(ubuntu-vm-server::deploy-host-folders-access)
-  34:       list+=("backup::vm-home-to-host restic::menu with-systemd")
-  35:       list+=("backup::vm-home-to-host::create")
-  36:       list+=("backup::vm-home-to-host::forget-and-check")
-  40:     list+=(macos-workstation::deploy)
-  41:     list+=(macos-workstation::configure)
-  44:     list+=(windows-workstation::deploy)
-  48:     list+=(workstation::merge-configs)
-  51:   list+=(workstation::update-home-sopka)
-  54:     list+=(sopkafile::change-hostname)
-  59:       list+=(benchmark::run)
-
-./lib/macos/macos-workstation.sh:
-  166:     (
-
 ./deploy.sh:
   25:   fail() {
   26:     local i perhapsDelimiter="" startFrom=$((${#BASH_LINENO[@]}-1))
-  27:     for ((i=${startFrom}; i>=1; i--)); do
+  27:     for ((i=startFrom; i>=1; i--)); do
   29:         printf "\n" >&2
   40:   git::install-git() {
   56:   git::clone-or-pull() {
   85: __xVhMyefCbBnZFUQtwqCs "$@" || return $?
 
 ./lint/lint.sh:
-  19: ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') | tee lint/check-shell-error-handling.txt
-  21: shellcheck $(find . -name '*.sh') -e SC1090 | tee lint/shellcheck.txt
+  19: ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') > lint/check-shell-error-handling.txt
+  21: shellcheck $(find . -name '*.sh') -e SC1090 > lint/shellcheck.txt

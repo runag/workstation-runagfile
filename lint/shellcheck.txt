@@ -9,28 +9,23 @@ In ./lib/linux/backup.sh line 45:
   ^-- SC2034: timerOptions appears unused. Verify use (or export if used externally).
 
 
-In ./lib/linux/ubuntu-workstation/configure.sh line 109:
+In ./lib/linux/ubuntu-workstation/configure.sh line 110:
       echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./lib/linux/ubuntu-workstation/configure.sh line 113:
+In ./lib/linux/ubuntu-workstation/configure.sh line 114:
       echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
            ^-- SC2016: Expressions don't expand in single quotes, use double quotes for that.
 
 
-In ./deploy.sh line 27:
-    for ((i=${startFrom}; i>=1; i--)); do
-            ^----------^ SC2004: $/${} is unnecessary on arithmetic variables.
-
-
 In ./lint/lint.sh line 19:
-ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') | tee lint/check-shell-error-handling.txt
+ruby lint/check-shell-error-handling.rb $(find . -name '*.sh') > lint/check-shell-error-handling.txt
                                         ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 
 In ./lint/lint.sh line 21:
-shellcheck $(find . -name '*.sh') -e SC1090 | tee lint/shellcheck.txt
+shellcheck $(find . -name '*.sh') -e SC1090 > lint/shellcheck.txt
            ^--------------------^ SC2046: Quote this to prevent word splitting.
 
 For more information:

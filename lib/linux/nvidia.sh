@@ -16,7 +16,6 @@
 
 nvidia::is-card-present() {
   lspci | grep --quiet "VGA.*NVIDIA Corporation"
-
   local savedPipeStatus="${PIPESTATUS[*]}"
 
   if [ "${savedPipeStatus}" = "0 0" ]; then
