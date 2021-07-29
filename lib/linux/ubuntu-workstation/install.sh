@@ -62,6 +62,7 @@ ubuntu-workstation::install-terminal-software() {
 
   rclone::install || fail
   tailscale::install || fail
+  tailscale::install-issue-2541-workaround || fail
 }
 
 ubuntu-workstation::install-build-tools() {
