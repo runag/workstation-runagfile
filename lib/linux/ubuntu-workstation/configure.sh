@@ -49,10 +49,11 @@ ubuntu-workstation::configure-desktop-software() {
     ubuntu-workstation::configure-home-folders || fail
 
     # apply fixes for nvidia
-    if nvidia::is-card-present; then
-      nvidia::fix-screen-tearing || fail
-      nvidia::fix-gpu-background-image-glitch || fail
-    fi
+    # TODO: Check if I really need those fixes nowadays
+    # if nvidia::is-card-present; then
+    #   nvidia::fix-screen-tearing || fail
+    #   nvidia::fix-gpu-background-image-glitch || fail
+    # fi
 
     # configure gnome desktop
     ubuntu-workstation::configure-gnome || fail
