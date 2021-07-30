@@ -198,24 +198,3 @@ ubuntu-workstation::configure-gnome() {
     gnome-set desktop.peripherals.mouse speed -0.75 || fail
   ) || fail
 }
-
-ubuntu-workstation::configure-host-folders-mount() {
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
-
-  # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
-  mount::cifs "//${hostIpAddress}/ephemeral-data" "ephemeral-data" "my microsoft account" || fail
-}
-
-ubuntu-workstation::configure-tailscale() {
-  local tailscaleKey
-
-  bitwarden::unlock || fail
-
-  # bitwarden-object: "my tailscale reusable key"
-  tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
-
-  sudo tailscale up \
-    --authkey "${tailscaleKey}" \
-    || fail
-}

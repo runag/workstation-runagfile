@@ -16,10 +16,21 @@
 
 ubuntu-workstation::deploy-full-workstation() {
   ubuntu-workstation::deploy-workstation-base || fail
-  ubuntu-workstation::deploy-secrets || fail
-  ubuntu-workstation::deploy-host-folders-access || fail
-  ubuntu-workstation::deploy-tailscale || fail
-  ubuntu-workstation::deploy-backup || fail
+
+  # subshell to deploy secrets
+  (
+    ubuntu-workstation::deploy-secrets || fail
+
+    if vmware::is-inside-vm; then
+      ubuntu-workstation::deploy-host-folders-access || fail
+    fi
+
+    if tailscale::is-logged-out; then
+      ubuntu-workstation::deploy-tailscale || fail
+    fi
+
+    ubuntu-workstation::deploy-backup || fail
+  ) || fail
 }
 
 ubuntu-workstation::deploy-workstation-base() {
@@ -113,7 +124,7 @@ ubuntu-workstation::deploy-secrets() {
   sublime::install-license || fail
 }
 
-ubuntu-workstation::deploy-host-folders-access() (
+ubuntu-workstation::deploy-host-folders-access() {
   # Check if we have terminal
   if [ ! -t 0 ]; then
     fail "Terminal input should be available"
@@ -130,10 +141,14 @@ ubuntu-workstation::deploy-host-folders-access() (
   apt::install cifs-utils || fail
 
   # mount host folder
-  ubuntu-workstation::configure-host-folders-mount || fail
-)
+  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
-ubuntu-workstation::deploy-tailscale() (
+  # bitwarden-object: "my microsoft account"
+  mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
+  mount::cifs "//${hostIpAddress}/ephemeral-data" "ephemeral-data" "my microsoft account" || fail
+}
+
+ubuntu-workstation::deploy-tailscale() {
   # Check if we have terminal
   if [ ! -t 0 ]; then
     fail "Terminal input should be available"
@@ -150,10 +165,18 @@ ubuntu-workstation::deploy-tailscale() (
   tailscale::install || fail
   tailscale::install-issue-2541-workaround || fail
 
-  ubuntu-workstation::configure-tailscale || fail
-)
+  # get tailscale key  
+  # bitwarden-object: "my tailscale reusable key"
+  bitwarden::unlock || fail
+  local tailscaleKey; tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
 
-ubuntu-workstation::deploy-backup() (
+  # configure tailscale
+  sudo tailscale up \
+    --authkey "${tailscaleKey}" \
+    || fail
+}
+
+ubuntu-workstation::deploy-backup() {
   echo TODO
   # backup::vm-home-to-host::setup || fail
-)
+}
