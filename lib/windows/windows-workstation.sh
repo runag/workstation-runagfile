@@ -50,6 +50,4 @@ windows-workstation::deploy() {
       sublime::install-license || fail
     ) || fail
   fi
-
-  touch "${HOME}/.sopka.workstation.deployed" || fail
 }

@@ -18,10 +18,6 @@ macos-workstation::deploy() {
   macos::install-basic-packages || fail
   macos::install-developer-packages || fail
   macos-workstation::configure || fail
-
-  touch "${HOME}/.sopka.workstation.deployed" || fail
-
-  tools::perhaps-display-deploy-footnotes || fail
 }
 
 macos::install-basic-packages() {

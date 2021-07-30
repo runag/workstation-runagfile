@@ -80,12 +80,6 @@ ubuntu-workstation::deploy-workstation-base() {
   # install & configure desktop software
   ubuntu-workstation::install-desktop-software || fail
   ubuntu-workstation::configure-desktop-software || fail
-
-  # set "deployed" flag
-  touch "${HOME}/.sopka.workstation.deployed" || fail
-
-  # display footnotes if running on interactive terminal
-  tools::perhaps-display-deploy-footnotes || fail
 }
 
 ubuntu-workstation::deploy-secrets() {

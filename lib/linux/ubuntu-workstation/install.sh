@@ -14,6 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+ubuntu-workstation::install-shellrc() {
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-nano-editor-shellrc || fail
+  shell::install-direnv-loader-shellrc || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
+}
+
 ubuntu-workstation::install-system-software() {
   # install open-vm-tools
   if vmware::is-inside-vm; then
@@ -28,14 +36,6 @@ ubuntu-workstation::install-system-software() {
 
   # install cifs-utils
   apt::install cifs-utils || fail
-}
-
-ubuntu-workstation::install-shellrc() {
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-sopka-path-shellrc || fail
-  shell::install-nano-editor-shellrc || fail
-  shell::install-direnv-loader-shellrc || fail
-  bitwarden::install-bitwarden-login-shellrc || fail
 }
 
 ubuntu-workstation::install-terminal-software() {
@@ -136,14 +136,13 @@ ubuntu-workstation::install-desktop-software() {
   # GNU Privacy Assistant
   apt::install gpa || fail
 
-  # imwheel
-  apt::install imwheel || fail
+  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
+    # imwheel
+    apt::install imwheel || fail
+  fi
 
   # software for bare metal workstation
   if linux::is-bare-metal; then
-    # OBS studio
-    ubuntu-workstation::install-obs-studio || fail
-
     # copyq
     ubuntu-workstation::install-copyq || fail
 
@@ -151,14 +150,17 @@ ubuntu-workstation::install-desktop-software() {
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
     ubuntu-workstation::install-vitals || fail
 
-    # telegram desktop
-    sudo snap install telegram-desktop || fail
-
     # skype
     sudo snap install skype --classic || fail
 
+    # telegram desktop
+    sudo snap install telegram-desktop || fail
+
     # discord
     sudo snap install discord || fail
+
+    # OBS studio
+    ubuntu-workstation::install-obs-studio || fail
   fi
 }
 
@@ -175,14 +177,14 @@ ubuntu-workstation::install-vitals() {
   gnome-extensions enable "${extensionUuid}" || fail
 }
 
-ubuntu-workstation::install-obs-studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-  apt::update || fail
-  apt::install obs-studio guvcview || fail
-}
-
 ubuntu-workstation::install-copyq() {
   sudo add-apt-repository --yes ppa:hluk/copyq || fail
   apt::update || fail
   apt::install copyq || fail
+}
+
+ubuntu-workstation::install-obs-studio() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+  apt::update || fail
+  apt::install obs-studio guvcview || fail
 }

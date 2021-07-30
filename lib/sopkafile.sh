@@ -47,14 +47,16 @@ sopkafile::menu() {
   fi
 
   list+=(workstation::update-home-sopka)
-  if [ -f "${HOME}/.sopka.workstation.deployed" ]; then
-    list+=(workstation::merge-configs)
-  fi
+  list+=(workstation::merge-configs)
 
   if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
       list+=(benchmark::run)
     fi
+  fi
+
+  if [[ "$OSTYPE" =~ ^linux ]]; then
+    list+=(linux::display-if-restart-required)
   fi
 
   menu::select-and-run "${list[@]}" || fail

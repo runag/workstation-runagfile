@@ -42,8 +42,10 @@ ubuntu-workstation::configure-desktop-software() {
     # install sublime configuration
     sublime::install-config || fail
 
-    # configure imwheel
-    ubuntu-workstation::configure-imwhell || fail
+    if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
+      # configure imwheel
+      ubuntu-workstation::configure-imwhell || fail
+    fi
 
     # configure home folders
     ubuntu-workstation::configure-home-folders || fail
