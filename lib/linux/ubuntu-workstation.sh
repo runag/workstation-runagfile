@@ -89,21 +89,14 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 ubuntu-workstation::deploy-secrets() {
-  # Check if we have terminal
-  if [ ! -t 0 ]; then
-    fail "Terminal input should be available"
-  fi
+  ubuntu::deploy-secrets-lazy-prerequisites || fail
 
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-
-  # install nodejs & bitwarden
-  nodejs::apt::install || fail
-  bitwarden::install-cli || fail
-
-  # install gnome-keyring and libsecret (for git and ssh)
-  apt::install-gnome-keyring-and-libsecret || fail
-  git::install-libsecret-credential-helper || fail
+  ( unset BW_SESSION
+    # install gnome-keyring and libsecret (for git and ssh), configure git
+    apt::install-gnome-keyring-and-libsecret || fail
+    git::install-libsecret-credential-helper || fail
+    git::use-libsecret-credential-helper || fail
+  ) || fail
 
   # install ssh key, configure ssh to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
@@ -114,7 +107,6 @@ ubuntu-workstation::deploy-secrets() {
   # git access token
   # bitwarden-object: "my github personal access token"
   git::add-credentials-to-gnome-keyring "my" || fail
-  git::use-libsecret-credential-helper || fail
 
   # rubygems
   # bitwarden-object: "my rubygems credentials"
@@ -125,23 +117,15 @@ ubuntu-workstation::deploy-secrets() {
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
-  # Check if we have terminal
-  if [ ! -t 0 ]; then
-    fail "Terminal input should be available"
-  fi
+  ubuntu::deploy-secrets-lazy-prerequisites || fail
 
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-
-  # install nodejs & bitwarden
-  nodejs::apt::install || fail
-  bitwarden::install-cli || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
+  ( unset BW_SESSION
+    # install cifs-utils
+    apt::install cifs-utils || fail
+  ) || fail
 
   # mount host folder
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+  local hostIpAddress; hostIpAddress="$(unset BW_SESSION && vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
   mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
@@ -149,34 +133,46 @@ ubuntu-workstation::deploy-host-folders-access() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
-  # Check if we have terminal
-  if [ ! -t 0 ]; then
-    fail "Terminal input should be available"
-  fi
-
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-
-  # install nodejs & bitwarden
-  nodejs::apt::install || fail
-  bitwarden::install-cli || fail
-
-  # install tailscale
-  tailscale::install || fail
-  tailscale::install-issue-2541-workaround || fail
+  ubuntu::deploy-secrets-lazy-prerequisites || fail
 
   # get tailscale key  
   # bitwarden-object: "my tailscale reusable key"
   bitwarden::unlock || fail
   local tailscaleKey; tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
 
-  # configure tailscale
-  sudo tailscale up \
-    --authkey "${tailscaleKey}" \
-    || fail
+  ( unset BW_SESSION
+    # install tailscale
+    tailscale::install || fail
+    tailscale::install-issue-2541-workaround || fail
+
+    # configure tailscale
+    sudo tailscale up \
+      --authkey "${tailscaleKey}" \
+      || fail
+  ) || fail
 }
 
 ubuntu-workstation::deploy-backup() {
-  echo TODO
+  ubuntu::deploy-secrets-lazy-prerequisites || fail
   # backup::vm-home-to-host::setup || fail
+}
+
+ubuntu::deploy-secrets-lazy-prerequisites() {
+  if [ -z "${SOPKA_DEPLOY_SECRETS_LAZY_PREREQUISITES_HAPPENED:-}" ]; then
+    SOPKA_DEPLOY_SECRETS_LAZY_PREREQUISITES_HAPPENED=1
+    ( unset BW_SESSION
+
+      # Check if we have terminal
+      if [ ! -t 0 ]; then
+        fail "Terminal input should be available"
+      fi
+
+      # perform apt update and upgrade
+      apt::lazy-update || fail
+
+      # install nodejs & bitwarden
+      nodejs::apt::install || fail
+      bitwarden::install-cli || fail
+    ) || fail
+  fi
 }
