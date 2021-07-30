@@ -35,6 +35,7 @@ ubuntu-workstation::install-shellrc() {
   shell::install-sopka-path-shellrc || fail
   shell::install-nano-editor-shellrc || fail
   shell::install-direnv-loader-shellrc || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
 }
 
 ubuntu-workstation::install-terminal-software() {
@@ -61,8 +62,6 @@ ubuntu-workstation::install-terminal-software() {
       || fail
 
   rclone::install || fail
-  tailscale::install || fail
-  tailscale::install-issue-2541-workaround || fail
 }
 
 ubuntu-workstation::install-build-tools() {
@@ -161,16 +160,6 @@ ubuntu-workstation::install-desktop-software() {
     # discord
     sudo snap install discord || fail
   fi
-}
-
-ubuntu-workstation::install-secrets-software() {
-  # gnome-keyring and libsecret (for git and ssh)
-  apt::install-gnome-keyring-and-libsecret || fail
-  git::install-libsecret-credential-helper || fail
-
-  # bitwarden cli
-  bitwarden::install-bitwarden-login-shellrc || fail
-  bitwarden::install-cli || fail
 }
 
 ubuntu-workstation::install-vitals() {

@@ -21,12 +21,18 @@ sopkafile::menu() {
     list+=(sopkafile::change-hostname)
 
     if [ -n "${DISPLAY:-}" ]; then
-      list+=(ubuntu-workstation::deploy)
+      list+=(ubuntu-workstation::deploy-full-workstation)
+      list+=(ubuntu-workstation::deploy-workstation-base)
+      list+=(ubuntu-workstation::deploy-secrets)
     fi
+    if vmware::is-inside-vm; then
+      list+=(ubuntu-workstation::deploy-host-folders-access)
+    fi
+    list+=(ubuntu-workstation::deploy-tailscale)
+    list+=(ubuntu-workstation::deploy-backup)
     list+=(ubuntu-workstation::install-shellrc)
 
     list+=(ubuntu-vm-server::deploy)
-    list+=(ubuntu-vm-server::deploy-host-folders-access)
 
     # list+=("backup::vm-home-to-host restic::menu with-systemd")
     # list+=(backup::vm-home-to-host::create)

@@ -14,7 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::deploy() {
+ubuntu-workstation::deploy-full-workstation() {
+  ubuntu-workstation::deploy-workstation-base || fail
+  ubuntu-workstation::deploy-secrets || fail
+  ubuntu-workstation::deploy-host-folders-access || fail
+  ubuntu-workstation::deploy-tailscale || fail
+  ubuntu-workstation::deploy-backup || fail
+}
+
+ubuntu-workstation::deploy-workstation-base() {
   # disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
@@ -62,27 +70,6 @@ ubuntu-workstation::deploy() {
   ubuntu-workstation::install-desktop-software || fail
   ubuntu-workstation::configure-desktop-software || fail
 
-  # install secrets software
-  ubuntu-workstation::install-secrets-software || fail
-
-  # subshell to deploy secrets
-  ( 
-    if [ -t 0 ]; then
-      # deploy secrets
-      ubuntu-workstation::deploy-secrets || fail
-
-      # mount host folder
-      if vmware::is-inside-vm; then
-        ubuntu-workstation::configure-host-folders-mount || fail
-        # backup::vm-home-to-host::setup || fail
-      fi
-
-      if tailscale::is-logged-out; then
-        ubuntu-workstation::configure-tailscale || fail
-      fi
-    fi
-  ) || fail
-
   # set "deployed" flag
   touch "${HOME}/.sopka.workstation.deployed" || fail
 
@@ -91,11 +78,26 @@ ubuntu-workstation::deploy() {
 }
 
 ubuntu-workstation::deploy-secrets() {
+  # Check if we have terminal
+  if [ ! -t 0 ]; then
+    fail "Terminal input should be available"
+  fi
+
+  # perform apt update and upgrade
+  apt::lazy-update || fail
+
+  # install nodejs & bitwarden
+  nodejs::apt::install || fail
+  bitwarden::install-cli || fail
+
+  # install gnome-keyring and libsecret (for git and ssh)
+  apt::install-gnome-keyring-and-libsecret || fail
+  git::install-libsecret-credential-helper || fail
+
   # install ssh key, configure ssh to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
-  ssh::install-keys "my" || fail
-
   # bitwarden-object: "my password for ssh private key"
+  ssh::install-keys "my" || fail
   ssh::add-key-password-to-gnome-keyring "my" || fail
 
   # git access token
@@ -110,3 +112,48 @@ ubuntu-workstation::deploy-secrets() {
   # install sublime license key
   sublime::install-license || fail
 }
+
+ubuntu-workstation::deploy-host-folders-access() (
+  # Check if we have terminal
+  if [ ! -t 0 ]; then
+    fail "Terminal input should be available"
+  fi
+
+  # perform apt update and upgrade
+  apt::lazy-update || fail
+
+  # install nodejs & bitwarden
+  nodejs::apt::install || fail
+  bitwarden::install-cli || fail
+
+  # install cifs-utils
+  apt::install cifs-utils || fail
+
+  # mount host folder
+  ubuntu-workstation::configure-host-folders-mount || fail
+)
+
+ubuntu-workstation::deploy-tailscale() (
+  # Check if we have terminal
+  if [ ! -t 0 ]; then
+    fail "Terminal input should be available"
+  fi
+
+  # perform apt update and upgrade
+  apt::lazy-update || fail
+
+  # install nodejs & bitwarden
+  nodejs::apt::install || fail
+  bitwarden::install-cli || fail
+
+  # install tailscale
+  tailscale::install || fail
+  tailscale::install-issue-2541-workaround || fail
+
+  ubuntu-workstation::configure-tailscale || fail
+)
+
+ubuntu-workstation::deploy-backup() (
+  echo TODO
+  # backup::vm-home-to-host::setup || fail
+)

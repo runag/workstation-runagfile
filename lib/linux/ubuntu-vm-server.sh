@@ -43,24 +43,3 @@ ubuntu-vm-server::deploy() {
   # install avahi daemon
   apt::install avahi-daemon || fail
 }
-
-ubuntu-vm-server::deploy-host-folders-access() {
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
-
-  # install nodejs
-  nodejs::apt::install || fail
-
-  # install bitwarden
-  bitwarden::install-cli || fail
-
-  # the following commands use bitwarden, that requires password entry
-  # subshell for unlocked bitwarden
-  (
-    # mount host folder
-    ubuntu-workstation::configure-host-folders-mount || fail
-  ) || fail
-}

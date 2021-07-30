@@ -50,7 +50,7 @@ jobs:
       run: bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu-vm-server::deploy
 
   ubuntu-workstation:
-    name: ubuntu-workstation::deploy
+    name: ubuntu-workstation::deploy-workstation-base
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -64,7 +64,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y xvfb dbus-x11 ubuntu-desktop
 
     - name: Run deploy script
-      run: DISPLAY=:42 dbus-launch xvfb-run --server-num 42 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu-workstation::deploy
+      run: DISPLAY=:42 dbus-launch xvfb-run --server-num 42 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.sh) ubuntu-workstation::deploy-workstation-base
 
   windows-workstation:
     name: windows-workstation::deploy
