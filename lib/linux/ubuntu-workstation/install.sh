@@ -136,7 +136,7 @@ ubuntu-workstation::install-desktop-software() {
   # GNU Privacy Assistant
   apt::install gpa || fail
 
-  # imwheel 
+  # imwheel
   apt::install imwheel || fail
 
   # software for bare metal workstation
