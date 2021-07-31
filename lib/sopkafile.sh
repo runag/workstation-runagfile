@@ -18,8 +18,6 @@ sopkafile::menu() {
   local list=()
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
-    list+=(sopkafile::change-hostname)
-
     if [ -n "${DISPLAY:-}" ]; then
       list+=(ubuntu-workstation::deploy-full-workstation)
       list+=(ubuntu-workstation::deploy-workstation-base)
@@ -56,6 +54,7 @@ sopkafile::menu() {
   fi
 
   if [[ "$OSTYPE" =~ ^linux ]]; then
+    list+=(sopkafile::change-hostname)
     list+=(linux::display-if-restart-required)
   fi
 
