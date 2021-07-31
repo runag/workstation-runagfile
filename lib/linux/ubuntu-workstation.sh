@@ -167,6 +167,7 @@ ubuntu::deploy-secrets-lazy-prerequisites() {
       # install nodejs & bitwarden
       nodejs::apt::install || fail
       bitwarden::install-cli || fail
+      bitwarden::install-bitwarden-login-shellrc || fail
     ) || fail
   fi
 }

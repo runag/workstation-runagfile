@@ -19,7 +19,6 @@ ubuntu-workstation::install-shellrc() {
   shell::install-sopka-path-shellrc || fail
   shell::install-nano-editor-shellrc || fail
   shell::install-direnv-loader-shellrc || fail
-  bitwarden::install-bitwarden-login-shellrc || fail
 }
 
 ubuntu-workstation::install-system-software() {
