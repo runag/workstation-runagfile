@@ -1,7 +1,6 @@
 {
     "window.titleBarStyle": "custom",
     "workbench.tree.indent": 25,
-    "editor.fontSize": 16,
     "solargraph.useBundler": true,
     "editor.tabSize": 2,
     "editor.detectIndentation": false,
@@ -28,4 +27,6 @@
     "diffEditor.renderSideBySide": false,
     "editor.smoothScrolling": true,
     "workbench.list.smoothScrolling": true,
+    "workbench.startupEditor": "none",
+    "window.zoomLevel": 2,
 }
