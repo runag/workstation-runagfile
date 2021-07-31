@@ -30,7 +30,7 @@ sopkafile::menu() {
     list+=(ubuntu-workstation::deploy-backup)
     list+=(ubuntu-workstation::install-shellrc)
 
-    list+=(ubuntu-vm-server::deploy)
+    list+=(ubuntu-vm-server::deploy-base)
 
     # list+=("backup::vm-home-to-host restic::menu with-systemd")
     # list+=(backup::vm-home-to-host::create)
