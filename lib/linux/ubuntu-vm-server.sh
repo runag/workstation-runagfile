@@ -43,3 +43,9 @@ ubuntu-vm-server::deploy-base() {
   # install avahi daemon
   apt::install avahi-daemon || fail
 }
+
+ubuntu-vm-server::install-shellrc() {
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-nano-editor-shellrc || fail
+}

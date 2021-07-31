@@ -28,9 +28,9 @@ sopkafile::menu() {
     fi
     list+=(ubuntu-workstation::deploy-tailscale)
     list+=(ubuntu-workstation::deploy-backup)
-    list+=(ubuntu-workstation::install-shellrc)
 
     list+=(ubuntu-vm-server::deploy-base)
+    list+=(ubuntu-vm-server::install-shellrc)
 
     # list+=("backup::vm-home-to-host restic::menu with-systemd")
     # list+=(backup::vm-home-to-host::create)
