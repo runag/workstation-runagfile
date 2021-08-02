@@ -53,6 +53,8 @@ sopkafile::menu() {
     fi
   fi
 
+  list+=(sopkafile::set-update-secrets-true)
+
   if [[ "$OSTYPE" =~ ^linux ]]; then
     list+=(sopkafile::change-hostname)
     list+=(linux::display-if-restart-required)
@@ -68,5 +70,10 @@ sopkafile::change-hostname() {
 
   linux::dangerously-set-hostname "${hostname}" || fail
 
+  sopkafile::menu || fail
+}
+
+sopkafile::set-update-secrets-true() {
+  export UPDATE_SECRETS=true
   sopkafile::menu || fail
 }

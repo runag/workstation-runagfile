@@ -25,7 +25,7 @@ ubuntu-workstation::deploy-full-workstation() {
       ubuntu-workstation::deploy-host-folders-access || fail
     fi
 
-    if ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
+    if [ "${UPDATE_SECRETS:-}" = "true" ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
       ubuntu-workstation::deploy-tailscale || fail
     fi
 
