@@ -20,15 +20,14 @@ A script to configure my workstation. I run it on a freshly installed Linux, Mac
 It will do the following:
 
 1. Installs the basic software I frequently use.
-2. Installs my keys, passwords, software licenses (I keep them in the bitwarden database)
-	* Puts SSH keys to the filesystem and passwords to the linux keychain.
+2. Installs keys and software licenses from my bitwarden database.
 3. Makes a few tweaks to the system and to the desktop software.
 4. Installs a few shell aliases.
 5. Installs configuration for the Sublime Text and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
 
 This script is idempotent. It can be run multiple times to produce a system which is up-to date with the recent software updates and with my configuration changes.
 
-The file ``config.sh`` contains my name and email to use in configuration. If you'll fork this script, please remove them.
+The file ``config.sh`` contains my name and email to use in configuration. Please remove them if you happen to fork this script.
 
 ## Linux
 
