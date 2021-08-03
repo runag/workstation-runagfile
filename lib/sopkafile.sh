@@ -17,7 +17,7 @@
 sopkafile::menu() {
   local list=()
 
-  if [[ "$OSTYPE" =~ ^linux ]]; then
+  if [[ "${OSTYPE}" =~ ^linux ]]; then
     if [ -n "${DISPLAY:-}" ]; then
       list+=(ubuntu-workstation::deploy-full-workstation)
       list+=(ubuntu-workstation::deploy-workstation-base)
@@ -36,18 +36,18 @@ sopkafile::menu() {
     # list+=(backup::vm-home-to-host::create)
     # list+=(backup::vm-home-to-host::forget-and-check)
 
-  elif [[ "$OSTYPE" =~ ^darwin ]]; then
+  elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     list+=(macos-workstation::deploy)
     list+=(macos-workstation::configure)
 
-  elif [[ "$OSTYPE" =~ ^msys ]]; then
+  elif [[ "${OSTYPE}" =~ ^msys ]]; then
     list+=(windows-workstation::deploy)
   fi
 
   list+=(workstation::update-home-sopka)
   list+=(workstation::merge-configs)
 
-  if [[ "$OSTYPE" =~ ^linux ]] || [[ "$OSTYPE" =~ ^darwin ]]; then
+  if [[ "${OSTYPE}" =~ ^linux ]] || [[ "${OSTYPE}" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
       list+=(benchmark::run)
     fi
@@ -55,7 +55,7 @@ sopkafile::menu() {
 
   list+=(sopkafile::set-update-secrets-true)
 
-  if [[ "$OSTYPE" =~ ^linux ]]; then
+  if [[ "${OSTYPE}" =~ ^linux ]]; then
     list+=(sopkafile::change-hostname)
     list+=(linux::display-if-restart-required)
   fi

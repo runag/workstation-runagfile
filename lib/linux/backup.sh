@@ -61,7 +61,7 @@ backup::vm-home-to-host::create() (
 
   local quietMaybe=""; test -t 1 || quietMaybe="--quiet"
 
-  restic backup $quietMaybe --one-file-system . || fail
+  restic backup ${quietMaybe} --one-file-system . || fail
 
   tools::do-once-per-day backup::vm-home-to-host::forget-and-check || fail
 )

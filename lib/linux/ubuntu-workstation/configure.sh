@@ -108,12 +108,12 @@ ubuntu-workstation::configure-home-folders() {
   if [ -f "${dirsFile}" ]; then
     local tmpFile; tmpFile="$(mktemp)" || fail
 
-    if [ -d "$HOME/Desktop" ]; then
-      echo 'XDG_DESKTOP_DIR="$HOME/Desktop"' >>"${tmpFile}" || fail
+    if [ -d "${HOME}/Desktop" ]; then
+      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${tmpFile}" || fail
     fi
 
-    if [ -d "$HOME/Downloads" ]; then
-      echo 'XDG_DOWNLOADS_DIR="$HOME/Downloads"' >>"${tmpFile}" || fail
+    if [ -d "${HOME}/Downloads" ]; then
+      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${tmpFile}" || fail
     fi
 
     mv "${tmpFile}" "${dirsFile}" || fail
@@ -121,15 +121,15 @@ ubuntu-workstation::configure-home-folders() {
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
     dir::remove-if-empty \
-      "$HOME/Documents" \
-      "$HOME/Music" \
-      "$HOME/Pictures" \
-      "$HOME/Public" \
-      "$HOME/Templates" \
-      "$HOME/Videos" || fail
+      "${HOME}/Documents" \
+      "${HOME}/Music" \
+      "${HOME}/Pictures" \
+      "${HOME}/Public" \
+      "${HOME}/Templates" \
+      "${HOME}/Videos" || fail
 
-    if [ -f "$HOME/examples.desktop" ]; then
-      rm "$HOME/examples.desktop" || fail
+    if [ -f "${HOME}/examples.desktop" ]; then
+      rm "${HOME}/examples.desktop" || fail
     fi
 
     xdg-user-dirs-update || fail

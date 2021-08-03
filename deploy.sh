@@ -38,7 +38,7 @@ __xVhMyefCbBnZFUQtwqCs() {
   }
 
   git::install-git() {
-    if [[ "$OSTYPE" =~ ^linux ]]; then
+    if [[ "${OSTYPE}" =~ ^linux ]]; then
       if ! command -v git >/dev/null; then
         if command -v apt >/dev/null; then
           sudo apt update || fail
@@ -58,15 +58,15 @@ __xVhMyefCbBnZFUQtwqCs() {
     local dest="$2"
     local branch="${3:-}"
 
-    if [ -d "$dest" ]; then
-      git -C "$dest" config remote.origin.url "${url}" || fail
-      git -C "$dest" pull || fail
+    if [ -d "${dest}" ]; then
+      git -C "${dest}" config remote.origin.url "${url}" || fail
+      git -C "${dest}" pull || fail
     else
-      git clone "$url" "$dest" || fail
+      git clone "${url}" "${dest}" || fail
     fi
 
     if [ -n "${branch:-}" ]; then
-      git -C "$dest" checkout "${branch}" || fail "Unable to checkout ${branch}"
+      git -C "${dest}" checkout "${branch}" || fail "Unable to checkout ${branch}"
     fi
   }
 
