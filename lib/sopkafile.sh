@@ -57,6 +57,7 @@ sopkafile::menu() {
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     list+=(sopkafile::change-hostname)
+    list+=(keys::create-update-or-verify-key-checksums-on-all-mounted-media)
     list+=(linux::display-if-restart-required)
   fi
 
