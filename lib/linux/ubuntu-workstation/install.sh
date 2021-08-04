@@ -187,3 +187,18 @@ ubuntu-workstation::install-obs-studio() {
   apt::update || fail
   apt::install obs-studio guvcview || fail
 }
+
+ubuntu::lazy-install-secrets-dependencies() {
+  if [ -z "${SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED:-}" ]; then
+    SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED=true
+    ( unset BW_SESSION
+      # perform apt update and upgrade
+      apt::lazy-update || fail
+
+      # install nodejs & bitwarden
+      nodejs::apt::install || fail
+      bitwarden::install-cli || fail
+      bitwarden::install-bitwarden-login-shellrc || fail
+    ) || fail
+  fi
+}

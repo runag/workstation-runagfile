@@ -83,7 +83,7 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 ubuntu-workstation::deploy-secrets() {
-  ubuntu::deploy-secrets-lazy-prerequisites || fail
+  ubuntu::lazy-install-secrets-dependencies || fail
 
   ( unset BW_SESSION
     # install gnome-keyring and libsecret (for git and ssh), configure git
@@ -111,7 +111,7 @@ ubuntu-workstation::deploy-secrets() {
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
-  ubuntu::deploy-secrets-lazy-prerequisites || fail
+  ubuntu::lazy-install-secrets-dependencies || fail
 
   ( unset BW_SESSION
     # install cifs-utils
@@ -127,7 +127,7 @@ ubuntu-workstation::deploy-host-folders-access() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
-  ubuntu::deploy-secrets-lazy-prerequisites || fail
+  ubuntu::lazy-install-secrets-dependencies || fail
 
   # get tailscale key  
   # bitwarden-object: "my tailscale reusable key"
@@ -147,27 +147,6 @@ ubuntu-workstation::deploy-tailscale() {
 }
 
 ubuntu-workstation::deploy-backup() {
-  ubuntu::deploy-secrets-lazy-prerequisites || fail
+  ubuntu::lazy-install-secrets-dependencies || fail
   # backup::vm-home-to-host::setup || fail
-}
-
-ubuntu::deploy-secrets-lazy-prerequisites() {
-  if [ -z "${SOPKA_DEPLOY_SECRETS_LAZY_PREREQUISITES_HAPPENED:-}" ]; then
-    SOPKA_DEPLOY_SECRETS_LAZY_PREREQUISITES_HAPPENED=1
-    ( unset BW_SESSION
-
-      # Check if we have terminal
-      if [ ! -t 0 ]; then
-        fail "Terminal input should be available"
-      fi
-
-      # perform apt update and upgrade
-      apt::lazy-update || fail
-
-      # install nodejs & bitwarden
-      nodejs::apt::install || fail
-      bitwarden::install-cli || fail
-      bitwarden::install-bitwarden-login-shellrc || fail
-    ) || fail
-  fi
 }
