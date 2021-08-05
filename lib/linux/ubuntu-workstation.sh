@@ -171,7 +171,7 @@ ubuntu-workstation::install-gpg-key() {
 
 ubuntu-workstation::install-restic-key() {
   local key="$1"
-  if [ ! -f "${HOME}/.keys/restic/${key}.txt" ]; then
+  if ! restic::key-exists "${key}"; then
     local keysVolume="/media/${USER}/KEYS-DAILY"
     mount::ask-for-mount "${keysVolume}" || fail
     
