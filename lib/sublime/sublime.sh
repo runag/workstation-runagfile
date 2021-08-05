@@ -16,7 +16,6 @@
 
 
 sublime::install-config() {
-  sublime::determine-config-path || fail
   sublime::install-package-control || fail
 
   local sourceDir="${SOPKAFILE_DIR}/lib/sublime"
@@ -27,8 +26,10 @@ sublime::install-config() {
 }
 
 sublime::install-license() {
+  local configPath; configPath="$(sublime::config-path)" || fail
+
   # bitwarden-object: "sublime text 3 license"
-  bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${SUBLIME_CONFIG_PATH}/Local/License.sublime_license" || fail
+  bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${configPath}/Local/License.sublime_license" || fail
 }
 
 sublime::merge-config() {
