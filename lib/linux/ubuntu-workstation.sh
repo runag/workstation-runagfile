@@ -108,6 +108,13 @@ ubuntu-workstation::deploy-secrets() {
 
   # install sublime license key
   sublime::install-license || fail
+
+  # install gpg key
+  ubuntu-workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
+  git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
+
+  # install restic key
+  ubuntu-workstation::install-restic-key "stan" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
@@ -149,4 +156,26 @@ ubuntu-workstation::deploy-tailscale() {
 ubuntu-workstation::deploy-backup() {
   ubuntu::lazy-install-secrets-dependencies || fail
   # backup::vm-home-to-host::setup || fail
+}
+
+ubuntu-workstation::install-gpg-key() {
+  local key="$1"
+  if ! gpg --list-keys "${key}" >/dev/null 2>&1; then
+    local keysVolume="/media/${USER}/KEYS-DAILY"
+    mount::ask-for-mount "${keysVolume}" || fail
+
+    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+    echo "${key}:6:" | gpg --import-ownertrust || fail
+  fi
+}
+
+ubuntu-workstation::install-restic-key() {
+  local key="$1"
+  if [ ! -f "${HOME}/.keys/restic/${key}.txt" ]; then
+    local keysVolume="/media/${USER}/KEYS-DAILY"
+    mount::ask-for-mount "${keysVolume}" || fail
+    
+    gpg --decrypt "${keysVolume}/keys/restic/${key}.txt.asc" | restic::write-key "${key}"
+    test "${PIPESTATUS[*]}" = "0 0" || fail
+  fi
 }
