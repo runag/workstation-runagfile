@@ -89,5 +89,5 @@ __xVhMyefCbBnZFUQtwqCs() {
 }
 
 # I'm wrapping the script in the function with the random name, to ensure that in case if download fails in the middle,
-# then "curl | bash" hopefully will not run some funny things
+# then "curl | bash" will most likely not run some unexpected commands
 __xVhMyefCbBnZFUQtwqCs "$@" || return $?

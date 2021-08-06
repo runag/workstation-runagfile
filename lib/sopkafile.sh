@@ -44,8 +44,7 @@ sopkafile::menu() {
     list+=(windows-workstation::deploy)
   fi
 
-  list+=(workstation::update-home-sopka)
-  list+=(workstation::merge-configs)
+  list+=(sopkafile::merge-editor-configs)
 
   if [[ "${OSTYPE}" =~ ^linux ]] || [[ "${OSTYPE}" =~ ^darwin ]]; then
     if command -v sysbench >/dev/null; then
@@ -54,6 +53,7 @@ sopkafile::menu() {
   fi
 
   list+=(sopkafile::set-update-secrets-true)
+  list+=(sopkafile::update-sopka-and-sopkafile)
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     list+=(sopkafile::change-hostname)
@@ -78,4 +78,19 @@ sopkafile::change-hostname() {
 sopkafile::set-update-secrets-true() {
   export UPDATE_SECRETS=true
   sopkafile::menu || fail
+}
+
+sopkafile::update-sopka-and-sopkafile() {
+  if [ -d "${HOME}/.sopka" ]; then
+    git -C "${HOME}/.sopka" pull || fail
+  fi
+
+  if [ -d "${HOME}/.sopkafile" ]; then
+    git -C "${HOME}/.sopkafile" pull || fail
+  fi
+}
+
+sopkafile::merge-editor-configs() {
+  vscode::merge-config || fail
+  sublime::merge-config || fail
 }

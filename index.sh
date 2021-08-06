@@ -17,7 +17,6 @@
 . "${SOPKAFILE_DIR}/config.sh" || fail
 
 . "${SOPKAFILE_DIR}/lib/sopkafile.sh" || fail
-. "${SOPKAFILE_DIR}/lib/workstation.sh" || fail
 . "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
 . "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
 
