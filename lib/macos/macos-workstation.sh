@@ -15,12 +15,12 @@
 #  limitations under the License.
 
 macos-workstation::deploy() {
-  macos::install-basic-packages || fail
-  macos::install-developer-packages || fail
+  macos-workstation::install-basic-packages || fail
+  macos-workstation::install-developer-packages || fail
   macos-workstation::configure || fail
 }
 
-macos::install-basic-packages() {
+macos-workstation::install-basic-packages() {
   # install homebrew
   macos::install-homebrew || fail
 
@@ -49,7 +49,7 @@ macos::install-basic-packages() {
   brew install --cask obs || fail
 }
 
-macos::install-developer-packages() {
+macos-workstation::install-developer-packages() {
   # basic tools
   brew install jq || fail
   brew install midnight-commander || fail
@@ -130,7 +130,7 @@ macos-workstation::configure() {
   macos::increase-maxfiles-limit || fail
 
   # hide folders
-  macos::hide-folders || fail
+  macos-workstation::hide-folders || fail
 
   # shell aliases
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
@@ -181,7 +181,7 @@ macos-workstation::configure() {
   git config --global core.autocrlf input || fail
 }
 
-macos::hide-folders() {
+macos-workstation::hide-folders() {
   macos::hide-folder "${HOME}/Applications" || fail
   macos::hide-folder "${HOME}/Desktop" || fail
   macos::hide-folder "${HOME}/Documents" || fail
