@@ -14,6 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+sopkafile::main() {
+  sopkafile::menu || fail
+}
+
 sopkafile::menu() {
   local list=()
 
@@ -26,11 +30,10 @@ sopkafile::menu() {
     if vmware::is-inside-vm; then
       list+=(ubuntu-workstation::deploy-host-folders-access)
     fi
-    list+=(ubuntu-workstation::deploy-tailscale)
     list+=(ubuntu-workstation::deploy-backup)
-
-    list+=(ubuntu-vm-server::deploy-base)
-    list+=(ubuntu-vm-server::install-shellrc)
+    list+=(ubuntu-workstation::deploy-tailscale)
+    list+=(ubuntu-workstation::deploy-vm-server)
+    list+=(ubuntu-workstation::install-shellrc)
 
     # list+=("backup::vm-home-to-host restic::menu with-systemd")
     # list+=(backup::vm-home-to-host::create)
@@ -45,13 +48,6 @@ sopkafile::menu() {
   fi
 
   list+=(sopkafile::merge-editor-configs)
-
-  if [[ "${OSTYPE}" =~ ^linux ]] || [[ "${OSTYPE}" =~ ^darwin ]]; then
-    if command -v sysbench >/dev/null; then
-      list+=(benchmark::run)
-    fi
-  fi
-
   list+=(sopkafile::set-update-secrets-true)
   list+=(sopkafile::update-sopka-and-sopkafile)
 
@@ -60,6 +56,12 @@ sopkafile::menu() {
     list+=(keys::create-update-or-verify-key-checksums-on-all-mounted-media)
     list+=(keys::make-backup-copies-on-all-mounted-media)
     list+=(linux::display-if-restart-required)
+  fi
+
+  if [[ "${OSTYPE}" =~ ^linux ]] || [[ "${OSTYPE}" =~ ^darwin ]]; then
+    if command -v sysbench >/dev/null; then
+      list+=(benchmark::run)
+    fi
   fi
 
   menu::select-and-run "${list[@]}" || fail
