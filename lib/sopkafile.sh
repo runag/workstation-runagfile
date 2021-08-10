@@ -83,11 +83,11 @@ sopkafile::set-update-secrets-true() {
 }
 
 sopkafile::update-sopka-and-sopkafile() {
-  if [ -d "${HOME}/.sopka" ]; then
+  if [ -d "${HOME}/.sopka/.git" ]; then
     git -C "${HOME}/.sopka" pull || fail
   fi
 
-  if [ -d "${HOME}/.sopkafile" ]; then
+  if [ -d "${HOME}/.sopkafile/.git" ]; then
     git -C "${HOME}/.sopkafile" pull || fail
   fi
 }
