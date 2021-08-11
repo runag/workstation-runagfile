@@ -47,9 +47,9 @@ sopkafile::menu() {
     list+=(windows-workstation::deploy)
   fi
 
+  list+=("sopka::with-update-secrets sopkafile::menu")
+  list+=(sopka::update-sopka-and-sopkafile)
   list+=(sopkafile::merge-editor-configs)
-  list+=(sopkafile::set-update-secrets-true)
-  list+=(sopkafile::update-sopka-and-sopkafile)
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     list+=(sopkafile::change-hostname)
@@ -75,21 +75,6 @@ sopkafile::change-hostname() {
   linux::dangerously-set-hostname "${hostname}" || fail
 
   sopkafile::menu || fail
-}
-
-sopkafile::set-update-secrets-true() {
-  export UPDATE_SECRETS=true
-  sopkafile::menu || fail
-}
-
-sopkafile::update-sopka-and-sopkafile() {
-  if [ -d "${HOME}/.sopka/.git" ]; then
-    git -C "${HOME}/.sopka" pull || fail
-  fi
-
-  if [ -d "${HOME}/.sopkafile/.git" ]; then
-    git -C "${HOME}/.sopkafile" pull || fail
-  fi
 }
 
 sopkafile::merge-editor-configs() {
