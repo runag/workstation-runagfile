@@ -5,7 +5,7 @@
   27:     for ((i=startFrom; i>=1; i--)); do
   29:         printf "\n" >&2
   40:   git::install-git() {
-  56:   git::clone-or-pull() {
+  56:   git::place-up-to-date-clone() {
   85: __xVhMyefCbBnZFUQtwqCs "$@" || return $?
 
 ./lint/lint.sh:

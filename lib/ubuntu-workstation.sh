@@ -425,7 +425,7 @@ ubuntu-workstation::install-vitals() {
 
   mkdir -p "${extensionsDir}" || fail
 
-  git::clone-or-pull "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
+  git::place-up-to-date-clone "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
 
   gnome-extensions enable "${extensionUuid}" || fail
 }

@@ -61,13 +61,22 @@ __xVhMyefCbBnZFUQtwqCs() {
     git --version >/dev/null || fail
   }
 
-  git::clone-or-pull() {
+  git::place-up-to-date-clone() {
     local url="$1"
     local dest="$2"
     local branch="${3:-}"
 
     if [ -d "${dest}" ]; then
-      git -C "${dest}" config remote.origin.url "${url}" || fail
+      local currentUrl; currentUrl="$(git -C "${dest}" config remote.origin.url)" || fail
+
+      if [ "${currentUrl}" != "${url}" ]; then
+        local destFullPath; destFullPath="$(cd "${dest}" >/dev/null 2>&1 && pwd)" || fail
+        local destParentDir; destParentDir="$(dirname "${destFullPath}")" || fail
+        local destDirName; destDirName="$(basename "${destFullPath}")" || fail
+        local packupPath; packupPath="$(mktemp -u "${destParentDir}/${destDirName}-SOPKA-PREVIOUS-CLONE-XXXXXXXX")" || fail
+        mv "${destFullPath}" "${packupPath}" || fail
+        git clone "${url}" "${dest}" || fail
+      fi
       git -C "${dest}" pull || fail
     else
       git clone "${url}" "${dest}" || fail
@@ -80,8 +89,8 @@ __xVhMyefCbBnZFUQtwqCs() {
 
   git::install-git || fail
 
-  git::clone-or-pull "https://github.com/senotrusov/sopkafile.git" "${HOME}/.sopkafile" || fail
-  git::clone-or-pull "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka" || fail
+  git::place-up-to-date-clone "https://github.com/senotrusov/sopkafile.git" "${HOME}/.sopkafile" || fail
+  git::place-up-to-date-clone "https://github.com/senotrusov/sopka.git" "${HOME}/.sopka" || fail
 
   cd "${HOME}/.sopka" || fail
 
