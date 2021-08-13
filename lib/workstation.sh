@@ -14,14 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. "${SOPKAFILE_DIR}/config.sh" || fail
-
-. "${SOPKAFILE_DIR}/lib/sopkafile.sh" || fail
-. "${SOPKAFILE_DIR}/lib/workstation.sh" || fail
-
-if [[ "${OSTYPE}" =~ ^darwin ]]; then . "${SOPKAFILE_DIR}/lib/macos-workstation.sh" || fail; fi
-if [[ "${OSTYPE}" =~ ^linux ]]; then . "${SOPKAFILE_DIR}/lib/ubuntu-workstation.sh" || fail; fi
-if [[ "${OSTYPE}" =~ ^msys ]]; then . "${SOPKAFILE_DIR}/lib/windows-workstation.sh" || fail; fi
-
-. "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
-. "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
+workstation::merge-editor-configs() {
+  vscode::merge-config || fail
+  sublime::merge-config || fail
+}

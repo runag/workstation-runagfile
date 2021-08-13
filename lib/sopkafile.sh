@@ -49,10 +49,10 @@ sopkafile::menu() {
 
   list+=("sopka::with-update-secrets sopkafile::menu")
   list+=(sopka::update-sopka-and-sopkafile)
-  list+=(sopkafile::merge-editor-configs)
+  list+=(workstation::merge-editor-configs)
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    list+=(sopkafile::change-hostname)
+    list+=(ubuntu-workstation::change-hostname)
     list+=(keys::create-update-or-verify-key-checksums-on-all-mounted-media)
     list+=(keys::make-backup-copies-on-all-mounted-media)
     list+=(linux::display-if-restart-required)
@@ -65,19 +65,4 @@ sopkafile::menu() {
   fi
 
   menu::select-and-run "${list[@]}" || fail
-}
-
-sopkafile::change-hostname() {
-  local hostname
-  echo "Please enter new hostname:"
-  IFS="" read -r hostname || fail
-
-  linux::dangerously-set-hostname "${hostname}" || fail
-
-  sopkafile::menu || fail
-}
-
-sopkafile::merge-editor-configs() {
-  vscode::merge-config || fail
-  sublime::merge-config || fail
 }

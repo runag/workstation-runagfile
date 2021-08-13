@@ -734,3 +734,11 @@ backup::vm-home-to-host::forget-and-check() {
   restic::forget-and-prune || fail
   restic::check-and-read-data || fail
 }
+
+ubuntu-workstation::change-hostname() {
+  local hostname
+  echo "Please enter new hostname:"
+  IFS="" read -r hostname || fail
+
+  linux::dangerously-set-hostname "${hostname}" || fail
+}
