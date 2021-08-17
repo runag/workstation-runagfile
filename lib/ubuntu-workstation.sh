@@ -82,14 +82,8 @@ ubuntu-workstation::deploy-secrets() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  ( 
-    unset BW_SESSION
-
-    # install gnome-keyring and libsecret (for git and ssh), configure git
-    apt::install-gnome-keyring-and-libsecret || fail
-    git::install-libsecret-credential-helper || fail
-    git::use-libsecret-credential-helper || fail
-  ) || fail
+  # install gnome-keyring and libsecret
+  ( unset BW_SESSION && apt::install-gnome-keyring-and-libsecret ) || fail
 
   # install ssh key, configure ssh to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
@@ -99,6 +93,7 @@ ubuntu-workstation::deploy-secrets() {
 
   # git access token
   # bitwarden-object: "my github personal access token"
+  ( unset BW_SESSION && git::install-with-libsecret-credential-helper ) || fail
   git::add-credentials-to-gnome-keyring "my" || fail
 
   # rubygems
@@ -120,12 +115,8 @@ ubuntu-workstation::deploy-host-folders-access() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  ( 
-    unset BW_SESSION
-    
-    # install cifs-utils
-    apt::install cifs-utils || fail
-  ) || fail
+  # install cifs-utils
+  ( unset BW_SESSION && apt::install cifs-utils ) || fail
 
   # mount host folder
   local hostIpAddress; hostIpAddress="$(unset BW_SESSION && vmware::get-host-ip-address)" || fail
