@@ -82,7 +82,9 @@ ubuntu-workstation::deploy-secrets() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  ( unset BW_SESSION
+  ( 
+    unset BW_SESSION
+
     # install gnome-keyring and libsecret (for git and ssh), configure git
     apt::install-gnome-keyring-and-libsecret || fail
     git::install-libsecret-credential-helper || fail
