@@ -15,25 +15,28 @@
 #  limitations under the License.
 
 vscode::install-and-configure(){
+  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   vscode::snap::install || fail
   vscode::install-config || fail
-  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
+  vscode::install-extensions "${selfDir}/extensions.txt" || fail
 }
 
 vscode::install-config() {
+  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   vscode::determine-config-path || fail
 
-  config::install "${SOPKAFILE_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::install "${SOPKAFILE_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::install "${selfDir}/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::install "${selfDir}/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
+  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   vscode::determine-config-path || fail
 
-  config::merge "${SOPKAFILE_DIR}/lib/vscode/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::merge "${SOPKAFILE_DIR}/lib/vscode/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::merge "${selfDir}/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
+  config::merge "${selfDir}/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  config::merge "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" "${extensionsList}" || fail
+  config::merge "${selfDir}/extensions.txt" "${extensionsList}" || fail
   rm "${extensionsList}" || fail
 }

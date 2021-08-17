@@ -30,7 +30,8 @@ windows-workstation::deploy() {
 
   # vscode
   vscode::install-config || fail
-  vscode::install-extensions "${SOPKAFILE_DIR}/lib/vscode/extensions.txt" || fail
+  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  vscode::install-extensions "${selfDir}/vscode/extensions.txt" || fail
 
   # sublime text config
   sublime::install-config || fail

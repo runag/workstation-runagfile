@@ -14,16 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. "${SOPKAFILE_DIR}/config.sh" || fail
+sopkafile::load() {
+  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-. "${SOPKAFILE_DIR}/lib/workstation.sh" || fail
+  . "${selfDir}/config.sh" || fail
 
-if [[ "${OSTYPE}" =~ ^darwin ]]; then . "${SOPKAFILE_DIR}/lib/macos-workstation.sh" || fail; fi
-if [[ "${OSTYPE}" =~ ^linux ]]; then . "${SOPKAFILE_DIR}/lib/ubuntu-workstation.sh" || fail; fi
-if [[ "${OSTYPE}" =~ ^msys ]]; then . "${SOPKAFILE_DIR}/lib/windows-workstation.sh" || fail; fi
+  . "${selfDir}/lib/workstation.sh" || fail
 
-. "${SOPKAFILE_DIR}/lib/sublime/sublime.sh" || fail
-. "${SOPKAFILE_DIR}/lib/vscode/vscode.sh" || fail
+  if [[ "${OSTYPE}" =~ ^darwin ]]; then . "${selfDir}/lib/macos-workstation.sh" || fail; fi
+  if [[ "${OSTYPE}" =~ ^linux ]]; then . "${selfDir}/lib/ubuntu-workstation.sh" || fail; fi
+  if [[ "${OSTYPE}" =~ ^msys ]]; then . "${selfDir}/lib/windows-workstation.sh" || fail; fi
+
+  . "${selfDir}/lib/sublime/sublime.sh" || fail
+  . "${selfDir}/lib/vscode/vscode.sh" || fail
+}
+
+sopkafile::load || fail
 
 if declare -f sopka::add-menu-item >/dev/null; then
   if [[ "${OSTYPE}" =~ ^linux ]]; then
