@@ -74,9 +74,6 @@ if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
 # Clone repositories
 function Git-Clone-or-Pull($url, $dest){
   if (Test-Path -Path "$dest") {
-    & "C:\Program Files\Git\bin\git.exe" -C "$dest" config remote.origin.url "$url"
-    if ($LASTEXITCODE -ne 0) { throw "Unable to change git remote origin url" }
-  
     & "C:\Program Files\Git\bin\git.exe" -C "$dest" pull
     if ($LASTEXITCODE -ne 0) { throw "Unable to git pull" }
   } else {
