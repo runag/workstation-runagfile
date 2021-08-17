@@ -192,6 +192,7 @@ ubuntu-workstation::install-shellrc() {
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
   shell::install-sopka-path-shellrc || fail
   shell::install-nano-editor-shellrc || fail
+  bitwarden::install-bitwarden-login-shellrc || fail
 }
 
 ubuntu-workstation::install-system-software() {
@@ -365,24 +366,23 @@ ubuntu-workstation::lazy-install-secrets-dependencies() {
   if [ -z "${SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED:-}" ]; then
     SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED=true
     ( unset BW_SESSION
-      # perform apt update and upgrade
-      apt::lazy-update || fail
-
       # install nodejs & bitwarden
+      apt::lazy-update || fail
       nodejs::apt::install || fail
       bitwarden::install-cli || fail
-      bitwarden::install-bitwarden-login-shellrc || fail
     ) || fail
   fi
 }
 
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
+  local keyPart="${2:-"secret-subkeys"}"
+
   if ! gpg --list-keys "${key}" >/dev/null 2>&1; then
     local keysVolume="/media/${USER}/KEYS-DAILY"
     mount::ask-for-mount "${keysVolume}" || fail
 
-    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-${keyPart}.asc" || fail
     echo "${key}:6:" | gpg --import-ownertrust || fail
   fi
 }
@@ -426,22 +426,22 @@ ubuntu-workstation::configure-desktop-software() {
     # install sublime configuration
     sublime::install-config || fail
 
+    # configure imwheel
     if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-      # configure imwheel
       ubuntu-workstation::configure-imwhell || fail
     fi
 
     # configure home folders
     ubuntu-workstation::configure-home-folders || fail
 
+    # configure gnome desktop
+    ubuntu-workstation::configure-gnome || fail
+
     # apply fixes for nvidia
     # TODO: Check if I really need those fixes nowadays
     # if ubuntu-workstation::is-nvidia-gpu-present; then
     #   ubuntu-workstation::fix-nvidia-gpu-glitches || fail
     # fi
-
-    # configure gnome desktop
-    ubuntu-workstation::configure-gnome || fail
   fi
 }
 
