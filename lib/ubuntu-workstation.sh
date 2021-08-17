@@ -309,8 +309,8 @@ ubuntu-workstation::install-desktop-software() {
   # GNU Privacy Assistant
   apt::install gpa || fail
 
+  # imwheel
   if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-    # imwheel
     apt::install imwheel || fail
   fi
 
