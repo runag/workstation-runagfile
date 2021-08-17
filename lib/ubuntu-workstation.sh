@@ -607,7 +607,6 @@ ubuntu-workstation::fix-nvidia-gpu-glitches() {
     sudo update-initramfs -u || fail
     echo "Please reboot to activate screen tearing fix" >&2
   fi
-}
 
   # fix background image glitch
   file::sudo-write "/usr/lib/systemd/system-sleep/nvidia--fix-gpu-background-image-glitch.sh" 0755 <<'SHELL' || fail
