@@ -158,28 +158,6 @@ ubuntu-workstation::deploy-backup() {
   # backup::vm-home-to-host::setup || fail
 }
 
-ubuntu-workstation::install-gpg-key() {
-  local key="$1"
-  if ! gpg --list-keys "${key}" >/dev/null 2>&1; then
-    local keysVolume="/media/${USER}/KEYS-DAILY"
-    mount::ask-for-mount "${keysVolume}" || fail
-
-    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
-    echo "${key}:6:" | gpg --import-ownertrust || fail
-  fi
-}
-
-ubuntu-workstation::install-restic-key() {
-  local key="$1"
-  if ! restic::key-exists "${key}"; then
-    local keysVolume="/media/${USER}/KEYS-DAILY"
-    mount::ask-for-mount "${keysVolume}" || fail
-    
-    gpg --decrypt "${keysVolume}/keys/restic/${key}.txt.asc" | restic::write-key "${key}"
-    test "${PIPESTATUS[*]}" = "0 0" || fail
-  fi
-}
-
 ubuntu-workstation::deploy-vm-server() {
   # perform cleanup
   apt::autoremove || fail
@@ -208,49 +186,6 @@ ubuntu-workstation::deploy-vm-server() {
 
   # install avahi daemon
   apt::install avahi-daemon || fail
-}
-
-ubuntu-workstation::is-nvidia-card-present() {
-  lspci | grep --quiet "VGA.*NVIDIA Corporation"
-  local savedPipeStatus="${PIPESTATUS[*]}"
-
-  if [ "${savedPipeStatus}" = "0 0" ]; then
-    return 0
-  elif [ "${savedPipeStatus}" = "0 1" ]; then
-    return 1
-  else
-    fail "Error calling lspci"
-  fi
-}
-
-ubuntu-workstation::fix-nvidia-screen-tearing() {
-  # based on https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
-  local modprobeFile="/etc/modprobe.d/zz-nvidia-modeset.conf"
-  if [ ! -f "${modprobeFile}" ]; then
-    echo "options nvidia_drm modeset=1" | sudo tee "${modprobeFile}"
-    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to ${modprobeFile}"
-    sudo update-initramfs -u || fail
-    echo "Please reboot to activate screen tearing fix" >&2
-  fi
-}
-
-ubuntu-workstation::fix-nvidia-background-image-glitch() {
-  file::sudo-write "/usr/lib/systemd/system-sleep/nvidia--fix-gpu-background-image-glitch.sh" 0755 <<'SHELL' || fail
-#!/bin/bash
-case $1/$2 in
-  pre/*)
-    ;;
-  post/*)
-    if [ -f /var/cache/background-fix-state ]; then
-      rm /var/cache/background-fix-state
-      su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"
-    else
-      touch /var/cache/background-fix-state
-      su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
-    fi
-    ;;
-esac
-SHELL
 }
 
 ubuntu-workstation::install-shellrc() {
@@ -441,6 +376,28 @@ ubuntu-workstation::lazy-install-secrets-dependencies() {
   fi
 }
 
+ubuntu-workstation::install-gpg-key() {
+  local key="$1"
+  if ! gpg --list-keys "${key}" >/dev/null 2>&1; then
+    local keysVolume="/media/${USER}/KEYS-DAILY"
+    mount::ask-for-mount "${keysVolume}" || fail
+
+    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+    echo "${key}:6:" | gpg --import-ownertrust || fail
+  fi
+}
+
+ubuntu-workstation::install-restic-key() {
+  local key="$1"
+  if ! restic::key-exists "${key}"; then
+    local keysVolume="/media/${USER}/KEYS-DAILY"
+    mount::ask-for-mount "${keysVolume}" || fail
+    
+    gpg --decrypt "${keysVolume}/keys/restic/${key}.txt.asc" | restic::write-key "${key}"
+    test "${PIPESTATUS[*]}" = "0 0" || fail
+  fi
+}
+
 ubuntu-workstation::configure-system() {
   # increase inotify limits
   linux::configure-inotify || fail
@@ -479,9 +436,8 @@ ubuntu-workstation::configure-desktop-software() {
 
     # apply fixes for nvidia
     # TODO: Check if I really need those fixes nowadays
-    # if ubuntu-workstation::is-nvidia-card-present; then
-    #   ubuntu-workstation::fix-nvidia-screen-tearing || fail
-    #   ubuntu-workstation::fix-nvidia-background-image-glitch || fail
+    # if ubuntu-workstation::is-nvidia-gpu-present; then
+    #   ubuntu-workstation::fix-nvidia-gpu-glitches || fail
     # fi
 
     # configure gnome desktop
@@ -626,6 +582,50 @@ ubuntu-workstation::configure-gnome() {
     # 1600 DPI mouse
     gnome-set desktop.peripherals.mouse speed -0.75 || fail
   ) || fail
+}
+
+ubuntu-workstation::is-nvidia-gpu-present() {
+  lspci | grep --quiet "VGA.*NVIDIA Corporation"
+  local savedPipeStatus="${PIPESTATUS[*]}"
+
+  if [ "${savedPipeStatus}" = "0 0" ]; then
+    return 0
+  elif [ "${savedPipeStatus}" = "0 1" ]; then
+    return 1
+  else
+    fail "Error calling lspci"
+  fi
+}
+
+ubuntu-workstation::fix-nvidia-gpu-glitches() {
+  # fix screen tearing
+  # based on https://www.reddit.com/r/linuxquestions/comments/8fb9oj/how_to_fix_screen_tearing_ubuntu_1804_nvidia_390/
+  local modprobeFile="/etc/modprobe.d/zz-nvidia-modeset.conf"
+  if [ ! -f "${modprobeFile}" ]; then
+    echo "options nvidia_drm modeset=1" | sudo tee "${modprobeFile}"
+    test "${PIPESTATUS[*]}" = "0 0" || fail "Unable to write to ${modprobeFile}"
+    sudo update-initramfs -u || fail
+    echo "Please reboot to activate screen tearing fix" >&2
+  fi
+}
+
+  # fix background image glitch
+  file::sudo-write "/usr/lib/systemd/system-sleep/nvidia--fix-gpu-background-image-glitch.sh" 0755 <<'SHELL' || fail
+#!/bin/bash
+case $1/$2 in
+  pre/*)
+    ;;
+  post/*)
+    if [ -f /var/cache/background-fix-state ]; then
+      rm /var/cache/background-fix-state
+      su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/warty-final-ubuntu.png'"
+    else
+      touch /var/cache/background-fix-state
+      su - stan bash -c "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Disco_Dingo_Alt_Default_by_Abubakar_NK.png'"
+    fi
+    ;;
+esac
+SHELL
 }
 
 backup::vm-home-to-host() {
