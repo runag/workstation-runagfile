@@ -83,7 +83,7 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 ubuntu-workstation::deploy-secrets() {
-  ubuntu-workstation::lazy-install-secrets-dependencies || fail
+  bitwarden::install-cli-with-nodejs || fail
 
   ( unset BW_SESSION
     # install gnome-keyring and libsecret (for git and ssh), configure git
@@ -118,7 +118,7 @@ ubuntu-workstation::deploy-secrets() {
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
-  ubuntu-workstation::lazy-install-secrets-dependencies || fail
+  bitwarden::install-cli-with-nodejs || fail
 
   ( unset BW_SESSION
     # install cifs-utils
@@ -134,7 +134,7 @@ ubuntu-workstation::deploy-host-folders-access() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
-  ubuntu-workstation::lazy-install-secrets-dependencies || fail
+  bitwarden::install-cli-with-nodejs || fail
 
   # get tailscale key  
   # bitwarden-object: "my tailscale reusable key"
@@ -154,7 +154,7 @@ ubuntu-workstation::deploy-tailscale() {
 }
 
 ubuntu-workstation::deploy-backup() {
-  ubuntu-workstation::lazy-install-secrets-dependencies || fail
+  bitwarden::install-cli-with-nodejs || fail
   # backup::vm-home-to-host::setup || fail
 }
 
@@ -360,18 +360,6 @@ ubuntu-workstation::install-obs-studio() {
   sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
   apt::update || fail
   apt::install obs-studio guvcview || fail
-}
-
-ubuntu-workstation::lazy-install-secrets-dependencies() {
-  if [ -z "${SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED:-}" ]; then
-    SOPKA_LAZY_INSTALL_SECRETS_DEPENDENCIES_HAPPENED=true
-    ( unset BW_SESSION
-      # install nodejs & bitwarden
-      apt::lazy-update || fail
-      nodejs::apt::install || fail
-      bitwarden::install-cli || fail
-    ) || fail
-  fi
 }
 
 ubuntu-workstation::install-gpg-key() {
