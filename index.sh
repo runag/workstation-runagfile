@@ -62,7 +62,7 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item workstation::merge-editor-configs || fail
 
   sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
-  sopka::add-menu-item sopka::update-sopka-and-sopkafile || fail
+  sopka::add-menu-item sopka::update || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     sopka::add-menu-item keys::create-update-or-verify-key-checksums-on-all-mounted-media || fail
