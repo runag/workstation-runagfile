@@ -41,10 +41,9 @@ ubuntu-workstation::deploy-workstation-base() {
   apt::autoremove || fail
 
   # update and upgrade
-  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
-    apt::lazy-update || fail
-  else
-    apt::lazy-update-and-dist-upgrade || fail
+  apt::lazy-update || fail
+  if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+    apt::dist-upgrade || fail
   fi
 
   # install tools to use by the rest of the script
@@ -163,10 +162,9 @@ ubuntu-workstation::deploy-vm-server() {
   apt::autoremove || fail
 
   # perform apt update and upgrade
-  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
-    apt::lazy-update || fail
-  else
-    apt::lazy-update-and-dist-upgrade || fail
+  apt::lazy-update || fail
+  if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+    apt::dist-upgrade || fail
   fi
 
   # install open-vm-tools
