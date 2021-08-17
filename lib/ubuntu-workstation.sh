@@ -25,10 +25,7 @@ ubuntu-workstation::deploy-full-workstation() {
       ubuntu-workstation::deploy-host-folders-access || fail
     fi
 
-    if [ "${UPDATE_SECRETS:-}" = "true" ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
-      ubuntu-workstation::deploy-tailscale || fail
-    fi
-
+    ubuntu-workstation::deploy-tailscale || fail
     ubuntu-workstation::deploy-backup || fail
   ) || fail
 }
@@ -138,21 +135,32 @@ ubuntu-workstation::deploy-tailscale() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  # get tailscale key  
-  # bitwarden-object: "my tailscale reusable key"
-  bitwarden::unlock || fail
-  local tailscaleKey; tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
+  if ! command -v tailscale >/dev/null || tailscale::is-logged-out || [ "${UPDATE_SECRETS:-}" = true ]; then
+    # get tailscale key  
+    # bitwarden-object: "my tailscale reusable key"
+    bitwarden::unlock || fail
+    local tailscaleKey
+    tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
 
-  ( unset BW_SESSION
-    # install tailscale
-    tailscale::install || fail
-    tailscale::install-issue-2541-workaround || fail
+    (
+      unset BW_SESSION
 
-    # configure tailscale
-    sudo tailscale up \
-      --authkey "${tailscaleKey}" \
-      || fail
-  ) || fail
+      # install tailscale
+      if ! command -v tailscale >/dev/null
+        tailscale::install || fail
+        tailscale::install-issue-2541-workaround || fail
+      fi
+
+      # logout if UPDATE_SECRETS is set
+      if ! tailscale::is-logged-out && [ "${UPDATE_SECRETS:-}" = true ]; then
+        sudo tailscale logout || fail
+      fi
+
+      # configure tailscale
+      sudo tailscale up --authkey "${tailscaleKey}" || fail
+
+    ) || fail
+  fi
 }
 
 ubuntu-workstation::deploy-backup() {
