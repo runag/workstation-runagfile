@@ -65,8 +65,9 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item sopka::update || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    sopka::add-menu-item keys::create-update-or-verify-key-checksums-on-all-mounted-media || fail
-    sopka::add-menu-item keys::make-backup-copies-on-all-mounted-media || fail
+    sopka::add-menu-item keys::maintain-checksums || fail
+    sopka::add-menu-item keys::make-backups || fail
+
     sopka::add-menu-item linux::display-if-restart-required || fail
   fi
 
