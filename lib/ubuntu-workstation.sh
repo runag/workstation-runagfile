@@ -173,7 +173,7 @@ ubuntu-workstation::deploy-vm-server() {
   fi
 
   # install and configure sshd
-  echo "PasswordAuthentication no" | file::sudo-write "/etc/ssh/sshd_config.d/disable-password-authentication.conf" || fail
+  ssh::disable-password-authentication || fail
   apt::install openssh-server || fail
   sudo systemctl --now enable ssh || fail
   sudo systemctl reload ssh || fail
