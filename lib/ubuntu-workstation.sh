@@ -82,6 +82,7 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 ubuntu-workstation::deploy-secrets() {
+  # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
   ( unset BW_SESSION
@@ -117,6 +118,7 @@ ubuntu-workstation::deploy-secrets() {
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
+  # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
   ( unset BW_SESSION
@@ -133,6 +135,7 @@ ubuntu-workstation::deploy-host-folders-access() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
+  # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
   # get tailscale key  
@@ -153,7 +156,9 @@ ubuntu-workstation::deploy-tailscale() {
 }
 
 ubuntu-workstation::deploy-backup() {
+  # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
+
   # backup::vm-home-to-host::setup || fail
 }
 
