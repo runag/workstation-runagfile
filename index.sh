@@ -70,10 +70,8 @@ if declare -f sopka::add-menu-item >/dev/null; then
     sopka::add-menu-item linux::display-if-restart-required || fail
   fi
 
-  if [[ "${OSTYPE}" =~ ^linux ]] || [[ "${OSTYPE}" =~ ^darwin ]]; then
-    if command -v sysbench >/dev/null; then
-      sopka::add-menu-item benchmark::run || fail
-    fi
+  if benchmark::is-available; then
+    sopka::add-menu-item benchmark::run || fail
   fi
 
 fi
