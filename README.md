@@ -32,15 +32,13 @@ The file ``config.sh`` contains my name and email to use in configuration. Pleas
 ## Linux
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) \
-senotrusov/sopkafile
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) senotrusov/sopkafile
 ```
 
 ## MacOS
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) \
-senotrusov/sopkafile
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) senotrusov/sopkafile
 ```
 
 ## Windows
