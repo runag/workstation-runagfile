@@ -118,7 +118,9 @@ ubuntu-workstation::deploy-host-folders-access() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  ( unset BW_SESSION
+  ( 
+    unset BW_SESSION
+    
     # install cifs-utils
     apt::install cifs-utils || fail
   ) || fail
