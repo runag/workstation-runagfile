@@ -141,7 +141,7 @@ ubuntu-workstation::deploy-tailscale() {
       unset BW_SESSION
 
       # install tailscale
-      if ! command -v tailscale >/dev/null
+      if ! command -v tailscale >/dev/null; then
         tailscale::install || fail
         tailscale::install-issue-2541-workaround || fail
       fi
