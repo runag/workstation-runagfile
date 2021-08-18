@@ -92,9 +92,9 @@ ubuntu-workstation::deploy-secrets() {
   ssh::add-key-password-to-gnome-keyring "my" || fail
 
   # git access token
-  # bitwarden-object: "my github personal access token"
+  # bitwarden-object: "my github.com personal access token"
   ( unset BW_SESSION && git::install-with-libsecret-credential-helper ) || fail
-  git::add-credentials-to-gnome-keyring "my" || fail
+  git::add-credentials-to-gnome-keyring "my" "github.com" || fail
 
   # rubygems
   # bitwarden-object: "my rubygems credentials"
