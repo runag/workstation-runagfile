@@ -223,13 +223,14 @@ ubuntu-workstation::install-terminal-software() {
   apt::install \
     apache2-utils \
     awscli \
+    certbot \
     ffmpeg \
     git \
+    gnupg \
     graphviz \
     htop \
     imagemagick \
     iperf3 \
-    certbot \
     mc \
     ncdu \
     p7zip-full \
