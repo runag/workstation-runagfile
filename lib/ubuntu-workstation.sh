@@ -85,7 +85,7 @@ ubuntu-workstation::deploy-secrets() {
   # install gnome-keyring and libsecret
   ( unset BW_SESSION && apt::install-gnome-keyring-and-libsecret ) || fail
 
-  # install ssh key, configure ssh to use it
+  # install ssh key, configure ssh  to use it
   # bitwarden-object: "my ssh private key", "my ssh public key"
   # bitwarden-object: "my password for ssh private key"
   ssh::install-keys "my" || fail
@@ -160,7 +160,13 @@ ubuntu-workstation::deploy-backup() {
   bitwarden::install-cli-with-nodejs || fail
 
   # install restic key
-  ubuntu-workstation::install-restic-key "stan" || fail
+  ubuntu-workstation::install-restic-password-file "stan" || fail
+
+  # install ssh key
+  ssh::install-keys "my data server" "data_server" || fail
+
+  # save ssh destination
+  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
   # backup::vm-home-to-host::setup || fail
 }
@@ -374,9 +380,9 @@ ubuntu-workstation::install-gpg-key() {
   keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY" "keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
 }
 
-ubuntu-workstation::install-restic-key() {
+ubuntu-workstation::install-restic-password-file() {
   local key="$1"
-  keys::install-restic-key "${key}" "/media/${USER}/KEYS-DAILY" "keys/restic/${key}.txt.asc" || fail
+  keys::install-restic-password-file "${key}" "/media/${USER}/KEYS-DAILY" "keys/restic/${key}.restic-password.asc" || fail
 }
 
 ubuntu-workstation::configure-system() {
