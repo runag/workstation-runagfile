@@ -104,11 +104,9 @@ ubuntu-workstation::deploy-secrets() {
   sublime::install-license || fail
 
   # install gpg key
-  ubuntu-workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
+  local key="84C200370DF103F0ADF5028FF4D70B8640424BEA"
+  keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY" "keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
   git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
-
-  # install restic key
-  ubuntu-workstation::install-restic-key "stan" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
@@ -161,6 +159,10 @@ ubuntu-workstation::deploy-tailscale() {
 ubuntu-workstation::deploy-backup() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
+
+  # install restic key
+  local key="stan"
+  keys::install-restic-key "${key}" "/media/${USER}/KEYS-DAILY" "keys/restic/${key}.txt.asc" || fail
 
   # backup::vm-home-to-host::setup || fail
 }
@@ -366,30 +368,6 @@ ubuntu-workstation::install-obs-studio() {
   sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
   apt::update || fail
   apt::install obs-studio guvcview || fail
-}
-
-ubuntu-workstation::install-gpg-key() {
-  local key="$1"
-  local keyPart="${2:-"secret-subkeys"}"
-
-  if ! gpg --list-keys "${key}" >/dev/null 2>&1; then
-    local keysVolume="/media/${USER}/KEYS-DAILY"
-    mount::ask-for-mount "${keysVolume}" || fail
-
-    gpg --import "${keysVolume}/keys/gpg/${key:(-8)}/${key:(-8)}-${keyPart}.asc" || fail
-    echo "${key}:6:" | gpg --import-ownertrust || fail
-  fi
-}
-
-ubuntu-workstation::install-restic-key() {
-  local key="$1"
-  if ! restic::key-exists "${key}"; then
-    local keysVolume="/media/${USER}/KEYS-DAILY"
-    mount::ask-for-mount "${keysVolume}" || fail
-    
-    gpg --decrypt "${keysVolume}/keys/restic/${key}.txt.asc" | restic::write-key "${key}"
-    test "${PIPESTATUS[*]}" = "0 0" || fail
-  fi
 }
 
 ubuntu-workstation::configure-system() {
