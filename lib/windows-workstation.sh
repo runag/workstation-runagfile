@@ -14,6 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+if declare -f sopka::add-menu-item >/dev/null; then
+  sopka::add-menu-item windows-workstation::deploy || fail
+fi
+
 windows-workstation::deploy() {
   # check dependencies
   shell::fail-unless-command-is-found bw jq code || fail

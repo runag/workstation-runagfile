@@ -14,6 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+if declare -f sopka::add-menu-item >/dev/null; then
+  sopka::add-menu-item workstation::merge-editor-configs || fail
+fi
+
 workstation::merge-editor-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
