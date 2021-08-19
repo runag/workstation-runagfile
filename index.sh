@@ -41,15 +41,25 @@ if declare -f sopka::add-menu-item >/dev/null; then
     if vmware::is-inside-vm; then
       sopka::add-menu-item ubuntu-workstation::deploy-host-folders-access || fail
     fi
-    sopka::add-menu-item ubuntu-workstation::deploy-backup || fail
     sopka::add-menu-item ubuntu-workstation::deploy-tailscale || fail
     sopka::add-menu-item ubuntu-workstation::deploy-vm-server || fail
     sopka::add-menu-item ubuntu-workstation::install-shellrc || fail
     sopka::add-menu-item ubuntu-workstation::change-hostname || fail
 
-    # sopka::add-menu-item "backup::vm-home-to-host restic::menu with-systemd" || fail
-    # sopka::add-menu-item backup::vm-home-to-host::create || fail
-    # sopka::add-menu-item backup::vm-home-to-host::forget-and-check || fail
+    sopka::add-menu-item ubuntu-workstation::backup::deploy || fail
+    sopka::add-menu-item ubuntu-workstation::backup::create || fail
+    sopka::add-menu-item ubuntu-workstation::backup::list-snapshots || fail
+    sopka::add-menu-item ubuntu-workstation::backup::check-and-read-data || fail
+    sopka::add-menu-item ubuntu-workstation::backup::forget-and-prune || fail
+    sopka::add-menu-item ubuntu-workstation::backup::maintenance || fail
+    sopka::add-menu-item ubuntu-workstation::backup::unlock || fail
+    sopka::add-menu-item ubuntu-workstation::backup::mount || fail
+    sopka::add-menu-item ubuntu-workstation::backup::umount || fail
+    sopka::add-menu-item ubuntu-workstation::backup::start || fail
+    sopka::add-menu-item ubuntu-workstation::backup::stop || fail
+    sopka::add-menu-item ubuntu-workstation::backup::disable-timers || fail
+    sopka::add-menu-item ubuntu-workstation::backup::status || fail
+    sopka::add-menu-item ubuntu-workstation::backup::log || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     sopka::add-menu-item macos-workstation::deploy || fail

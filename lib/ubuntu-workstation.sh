@@ -26,7 +26,7 @@ ubuntu-workstation::deploy-full-workstation() {
     fi
 
     ubuntu-workstation::deploy-tailscale || fail
-    ubuntu-workstation::deploy-backup || fail
+    ubuntu-workstation::backup::deploy || fail
   ) || fail
 }
 
@@ -104,7 +104,7 @@ ubuntu-workstation::deploy-secrets() {
   sublime::install-license || fail
 
   # install gpg key
-  ubuntu-workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
+  ubuntu-workstation::install-all-gpg-keys || fail
   git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
 }
 
@@ -153,22 +153,6 @@ ubuntu-workstation::deploy-tailscale() {
 
     ) || fail
   fi
-}
-
-ubuntu-workstation::deploy-backup() {
-  # install bitwarden cli
-  bitwarden::install-cli-with-nodejs || fail
-
-  # install restic key
-  ubuntu-workstation::install-restic-password-file "stan" || fail
-
-  # install ssh key
-  ssh::install-keys "my data server" "data_server" || fail
-
-  # save ssh destination
-  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
-
-  # backup::vm-home-to-host::setup || fail
 }
 
 ubuntu-workstation::deploy-vm-server() {
@@ -383,6 +367,10 @@ ubuntu-workstation::install-obs-studio() {
   apt::install obs-studio guvcview || fail
 }
 
+ubuntu-workstation::install-all-gpg-keys() {
+  ubuntu-workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
+}
+
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
   keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
@@ -399,9 +387,6 @@ ubuntu-workstation::install-restic-password-file() {
 ubuntu-workstation::configure-system() {
   # increase inotify limits
   linux::configure-inotify || fail
-
-  # enable systemd user instance without the need for the user to login
-  sudo loginctl enable-linger "${USER}" || fail
 }
 
 ubuntu-workstation::configure-git() {
@@ -625,62 +610,207 @@ esac
 SHELL
 }
 
-backup::vm-home-to-host() {
-  backup::vm-home-to-host::load-configuration || fail
-  "$@" || fail
+ubuntu-workstation::backup::deploy() {
+  # install bitwarden cli
+  bitwarden::install-cli-with-nodejs || fail
+
+  # install gpg keys to decrypt restic key
+  ubuntu-workstation::install-all-gpg-keys || fail
+
+  # install restic key
+  ubuntu-workstation::install-restic-password-file "stan" || fail
+
+  # install ssh key
+  ssh::install-keys "my data server" "id_rsa" || fail
+
+  # save ssh destination
+  local sshDestinationFile="${HOME}/.keys/my-data-server.ssh-destination"
+  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${sshDestinationFile}" || fail
+
+  (
+    unset BW_SESSION
+
+    local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
+    ssh::add-host-to-known-hosts "${remoteHost}" || fail
+
+    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write "/etc/sudoers.d/dmidecode" 440 || fail
+  
+    # install systemd service
+    local unitsPath="${HOME}/.config/systemd/user"
+    mkdir -p "${unitsPath}" || fail
+
+    tee "${unitsPath}/workstation-backup.service" <<EOF >/dev/null || fail
+[Unit]
+Description=Workstation backup
+
+[Service]
+Type=oneshot
+ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::create
+SyslogIdentifier=workstation-backup
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=false
+EOF
+
+    tee "${unitsPath}/workstation-backup.timer" <<EOF >/dev/null || fail
+[Unit]
+Description=Backup service timer for workstation backup
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
+EOF
+
+    tee "${unitsPath}/workstation-backup-maintenance.service" <<EOF >/dev/null || fail
+[Unit]
+Description=Workstation backup maintenance
+
+[Service]
+Type=oneshot
+ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::maintenance
+SyslogIdentifier=workstation-backup
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=false
+EOF
+
+    tee "${unitsPath}/workstation-backup-maintenance.timer" <<EOF >/dev/null || fail
+[Unit]
+Description=Backup service timer for workstation backup maintenance
+
+[Timer]
+OnCalendar=monthly
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
+EOF
+
+    # enable systemd user instance without the need for the user to login
+    sudo loginctl enable-linger "${USER}" || fail
+
+    # enable the service and start the timer
+    systemctl --user reenable "workstation-backup.service" || fail
+    systemctl --user reenable "workstation-backup.timer" || fail
+    systemctl --user start "workstation-backup.timer" || fail
+
+    systemctl --user reenable "workstation-backup-maintenance.service" || fail
+    systemctl --user reenable "workstation-backup-maintenance.timer" || fail
+    systemctl --user start "workstation-backup-maintenance.timer" || fail
+  ) || fail
 }
 
-backup::vm-home-to-host::load-configuration() {
-  local machineUuid; machineUuid="$(vmware::get-machine-uuid)" || fail
+ubuntu-workstation::backup::load-configuration() {
+  local machineHostname machineId sshDestination
 
-  export BACKUP_NAME="vm-home-to-host"
-  export RESTIC_REPOSITORY="${HOME}/my/storage/vm-home-backups/${machineUuid}"
-  export RESTIC_PASSWORD="null"
-}
+  machineHostname="$(hostnamectl --static status)" || fail
 
-backup::vm-home-to-host::setup() (
-  file::sudo-write "/etc/sudoers.d/dmidecode" 0440 root <<SHELL || fail
-${USER} ALL=NOPASSWD: /usr/sbin/dmidecode
-SHELL
-
-  backup::vm-home-to-host::load-configuration || fail
-
-  # install systemd service
-  declare -A serviceOptions
-  serviceOptions[NoNewPrivileges]=false
-  restic::systemd::init-service serviceOptions || fail
-
-  # enable timer
-  declare -A timerOptions
-  timerOptions[OnCalendar]="*:00/30"
-  timerOptions[RandomizedDelaySec]="300"
-  restic::systemd::enable-timer timerOptions || fail
-)
-
-backup::vm-home-to-host::create() (
-  backup::vm-home-to-host::load-configuration || fail
-
-  # I should probably make a special user service to wait until the network is up and the directory is mounted
-  findmnt --mountpoint "${HOME}/my" >/dev/null || fail
-
-  if [ ! -d "${RESTIC_REPOSITORY}" ]; then
-    restic::init || fail
+  if vmware::is-inside-vm; then
+    machineId="$(vmware::get-machine-uuid)" || fail
+  else
+    machineId="$(cat /etc/machine-id)" || fail
   fi
 
-  # The purpose of this is to have relative paths in backup
-  cd "${HOME}" || fail
+  sshDestination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
+
+  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/stan.restic-password"
+  export RESTIC_REPOSITORY="sftp:${sshDestination}:backups/restic/workstation-backups/${machineHostname}-${machineId}"
+}
+
+ubuntu-workstation::backup::create() {
+  ubuntu-workstation::backup::load-configuration || fail
+
+  if ! restic cat config >/dev/null 2>&1; then
+    restic init || fail
+  fi
 
   local quietMaybe=""; test -t 1 || quietMaybe="--quiet"
 
-  restic backup ${quietMaybe} --one-file-system . || fail
-
-  tools::do-once-per-day backup::vm-home-to-host::forget-and-check || fail
-)
-
-backup::vm-home-to-host::forget-and-check() {
-  backup::vm-home-to-host::load-configuration || fail
-
-  restic::forget-and-prune || fail
-  restic::check-and-read-data || fail
+  (cd "${HOME}" && restic backup ${quietMaybe} --one-file-system --exclude "${HOME}"/'.*' --exclude "${HOME}"/'snap' .) || fail
 }
 
+ubuntu-workstation::backup::list-snapshots() {
+  ubuntu-workstation::backup::load-configuration || fail
+  restic snapshots || fail
+}
+
+ubuntu-workstation::backup::check-and-read-data() {
+  ubuntu-workstation::backup::load-configuration || fail
+  restic check --check-unused --read-data || fail
+}
+
+ubuntu-workstation::backup::forget-and-prune() {
+  ubuntu-workstation::backup::load-configuration || fail
+  restic forget \
+    --prune \
+    --keep-within 14d \
+    --keep-daily 32 \
+    --keep-weekly 14 \
+    --keep-monthly 25 || fail
+}
+
+ubuntu-workstation::backup::maintenance() {
+  ubuntu-workstation::backup::load-configuration || fail
+  restic check || fail
+  ubuntu-workstation::backup::forget-and-prune || fail
+}
+
+ubuntu-workstation::backup::unlock() {
+  ubuntu-workstation::backup::load-configuration || fail
+  restic unlock || fail
+}
+
+ubuntu-workstation::backup::mount() {
+  ubuntu-workstation::backup::load-configuration || fail
+
+  local mountPoint="${HOME}/workstation-backup"
+
+  if findmnt --mountpoint "${mountPoint}" >/dev/null; then
+    fusermount -u "${mountPoint}" || fail
+  fi
+
+  mkdir -p "${mountPoint}" || fail
+  restic mount "${mountPoint}" || fail
+}
+
+ubuntu-workstation::backup::umount() {
+  local mountPoint="${HOME}/workstation-backup"
+  fusermount -u -z "${mountPoint}" || fail
+}
+
+ubuntu-workstation::backup::start() {
+  systemctl --user --no-block start "workstation-backup.service" || fail
+}
+
+ubuntu-workstation::backup::stop() {
+  systemctl --user stop "workstation-backup.service" || fail
+}
+
+ubuntu-workstation::backup::disable-timers() {
+  systemctl --user stop "workstation-backup.timer" || fail
+  systemctl --user disable "workstation-backup.timer" || fail
+  systemctl --user stop "workstation-backup-maintenance.timer" || fail
+  systemctl --user disable "workstation-backup-maintenance.timer" || fail
+}
+
+ubuntu-workstation::backup::status() {
+  systemctl --user status "workstation-backup.service"
+  echo ""
+  systemctl --user status "workstation-backup.timer"
+  echo ""
+  systemctl --user list-timers "workstation-backup.timer" --all || fail
+  echo ""
+  systemctl --user status "workstation-backup-maintenance.service"
+  echo ""
+  systemctl --user status "workstation-backup-maintenance.timer"
+  echo ""
+  systemctl --user list-timers "workstation-backup-maintenance.timer" --all || fail
+}
+
+ubuntu-workstation::backup::log() {
+  journalctl --user -u "workstation-backup.service" --since today || fail
+  journalctl --user -u "workstation-backup-maintenance.service" --since today || fail
+}
