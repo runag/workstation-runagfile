@@ -32,8 +32,8 @@ sopkafile::load() {
 sopkafile::load || fail
 
 if declare -f sopka::add-menu-item >/dev/null; then
-  sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
   sopka::add-menu-item sopka::update || fail
+  sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     sopka::add-menu-item keys::maintain-checksums || fail
