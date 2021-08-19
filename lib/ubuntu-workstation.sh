@@ -200,6 +200,14 @@ ubuntu-workstation::deploy-vm-server() {
   apt::install avahi-daemon || fail
 }
 
+ubuntu-workstation::change-hostname() {
+  local hostname
+  echo "Please enter new hostname:"
+  IFS="" read -r hostname || fail
+
+  linux::dangerously-set-hostname "${hostname}" || fail
+}
+
 ubuntu-workstation::install-shellrc() {
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
   shell::install-sopka-path-shellrc || fail
@@ -377,12 +385,15 @@ ubuntu-workstation::install-obs-studio() {
 
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
-  keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY" "keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+  keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
 }
 
 ubuntu-workstation::install-restic-password-file() {
   local key="$1"
-  keys::install-restic-password-file "${key}" "/media/${USER}/KEYS-DAILY" "keys/restic/${key}.restic-password.asc" || fail
+  ( umask 077 && keys::install-decrypted-file \
+    "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
+    "${HOME}/.keys/restic/${key}.restic-password"
+    ) || fail
 }
 
 ubuntu-workstation::configure-system() {
@@ -673,10 +684,3 @@ backup::vm-home-to-host::forget-and-check() {
   restic::check-and-read-data || fail
 }
 
-ubuntu-workstation::change-hostname() {
-  local hostname
-  echo "Please enter new hostname:"
-  IFS="" read -r hostname || fail
-
-  linux::dangerously-set-hostname "${hostname}" || fail
-}
