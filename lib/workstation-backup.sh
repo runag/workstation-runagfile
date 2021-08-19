@@ -26,6 +26,8 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item workstation-backup::umount || fail
   sopka::add-menu-item workstation-backup::start || fail
   sopka::add-menu-item workstation-backup::stop || fail
+  sopka::add-menu-item workstation-backup::start-maintenance || fail
+  sopka::add-menu-item workstation-backup::stop-maintenance || fail
   sopka::add-menu-item workstation-backup::disable-timers || fail
   sopka::add-menu-item workstation-backup::status || fail
   sopka::add-menu-item workstation-backup::log || fail
@@ -156,9 +158,7 @@ workstation-backup::create() {
     restic init || fail
   fi
 
-  local quietMaybe=""; test -t 1 || quietMaybe="--quiet"
-
-  (cd "${HOME}" && restic backup ${quietMaybe} --one-file-system --exclude "${HOME}"/'.*' --exclude "${HOME}"/'snap' .) || fail
+  (cd "${HOME}" && restic backup --one-file-system --exclude "${HOME}"/'.*' --exclude "${HOME}"/'snap' .) || fail
 }
 
 workstation-backup::list-snapshots() {
@@ -218,28 +218,36 @@ workstation-backup::stop() {
   systemctl --user stop "workstation-backup.service" || fail
 }
 
+workstation-backup::start-maintenance() {
+  systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
+}
+
+workstation-backup::stop-maintenance() {
+  systemctl --user stop "workstation-backup-maintenance.service" || fail
+}
+
 workstation-backup::disable-timers() {
   systemctl --user stop "workstation-backup.timer" || fail
-  systemctl --user disable "workstation-backup.timer" || fail
   systemctl --user stop "workstation-backup-maintenance.timer" || fail
+  systemctl --user disable "workstation-backup.timer" || fail
   systemctl --user disable "workstation-backup-maintenance.timer" || fail
 }
 
 workstation-backup::status() {
   systemctl --user status "workstation-backup.service"
-  echo ""
-  systemctl --user status "workstation-backup.timer"
-  echo ""
-  systemctl --user list-timers "workstation-backup.timer" --all || fail
-  echo ""
   systemctl --user status "workstation-backup-maintenance.service"
-  echo ""
-  systemctl --user status "workstation-backup-maintenance.timer"
-  echo ""
+
+  printf "\n\n"
+
+  systemctl --user list-timers "workstation-backup.timer" --all || fail
   systemctl --user list-timers "workstation-backup-maintenance.timer" --all || fail
+
+  printf "\n\n"
+
+  systemctl --user status "workstation-backup.timer"
+  systemctl --user status "workstation-backup-maintenance.timer"
 }
 
 workstation-backup::log() {
-  journalctl --user -u "workstation-backup.service" --since today || fail
-  journalctl --user -u "workstation-backup-maintenance.service" --since today || fail
+  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
 }
