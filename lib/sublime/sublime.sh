@@ -20,9 +20,9 @@ sublime::install-config() {
 
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime::install-config-file "${selfDir}" "Preferences.sublime-settings" || fail "Unable to install Preferences.sublime-settings ($?)"
-  sublime::install-config-file "${selfDir}" "Package Control.sublime-settings" || fail "Unable to install Package Control.sublime-settings ($?)"
-  sublime::install-config-file "${selfDir}" "Terminal.sublime-settings" || fail "Unable to install Terminal.sublime-settings ($?)"
+  sublime::install-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime::install-config-file "${selfDir}/Package Control.sublime-settings" || fail
+  sublime::install-config-file "${selfDir}/Terminal.sublime-settings" || fail
 }
 
 sublime::install-license() {
@@ -35,7 +35,7 @@ sublime::install-license() {
 sublime::merge-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime::merge-config-file "${selfDir}" "Preferences.sublime-settings" || fail
-  sublime::merge-config-file "${selfDir}" "Package Control.sublime-settings" || fail
-  sublime::merge-config-file "${selfDir}" "Terminal.sublime-settings" || fail
+  sublime::merge-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime::merge-config-file "${selfDir}/Package Control.sublime-settings" || fail
+  sublime::merge-config-file "${selfDir}/Terminal.sublime-settings" || fail
 }
