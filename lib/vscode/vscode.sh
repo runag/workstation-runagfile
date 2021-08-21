@@ -23,18 +23,18 @@ vscode::install-and-configure(){
 
 vscode::install-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::determine-config-path || fail
+  local configPath; configPath="$(vscode::config-path)" || fail
 
-  config::install "${selfDir}/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::install "${selfDir}/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::install "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
+  config::install "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
 }
 
 vscode::merge-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::determine-config-path || fail
+  local configPath; configPath="$(vscode::config-path)" || fail
 
-  config::merge "${selfDir}/settings.json" "${VSCODE_CONFIG_PATH}/User/settings.json" || fail
-  config::merge "${selfDir}/keybindings.json" "${VSCODE_CONFIG_PATH}/User/keybindings.json" || fail
+  config::merge "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
+  config::merge "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
 
   local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
   config::merge "${selfDir}/extensions.txt" "${extensionsList}" || fail
