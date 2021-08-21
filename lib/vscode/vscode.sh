@@ -23,7 +23,7 @@ vscode::install-and-configure(){
 
 vscode::install-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  local configPath; configPath="$(vscode::config-path)" || fail
+  local configPath; configPath="$(vscode::get-config-path)" || fail
 
   config::install "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
   config::install "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
@@ -31,7 +31,7 @@ vscode::install-config() {
 
 vscode::merge-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  local configPath; configPath="$(vscode::config-path)" || fail
+  local configPath; configPath="$(vscode::get-config-path)" || fail
 
   config::merge "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
   config::merge "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail

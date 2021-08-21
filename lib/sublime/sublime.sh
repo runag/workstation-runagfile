@@ -26,7 +26,7 @@ sublime::install-config() {
 }
 
 sublime::install-license() {
-  local configPath; configPath="$(sublime::config-path)" || fail
+  local configPath; configPath="$(sublime::get-config-path)" || fail
 
   # bitwarden-object: "sublime text 3 license"
   bitwarden::write-notes-to-file-if-not-exists "sublime text 3 license" "${configPath}/Local/License.sublime_license" || fail
