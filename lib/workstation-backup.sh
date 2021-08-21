@@ -123,12 +123,12 @@ EOF
     # enable systemd user instance without the need for the user to login
     sudo loginctl enable-linger "${USER}" || fail
 
+    systemctl --user daemon-reload || fail
+
     # enable the service and start the timer
-    systemctl --user reenable "workstation-backup.service" || fail
     systemctl --user reenable "workstation-backup.timer" || fail
     systemctl --user start "workstation-backup.timer" || fail
 
-    systemctl --user reenable "workstation-backup-maintenance.service" || fail
     systemctl --user reenable "workstation-backup-maintenance.timer" || fail
     systemctl --user start "workstation-backup-maintenance.timer" || fail
   ) || fail
