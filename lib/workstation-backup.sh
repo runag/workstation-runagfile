@@ -137,7 +137,7 @@ EOF
 workstation-backup::load-configuration() {
   local machineHostname machineId sshDestination
 
-  machineHostname="$(hostnamectl --static status)" || fail
+  machineHostname="$(hostname)" || fail
 
   if vmware::is-inside-vm; then
     machineId="$(vmware::get-machine-uuid)" || fail
