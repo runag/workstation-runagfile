@@ -211,7 +211,7 @@ ubuntu-workstation::install-shellrc() {
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
   shell::install-sopka-path-shellrc || fail
   shell::install-nano-editor-shellrc || fail
-  bitwarden::install-bitwarden-login-shellrc || fail
+  # bitwarden::install-bitwarden-login-shellrc || fail
 }
 
 ubuntu-workstation::install-system-software() {

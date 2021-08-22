@@ -143,7 +143,7 @@ macos-workstation::configure() {
   shell::install-nano-editor-shellrc || fail
   shell::install-sopka-path-shellrc || fail
   shell::install-direnv-loader-shellrc || fail
-  bitwarden::install-bitwarden-login-shellrc || fail
+  # bitwarden::install-bitwarden-login-shellrc || fail
 
   # ruby
   ruby::dangerously-append-nodocument-to-gemrc || fail
