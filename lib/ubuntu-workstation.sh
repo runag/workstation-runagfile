@@ -493,13 +493,13 @@ ubuntu-workstation::configure-home-folders() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    dir::remove-if-empty \
+    rmdir \
       "${HOME}/Documents" \
       "${HOME}/Music" \
       "${HOME}/Pictures" \
       "${HOME}/Public" \
       "${HOME}/Templates" \
-      "${HOME}/Videos" || fail
+      "${HOME}/Videos" || true
 
     if [ -f "${HOME}/examples.desktop" ]; then
       rm "${HOME}/examples.desktop" || fail
