@@ -14,9 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-export BITWARDEN_LOGIN="stan@senotrusov.com"
+export SOPKA_BITWARDEN_LOGIN="stan@senotrusov.com"
 
-export GIT_USER_NAME="Stanislav Senotrusov"
-export GIT_USER_EMAIL="stan@senotrusov.com"
+export SOPKA_GIT_USER_NAME="Stanislav Senotrusov"
+export SOPKA_GIT_USER_EMAIL="stan@senotrusov.com"
 
-export GITHUB_LOGIN="senotrusov"
+export SOPKA_GITHUB_LOGIN="senotrusov"

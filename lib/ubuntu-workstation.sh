@@ -142,7 +142,7 @@ ubuntu-workstation::deploy-tailscale() {
   # install bitwarden cli
   bitwarden::install-cli-with-nodejs || fail
 
-  if ! command -v tailscale >/dev/null || tailscale::is-logged-out || [ "${UPDATE_SECRETS:-}" = true ]; then
+  if ! command -v tailscale >/dev/null || tailscale::is-logged-out || [ "${SOPKA_UPDATE_SECRETS:-}" = true ]; then
     # get tailscale key  
     # bitwarden-object: "my tailscale reusable key"
     bitwarden::unlock || fail
@@ -158,8 +158,8 @@ ubuntu-workstation::deploy-tailscale() {
         tailscale::install-issue-2541-workaround || fail
       fi
 
-      # logout if UPDATE_SECRETS is set
-      if ! tailscale::is-logged-out && [ "${UPDATE_SECRETS:-}" = true ]; then
+      # logout if SOPKA_UPDATE_SECRETS is set
+      if ! tailscale::is-logged-out && [ "${SOPKA_UPDATE_SECRETS:-}" = true ]; then
         sudo tailscale logout || fail
       fi
 
