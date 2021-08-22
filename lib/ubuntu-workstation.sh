@@ -134,8 +134,8 @@ ubuntu-workstation::deploy-host-folders-access() {
   local hostIpAddress; hostIpAddress="$(unset BW_SESSION && vmware::get-host-ip-address)" || fail
 
   # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/my" "my" "my microsoft account" || fail
-  mount::cifs "//${hostIpAddress}/ephemeral-data" "ephemeral-data" "my microsoft account" || fail
+  mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "my microsoft account" "${HOME}/.keys/my-microsoft-account.cifs-credentials" || fail
+  mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "my microsoft account" "${HOME}/.keys/my-microsoft-account.cifs-credentials" || fail
 }
 
 ubuntu-workstation::deploy-tailscale() {
