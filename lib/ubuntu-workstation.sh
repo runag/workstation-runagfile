@@ -74,7 +74,7 @@ ubuntu-workstation::deploy-workstation-base() {
   ubuntu-workstation::install-terminal-software || fail
 
   # configure git
-  ubuntu-workstation::configure-git || fail
+  workstation::configure-git || fail
 
   # install build tools
   ubuntu-workstation::install-build-tools || fail
@@ -394,11 +394,6 @@ ubuntu-workstation::install-gpg-key() {
 ubuntu-workstation::configure-system() {
   # increase inotify limits
   linux::configure-inotify || fail
-}
-
-ubuntu-workstation::configure-git() {
-  git::configure-user || fail
-  git config --global core.autocrlf input || fail
 }
 
 ubuntu-workstation::configure-servers() {

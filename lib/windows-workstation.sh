@@ -29,8 +29,7 @@ windows-workstation::deploy() {
   # bitwarden::install-bitwarden-login-shellrc || fail
 
   # git
-  git::configure-user || fail
-  git config --global core.autocrlf input || fail
+  workstation::configure-git || fail
 
   # vscode
   vscode::install-config || fail

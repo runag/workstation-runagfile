@@ -183,8 +183,7 @@ macos-workstation::configure() {
   fi
 
   # git
-  git::configure-user || fail
-  git config --global core.autocrlf input || fail
+  workstation::configure-git || fail
 }
 
 macos-workstation::hide-folders() {

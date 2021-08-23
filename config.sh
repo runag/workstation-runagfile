@@ -16,7 +16,7 @@
 
 export SOPKA_BITWARDEN_LOGIN="stan@senotrusov.com"
 
-export SOPKA_GIT_USER_NAME="Stanislav Senotrusov"
-export SOPKA_GIT_USER_EMAIL="stan@senotrusov.com"
+export MY_GIT_USER_NAME="Stanislav Senotrusov"
+export MY_GIT_USER_EMAIL="stan@senotrusov.com"
 
 export MY_GITHUB_LOGIN="senotrusov"

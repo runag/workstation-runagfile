@@ -22,3 +22,9 @@ workstation::merge-editor-configs() {
   vscode::merge-config || fail
   sublime::merge-config || fail
 }
+
+workstation::configure-git() {
+  git config --global user.name "${MY_GIT_USER_NAME}" || fail
+  git config --global user.email "${MY_GIT_USER_EMAIL}" || fail
+  git config --global core.autocrlf input || fail
+}
