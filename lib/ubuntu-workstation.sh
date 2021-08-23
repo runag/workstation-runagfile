@@ -515,8 +515,9 @@ ubuntu-workstation::configure-home-folders() {
 ubuntu-workstation::configure-gnome() {
   # use dconf-editor to find key/value pairs
   #
-  # Do not use dbus-launch here because it will introduce
-  # side-effect to git::add-credentials-to-gnome-keyring and ssh::add-key-password-to-gnome-keyring
+  # Please do not use dbus-launch here because it will introduce side-effect to
+  # git:Please dadd-credentials-to-gnome-keyring and
+  # ssh::add-key-password-to-gnome-keyring
   #
   (
     gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
