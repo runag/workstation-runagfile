@@ -71,6 +71,7 @@ Record names should be as the following:
 "my github personal access token"
 "my microsoft account"
 "my password for ssh private key"
+"my rubygems credentials"
 "my ssh private key"
 "my ssh public key"
 "my tailscale reusable key"
