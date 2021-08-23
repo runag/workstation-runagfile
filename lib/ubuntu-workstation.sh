@@ -616,3 +616,37 @@ case $1/$2 in
 esac
 SHELL
 }
+
+ubuntu-workstation::keys::maintain-checksums() {
+  local media="$1"
+  local dir
+
+  for dir in "${media}"/*keys* ; do
+    if [ -d "$dir" ]; then
+      linux::with-secure-tmpdir checksums::create-or-update "$dir" "checksums.txt" || fail
+    fi
+  done
+
+  for dir in "${media}"/copies/*/* ; do
+    if [ -d "$dir" ]; then
+      linux::with-secure-tmpdir checksums::verify "$dir" "checksums.txt" || fail
+    fi
+  done
+}
+
+ubuntu-workstation::keys::make-backups() {
+  local media="$1"
+  local dir
+
+  local destDir; destDir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
+  mkdir -p "${media}/copies" || fail
+  mkdir "${destDir}" || fail
+
+  for dir in "${media}"/*keys* ; do
+    if [ -d "$dir" ]; then
+      cp -R "${dir}" "${destDir}" || fail
+    fi
+  done
+  sync || fail
+  echo "${destDir}"
+}

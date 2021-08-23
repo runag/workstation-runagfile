@@ -36,8 +36,12 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    sopka::add-menu-item keys::maintain-checksums || fail
-    sopka::add-menu-item keys::make-backups || fail
+    for dir in "/media/${USER}"/KEYS-* ; do
+      if [ -d "$dir" ]; then
+        sopka::add-menu-item "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
+        sopka::add-menu-item "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
+      fi
+    done
 
     sopka::add-menu-item linux::display-if-restart-required || fail
   fi
