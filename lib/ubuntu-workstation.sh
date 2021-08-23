@@ -622,14 +622,14 @@ ubuntu-workstation::keys::maintain-checksums() {
   local dir
 
   for dir in "${media}"/*keys* ; do
-    if [ -d "$dir" ]; then
-      linux::with-secure-tmpdir checksums::create-or-update "$dir" "checksums.txt" || fail
+    if [ -d "${dir}" ]; then
+      linux::with-secure-tmpdir checksums::create-or-update "${dir}" "checksums.txt" || fail
     fi
   done
 
   for dir in "${media}"/copies/*/* ; do
-    if [ -d "$dir" ]; then
-      linux::with-secure-tmpdir checksums::verify "$dir" "checksums.txt" || fail
+    if [ -d "${dir}" ]; then
+      linux::with-secure-tmpdir checksums::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }
@@ -643,7 +643,7 @@ ubuntu-workstation::keys::make-backups() {
   mkdir "${destDir}" || fail
 
   for dir in "${media}"/*keys* ; do
-    if [ -d "$dir" ]; then
+    if [ -d "${dir}" ]; then
       cp -R "${dir}" "${destDir}" || fail
     fi
   done
