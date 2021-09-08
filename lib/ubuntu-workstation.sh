@@ -95,7 +95,7 @@ ubuntu-workstation::deploy-workstation-base() {
 
 ubuntu-workstation::deploy-secrets() {
   # install bitwarden cli
-  bitwarden::apt-and-npm::install-cli || fail
+  bitwarden::snap::install-cli || fail
 
   # install gnome-keyring and libsecret
   ( unset BW_SESSION && apt::install-gnome-keyring-and-libsecret ) || fail
@@ -125,7 +125,7 @@ ubuntu-workstation::deploy-secrets() {
 
 ubuntu-workstation::deploy-host-folders-access() {
   # install bitwarden cli
-  bitwarden::apt-and-npm::install-cli || fail
+  bitwarden::snap::install-cli || fail
 
   # install cifs-utils
   ( unset BW_SESSION && apt::install cifs-utils ) || fail
@@ -140,7 +140,7 @@ ubuntu-workstation::deploy-host-folders-access() {
 
 ubuntu-workstation::deploy-tailscale() {
   # install bitwarden cli
-  bitwarden::apt-and-npm::install-cli || fail
+  bitwarden::snap::install-cli || fail
 
   if ! command -v tailscale >/dev/null || tailscale::is-logged-out || [ "${SOPKA_UPDATE_SECRETS:-}" = true ]; then
     # get tailscale key  
