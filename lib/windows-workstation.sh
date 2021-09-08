@@ -26,7 +26,6 @@ windows-workstation::deploy() {
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
   shell::install-nano-editor-shellrc || fail
   shell::install-sopka-path-shellrc || fail
-  # bitwarden::install-bitwarden-login-shellrc || fail
 
   # git
   workstation::configure-git || fail
