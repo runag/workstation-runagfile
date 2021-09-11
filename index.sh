@@ -19,10 +19,16 @@ sopkafile::load() {
 
   . "${selfDir}/config.sh" || fail
 
+  if [[ "${OSTYPE}" =~ ^linux ]]; then
+    . "${selfDir}/lib/ubuntu-workstation/backup.sh" || fail
+    . "${selfDir}/lib/ubuntu-workstation/configure.sh" || fail
+    . "${selfDir}/lib/ubuntu-workstation/deploy.sh" || fail
+    . "${selfDir}/lib/ubuntu-workstation/install.sh" || fail
+    . "${selfDir}/lib/ubuntu-workstation/keys.sh" || fail
+  fi
+
   if [[ "${OSTYPE}" =~ ^darwin ]]; then . "${selfDir}/lib/macos-workstation.sh" || fail; fi
-  if [[ "${OSTYPE}" =~ ^linux ]]; then . "${selfDir}/lib/ubuntu-workstation.sh" || fail; fi
   if [[ "${OSTYPE}" =~ ^msys ]]; then . "${selfDir}/lib/windows-workstation.sh" || fail; fi
-  if [[ "${OSTYPE}" =~ ^linux ]]; then . "${selfDir}/lib/workstation-backup.sh" || fail; fi
 
   . "${selfDir}/lib/workstation.sh" || fail
   . "${selfDir}/lib/sublime/sublime.sh" || fail
@@ -36,13 +42,6 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    for dir in "/media/${USER}"/KEYS-* ; do
-      if [ -d "$dir" ]; then
-        sopka::add-menu-item "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
-        sopka::add-menu-item "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
-      fi
-    done
-
     sopka::add-menu-item linux::display-if-restart-required || fail
   fi
 
