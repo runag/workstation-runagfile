@@ -15,25 +15,25 @@
 #  limitations under the License.
 
 if declare -f sopka::add-menu-item >/dev/null; then
-  sopka::add-menu-item workstation-backup::deploy || fail
-  sopka::add-menu-item workstation-backup::create || fail
-  sopka::add-menu-item workstation-backup::list-snapshots || fail
-  sopka::add-menu-item workstation-backup::check-and-read-data || fail
-  sopka::add-menu-item workstation-backup::forget-and-prune || fail
-  sopka::add-menu-item workstation-backup::maintenance || fail
-  sopka::add-menu-item workstation-backup::unlock || fail
-  sopka::add-menu-item workstation-backup::mount || fail
-  sopka::add-menu-item workstation-backup::umount || fail
-  sopka::add-menu-item workstation-backup::start || fail
-  sopka::add-menu-item workstation-backup::stop || fail
-  sopka::add-menu-item workstation-backup::start-maintenance || fail
-  sopka::add-menu-item workstation-backup::stop-maintenance || fail
-  sopka::add-menu-item workstation-backup::disable-timers || fail
-  sopka::add-menu-item workstation-backup::status || fail
-  sopka::add-menu-item workstation-backup::log || fail
+  sopka::add-menu-item ubuntu-workstation::backup::deploy || fail
+  sopka::add-menu-item ubuntu-workstation::backup::create || fail
+  sopka::add-menu-item ubuntu-workstation::backup::list-snapshots || fail
+  sopka::add-menu-item ubuntu-workstation::backup::check-and-read-data || fail
+  sopka::add-menu-item ubuntu-workstation::backup::forget-and-prune || fail
+  sopka::add-menu-item ubuntu-workstation::backup::maintenance || fail
+  sopka::add-menu-item ubuntu-workstation::backup::unlock || fail
+  sopka::add-menu-item ubuntu-workstation::backup::mount || fail
+  sopka::add-menu-item ubuntu-workstation::backup::umount || fail
+  sopka::add-menu-item ubuntu-workstation::backup::start || fail
+  sopka::add-menu-item ubuntu-workstation::backup::stop || fail
+  sopka::add-menu-item ubuntu-workstation::backup::start-maintenance || fail
+  sopka::add-menu-item ubuntu-workstation::backup::stop-maintenance || fail
+  sopka::add-menu-item ubuntu-workstation::backup::disable-timers || fail
+  sopka::add-menu-item ubuntu-workstation::backup::status || fail
+  sopka::add-menu-item ubuntu-workstation::backup::log || fail
 fi
 
-workstation-backup::install-restic-password-file() {
+ubuntu-workstation::backup::install-restic-password-file() {
   local key="$1"
   keys::install-decrypted-file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
@@ -41,7 +41,7 @@ workstation-backup::install-restic-password-file() {
     "077" || fail
 }
 
-workstation-backup::deploy() {
+ubuntu-workstation::backup::deploy() {
   # install bitwarden cli
   bitwarden::snap::install-cli || fail
 
@@ -49,7 +49,7 @@ workstation-backup::deploy() {
   ubuntu-workstation::install-all-gpg-keys || fail
 
   # install restic key
-  workstation-backup::install-restic-password-file "stan" || fail
+  ubuntu-workstation::backup::install-restic-password-file "stan" || fail
 
   # install ssh key
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" "077" || fail
@@ -77,7 +77,7 @@ Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation-backup::create
+ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -102,7 +102,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation-backup::maintenance
+ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -135,7 +135,7 @@ EOF
   ) || fail
 }
 
-workstation-backup::load-configuration() {
+ubuntu-workstation::backup::load-configuration() {
   local machineHostname machineId sshDestination
 
   machineHostname="$(hostname)" || fail
@@ -152,8 +152,8 @@ workstation-backup::load-configuration() {
   export RESTIC_REPOSITORY="sftp:${sshDestination}:backups/restic/workstation-backups/${machineHostname}-${machineId}"
 }
 
-workstation-backup::create() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::create() {
+  ubuntu-workstation::backup::load-configuration || fail
 
   if ! restic cat config >/dev/null 2>&1; then
     restic init || fail
@@ -162,18 +162,18 @@ workstation-backup::create() {
   (cd "${HOME}" && restic backup --one-file-system --exclude "${HOME}"/'.*' --exclude "${HOME}"/'snap' .) || fail
 }
 
-workstation-backup::list-snapshots() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::list-snapshots() {
+  ubuntu-workstation::backup::load-configuration || fail
   restic snapshots || fail
 }
 
-workstation-backup::check-and-read-data() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::check-and-read-data() {
+  ubuntu-workstation::backup::load-configuration || fail
   restic check --check-unused --read-data || fail
 }
 
-workstation-backup::forget-and-prune() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::forget-and-prune() {
+  ubuntu-workstation::backup::load-configuration || fail
   restic forget \
     --prune \
     --keep-within 14d \
@@ -182,19 +182,19 @@ workstation-backup::forget-and-prune() {
     --keep-monthly 25 || fail
 }
 
-workstation-backup::maintenance() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::maintenance() {
+  ubuntu-workstation::backup::load-configuration || fail
   restic check || fail
-  workstation-backup::forget-and-prune || fail
+  ubuntu-workstation::backup::forget-and-prune || fail
 }
 
-workstation-backup::unlock() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::unlock() {
+  ubuntu-workstation::backup::load-configuration || fail
   restic unlock || fail
 }
 
-workstation-backup::mount() {
-  workstation-backup::load-configuration || fail
+ubuntu-workstation::backup::mount() {
+  ubuntu-workstation::backup::load-configuration || fail
 
   local mountPoint="${HOME}/workstation-backup"
 
@@ -206,35 +206,35 @@ workstation-backup::mount() {
   restic mount "${mountPoint}" || fail
 }
 
-workstation-backup::umount() {
+ubuntu-workstation::backup::umount() {
   local mountPoint="${HOME}/workstation-backup"
   fusermount -u -z "${mountPoint}" || fail
 }
 
-workstation-backup::start() {
+ubuntu-workstation::backup::start() {
   systemctl --user --no-block start "workstation-backup.service" || fail
 }
 
-workstation-backup::stop() {
+ubuntu-workstation::backup::stop() {
   systemctl --user stop "workstation-backup.service" || fail
 }
 
-workstation-backup::start-maintenance() {
+ubuntu-workstation::backup::start-maintenance() {
   systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
 }
 
-workstation-backup::stop-maintenance() {
+ubuntu-workstation::backup::stop-maintenance() {
   systemctl --user stop "workstation-backup-maintenance.service" || fail
 }
 
-workstation-backup::disable-timers() {
+ubuntu-workstation::backup::disable-timers() {
   systemctl --user stop "workstation-backup.timer" || fail
   systemctl --user stop "workstation-backup-maintenance.timer" || fail
   systemctl --user disable "workstation-backup.timer" || fail
   systemctl --user disable "workstation-backup-maintenance.timer" || fail
 }
 
-workstation-backup::status() {
+ubuntu-workstation::backup::status() {
   systemctl --user status "workstation-backup.service"
   systemctl --user status "workstation-backup-maintenance.service"
 
@@ -249,6 +249,6 @@ workstation-backup::status() {
   systemctl --user status "workstation-backup-maintenance.timer"
 }
 
-workstation-backup::log() {
+ubuntu-workstation::backup::log() {
   journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
 }

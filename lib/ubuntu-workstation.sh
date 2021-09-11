@@ -41,7 +41,7 @@ ubuntu-workstation::deploy-full-workstation() {
     fi
 
     ubuntu-workstation::deploy-tailscale || fail
-    workstation-backup::deploy || fail
+    ubuntu-workstation::backup::deploy || fail
   ) || fail
 }
 
