@@ -130,7 +130,7 @@ ubuntu-workstation::deploy-host-folders-access() {
 
   # mount host folder
   local credentialsFile="${HOME}/.keys/host-filesystem-access.cifs-credentials"
-  bitwarden::use username password "my workstation virtual machines host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
+  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
 
   (
     unset BW_SESSION 
