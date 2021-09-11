@@ -70,7 +70,7 @@ Record names should be as the following:
 "my data server ssh private key"
 "my data server ssh public key"
 "my github personal access token"
-"my microsoft account"
+"my workstation virtual machines host filesystem access credentials"
 "my password for ssh private key"
 "my rubygems credentials"
 "my ssh private key"
