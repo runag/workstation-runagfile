@@ -94,25 +94,27 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 ubuntu-workstation::deploy-secrets() {
-  # install bitwarden cli
-  bitwarden::snap::install-cli || fail
+  ubuntu-workstation::install-and-configure-bitwarden || fail
 
-  # install gnome-keyring and libsecret
-  ( unset BW_SESSION && apt::install-gnome-keyring-and-libsecret ) || fail
+  # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
+  (
+    unset BW_SESSION
+
+    apt::lazy-update || fail
+    apt::install-gnome-keyring-and-libsecret || fail
+
+    git::install-libsecret-credential-helper || fail
+    git::use-libsecret-credential-helper || fail
+  ) || fail
 
   # install ssh key, configure ssh  to use it
-  # bitwarden-object: "my ssh private key", "my ssh public key"
-  # bitwarden-object: "my password for ssh private key"
-  ssh::install-keys "my" || fail
-  ssh::add-key-password-to-gnome-keyring "my" || fail
+  workstation::install-ssh-keys || fail
+  bitwarden::use password "my password for ssh private key" ssh::gnome-keyring-credentials || fail
 
   # git access token
-  # bitwarden-object: "my github personal access token"
-  ( unset BW_SESSION && git::install-with-libsecret-credential-helper ) || fail
-  git::add-credentials-to-gnome-keyring "my github personal access token" "${MY_GITHUB_LOGIN}" "github.com" || fail
+  bitwarden::use password "my github personal access token" git::gnome-keyring-credentials "${MY_GITHUB_LOGIN}" || fail
 
   # rubygems
-  # bitwarden-object: "my rubygems credentials"
   bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 
   # install sublime license key
@@ -124,30 +126,28 @@ ubuntu-workstation::deploy-secrets() {
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
-  # install bitwarden cli
-  bitwarden::snap::install-cli || fail
-
-  # install cifs-utils
-  ( unset BW_SESSION && apt::install cifs-utils ) || fail
+  ubuntu-workstation::install-and-configure-bitwarden || fail
 
   # mount host folder
-  local hostIpAddress; hostIpAddress="$(unset BW_SESSION && vmware::get-host-ip-address)" || fail
+  local credentialsFile="${HOME}/.keys/my-microsoft-account.cifs-credentials"
+  bitwarden::use username password "my microsoft account" mount::cifs::credentials "${credentialsFile}" || fail
 
-  # bitwarden-object: "my microsoft account"
-  mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "my microsoft account" "${HOME}/.keys/my-microsoft-account.cifs-credentials" || fail
-  mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "my microsoft account" "${HOME}/.keys/my-microsoft-account.cifs-credentials" || fail
+  (
+    unset BW_SESSION 
+    local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+
+    apt::install cifs-utils || fail
+    mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
+    mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
+  ) || fail
 }
 
 ubuntu-workstation::deploy-tailscale() {
-  # install bitwarden cli
-  bitwarden::snap::install-cli || fail
+  ubuntu-workstation::install-and-configure-bitwarden || fail
 
-  if ! command -v tailscale >/dev/null || tailscale::is-logged-out || [ "${SOPKA_UPDATE_SECRETS:-}" = true ]; then
-    # get tailscale key  
-    # bitwarden-object: "my tailscale reusable key"
-    bitwarden::unlock || fail
-    local tailscaleKey
-    tailscaleKey="$(NODENV_VERSION=system bw get password "my tailscale reusable key")" || fail
+  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
+    bitwarden::unlock-and-sync || fail
+    local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
 
     (
       unset BW_SESSION
@@ -159,7 +159,7 @@ ubuntu-workstation::deploy-tailscale() {
       fi
 
       # logout if SOPKA_UPDATE_SECRETS is set
-      if ! tailscale::is-logged-out && [ "${SOPKA_UPDATE_SECRETS:-}" = true ]; then
+      if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && ! tailscale::is-logged-out; then
         sudo tailscale logout || fail
       fi
 
@@ -205,6 +205,11 @@ ubuntu-workstation::change-hostname() {
   IFS="" read -r hostname || fail
 
   linux::dangerously-set-hostname "${hostname}" || fail
+}
+
+ubuntu-workstation::install-and-configure-bitwarden() {
+  bitwarden::snap::install-cli || fail
+  bitwarden::login "${MY_BITWARDEN_LOGIN}" || fail
 }
 
 ubuntu-workstation::install-shellrc() {

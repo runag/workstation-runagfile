@@ -166,14 +166,11 @@ macos-workstation::configure() {
   if [ -t 0 ]; then
     (
       # add ssh key, configure ssh to use it
-      # bitwarden-object: "my ssh private key", "my ssh public key"
-      ssh::install-keys "my" || fail
-      ssh::add-use-macos-keychain-to-config || fail
-      # bitwarden-object: "my password for ssh private key"
-      ssh::add-key-password-to-macos-keychain "my" || fail
+      workstation::install-ssh-keys || fail
+      ssh::macos-keychain::configure-use-on-all-hosts || fail
+      bitwarden::use password "my password for ssh private key" ssh::macos-keychain || fail
 
       # rubygems
-      # bitwarden-object: "my rubygems credentials"
       bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 
       # sublime text license

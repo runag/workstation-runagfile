@@ -42,11 +42,9 @@ windows-workstation::deploy() {
   if [ -t 0 ]; then
     (
       # add ssh key
-      # bitwarden-object: "my ssh private key", "my ssh public key"
-      ssh::install-keys "my" || fail
+      workstation::install-ssh-keys || fail
 
       # rubygems
-      # bitwarden-object: "my rubygems credentials"
       bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 
       # sublime text license

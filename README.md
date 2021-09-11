@@ -65,9 +65,10 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
 
 Record names should be as the following:
 
-<!-- # bitwarden-object: see list below -->
-
 ```
+"my data server ssh destination"
+"my data server ssh private key"
+"my data server ssh public key"
 "my github personal access token"
 "my microsoft account"
 "my password for ssh private key"
@@ -75,7 +76,7 @@ Record names should be as the following:
 "my ssh private key"
 "my ssh public key"
 "my tailscale reusable key"
-"sublime text 3 license"
+"my sublime text 3 license"
 ```
 
 ## Contributing

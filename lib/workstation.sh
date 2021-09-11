@@ -28,3 +28,8 @@ workstation::configure-git() {
   git config --global user.email "${MY_GIT_USER_EMAIL}" || fail
   git config --global core.autocrlf input || fail
 }
+
+workstation::install-ssh-keys() {
+  bitwarden::write-notes-to-file-if-not-exists "my ssh private key" "${HOME}/.ssh/id_ed25519" "077" || fail
+  bitwarden::write-notes-to-file-if-not-exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" "077" || fail
+}
