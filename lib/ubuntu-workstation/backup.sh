@@ -20,7 +20,7 @@ if declare -f sopka::add-menu-item >/dev/null; then
   sopka::add-menu-item ubuntu-workstation::backup::list-snapshots || fail
   sopka::add-menu-item ubuntu-workstation::backup::check-and-read-data || fail
   sopka::add-menu-item ubuntu-workstation::backup::forget-and-prune || fail
-  sopka::add-menu-item ubuntu-workstation::backup::maintenance || fail
+  sopka::add-menu-item ubuntu-workstation::backup::perform-maintenance || fail
   sopka::add-menu-item ubuntu-workstation::backup::unlock || fail
   sopka::add-menu-item ubuntu-workstation::backup::mount || fail
   sopka::add-menu-item ubuntu-workstation::backup::umount || fail
@@ -102,7 +102,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::maintenance
+ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::perform-maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -182,7 +182,7 @@ ubuntu-workstation::backup::forget-and-prune() {
     --keep-monthly 25 || fail
 }
 
-ubuntu-workstation::backup::maintenance() {
+ubuntu-workstation::backup::perform-maintenance() {
   ubuntu-workstation::backup::load-configuration || fail
   restic check || fail
   ubuntu-workstation::backup::forget-and-prune || fail
