@@ -30,6 +30,6 @@ workstation::configure-git() {
 }
 
 workstation::install-ssh-keys() {
-  bitwarden::write-notes-to-file-if-not-exists "my ssh private key" "${HOME}/.ssh/id_ed25519" "077" || fail
-  bitwarden::write-notes-to-file-if-not-exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" "077" || fail
+  bitwarden::write-notes-to-file-if-not-exists "my ssh private key" "${HOME}/.ssh/id_ed25519" || fail
+  bitwarden::write-notes-to-file-if-not-exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" || fail
 }
