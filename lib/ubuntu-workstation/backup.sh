@@ -43,7 +43,7 @@ ubuntu-workstation::backup::install-restic-password-file() {
 
 ubuntu-workstation::backup::deploy() {
   # install bitwarden cli
-  bitwarden::snap::install-cli || fail
+  ubuntu-workstation::deploy-bitwarden || fail
 
   # install gpg keys to decrypt restic key
   ubuntu-workstation::install-all-gpg-keys || fail
