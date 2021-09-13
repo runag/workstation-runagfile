@@ -30,6 +30,16 @@ workstation::configure-git() {
 }
 
 workstation::install-ssh-keys() {
+  ssh::make-user-config-directory-if-not-exists || fail
   bitwarden::write-notes-to-file-if-not-exists "my ssh private key" "${HOME}/.ssh/id_ed25519" || fail
   bitwarden::write-notes-to-file-if-not-exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" || fail
+}
+
+workstation::install-rubygems-credentials() {
+  dir::make-if-not-exists "${HOME}/.gem" || fail
+  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+}
+
+workstation::make-keys-directory-if-not-exists() {
+  dir::make-if-not-exists "${HOME}/.keys" 700 || fail
 }

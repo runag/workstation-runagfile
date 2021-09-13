@@ -35,10 +35,13 @@ fi
 
 ubuntu-workstation::backup::install-restic-password-file() {
   local key="$1"
+
+  workstation::make-keys-directory-if-not-exists || fail
+  dir::make-if-not-exists "${HOME}/.keys/restic" 700 || fail
+
   keys::install-decrypted-file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
-    "${HOME}/.keys/restic/${key}.restic-password" \
-    "077" || fail
+    "${HOME}/.keys/restic/${key}.restic-password" || fail
 }
 
 ubuntu-workstation::backup::deploy() {
@@ -52,11 +55,14 @@ ubuntu-workstation::backup::deploy() {
   ubuntu-workstation::backup::install-restic-password-file "stan" || fail
 
   # install ssh key
+  ssh::make-user-config-directory-if-not-exists || fail
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" || fail
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
   local sshDestinationFile="${HOME}/.keys/my-data-server.ssh-destination"
+
+  workstation::make-keys-directory-if-not-exists || fail
   bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${sshDestinationFile}" || fail
 
   (

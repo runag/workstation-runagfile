@@ -171,7 +171,7 @@ macos-workstation::configure() {
       bitwarden::use password "my password for ssh private key" ssh::macos-keychain || fail
 
       # rubygems
-      bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+      workstation::install-rubygems-credentials || fail
 
       # sublime text license
       sublime::install-license || fail

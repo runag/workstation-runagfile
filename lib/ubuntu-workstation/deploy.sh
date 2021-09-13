@@ -115,7 +115,7 @@ ubuntu-workstation::deploy-secrets() {
   bitwarden::use password "my github personal access token" git::gnome-keyring-credentials "${MY_GITHUB_LOGIN}" || fail
 
   # rubygems
-  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+  workstation::install-rubygems-credentials || fail
 
   # install sublime license key
   sublime::install-license || fail
@@ -130,6 +130,8 @@ ubuntu-workstation::deploy-host-folders-access() {
 
   # mount host folder
   local credentialsFile="${HOME}/.keys/host-filesystem-access.cifs-credentials"
+
+  workstation::make-keys-directory-if-not-exists || fail
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
 
   (
