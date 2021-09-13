@@ -141,7 +141,7 @@ EOF
   ) || fail
 }
 
-ubuntu-workstation::backup::load-configuration() {
+ubuntu-workstation::backup::load-config() {
   local machineHostname machineId sshDestination
 
   machineHostname="$(hostname)" || fail
@@ -159,7 +159,7 @@ ubuntu-workstation::backup::load-configuration() {
 }
 
 ubuntu-workstation::backup::create() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
 
   if ! restic cat config >/dev/null 2>&1; then
     restic init || fail
@@ -169,17 +169,17 @@ ubuntu-workstation::backup::create() {
 }
 
 ubuntu-workstation::backup::list-snapshots() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
   restic snapshots || fail
 }
 
 ubuntu-workstation::backup::check-and-read-data() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
   restic check --check-unused --read-data || fail
 }
 
 ubuntu-workstation::backup::forget-and-prune() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
   restic forget \
     --prune \
     --keep-within 14d \
@@ -189,18 +189,18 @@ ubuntu-workstation::backup::forget-and-prune() {
 }
 
 ubuntu-workstation::backup::perform-maintenance() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
   restic check || fail
   ubuntu-workstation::backup::forget-and-prune || fail
 }
 
 ubuntu-workstation::backup::unlock() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
   restic unlock || fail
 }
 
 ubuntu-workstation::backup::mount() {
-  ubuntu-workstation::backup::load-configuration || fail
+  ubuntu-workstation::backup::load-config || fail
 
   local mountPoint="${HOME}/workstation-backup"
 
