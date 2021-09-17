@@ -28,7 +28,7 @@ sublime::install-config() {
 sublime::install-license() {
   local configPath; configPath="$(sublime::get-config-path)" || fail
 
-  dir::make-if-not-exists "${configPath}/Local" 755 || fail
+  dir::make-if-not-exists "${configPath}/Local" 700 || fail
 
   bitwarden::write-notes-to-file-if-not-exists "my sublime text 3 license" "${configPath}/Local/License.sublime_license" || fail
 }

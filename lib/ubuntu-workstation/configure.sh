@@ -66,7 +66,7 @@ Shift_L,   Down, Shift_L|Button5
 SHELL
 
   dir::make-if-not-exists "${HOME}/.config" 755 || fail
-  dir::make-if-not-exists "${HOME}/.config/autostart" 755 || fail
+  dir::make-if-not-exists "${HOME}/.config/autostart" 700 || fail
 
   local outputFile="${HOME}/.config/autostart/imwheel.desktop"
   tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
