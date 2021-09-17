@@ -158,12 +158,15 @@ ubuntu-workstation::install-desktop-software() {
 }
 
 ubuntu-workstation::install-vitals() {
-  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
-  local extensionUuid="Vitals@CoreCoding.com"
-
   apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
 
-  mkdir -p "${extensionsDir}" || fail
+  local extensionUuid="Vitals@CoreCoding.com"
+  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
+
+  dir::make-if-not-exists "${HOME}/.local" 755 || fail
+  dir::make-if-not-exists "${HOME}/.local/share" 755 || fail
+  dir::make-if-not-exists "${HOME}/.local/share/gnome-shell" 700 || fail
+  dir::make-if-not-exists "${extensionsDir}" 700 || fail
 
   git::place-up-to-date-clone "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
 

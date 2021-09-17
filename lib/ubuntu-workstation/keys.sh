@@ -47,8 +47,9 @@ ubuntu-workstation::keys::make-backups() {
   local dir
 
   local destDir; destDir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
-  mkdir -p "${media}/copies" || fail
-  mkdir "${destDir}" || fail
+
+  dir::make-if-not-exists "${media}/copies" || fail
+  dir::make-if-not-exists "${destDir}" || fail
 
   for dir in "${media}"/*keys* ; do
     if [ -d "${dir}" ]; then

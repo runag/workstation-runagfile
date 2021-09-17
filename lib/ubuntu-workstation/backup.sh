@@ -37,7 +37,7 @@ ubuntu-workstation::backup::install-restic-password-file() {
   local key="$1"
 
   workstation::make-keys-directory-if-not-exists || fail
-  dir::make-if-not-exists "${HOME}/.keys/restic" 700 || fail
+  dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys/restic" 700 || fail
 
   keys::install-decrypted-file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
@@ -73,11 +73,7 @@ ubuntu-workstation::backup::deploy() {
 
     echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write "/etc/sudoers.d/dmidecode" 440 || fail
   
-    # install systemd service
-    local unitsPath="${HOME}/.config/systemd/user"
-    mkdir -p "${unitsPath}" || fail
-
-    tee "${unitsPath}/workstation-backup.service" <<EOF >/dev/null || fail
+    systemd::write-user-unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
@@ -90,7 +86,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-    tee "${unitsPath}/workstation-backup.timer" <<EOF >/dev/null || fail
+    systemd::write-user-unit "workstation-backup.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup
 
@@ -102,7 +98,7 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-    tee "${unitsPath}/workstation-backup-maintenance.service" <<EOF >/dev/null || fail
+    systemd::write-user-unit "workstation-backup-maintenance.service" <<EOF || fail
 [Unit]
 Description=Workstation backup maintenance
 
@@ -115,7 +111,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-    tee "${unitsPath}/workstation-backup-maintenance.timer" <<EOF >/dev/null || fail
+    systemd::write-user-unit "workstation-backup-maintenance.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup maintenance
 
@@ -208,7 +204,8 @@ ubuntu-workstation::backup::mount() {
     fusermount -u "${mountPoint}" || fail
   fi
 
-  mkdir -p "${mountPoint}" || fail
+  dir::make-if-not-exists-but-chmod-anyway "${mountPoint}" 700 || fail
+
   restic mount "${mountPoint}" || fail
 }
 

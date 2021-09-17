@@ -36,10 +36,10 @@ workstation::install-ssh-keys() {
 }
 
 workstation::install-rubygems-credentials() {
-  dir::make-if-not-exists "${HOME}/.gem" || fail
+  dir::make-if-not-exists "${HOME}/.gem" 755 || fail
   bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 }
 
 workstation::make-keys-directory-if-not-exists() {
-  dir::make-if-not-exists "${HOME}/.keys" 700 || fail
+  dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys" 700 || fail
 }
