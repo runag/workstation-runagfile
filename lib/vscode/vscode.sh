@@ -25,6 +25,8 @@ vscode::install-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local configPath; configPath="$(vscode::get-config-path)" || fail
 
+  dir::make-if-not-exists "${configPath}/User" 755 || fail
+
   config::install "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
   config::install "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
 }
