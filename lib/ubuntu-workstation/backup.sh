@@ -71,7 +71,7 @@ ubuntu-workstation::backup::deploy() {
     local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
     ssh::add-host-to-known-hosts "${remoteHost}" || fail
 
-    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write "/etc/sudoers.d/dmidecode" 440 || fail
+    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
   
     systemd::write-user-unit "workstation-backup.service" <<EOF || fail
 [Unit]
