@@ -1,0 +1,13 @@
+{
+  "name": "@senotrusov/sopkafile",
+  "version": "0.1.0",
+  "homepage": "https://github.com/senotrusov/sopkafile",
+  "bugs": "https://github.com/senotrusov/sopkafile/issues",
+  "license": "Apache-2.0",
+  "author": "Stanislav Senotrusov",
+  "repository": "senotrusov/sopkafile",
+  "scripts": {
+    "lint": "shellcheck bin/* $(find . -name '*.sh')"
+  },
+  "private": true
+}

@@ -81,7 +81,4 @@ Record names should be as the following:
 
 ## Contributing
 
-### Please check shell scripts before commiting any changes
-```sh
-lint/lint.sh
-```
+Please check shell scripts before commiting any changes with `npm run lint`.
