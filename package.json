@@ -7,7 +7,7 @@
   "author": "Stanislav Senotrusov",
   "repository": "senotrusov/sopkafile",
   "scripts": {
-    "lint": "shellcheck bin/* $(find . -name '*.sh')"
+    "lint": "shellcheck $(find . -name '*.sh')"
   },
   "private": true
 }
