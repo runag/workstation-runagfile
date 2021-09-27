@@ -45,6 +45,7 @@ ubuntu-workstation::install-terminal-software() {
     mc \
     ncdu \
     p7zip-full \
+    rclone \
     restic \
     shellcheck \
     sqlite3 \
@@ -53,8 +54,6 @@ ubuntu-workstation::install-terminal-software() {
     whois \
     zsh \
       || fail
-
-  rclone::install || fail
 }
 
 ubuntu-workstation::install-build-tools() {
