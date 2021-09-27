@@ -47,6 +47,9 @@ windows-workstation::deploy() {
       # rubygems
       workstation::install-rubygems-credentials || fail
 
+      # npm
+      workstation::install-npm-credentials || fail
+
       # sublime text license
       sublime::install-license || fail
     ) || fail

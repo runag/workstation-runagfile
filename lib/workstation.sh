@@ -40,6 +40,10 @@ workstation::install-rubygems-credentials() {
   bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 }
 
+workstation::install-npm-credentials() {
+  bitwarden::use password "my npm publish token" nodejs::auth-token || fail
+}
+
 workstation::make-keys-directory-if-not-exists() {
   dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys" 700 || fail
 }

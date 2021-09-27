@@ -117,6 +117,9 @@ ubuntu-workstation::deploy-secrets() {
   # rubygems
   workstation::install-rubygems-credentials || fail
 
+  # npm
+  workstation::install-npm-credentials || fail
+
   # install sublime license key
   sublime::install-license || fail
 
