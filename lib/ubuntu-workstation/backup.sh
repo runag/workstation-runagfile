@@ -14,23 +14,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka::add-menu-item >/dev/null; then
-  sopka::add-menu-item ubuntu-workstation::backup::deploy || fail
-  sopka::add-menu-item ubuntu-workstation::backup::create || fail
-  sopka::add-menu-item ubuntu-workstation::backup::list-snapshots || fail
-  sopka::add-menu-item ubuntu-workstation::backup::check-and-read-data || fail
-  sopka::add-menu-item ubuntu-workstation::backup::forget-and-prune || fail
-  sopka::add-menu-item ubuntu-workstation::backup::perform-maintenance || fail
-  sopka::add-menu-item ubuntu-workstation::backup::unlock || fail
-  sopka::add-menu-item ubuntu-workstation::backup::mount || fail
-  sopka::add-menu-item ubuntu-workstation::backup::umount || fail
-  sopka::add-menu-item ubuntu-workstation::backup::start || fail
-  sopka::add-menu-item ubuntu-workstation::backup::stop || fail
-  sopka::add-menu-item ubuntu-workstation::backup::start-maintenance || fail
-  sopka::add-menu-item ubuntu-workstation::backup::stop-maintenance || fail
-  sopka::add-menu-item ubuntu-workstation::backup::disable-timers || fail
-  sopka::add-menu-item ubuntu-workstation::backup::status || fail
-  sopka::add-menu-item ubuntu-workstation::backup::log || fail
+if declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add ubuntu-workstation::backup::deploy || fail
+  sopka-menu::add ubuntu-workstation::backup::create || fail
+  sopka-menu::add ubuntu-workstation::backup::list-snapshots || fail
+  sopka-menu::add ubuntu-workstation::backup::check-and-read-data || fail
+  sopka-menu::add ubuntu-workstation::backup::forget-and-prune || fail
+  sopka-menu::add ubuntu-workstation::backup::perform-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::unlock || fail
+  sopka-menu::add ubuntu-workstation::backup::mount || fail
+  sopka-menu::add ubuntu-workstation::backup::umount || fail
+  sopka-menu::add ubuntu-workstation::backup::start || fail
+  sopka-menu::add ubuntu-workstation::backup::stop || fail
+  sopka-menu::add ubuntu-workstation::backup::start-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::stop-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::disable-timers || fail
+  sopka-menu::add ubuntu-workstation::backup::status || fail
+  sopka-menu::add ubuntu-workstation::backup::log || fail
 fi
 
 ubuntu-workstation::backup::install-restic-password-file() {

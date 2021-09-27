@@ -14,9 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka::add-menu-item >/dev/null; then
-  sopka::add-menu-item macos-workstation::deploy || fail
-  sopka::add-menu-item macos-workstation::configure || fail
+if declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add macos-workstation::deploy || fail
+  sopka-menu::add macos-workstation::configure || fail
 fi
 
 macos-workstation::deploy() {

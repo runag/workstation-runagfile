@@ -14,12 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka::add-menu-item >/dev/null; then
+if declare -f sopka-menu::add >/dev/null; then
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     for dir in "/media/${USER}"/KEYS-* ; do
       if [ -d "$dir" ]; then
-        sopka::add-menu-item "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
-        sopka::add-menu-item "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
+        sopka-menu::add "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
+        sopka-menu::add "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
       fi
     done
   fi

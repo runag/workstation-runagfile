@@ -37,15 +37,15 @@ sopkafile::load() {
 
 sopkafile::load || fail
 
-if declare -f sopka::add-menu-item >/dev/null; then
-  sopka::add-menu-item sopka::update || fail
-  sopka::add-menu-item "sopka::with-update-secrets sopka::display-menu" || fail
+if declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add sopka::update || fail
+  sopka-menu::add "sopka::with-update-secrets sopka-menu::display" || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    sopka::add-menu-item linux::display-if-restart-required || fail
+    sopka-menu::add linux::display-if-restart-required || fail
   fi
 
   if benchmark::is-available; then
-    sopka::add-menu-item benchmark::run || fail
+    sopka-menu::add benchmark::run || fail
   fi
 fi

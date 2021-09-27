@@ -14,19 +14,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka::add-menu-item >/dev/null; then
+if declare -f sopka-menu::add >/dev/null; then
   if [ -n "${DISPLAY:-}" ]; then
-    sopka::add-menu-item ubuntu-workstation::deploy-full-workstation || fail
-    sopka::add-menu-item ubuntu-workstation::deploy-workstation-base || fail
-    sopka::add-menu-item ubuntu-workstation::deploy-secrets || fail
+    sopka-menu::add ubuntu-workstation::deploy-full-workstation || fail
+    sopka-menu::add ubuntu-workstation::deploy-workstation-base || fail
+    sopka-menu::add ubuntu-workstation::deploy-secrets || fail
   fi
-  sopka::add-menu-item ubuntu-workstation::deploy-vm-server || fail
+  sopka-menu::add ubuntu-workstation::deploy-vm-server || fail
   if vmware::is-inside-vm; then
-    sopka::add-menu-item ubuntu-workstation::deploy-host-folders-access || fail
+    sopka-menu::add ubuntu-workstation::deploy-host-folders-access || fail
   fi
-  sopka::add-menu-item ubuntu-workstation::deploy-tailscale || fail
-  sopka::add-menu-item ubuntu-workstation::deploy-shellrc || fail
-  sopka::add-menu-item ubuntu-workstation::change-hostname || fail
+  sopka-menu::add ubuntu-workstation::deploy-tailscale || fail
+  sopka-menu::add ubuntu-workstation::deploy-shellrc || fail
+  sopka-menu::add ubuntu-workstation::change-hostname || fail
 fi
 
 ubuntu-workstation::deploy-full-workstation() {
