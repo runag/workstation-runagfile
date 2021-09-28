@@ -16,7 +16,7 @@
 
 ubuntu-workstation::configure-system() {
   # increase inotify limits
-  linux::configure-inotify || fail
+  task::run linux::configure-inotify || fail
 }
 
 ubuntu-workstation::configure-servers() {

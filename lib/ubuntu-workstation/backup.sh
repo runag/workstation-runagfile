@@ -69,7 +69,7 @@ ubuntu-workstation::backup::deploy() {
     unset BW_SESSION
 
     local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
-    ssh::add-host-to-known-hosts "${remoteHost}" || fail
+    task::run ssh::add-host-to-known-hosts "${remoteHost}" || fail
 
     echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
   
@@ -126,7 +126,7 @@ EOF
     # enable systemd user instance without the need for the user to login
     sudo loginctl enable-linger "${USER}" || fail
 
-    systemctl --user daemon-reload || fail
+    task::run systemctl --user daemon-reload || fail
 
     # enable the service and start the timer
     systemctl --user reenable "workstation-backup.timer" || fail

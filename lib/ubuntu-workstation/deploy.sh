@@ -160,7 +160,7 @@ ubuntu-workstation::deploy-tailscale() {
       # install tailscale
       if ! command -v tailscale >/dev/null; then
         tailscale::install || fail
-        tailscale::install-issue-2541-workaround || fail
+        task::run tailscale::install-issue-2541-workaround || fail
       fi
 
       # logout if SOPKA_UPDATE_SECRETS is set
@@ -169,7 +169,7 @@ ubuntu-workstation::deploy-tailscale() {
       fi
 
       # configure tailscale
-      sudo tailscale up --authkey "${tailscaleKey}" || fail
+      task::run-with-title "tailscale up" sudo tailscale up --authkey "${tailscaleKey}" || fail
 
     ) || fail
   fi
