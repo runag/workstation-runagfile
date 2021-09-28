@@ -40,6 +40,7 @@ sopkafile::load || fail
 if declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add sopka::update || fail
   sopka-menu::add "sopka::with-update-secrets sopka-menu::display" || fail
+  sopka-menu::add "sopka::with-verbose-tasks sopka-menu::display" || fail
 
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     sopka-menu::add linux::display-if-restart-required || fail
