@@ -72,8 +72,14 @@ ubuntu-workstation::backup::deploy() {
     task::run ssh::add-host-to-known-hosts "${remoteHost}" || fail
 
     echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
-  
-    systemd::write-user-unit "workstation-backup.service" <<EOF || fail
+
+    task::run ubuntu-workstation::backup::install-systemd-services || fail
+
+  ) || fail
+}
+
+ubuntu-workstation::backup::install-systemd-services() {
+  systemd::write-user-unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
@@ -86,7 +92,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-    systemd::write-user-unit "workstation-backup.timer" <<EOF || fail
+  systemd::write-user-unit "workstation-backup.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup
 
@@ -98,7 +104,7 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-    systemd::write-user-unit "workstation-backup-maintenance.service" <<EOF || fail
+  systemd::write-user-unit "workstation-backup-maintenance.service" <<EOF || fail
 [Unit]
 Description=Workstation backup maintenance
 
@@ -111,7 +117,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-    systemd::write-user-unit "workstation-backup-maintenance.timer" <<EOF || fail
+  systemd::write-user-unit "workstation-backup-maintenance.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup maintenance
 
@@ -123,18 +129,17 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-    # enable systemd user instance without the need for the user to login
-    sudo loginctl enable-linger "${USER}" || fail
+  # enable systemd user instance without the need for the user to login
+  sudo loginctl enable-linger "${USER}" || fail
 
-    task::run systemctl --user daemon-reload || fail
+  systemctl --user daemon-reload || fail
 
-    # enable the service and start the timer
-    systemctl --user reenable "workstation-backup.timer" || fail
-    systemctl --user start "workstation-backup.timer" || fail
+  # enable the service and start the timer
+  systemctl --user reenable "workstation-backup.timer" || fail
+  systemctl --user start "workstation-backup.timer" || fail
 
-    systemctl --user reenable "workstation-backup-maintenance.timer" || fail
-    systemctl --user start "workstation-backup-maintenance.timer" || fail
-  ) || fail
+  systemctl --user reenable "workstation-backup-maintenance.timer" || fail
+  systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
 
 ubuntu-workstation::backup::load-config() {
