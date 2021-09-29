@@ -104,13 +104,12 @@ ubuntu-workstation::configure-home-folders() {
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    rmdir \
-      "${HOME}/Documents" \
-      "${HOME}/Music" \
-      "${HOME}/Pictures" \
-      "${HOME}/Public" \
-      "${HOME}/Templates" \
-      "${HOME}/Videos" || true
+    dir::remove-if-exists-and-empty "${HOME}/Documents" || fail
+    dir::remove-if-exists-and-empty "${HOME}/Music" || fail
+    dir::remove-if-exists-and-empty "${HOME}/Pictures" || fail
+    dir::remove-if-exists-and-empty "${HOME}/Public" || fail
+    dir::remove-if-exists-and-empty "${HOME}/Templates" || fail
+    dir::remove-if-exists-and-empty "${HOME}/Videos" || fail
 
     if [ -f "${HOME}/examples.desktop" ]; then
       rm "${HOME}/examples.desktop" || fail
