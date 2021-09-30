@@ -71,7 +71,7 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
-    # install nodejs
+  # install nodejs
   nodejs::apt::install || fail
   nodejs::install-and-load-nodenv || fail
 
@@ -98,7 +98,7 @@ ubuntu-workstation::install-and-update-python() {
       || fail
 }
 
-ubuntu-workstation::install-desktop-software() {
+ubuntu-workstation::install-desktop-software::apt() {
   # open-vm-tools-desktop
   if vmware::is-inside-vm; then
     apt::install open-vm-tools-desktop || fail
@@ -107,20 +107,11 @@ ubuntu-workstation::install-desktop-software() {
   # install dconf-editor
   apt::install dconf-editor || fail
 
-  # vscode
-  vscode::install-and-configure || fail
-
   # sublime text and sublime merge
   sublime::apt::install-merge-and-text || fail
 
   # meld
   apt::install meld || fail
-
-  # chromium
-  sudo snap install chromium || fail
-
-  # bitwarden
-  sudo snap install bitwarden || fail
 
   # gparted
   apt::install gparted || fail
@@ -142,6 +133,23 @@ ubuntu-workstation::install-desktop-software() {
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
     ubuntu-workstation::install-vitals || fail
 
+    # OBS studio
+    ubuntu-workstation::install-obs-studio || fail
+  fi
+}
+
+ubuntu-workstation::install-desktop-software::snap() {
+  # vscode
+  vscode::install-and-configure || fail
+
+  # chromium
+  sudo snap install chromium || fail
+
+  # bitwarden
+  sudo snap install bitwarden || fail
+
+  # software for bare metal workstation
+  if linux::is-bare-metal; then
     # skype
     sudo snap install skype --classic || fail
 
@@ -150,9 +158,6 @@ ubuntu-workstation::install-desktop-software() {
 
     # discord
     sudo snap install discord || fail
-
-    # OBS studio
-    ubuntu-workstation::install-obs-studio || fail
   fi
 }
 

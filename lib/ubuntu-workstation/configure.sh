@@ -16,7 +16,7 @@
 
 ubuntu-workstation::configure-system() {
   # increase inotify limits
-  task::run linux::configure-inotify || fail
+  linux::configure-inotify || fail
 }
 
 ubuntu-workstation::configure-servers() {
@@ -30,9 +30,6 @@ ubuntu-workstation::configure-desktop-software() {
     # configure firefox
     ubuntu-workstation::configure-firefox || fail
     firefox::enable-wayland || fail
-
-    # install sublime configuration
-    sublime::install-config || fail
 
     # configure imwheel
     if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
@@ -123,65 +120,63 @@ ubuntu-workstation::configure-home-folders() {
   file::append-line-unless-present "snap" "${HOME}/.hidden" || fail
 }
 
-ubuntu-workstation::configure-gnome() {
+ubuntu-workstation::configure-gnome() {(
   # use dconf-editor to find key/value pairs
   #
   # Please do not use dbus-launch here because it will introduce side-effect to
-  # git:Please dadd-credentials-to-gnome-keyring and
+  # git:add-credentials-to-gnome-keyring and
   # ssh::add-key-password-to-gnome-keyring
   #
-  (
-    gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
-    gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
+  gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
+  gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
 
-    # Terminal
-    local profileId profilePath
+  # Terminal
+  local profileId profilePath
 
-    if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
-      local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
-      
-      gnome-set "${profilePath}" exit-action 'hold' || fail
-      gnome-set "${profilePath}" login-shell true || fail
-    fi
+  if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
+    local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
+    
+    gnome-set "${profilePath}" exit-action 'hold' || fail
+    gnome-set "${profilePath}" login-shell true || fail
+  fi
 
-    gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-    gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
-    gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
+  gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
+  gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
+  gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
 
-    # Desktop
-    gnome-set shell.extensions.desktop-icons show-trash false || fail
-    gnome-set shell.extensions.desktop-icons show-home false || fail
+  # Desktop
+  gnome-set shell.extensions.desktop-icons show-trash false || fail
+  gnome-set shell.extensions.desktop-icons show-home false || fail
 
-    # Dash
-    gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-    gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
-    gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-    gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
-    gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
-    gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
-    gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
+  # Dash
+  gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
+  gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
+  gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
+  gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
+  gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
+  gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
-    # Nautilus
-    gnome-set nautilus.list-view default-zoom-level 'small' || fail
-    gnome-set nautilus.list-view use-tree-view true || fail
-    gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
-    gnome-set nautilus.preferences show-delete-permanently true || fail
-    gnome-set nautilus.preferences show-hidden-files true || fail
+  # Nautilus
+  gnome-set nautilus.list-view default-zoom-level 'small' || fail
+  gnome-set nautilus.list-view use-tree-view true || fail
+  gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
+  gnome-set nautilus.preferences show-delete-permanently true || fail
+  gnome-set nautilus.preferences show-hidden-files true || fail
 
-    # Automatic timezone
-    gnome-set desktop.datetime automatic-timezone true || fail
+  # Automatic timezone
+  gnome-set desktop.datetime automatic-timezone true || fail
 
-    # Input sources
-    # on mac host: ('xkb', 'ru+mac')
-    gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
+  # Input sources
+  # on mac host: ('xkb', 'ru+mac')
+  gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
 
-    # Disable sound alerts
-    gnome-set desktop.sound event-sounds false || fail
+  # Disable sound alerts
+  gnome-set desktop.sound event-sounds false || fail
 
-    # Enable fractional scaling
-    # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
+  # Enable fractional scaling
+  # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
 
-    # 1600 DPI mouse
-    gnome-set desktop.peripherals.mouse speed -0.75 || fail
-  ) || fail
-}
+  # 1600 DPI mouse
+  gnome-set desktop.peripherals.mouse speed -0.75 || fail
+)}

@@ -50,62 +50,70 @@ ubuntu-workstation::deploy-workstation-base() {
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # perform cleanup
-  apt::autoremove || fail
+  task::run apt::autoremove || fail
 
   # update and upgrade
-  apt::lazy-update || fail
+  task::run apt::lazy-update || fail
   if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
-    apt::dist-upgrade || fail
+    task::run apt::dist-upgrade || fail
   fi
 
   # install tools to use by the rest of the script
-  apt::install-tools || fail
+  task::run apt::install-tools || fail
 
   # shellrc
-  ubuntu-workstation::deploy-shellrc || fail
+  task::run ubuntu-workstation::deploy-shellrc || fail
 
   # install system software
-  ubuntu-workstation::install-system-software || fail
+  task::run ubuntu-workstation::install-system-software || fail
 
   # configure system
-  ubuntu-workstation::configure-system || fail
+  task::run ubuntu-workstation::configure-system || fail
 
   # install terminal software
-  ubuntu-workstation::install-terminal-software || fail
+  task::run ubuntu-workstation::install-terminal-software || fail
 
   # configure git
-  workstation::configure-git || fail
+  task::run workstation::configure-git || fail
 
   # install build tools
-  ubuntu-workstation::install-build-tools || fail
+  task::run ubuntu-workstation::install-build-tools || fail
 
   # install and configure servers
-  ubuntu-workstation::install-servers || fail
-  ubuntu-workstation::configure-servers || fail
+  task::run ubuntu-workstation::install-servers || fail
+  task::run ubuntu-workstation::configure-servers || fail
 
   # programming languages
-  ubuntu-workstation::install-and-update-nodejs || fail
-  ubuntu-workstation::install-and-update-ruby || fail
-  ubuntu-workstation::install-and-update-python || fail
+  task::run ubuntu-workstation::install-and-update-nodejs || fail
+  task::run-and-fail-on-error-in-rubygems ubuntu-workstation::install-and-update-ruby || fail
+  task::run ubuntu-workstation::install-and-update-python || fail
 
   # install & configure desktop software
-  ubuntu-workstation::install-desktop-software || fail
-  ubuntu-workstation::configure-desktop-software || fail
+  task::run ubuntu-workstation::install-desktop-software::apt || fail
+  task::run ubuntu-workstation::configure-desktop-software || fail
+
+  # possible interactive part (so without task::run)
+  # install sublime configuration
+  sublime::install-config || fail
+
+  # snap stuff
+  ubuntu-workstation::install-desktop-software::snap || fail
 }
+
+# install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
+ubuntu-workstation::deploy-secrets::preliminary-stage(){(
+  unset BW_SESSION
+
+  apt::lazy-update || fail
+  apt::install-gnome-keyring-and-libsecret || fail
+
+  git::install-libsecret-credential-helper || fail
+  git::use-libsecret-credential-helper || fail
+)}
 
 ubuntu-workstation::deploy-secrets() {
   ubuntu-workstation::deploy-bitwarden || fail
-
-  # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
-  (
-    unset BW_SESSION
-
-    apt::lazy-update || fail
-    apt::install-gnome-keyring-and-libsecret || fail
-
-    git::install-libsecret-credential-helper || fail
-    git::use-libsecret-credential-helper || fail
-  ) || fail
+  task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
   # install ssh key, configure ssh  to use it
   workstation::install-ssh-keys || fail
@@ -137,15 +145,19 @@ ubuntu-workstation::deploy-host-folders-access() {
   workstation::make-keys-directory-if-not-exists || fail
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
 
-  (
-    unset BW_SESSION 
-    local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
-
-    apt::install cifs-utils || fail
-    mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
-    mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
-  ) || fail
+  task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
 }
+
+ubuntu-workstation::deploy-host-folders-access::stage-2() {(
+  unset BW_SESSION
+  local credentialsFile="$1"
+
+  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+
+  apt::install cifs-utils || fail
+  mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
+  mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
+)}
 
 ubuntu-workstation::deploy-tailscale() {
   ubuntu-workstation::deploy-bitwarden || fail
@@ -153,27 +165,28 @@ ubuntu-workstation::deploy-tailscale() {
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
     bitwarden::unlock-and-sync || fail
     local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
-
-    (
-      unset BW_SESSION
-
-      # install tailscale
-      if ! command -v tailscale >/dev/null; then
-        tailscale::install || fail
-        task::run tailscale::install-issue-2541-workaround || fail
-      fi
-
-      # logout if SOPKA_UPDATE_SECRETS is set
-      if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && ! tailscale::is-logged-out; then
-        sudo tailscale logout || fail
-      fi
-
-      # configure tailscale
-      task::run-with-title "tailscale up" sudo tailscale up --authkey "${tailscaleKey}" || fail
-
-    ) || fail
+    task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
   fi
 }
+
+ubuntu-workstation::deploy-tailscale::stage-2() {(
+  unset BW_SESSION
+  local tailscaleKey="$1"
+
+  # install tailscale
+  if ! command -v tailscale >/dev/null; then
+    tailscale::install || fail
+    tailscale::install-issue-2541-workaround || fail
+  fi
+
+  # logout if SOPKA_UPDATE_SECRETS is set
+  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && ! tailscale::is-logged-out; then
+    sudo tailscale logout || fail
+  fi
+
+  # configure tailscale
+  sudo tailscale up --authkey "${tailscaleKey}" || fail
+)}
 
 ubuntu-workstation::deploy-vm-server() {
   # perform cleanup

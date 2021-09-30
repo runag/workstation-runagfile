@@ -65,18 +65,20 @@ ubuntu-workstation::backup::deploy() {
   workstation::make-keys-directory-if-not-exists || fail
   bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${sshDestinationFile}" || fail
 
-  (
-    unset BW_SESSION
-
-    local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
-    task::run ssh::add-host-to-known-hosts "${remoteHost}" || fail
-
-    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
-
-    task::run ubuntu-workstation::backup::install-systemd-services || fail
-
-  ) || fail
+  task::run ubuntu-workstation::backup::deploy::stage-2 "${sshDestinationFile}" || fail
 }
+
+ubuntu-workstation::backup::deploy::stage-2() {(
+  unset BW_SESSION
+  local sshDestinationFile="$1"
+
+  local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
+  ssh::add-host-to-known-hosts "${remoteHost}" || fail
+
+  echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
+
+  ubuntu-workstation::backup::install-systemd-services || fail
+)}
 
 ubuntu-workstation::backup::install-systemd-services() {
   systemd::write-user-unit "workstation-backup.service" <<EOF || fail
