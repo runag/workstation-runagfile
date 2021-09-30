@@ -72,7 +72,7 @@ ubuntu-workstation::install-servers() {
 
 ubuntu-workstation::install-and-update-nodejs() {
   # install nodejs
-  nodejs::apt::install || fail
+  nodejs::apt::install 14 || fail
   nodejs::install-and-load-nodenv || fail
 
   # update nodejs packages
