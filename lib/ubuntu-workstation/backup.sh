@@ -163,7 +163,7 @@ ubuntu-workstation::backup::create() {
     restic init || fail
   fi
 
-  (cd "${HOME}" && restic backup --one-file-system --exclude "${HOME}"/'.*' --exclude "${HOME}"/'snap' .) || fail
+  (cd "${HOME}" && restic backup --one-file-system --exclude "${HOME}/.*" --exclude "${HOME}/snap" .) || fail
 }
 
 ubuntu-workstation::backup::list-snapshots() {
