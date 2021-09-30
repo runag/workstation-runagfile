@@ -60,18 +60,14 @@ ubuntu-workstation::backup::deploy() {
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
-  local sshDestinationFile="${HOME}/.keys/my-data-server.ssh-destination"
-
   workstation::make-keys-directory-if-not-exists || fail
-  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${sshDestinationFile}" || fail
+  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
-  bitwarden::beyond-session task::run ubuntu-workstation::backup::deploy::stage-2 "${sshDestinationFile}" || fail
+  bitwarden::beyond-session task::run ubuntu-workstation::backup::deploy::stage-2 || fail
 }
 
 ubuntu-workstation::backup::deploy::stage-2() {
-  local sshDestinationFile="$1"
-
-  local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
+  local remoteHost; remoteHost="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
   ssh::add-host-to-known-hosts "${remoteHost}" || fail
 
   echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
