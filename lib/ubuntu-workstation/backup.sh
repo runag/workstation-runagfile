@@ -65,11 +65,10 @@ ubuntu-workstation::backup::deploy() {
   workstation::make-keys-directory-if-not-exists || fail
   bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${sshDestinationFile}" || fail
 
-  task::run ubuntu-workstation::backup::deploy::stage-2 "${sshDestinationFile}" || fail
+  bitwarden::beyond-session task::run ubuntu-workstation::backup::deploy::stage-2 "${sshDestinationFile}" || fail
 }
 
-ubuntu-workstation::backup::deploy::stage-2() {(
-  unset BW_SESSION
+ubuntu-workstation::backup::deploy::stage-2() {
   local sshDestinationFile="$1"
 
   local remoteHost; remoteHost="$(sed s/.*@// "${sshDestinationFile}")" || fail
@@ -78,7 +77,7 @@ ubuntu-workstation::backup::deploy::stage-2() {(
   echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
 
   ubuntu-workstation::backup::install-systemd-services || fail
-)}
+}
 
 ubuntu-workstation::backup::install-systemd-services() {
   systemd::write-user-unit "workstation-backup.service" <<EOF || fail

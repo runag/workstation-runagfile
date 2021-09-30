@@ -101,19 +101,17 @@ ubuntu-workstation::deploy-workstation-base() {
 }
 
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
-ubuntu-workstation::deploy-secrets::preliminary-stage(){(
-  unset BW_SESSION
-
+ubuntu-workstation::deploy-secrets::preliminary-stage(){
   apt::lazy-update || fail
   apt::install-gnome-keyring-and-libsecret || fail
 
   git::install-libsecret-credential-helper || fail
   git::use-libsecret-credential-helper || fail
-)}
+}
 
 ubuntu-workstation::deploy-secrets() {
   ubuntu-workstation::deploy-bitwarden || fail
-  task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
+  bitwarden::beyond-session task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
   # install ssh key, configure ssh  to use it
   workstation::install-ssh-keys || fail
@@ -145,11 +143,10 @@ ubuntu-workstation::deploy-host-folders-access() {
   workstation::make-keys-directory-if-not-exists || fail
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
 
-  task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
+  bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
 }
 
-ubuntu-workstation::deploy-host-folders-access::stage-2() {(
-  unset BW_SESSION
+ubuntu-workstation::deploy-host-folders-access::stage-2() {
   local credentialsFile="$1"
 
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
@@ -157,7 +154,7 @@ ubuntu-workstation::deploy-host-folders-access::stage-2() {(
   apt::install cifs-utils || fail
   mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
   mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
-)}
+}
 
 ubuntu-workstation::deploy-tailscale() {
   ubuntu-workstation::deploy-bitwarden || fail
@@ -165,12 +162,11 @@ ubuntu-workstation::deploy-tailscale() {
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
     bitwarden::unlock-and-sync || fail
     local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
-    task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
+    bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
   fi
 }
 
-ubuntu-workstation::deploy-tailscale::stage-2() {(
-  unset BW_SESSION
+ubuntu-workstation::deploy-tailscale::stage-2() {
   local tailscaleKey="$1"
 
   # install tailscale
@@ -186,7 +182,7 @@ ubuntu-workstation::deploy-tailscale::stage-2() {(
 
   # configure tailscale
   sudo tailscale up --authkey "${tailscaleKey}" || fail
-)}
+}
 
 ubuntu-workstation::deploy-vm-server() {
   # perform cleanup
