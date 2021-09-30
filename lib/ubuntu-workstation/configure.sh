@@ -90,10 +90,12 @@ ubuntu-workstation::configure-home-folders() {
     local tmpFile; tmpFile="$(mktemp)" || fail
 
     if [ -d "${HOME}/Desktop" ]; then
+      # shellcheck disable=SC2016
       echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${tmpFile}" || fail
     fi
 
     if [ -d "${HOME}/Downloads" ]; then
+      # shellcheck disable=SC2016
       echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${tmpFile}" || fail
     fi
 
