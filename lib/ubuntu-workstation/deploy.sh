@@ -94,7 +94,7 @@ ubuntu-workstation::deploy-workstation-base() {
 
   # possible interactive part (so without task::run)
   # install sublime configuration
-  sublime::install-config || fail
+  sublime-text::install-config || fail
 
   # snap stuff
   ubuntu-workstation::install-desktop-software::snap || fail
@@ -127,7 +127,7 @@ ubuntu-workstation::deploy-secrets() {
   workstation::install-npm-credentials || fail
 
   # install sublime license key
-  sublime::install-license || fail
+  sublime-text::install-license || fail
 
   # install gpg key
   ubuntu-workstation::install-all-gpg-keys || fail

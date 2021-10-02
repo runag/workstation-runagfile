@@ -15,28 +15,28 @@
 #  limitations under the License.
 
 
-sublime::install-config() {
-  sublime::install-package-control || fail
+sublime-text::install-config() {
+  sublime-text::install-package-control || fail
 
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime::install-config-file "${selfDir}/Preferences.sublime-settings" || fail
-  sublime::install-config-file "${selfDir}/Package Control.sublime-settings" || fail
-  sublime::install-config-file "${selfDir}/Terminal.sublime-settings" || fail
+  sublime-text::install-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime-text::install-config-file "${selfDir}/Package Control.sublime-settings" || fail
+  sublime-text::install-config-file "${selfDir}/Terminal.sublime-settings" || fail
 }
 
-sublime::install-license() {
-  local configPath; configPath="$(sublime::get-config-path)" || fail
+sublime-text::install-license() {
+  local configPath; configPath="$(sublime-text::get-config-path)" || fail
 
   dir::make-if-not-exists "${configPath}/Local" 700 || fail
 
   bitwarden::write-notes-to-file-if-not-exists "my sublime text 3 license" "${configPath}/Local/License.sublime_license" || fail
 }
 
-sublime::merge-config() {
+sublime-text::merge-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime::merge-config-file "${selfDir}/Preferences.sublime-settings" || fail
-  sublime::merge-config-file "${selfDir}/Package Control.sublime-settings" || fail
-  sublime::merge-config-file "${selfDir}/Terminal.sublime-settings" || fail
+  sublime-text::merge-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime-text::merge-config-file "${selfDir}/Package Control.sublime-settings" || fail
+  sublime-text::merge-config-file "${selfDir}/Terminal.sublime-settings" || fail
 }

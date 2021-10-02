@@ -38,7 +38,7 @@ windows-workstation::deploy() {
   vscode::install-extensions "${selfDir}/vscode/extensions.txt" || fail
 
   # sublime text config
-  sublime::install-config || fail
+  sublime-text::install-config || fail
 
   # secrets
   if [ -t 0 ]; then
@@ -53,7 +53,7 @@ windows-workstation::deploy() {
       workstation::install-npm-credentials || fail
 
       # sublime text license
-      sublime::install-license || fail
+      sublime-text::install-license || fail
     ) || fail
   fi
 }

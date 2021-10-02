@@ -72,7 +72,7 @@ ubuntu-workstation::install-servers() {
 
 ubuntu-workstation::install-and-update-nodejs() {
   # install nodejs
-  nodejs::apt::install 14 || fail
+  nodejs::install::apt 14 || fail
   nodejs::install-and-load-nodenv || fail
 
   # update nodejs packages
@@ -81,7 +81,7 @@ ubuntu-workstation::install-and-update-nodejs() {
 
 ubuntu-workstation::install-and-update-ruby() {
   # install rbenv, configure ruby
-  ruby::apt::install || fail
+  ruby::install::apt || fail
   ruby::install-and-load-rbenv || fail
   ruby::dangerously-append-nodocument-to-gemrc || fail
 
@@ -108,7 +108,8 @@ ubuntu-workstation::install-desktop-software::apt() {
   apt::install dconf-editor || fail
 
   # sublime text and sublime merge
-  sublime::apt::install-merge-and-text || fail
+  sublime-merge::install::apt || fail
+  sublime-text::install::apt || fail
 
   # meld
   apt::install meld || fail
