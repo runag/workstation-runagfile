@@ -141,7 +141,7 @@ ubuntu-workstation::deploy-host-folders-access() {
   local credentialsFile="${HOME}/.keys/host-filesystem-access.cifs-credentials"
 
   workstation::make-keys-directory-if-not-exists || fail
-  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" mount::cifs::credentials "${credentialsFile}" || fail
+  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentialsFile}" || fail
 
   bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
 }
@@ -152,8 +152,8 @@ ubuntu-workstation::deploy-host-folders-access::stage-2() {
   local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
 
   apt::install cifs-utils || fail
-  mount::cifs "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
-  mount::cifs "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
+  cifs::mount "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
+  cifs::mount "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
 }
 
 ubuntu-workstation::deploy-tailscale() {

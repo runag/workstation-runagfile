@@ -25,9 +25,6 @@ ubuntu-workstation::install-system-software() {
 
   # install inotify tools
   apt::install inotify-tools || fail
-
-  # install cifs-utils
-  apt::install cifs-utils || fail
 }
 
 ubuntu-workstation::install-terminal-software() {
