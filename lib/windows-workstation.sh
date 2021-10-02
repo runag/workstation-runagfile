@@ -20,7 +20,9 @@ fi
 
 windows-workstation::deploy() {
   # check dependencies
-  shell::fail-unless-command-is-found bw jq code || fail
+  command -v bw >/dev/null || fail "bw command is not found"
+  command -v jq >/dev/null || fail "jq command is not found"
+  command -v code >/dev/null || fail "code command is not found"
 
   # shell aliases
   shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
