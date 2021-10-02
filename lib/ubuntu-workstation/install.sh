@@ -73,7 +73,7 @@ ubuntu-workstation::install-and-update-nodejs() {
   nodejs::install-and-load-nodenv || fail
 
   # update nodejs packages
-  nodejs::update-systemwide-packages || fail
+  nodejs::update-system-wide-packages || fail
 }
 
 ubuntu-workstation::install-and-update-ruby() {
@@ -83,7 +83,7 @@ ubuntu-workstation::install-and-update-ruby() {
   ruby::dangerously-append-nodocument-to-gemrc || fail
 
   # update ruby packages
-  ruby::update-systemwide-packages || fail
+  ruby::update-system-wide-packages || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
