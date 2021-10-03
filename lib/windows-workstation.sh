@@ -56,4 +56,6 @@ windows-workstation::deploy() {
       sublime-text::install-license || fail
     ) || fail
   fi
+
+  log::success "Done windows-workstation::deploy" || fail
 }

@@ -23,6 +23,8 @@ macos-workstation::deploy() {
   macos-workstation::install-basic-packages || fail
   macos-workstation::install-developer-packages || fail
   macos-workstation::configure || fail
+  
+  log::success "Done macos-workstation::deploy" || fail
 }
 
 macos-workstation::install-basic-packages() {
@@ -183,6 +185,8 @@ macos-workstation::configure() {
 
   # git
   workstation::configure-git || fail
+
+  log::success "Done macos-workstation::configure" || fail
 }
 
 macos-workstation::hide-folders() {

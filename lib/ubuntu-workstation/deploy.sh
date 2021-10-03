@@ -43,6 +43,8 @@ ubuntu-workstation::deploy-full-workstation() {
     ubuntu-workstation::deploy-tailscale || fail
     ubuntu-workstation::backup::deploy || fail
   ) || fail
+
+  log::success "Done ubuntu-workstation::deploy-full-workstation" || fail
 }
 
 ubuntu-workstation::deploy-workstation-base() {
@@ -62,7 +64,7 @@ ubuntu-workstation::deploy-workstation-base() {
   task::run apt::install-tools || fail
 
   # shellrc
-  task::run ubuntu-workstation::deploy-shellrc || fail
+  task::run ubuntu-workstation::install-shellrc || fail
 
   # install system software
   task::run ubuntu-workstation::install-system-software || fail
@@ -98,6 +100,8 @@ ubuntu-workstation::deploy-workstation-base() {
 
   # snap stuff
   ubuntu-workstation::install-desktop-software::snap || fail
+
+  log::success "Done ubuntu-workstation::deploy-workstation-base" || fail
 }
 
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
@@ -110,7 +114,7 @@ ubuntu-workstation::deploy-secrets::preliminary-stage(){
 }
 
 ubuntu-workstation::deploy-secrets() {
-  ubuntu-workstation::deploy-bitwarden || fail
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
   bitwarden::beyond-session task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
   # install ssh key, configure ssh  to use it
@@ -132,10 +136,12 @@ ubuntu-workstation::deploy-secrets() {
   # install gpg key
   ubuntu-workstation::install-all-gpg-keys || fail
   git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
+
+  log::success "Done ubuntu-workstation::deploy-secrets" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
-  ubuntu-workstation::deploy-bitwarden || fail
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # mount host folder
   local credentialsFile="${HOME}/.keys/host-filesystem-access.cifs-credentials"
@@ -144,6 +150,8 @@ ubuntu-workstation::deploy-host-folders-access() {
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentialsFile}" || fail
 
   bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
+
+  log::success "Done ubuntu-workstation::deploy-host-folders-access" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access::stage-2() {
@@ -157,13 +165,15 @@ ubuntu-workstation::deploy-host-folders-access::stage-2() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
-  ubuntu-workstation::deploy-bitwarden || fail
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
     bitwarden::unlock-and-sync || fail
     local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
     bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
   fi
+
+  log::success "Done ubuntu-workstation::deploy-tailscale" || fail
 }
 
 ubuntu-workstation::deploy-tailscale::stage-2() {
@@ -211,17 +221,14 @@ ubuntu-workstation::deploy-vm-server() {
 
   # install avahi daemon
   apt::install avahi-daemon || fail
+
+  log::success "Done ubuntu-workstation::deploy-vm-server" || fail
 }
 
 ubuntu-workstation::deploy-shellrc() {
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-sopka-path-shellrc || fail
-  shell::install-nano-editor-shellrc || fail
-}
+  ubuntu-workstation::install-shellrc || fail
 
-ubuntu-workstation::deploy-bitwarden() {
-  bitwarden::snap::install-cli || fail
-  bitwarden::login "${MY_BITWARDEN_LOGIN}" || fail
+  log::success "Done ubuntu-workstation::deploy-shellrc" || fail
 }
 
 ubuntu-workstation::change-hostname() {
@@ -230,4 +237,6 @@ ubuntu-workstation::change-hostname() {
   IFS="" read -r hostname || fail
 
   linux::dangerously-set-hostname "${hostname}" || fail
+
+  log::success "Done ubuntu-workstation::change-hostname" || fail
 }

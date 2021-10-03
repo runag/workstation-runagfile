@@ -16,7 +16,7 @@
 
 vscode::install-and-configure(){
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::snap::install || fail
+  vscode::install::snap || fail
   vscode::install-config || fail
   vscode::install-extensions "${selfDir}/extensions.txt" || fail
 }

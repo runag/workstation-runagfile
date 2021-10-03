@@ -195,3 +195,14 @@ ubuntu-workstation::install-gpg-key() {
   local key="$1"
   keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
 }
+
+ubuntu-workstation::install-shellrc() {
+  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
+  shell::install-sopka-path-shellrc || fail
+  shell::install-nano-editor-shellrc || fail
+}
+
+ubuntu-workstation::install-bitwarden-cli-and-login() {
+  bitwarden::install-cli::snap || fail
+  bitwarden::login "${MY_BITWARDEN_LOGIN}" || fail
+}

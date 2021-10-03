@@ -48,7 +48,7 @@ ubuntu-workstation::backup::install-restic-password-file() {
 
 ubuntu-workstation::backup::deploy() {
   # install bitwarden cli
-  ubuntu-workstation::deploy-bitwarden || fail
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # install gpg keys to decrypt restic key
   ubuntu-workstation::install-all-gpg-keys || fail
@@ -66,6 +66,8 @@ ubuntu-workstation::backup::deploy() {
   bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
   bitwarden::beyond-session task::run ubuntu-workstation::backup::deploy::stage-2 || fail
+
+  log::success "Done ubuntu-workstation::backup::deploy" || fail
 }
 
 ubuntu-workstation::backup::deploy::stage-2() {
