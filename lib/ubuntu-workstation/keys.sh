@@ -14,28 +14,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka-menu::add >/dev/null; then
+ubuntu-workstation::keys::populate-sopka-menu() {
   if [[ "${OSTYPE}" =~ ^linux ]]; then
-    for dir in "/media/${USER}"/KEYS-* ; do
+    local dir; for dir in "/media/${USER}"/KEYS-* ; do
       if [ -d "$dir" ]; then
         sopka-menu::add "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
         sopka-menu::add "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
       fi
     done
   fi
+}
+
+if declare -f sopka-menu::add >/dev/null; then
+  ubuntu-workstation::keys::populate-sopka-menu || fail
 fi
 
 ubuntu-workstation::keys::maintain-checksums() {
   local media="$1"
-  local dir
 
-  for dir in "${media}"/*keys* ; do
+  local dir; for dir in "${media}"/*keys* ; do
     if [ -d "${dir}" ]; then
       linux::with-secure-tmpdir checksums::create-or-update "${dir}" "checksums.txt" || fail
     fi
   done
 
-  for dir in "${media}"/copies/*/* ; do
+  local dir; for dir in "${media}"/copies/*/* ; do
     if [ -d "${dir}" ]; then
       linux::with-secure-tmpdir checksums::verify "${dir}" "checksums.txt" || fail
     fi
@@ -44,14 +47,13 @@ ubuntu-workstation::keys::maintain-checksums() {
 
 ubuntu-workstation::keys::make-backups() {
   local media="$1"
-  local dir
-
+  
   local destDir; destDir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
   dir::make-if-not-exists "${media}/copies" || fail
   dir::make-if-not-exists "${destDir}" || fail
 
-  for dir in "${media}"/*keys* ; do
+  local dir; for dir in "${media}"/*keys* ; do
     if [ -d "${dir}" ]; then
       cp -R "${dir}" "${destDir}" || fail
     fi
