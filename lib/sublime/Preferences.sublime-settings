@@ -14,7 +14,7 @@
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
 	],
 	"indent_guide_options":
 	[
@@ -44,5 +44,5 @@
 	"tab_size": 2,
 	"translate_tabs_to_spaces": true,
 	"tree_animation_enabled": false,
-	"trim_trailing_white_space_on_save": true
+	"trim_trailing_white_space_on_save": true,
 }
