@@ -197,9 +197,9 @@ ubuntu-workstation::install-gpg-key() {
 }
 
 ubuntu-workstation::install-shellrc() {
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-sopka-path-shellrc || fail
-  shell::install-nano-editor-shellrc || fail
+  shellrc::install-loader "${HOME}/.bashrc" || fail
+  shellrc::install-sopka-path-rc || fail
+  shellrc::install-nano-editor-rc || fail
 }
 
 ubuntu-workstation::install-bitwarden-cli-and-login() {

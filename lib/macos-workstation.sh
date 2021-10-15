@@ -140,11 +140,11 @@ macos-workstation::configure() {
   macos-workstation::hide-folders || fail
 
   # shell aliases
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-shellrc-directory-loader "${HOME}/.zshrc" || fail
-  shell::install-nano-editor-shellrc || fail
-  shell::install-sopka-path-shellrc || fail
-  shell::install-direnv-loader-shellrc || fail
+  shellrc::install-loader "${HOME}/.bashrc" || fail
+  shellrc::install-loader "${HOME}/.zshrc" || fail
+  shellrc::install-nano-editor-rc || fail
+  shellrc::install-sopka-path-rc || fail
+  shellrc::install-direnv-rc || fail
 
   # ruby
   ruby::dangerously-append-nodocument-to-gemrc || fail

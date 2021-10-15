@@ -25,9 +25,9 @@ windows-workstation::deploy() {
   command -v code >/dev/null || fail "code command is not found"
 
   # shell aliases
-  shell::install-shellrc-directory-loader "${HOME}/.bashrc" || fail
-  shell::install-nano-editor-shellrc || fail
-  shell::install-sopka-path-shellrc || fail
+  shellrc::install-loader "${HOME}/.bashrc" || fail
+  shellrc::install-nano-editor-rc || fail
+  shellrc::install-sopka-path-rc || fail
 
   # git
   workstation::configure-git || fail
