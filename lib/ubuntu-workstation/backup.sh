@@ -41,7 +41,7 @@ ubuntu-workstation::backup::install-restic-password-file() {
   workstation::make-keys-directory-if-not-exists || fail
   dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys/restic" 700 || fail
 
-  gpg::decrypt-and-install \
+  gpg::decrypt-and-install-file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
     "${HOME}/.keys/restic/${key}.restic-password" || fail
 }
