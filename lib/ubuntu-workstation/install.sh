@@ -193,7 +193,7 @@ ubuntu-workstation::install-all-gpg-keys() {
 
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
-  keys::install-gpg-key "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+  gpg::import-key-with-ultimate-ownertrust "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
 }
 
 ubuntu-workstation::install-shellrc() {
