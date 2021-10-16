@@ -118,8 +118,13 @@ ubuntu-workstation::deploy-secrets::preliminary-stage(){
 }
 
 ubuntu-workstation::deploy-secrets() {
-  ubuntu-workstation::install-bitwarden-cli-and-login || fail
   bitwarden::beyond-session task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
+
+  # install gpg keys
+  ubuntu-workstation::install-all-gpg-keys || fail
+
+  # install bitwarden cli and login
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # install ssh key, configure ssh  to use it
   workstation::install-ssh-keys || fail
@@ -137,14 +142,17 @@ ubuntu-workstation::deploy-secrets() {
   # install sublime license key
   sublime-text::install-license || fail
 
-  # install gpg key
-  ubuntu-workstation::install-all-gpg-keys || fail
+  # configure git to use gpg signing key
   git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
 
   log::success "Done ubuntu-workstation::deploy-secrets" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access() {
+  # install gpg keys
+  ubuntu-workstation::install-all-gpg-keys || fail
+
+  # install bitwarden cli and login
   ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # mount host folder
@@ -169,6 +177,10 @@ ubuntu-workstation::deploy-host-folders-access::stage-2() {
 }
 
 ubuntu-workstation::deploy-tailscale() {
+  # install gpg keys
+  ubuntu-workstation::install-all-gpg-keys || fail
+
+  # install bitwarden cli and login
   ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then

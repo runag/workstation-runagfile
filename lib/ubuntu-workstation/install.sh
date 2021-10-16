@@ -204,5 +204,9 @@ ubuntu-workstation::install-shellrc() {
 
 ubuntu-workstation::install-bitwarden-cli-and-login() {
   bitwarden::install-cli::snap || fail
-  bitwarden::login "${MY_BITWARDEN_LOGIN}" || fail
+
+  if ! bitwarden::is-logged-in; then
+    gpg::decrypt-and-source-script "/media/${USER}/KEYS-DAILY/keys/bitwarden/stan-api-key.sh.asc" || fail
+    bitwarden::login --apikey || fail
+  fi
 }

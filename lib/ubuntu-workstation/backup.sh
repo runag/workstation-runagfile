@@ -47,11 +47,11 @@ ubuntu-workstation::backup::install-restic-password-file() {
 }
 
 ubuntu-workstation::backup::deploy() {
-  # install bitwarden cli
-  ubuntu-workstation::install-bitwarden-cli-and-login || fail
-
-  # install gpg keys to decrypt restic key
+  # install gpg keys to decrypt bitwarden api key and restic key
   ubuntu-workstation::install-all-gpg-keys || fail
+
+  # install bitwarden cli and login
+  ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # install restic key
   ubuntu-workstation::backup::install-restic-password-file "stan" || fail
