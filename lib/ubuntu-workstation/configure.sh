@@ -26,22 +26,20 @@ ubuntu-workstation::configure-servers() {
 }
 
 ubuntu-workstation::configure-desktop-software() {
-  if [ -n "${DISPLAY:-}" ]; then
-    # configure firefox
-    ubuntu-workstation::configure-firefox || fail
-    firefox::enable-wayland || fail
+  # configure firefox
+  ubuntu-workstation::configure-firefox || fail
+  firefox::enable-wayland || fail
 
-    # configure imwheel
-    if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-      ubuntu-workstation::configure-imwhell || fail
-    fi
-
-    # configure home folders
-    ubuntu-workstation::configure-home-folders || fail
-
-    # configure gnome desktop
-    ubuntu-workstation::configure-gnome || fail
+  # configure imwheel
+  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
+    ubuntu-workstation::configure-imwhell || fail
   fi
+
+  # configure home folders
+  ubuntu-workstation::configure-home-folders || fail
+
+  # configure gnome desktop
+  ubuntu-workstation::configure-gnome || fail
 }
 
 ubuntu-workstation::configure-firefox() {
