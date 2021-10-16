@@ -31,7 +31,8 @@ sopkafile::load() {
   if [[ "${OSTYPE}" =~ ^msys ]]; then . "${selfDir}/lib/windows-workstation.sh" || fail; fi
 
   . "${selfDir}/lib/workstation.sh" || fail
-  . "${selfDir}/lib/sublime/sublime.sh" || fail
+  . "${selfDir}/lib/sublime-merge/sublime-merge.sh" || fail
+  . "${selfDir}/lib/sublime-text/sublime-text.sh" || fail
   . "${selfDir}/lib/vscode/vscode.sh" || fail
 }
 

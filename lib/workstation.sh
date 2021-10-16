@@ -20,6 +20,7 @@ fi
 
 workstation::merge-editor-configs() {
   vscode::merge-config || fail
+  sublime-merge::merge-config || fail
   sublime-text::merge-config || fail
 }
 

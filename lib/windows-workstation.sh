@@ -37,6 +37,9 @@ windows-workstation::deploy() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   vscode::install-extensions "${selfDir}/vscode/extensions.txt" || fail
 
+  # sublime merge config
+  sublime-merge::install-config || fail
+
   # sublime text config
   sublime-text::install-config || fail
 

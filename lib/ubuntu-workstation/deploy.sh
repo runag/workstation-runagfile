@@ -95,7 +95,11 @@ ubuntu-workstation::deploy-workstation-base() {
   task::run ubuntu-workstation::configure-desktop-software || fail
 
   # possible interactive part (so without task::run)
-  # install sublime configuration
+
+  # install sublime merge configuration
+  sublime-merge::install-config || fail
+
+  # install sublime text configuration
   sublime-text::install-config || fail
 
   # snap stuff
