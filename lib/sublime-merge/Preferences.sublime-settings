@@ -4,6 +4,6 @@
 	"hide_menu": true,
 	"render_commit_dialog_message_at_top": true,
 	"side_bar_layout": "tabs",
-	"hardware_acceleration": "opengl",
+	"hardware_acceleration": "none",
 	"trim_trailing_white_space_on_save": true,
 }
