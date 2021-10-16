@@ -14,14 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-vscode::install-and-configure(){
+workstation::vscode::install-extensions() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::install::snap || fail
-  vscode::install-config || fail
   vscode::install-extensions "${selfDir}/extensions.txt" || fail
 }
 
-vscode::install-config() {
+workstation::vscode::install-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local configPath; configPath="$(vscode::get-config-path)" || fail
 
@@ -31,7 +29,7 @@ vscode::install-config() {
   config::install "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
 }
 
-vscode::merge-config() {
+workstation::vscode::merge-config() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local configPath; configPath="$(vscode::get-config-path)" || fail
 

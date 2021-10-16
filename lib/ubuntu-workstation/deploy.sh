@@ -97,10 +97,10 @@ ubuntu-workstation::deploy-workstation-base() {
   # possible interactive part (so without task::run)
 
   # install sublime merge configuration
-  sublime-merge::install-config || fail
+  workstation::sublime-merge::install-config || fail
 
   # install sublime text configuration
-  sublime-text::install-config || fail
+  workstation::sublime-text::install-config || fail
 
   # snap stuff
   ubuntu-workstation::install-desktop-software::snap || fail
@@ -140,7 +140,7 @@ ubuntu-workstation::deploy-secrets() {
   workstation::install-npm-credentials || fail
 
   # install sublime license key
-  sublime-text::install-license || fail
+  workstation::sublime-text::install-license || fail
 
   # configure git to use gpg signing key
   git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail

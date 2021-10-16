@@ -157,15 +157,14 @@ macos-workstation::configure() {
   nodejs::load-nodenv || fail
 
   # vscode
-  vscode::install-config || fail
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::install-extensions "${selfDir}/vscode/extensions.txt" || fail
+  workstation::vscode::install-config || fail
+  workstation::vscode::install-extensions || fail
 
   # sublime merge config
-  sublime-merge::install-config || fail
+  workstation::sublime-merge::install-config || fail
 
   # sublime text config
-  sublime-text::install-config || fail
+  workstation::sublime-text::install-config || fail
 
   # secrets
   if [ -t 0 ]; then
@@ -182,7 +181,7 @@ macos-workstation::configure() {
       workstation::install-npm-credentials || fail
 
       # sublime text license
-      sublime-text::install-license || fail
+      workstation::sublime-text::install-license || fail
     ) || fail
   fi
 

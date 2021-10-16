@@ -138,7 +138,9 @@ ubuntu-workstation::install-desktop-software::apt() {
 
 ubuntu-workstation::install-desktop-software::snap() {
   # vscode
-  vscode::install-and-configure || fail
+  vscode::install::snap || fail
+  workstation::vscode::install-config || fail
+  workstation::vscode::install-extensions || fail
 
   # chromium
   sudo snap install chromium || fail

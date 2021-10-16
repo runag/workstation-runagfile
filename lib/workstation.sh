@@ -19,9 +19,9 @@ if declare -f sopka-menu::add >/dev/null; then
 fi
 
 workstation::merge-editor-configs() {
-  vscode::merge-config || fail
-  sublime-merge::merge-config || fail
-  sublime-text::merge-config || fail
+  workstation::vscode::merge-config || fail
+  workstation::sublime-merge::merge-config || fail
+  workstation::sublime-text::merge-config || fail
 }
 
 workstation::configure-git() {
