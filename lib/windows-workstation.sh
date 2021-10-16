@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka-menu::add >/dev/null; then
+if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add windows-workstation::deploy || fail
 fi
 

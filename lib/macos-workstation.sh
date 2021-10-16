@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka-menu::add >/dev/null; then
+if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add macos-workstation::deploy || fail
   sopka-menu::add macos-workstation::configure || fail
 fi

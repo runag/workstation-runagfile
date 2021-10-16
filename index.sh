@@ -14,29 +14,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sopkafile::load() {
+my-sopkafile::load() {
   local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
   . "${selfDir}/config.sh" || fail
 
-  if [[ "${OSTYPE}" =~ ^linux ]]; then
-    . "${selfDir}/lib/ubuntu-workstation/backup.sh" || fail
-    . "${selfDir}/lib/ubuntu-workstation/configure.sh" || fail
-    . "${selfDir}/lib/ubuntu-workstation/deploy.sh" || fail
-    . "${selfDir}/lib/ubuntu-workstation/install.sh" || fail
-    . "${selfDir}/lib/ubuntu-workstation/keys.sh" || fail
-  fi
-
-  if [[ "${OSTYPE}" =~ ^darwin ]]; then . "${selfDir}/lib/macos-workstation.sh" || fail; fi
-  if [[ "${OSTYPE}" =~ ^msys ]]; then . "${selfDir}/lib/windows-workstation.sh" || fail; fi
-
-  . "${selfDir}/lib/workstation.sh" || fail
-  . "${selfDir}/lib/sublime-merge/sublime-merge.sh" || fail
-  . "${selfDir}/lib/sublime-text/sublime-text.sh" || fail
-  . "${selfDir}/lib/vscode/vscode.sh" || fail
+  local filePath; for filePath in "${selfDir}"/lib/*.sh "${selfDir}"/lib/*/*.sh; do
+    if [ -f "${filePath}" ]; then
+      . "${filePath}" || { echo "Unable to load '${filePath}' ($?)" >&2; return 1; }
+    fi
+  done
 }
 
-sopkafile::load || fail
+my-sopkafile::load || fail
 
 if declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add sopka::update || fail

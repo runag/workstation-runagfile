@@ -14,25 +14,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if command -v restic >/dev/null; then
-  if declare -f sopka-menu::add >/dev/null; then
-    sopka-menu::add ubuntu-workstation::backup::deploy || fail
-    sopka-menu::add ubuntu-workstation::backup::create || fail
-    sopka-menu::add ubuntu-workstation::backup::list-snapshots || fail
-    sopka-menu::add ubuntu-workstation::backup::check-and-read-data || fail
-    sopka-menu::add ubuntu-workstation::backup::forget-and-prune || fail
-    sopka-menu::add ubuntu-workstation::backup::perform-maintenance || fail
-    sopka-menu::add ubuntu-workstation::backup::unlock || fail
-    sopka-menu::add ubuntu-workstation::backup::mount || fail
-    sopka-menu::add ubuntu-workstation::backup::umount || fail
-    sopka-menu::add ubuntu-workstation::backup::start || fail
-    sopka-menu::add ubuntu-workstation::backup::stop || fail
-    sopka-menu::add ubuntu-workstation::backup::start-maintenance || fail
-    sopka-menu::add ubuntu-workstation::backup::stop-maintenance || fail
-    sopka-menu::add ubuntu-workstation::backup::disable-timers || fail
-    sopka-menu::add ubuntu-workstation::backup::status || fail
-    sopka-menu::add ubuntu-workstation::backup::log || fail
-  fi
+if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add ubuntu-workstation::backup::deploy || fail
+  sopka-menu::add ubuntu-workstation::backup::create || fail
+  sopka-menu::add ubuntu-workstation::backup::list-snapshots || fail
+  sopka-menu::add ubuntu-workstation::backup::check-and-read-data || fail
+  sopka-menu::add ubuntu-workstation::backup::forget-and-prune || fail
+  sopka-menu::add ubuntu-workstation::backup::perform-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::unlock || fail
+  sopka-menu::add ubuntu-workstation::backup::mount || fail
+  sopka-menu::add ubuntu-workstation::backup::umount || fail
+  sopka-menu::add ubuntu-workstation::backup::start || fail
+  sopka-menu::add ubuntu-workstation::backup::stop || fail
+  sopka-menu::add ubuntu-workstation::backup::start-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::stop-maintenance || fail
+  sopka-menu::add ubuntu-workstation::backup::disable-timers || fail
+  sopka-menu::add ubuntu-workstation::backup::status || fail
+  sopka-menu::add ubuntu-workstation::backup::log || fail
 fi
 
 ubuntu-workstation::backup::install-restic-password-file() {
