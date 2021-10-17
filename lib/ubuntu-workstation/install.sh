@@ -139,7 +139,6 @@ ubuntu-workstation::install-desktop-software::apt() {
 ubuntu-workstation::install-desktop-software::snap() {
   # vscode
   vscode::install::snap || fail
-  workstation::vscode::install-config || fail
   workstation::vscode::install-extensions || fail
 
   # chromium
@@ -189,6 +188,12 @@ ubuntu-workstation::install-obs-studio() {
   apt::install obs-studio guvcview || fail
 }
 
+ubuntu-workstation::install-shellrc() {
+  shellrc::install-loader "${HOME}/.bashrc" || fail
+  shellrc::install-sopka-path-rc || fail
+  shellrc::install-nano-editor-rc || fail
+}
+
 ubuntu-workstation::install-all-gpg-keys() {
   ubuntu-workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
 }
@@ -196,12 +201,6 @@ ubuntu-workstation::install-all-gpg-keys() {
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
   gpg::import-key-with-ultimate-ownertrust "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
-}
-
-ubuntu-workstation::install-shellrc() {
-  shellrc::install-loader "${HOME}/.bashrc" || fail
-  shellrc::install-sopka-path-rc || fail
-  shellrc::install-nano-editor-rc || fail
 }
 
 ubuntu-workstation::install-bitwarden-cli-and-login() {

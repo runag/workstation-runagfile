@@ -19,7 +19,7 @@ my-sopkafile::load() {
 
   . "${selfDir}/config.sh" || fail
 
-  local filePath; for filePath in "${selfDir}"/lib/*.sh "${selfDir}"/lib/*/*.sh; do
+  local filePath; for filePath in "${selfDir}"/lib/*.sh "${selfDir}"/lib/*/*.sh "${selfDir}"/lib/*/*/*.sh; do
     if [ -f "${filePath}" ]; then
       . "${filePath}" || { echo "Unable to load '${filePath}' ($?)" >&2; return 1; }
     fi
@@ -40,4 +40,6 @@ if declare -f sopka-menu::add >/dev/null; then
   if benchmark::is-available; then
     sopka-menu::add benchmark::run || fail
   fi
+
+  sopka-menu::sort || fail
 fi
