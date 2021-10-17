@@ -92,7 +92,9 @@ ubuntu-workstation::deploy-workstation-base() {
 
   # install & configure desktop software
   task::run ubuntu-workstation::install-desktop-software::apt || fail
-  task::run ubuntu-workstation::configure-desktop-software || fail
+  if [ -n "${DISPLAY:-}" ]; then
+    task::run ubuntu-workstation::configure-desktop-software || fail
+  fi
 
   # possible interactive part (so without task::run)
 
