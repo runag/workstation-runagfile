@@ -22,7 +22,7 @@ ubuntu-workstation::configure-system() {
 ubuntu-workstation::configure-servers() {
   # postgresql
   sudo systemctl --now enable postgresql || fail
-  postgresql::create-superuser-for-local-account || fail
+  postgresql::create-role-if-not-exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 
 ubuntu-workstation::configure-desktop-software() {
