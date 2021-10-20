@@ -30,7 +30,7 @@ ubuntu-workstation::deploy-secrets::preliminary-stage(){
 }
 
 ubuntu-workstation::deploy-secrets() {
-  bitwarden::beyond-session task::run ubuntu-workstation::deploy-secrets::preliminary-stage || fail
+  bitwarden::beyond-session task::run-with-install-filter ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
   # install gpg keys
   ubuntu-workstation::install-all-gpg-keys || fail

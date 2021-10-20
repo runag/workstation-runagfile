@@ -33,7 +33,7 @@ ubuntu-workstation::deploy-host-folders-access() {
   workstation::make-keys-directory-if-not-exists || fail
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentialsFile}" || fail
 
-  bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
+  SOPKA_TASK_STDERR_FILTER=task::install-filter bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
 
   log::success "Done ubuntu-workstation::deploy-host-folders-access" || fail
 }

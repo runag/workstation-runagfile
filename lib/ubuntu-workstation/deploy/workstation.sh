@@ -40,6 +40,8 @@ ubuntu-workstation::deploy-full-workstation() {
 }
 
 ubuntu-workstation::deploy-workstation-base() {
+  export SOPKA_TASK_STDERR_FILTER=task::install-filter
+
   # disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
