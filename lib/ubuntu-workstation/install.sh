@@ -68,7 +68,6 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs::nodenv() {
-return 0
   # Get a version number: nodenv install --list | grep ^14
   local nodeVersion="14.18.1"
 
