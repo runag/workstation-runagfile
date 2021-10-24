@@ -16,7 +16,19 @@
 
 if declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add workstation::merge-editor-configs || fail
+  sopka-menu::add workstation::edit || fail
 fi
+
+edit() {
+  workstation::edit || fail
+}
+
+workstation::edit() {
+  code "${HOME}/.sopka/sopkafiles/github-senotrusov-sopkafile/sopka.code-workspace"
+  smerge "${HOME}/.sopka"
+  sleep 3
+  smerge "${HOME}/.sopka/sopkafiles/github-senotrusov-sopkafile"
+}
 
 workstation::merge-editor-configs() {
   workstation::vscode::merge-config || fail
