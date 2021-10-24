@@ -68,8 +68,10 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
+  local nodeVersion="14"
+
   # install nodejs
-  nodejs::install::apt 14 || fail
+  nodejs::install::apt "${nodeVersion}" || fail
   nodejs::install-and-load-nodenv || fail
 
   # update nodejs packages
@@ -77,13 +79,18 @@ ubuntu-workstation::install-and-update-nodejs() {
 }
 
 ubuntu-workstation::install-and-update-ruby() {
-  # install rbenv, configure ruby
-  ruby::install::apt || fail
+  local rubyVersion="2.7.4" # refer to `rbenv install -l` to get a supported version number
+
+  # ruby::install::apt || fail
+  ruby::install-dependencies::apt || fail
   ruby::install-and-load-rbenv || fail
   ruby::dangerously-append-nodocument-to-gemrc || fail
 
-  # update ruby packages
-  ruby::update-system-wide-packages || fail
+  rbenv install "${rubyVersion}" || fail
+  rbenv global "${rubyVersion}" || fail
+  rbenv rehash || fail
+
+  # ruby::update-system-wide-packages || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
