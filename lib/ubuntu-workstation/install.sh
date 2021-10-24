@@ -67,30 +67,41 @@ ubuntu-workstation::install-servers() {
   apt::install redis-server || fail
 }
 
-ubuntu-workstation::install-and-update-nodejs() {
-  local nodeVersion="14"
+ubuntu-workstation::install-and-update-nodejs::nodenv() {
+  # Get a version number: nodenv install --list | grep ^14
+  local nodeVersion="14.18.1"
 
-  # install nodejs
-  nodejs::install::apt "${nodeVersion}" || fail
   nodejs::install-and-load-nodenv || fail
 
-  # update nodejs packages
+  nodenv install "${nodeVersion}" || fail
+  nodenv global "${nodeVersion}" || fail
+  nodenv rehash || fail
+}
+
+ubuntu-workstation::install-and-update-nodejs::system(){
+  local nodeVersion="14"
+  nodejs::install::apt "${nodeVersion}" || fail
   nodejs::update-system-wide-packages || fail
 }
 
-ubuntu-workstation::install-and-update-ruby() {
-  local rubyVersion="2.7.4" # refer to `rbenv install -l` to get a supported version number
+ubuntu-workstation::install-and-update-ruby::rbenv() {
+  # To get a version number, use: rbenv install -l
+  local rubyVersion="2.7.4"
 
-  # ruby::install::apt || fail
   ruby::install-dependencies::apt || fail
-  ruby::install-and-load-rbenv || fail
   ruby::dangerously-append-nodocument-to-gemrc || fail
+
+  ruby::install-and-load-rbenv || fail
 
   rbenv install "${rubyVersion}" || fail
   rbenv global "${rubyVersion}" || fail
   rbenv rehash || fail
+}
 
-  # ruby::update-system-wide-packages || fail
+ubuntu-workstation::install-and-update-ruby::system() {
+  ruby::install::apt || fail
+  ruby::dangerously-append-nodocument-to-gemrc || fail
+  ruby::update-system-wide-packages || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
