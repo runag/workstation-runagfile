@@ -34,13 +34,13 @@ ubuntu-workstation::keys::maintain-checksums() {
 
   local dir; for dir in "${media}"/*keys* ; do
     if [ -d "${dir}" ]; then
-      linux::with-secure-tmpdir checksums::create-or-update "${dir}" "checksums.txt" || fail
+      linux::with-secure-temp-dir checksums::create-or-update "${dir}" "checksums.txt" || fail
     fi
   done
 
   local dir; for dir in "${media}"/copies/*/* ; do
     if [ -d "${dir}" ]; then
-      linux::with-secure-tmpdir checksums::verify "${dir}" "checksums.txt" || fail
+      linux::with-secure-temp-dir checksums::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }

@@ -85,19 +85,19 @@ ubuntu-workstation::configure-home-folders() {
   local dirsFile="${HOME}/.config/user-dirs.dirs"
 
   if [ -f "${dirsFile}" ]; then
-    local tmpFile; tmpFile="$(mktemp)" || fail
+    local tempFile; tempFile="$(mktemp)" || fail
 
     if [ -d "${HOME}/Desktop" ]; then
       # shellcheck disable=SC2016
-      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${tmpFile}" || fail
+      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${tempFile}" || fail
     fi
 
     if [ -d "${HOME}/Downloads" ]; then
       # shellcheck disable=SC2016
-      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${tmpFile}" || fail
+      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${tempFile}" || fail
     fi
 
-    mv "${tmpFile}" "${dirsFile}" || fail
+    mv "${tempFile}" "${dirsFile}" || fail
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
