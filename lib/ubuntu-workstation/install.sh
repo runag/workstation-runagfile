@@ -73,9 +73,8 @@ ubuntu-workstation::install-and-update-nodejs::nodenv() {
 
   nodejs::install-and-load-nodenv || fail
 
-  nodenv install "${nodeVersion}" || fail
+  nodejs::nodenv::install "${nodeVersion}" || fail
   nodenv global "${nodeVersion}" || fail
-  nodenv rehash || fail
   
   nodejs::configure-mismatched-binaries-workaround || fail
 }
@@ -92,12 +91,10 @@ ubuntu-workstation::install-and-update-ruby::rbenv() {
 
   ruby::install-dependencies::apt || fail
   ruby::dangerously-append-nodocument-to-gemrc || fail
-
   ruby::install-and-load-rbenv || fail
 
-  rbenv install "${rubyVersion}" || fail
+  ruby::rbenv::install "${rubyVersion}" || fail
   rbenv global "${rubyVersion}" || fail
-  rbenv rehash || fail
 }
 
 ubuntu-workstation::install-and-update-ruby::system() {

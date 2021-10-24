@@ -54,6 +54,7 @@ workstation::install-rubygems-credentials() {
 }
 
 workstation::install-npm-credentials() {
+  nodejs::load-nodenv || fail
   bitwarden::use password "my npm publish token" nodejs::auth-token || fail
 }
 
