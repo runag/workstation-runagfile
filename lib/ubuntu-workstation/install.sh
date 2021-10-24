@@ -68,6 +68,7 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs::nodenv() {
+return 0
   # Get a version number: nodenv install --list | grep ^14
   local nodeVersion="14.18.1"
 
@@ -76,6 +77,8 @@ ubuntu-workstation::install-and-update-nodejs::nodenv() {
   nodenv install "${nodeVersion}" || fail
   nodenv global "${nodeVersion}" || fail
   nodenv rehash || fail
+  
+  nodejs::configure-mismatched-binaries-workaround || fail
 }
 
 ubuntu-workstation::install-and-update-nodejs::system(){
