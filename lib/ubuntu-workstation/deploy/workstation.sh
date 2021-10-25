@@ -46,7 +46,7 @@ ubuntu-workstation::deploy-workstation-base() {
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # perform autoremove, update and upgrade
-  apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
+  task::run apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
 
   # install tools to use by the rest of the script
   task::run apt::install-tools || fail
