@@ -35,6 +35,11 @@ The file ``config.sh`` contains my name and email to use in configuration. Pleas
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
 ```
 
+### deploy-vm-server on console without scroll buffer
+```sh
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu-workstation::deploy-vm-server 2>&1 | tee deploy-vm-server.log
+```
+
 ## MacOS
 
 ```sh
