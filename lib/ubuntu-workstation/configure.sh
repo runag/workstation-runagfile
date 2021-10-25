@@ -178,5 +178,9 @@ ubuntu-workstation::configure-gnome() {(
   # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
 
   # 1600 DPI mouse
-  gnome-set desktop.peripherals.mouse speed -0.75 || fail
+  # gnome-set desktop.peripherals.mouse speed -0.75 || fail
+
+  # dark theme
+  gnome-set desktop.interface gtk-theme 'Yaru-dark' || fail
+  
 )}
