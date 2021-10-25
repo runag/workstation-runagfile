@@ -72,7 +72,9 @@ ubuntu-workstation::backup::deploy::stage-2() {
   local remoteHost; remoteHost="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
   ssh::add-host-to-known-hosts "${remoteHost}" || fail
 
-  echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
+  if vmware::is-inside-vm; then
+    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
+  fi
 
   ubuntu-workstation::backup::install-systemd-services || fail
 }
