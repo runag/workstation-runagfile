@@ -17,7 +17,7 @@ $ErrorActionPreference = "Stop"
 
 
 # Ask a question
-if ("$env:GITHUB_ACTIONS" -eq "true") {
+if ("$env:CI" -eq "true") {
   $install_developer_tools = 0
 } else {
   $polar_question = "&Yes", "&No"
@@ -54,7 +54,7 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 choco feature enable -n allowGlobalConfirmation
 if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
-if ("$env:GITHUB_ACTIONS" -eq "true") {
+if ("$env:CI" -eq "true") {
   choco feature disable -n showDownloadProgress
   if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 }
@@ -92,7 +92,7 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
 
 
 # Install choco packages
-if ("$env:GITHUB_ACTIONS" -eq "true") {
+if ("$env:CI" -eq "true") {
   # gpg4win hangs forever in CI
   ( Get-Content "$env:USERPROFILE\.sopkafile\lib\choco\bare-metal-desktop.config" |
     Select-String -Pattern '"gpg4win"' -NotMatch ) |
@@ -114,7 +114,7 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-tools" }
 
 
 # Upgrade choco packages
-if ("$env:GITHUB_ACTIONS" -ne "true") { # I don't need to update them in CI
+if ("$env:CI" -ne "true") { # I don't need to update them in CI
   choco upgrade all --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
 

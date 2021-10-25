@@ -50,7 +50,7 @@ ubuntu-workstation::deploy-workstation-base() {
 
   # update and upgrade
   task::run apt::lazy-update || fail
-  if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+  if [ "${CI:-}" != "true" ]; then
     task::run apt::dist-upgrade || fail
   fi
 

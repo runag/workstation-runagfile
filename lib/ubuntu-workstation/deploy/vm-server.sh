@@ -26,7 +26,7 @@ ubuntu-workstation::deploy-vm-server() {
 
   # perform apt update and upgrade
   apt::lazy-update || fail
-  if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+  if [ "${CI:-}" != "true" ]; then
     apt::dist-upgrade || fail
   fi
 
