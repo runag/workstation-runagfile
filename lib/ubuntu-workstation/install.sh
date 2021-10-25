@@ -108,7 +108,6 @@ ubuntu-workstation::install-and-update-python() {
     python-is-python3 \
     python3 \
     python3-pip \
-    python3-psycopg2 \
       || fail
 }
 
