@@ -14,19 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-my-sopkafile::load() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-
-  . "${selfDir}/config.sh" || fail
-
-  local filePath; for filePath in "${selfDir}"/lib/*.sh "${selfDir}"/lib/*/*.sh "${selfDir}"/lib/*/*/*.sh; do
-    if [ -f "${filePath}" ]; then
-      . "${filePath}" || { echo "Unable to load '${filePath}' ($?)" >&2; return 1; }
-    fi
-  done
-}
-
-my-sopkafile::load || fail
+fs::source "${BASH_SOURCE[0]}" "config.sh" || fail
+fs::recursive-source "${BASH_SOURCE[0]}" "lib" || fail
 
 if declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add sopka::update || fail
