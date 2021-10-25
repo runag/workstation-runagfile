@@ -21,6 +21,9 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
 fi
 
 ubuntu-workstation::deploy-vm-server() {
+  # remove unattended-upgrades
+  apt::remove unattended-upgrades || fail
+
   # perform autoremove, update and upgrade
   apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
 
