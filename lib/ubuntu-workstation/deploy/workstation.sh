@@ -74,8 +74,8 @@ ubuntu-workstation::deploy-workstation-base() {
   task::run ubuntu-workstation::configure-servers || fail
 
   # programming languages
-  task::run ubuntu-workstation::install-and-update-nodejs::nodenv || fail
-  task::run-with-rubygems-fail-detector ubuntu-workstation::install-and-update-ruby::rbenv || fail
+  task::run ubuntu-workstation::install-and-update-nodejs || fail
+  task::run-with-rubygems-fail-detector ubuntu-workstation::install-and-update-ruby || fail
   task::run ubuntu-workstation::install-and-update-python || fail
 
   # install & configure desktop software

@@ -67,48 +67,17 @@ ubuntu-workstation::install-servers() {
   apt::install redis-server || fail
 }
 
-ubuntu-workstation::install-and-update-nodejs::nodenv() {
-  # Get a version number: nodenv install --list | grep ^14
-  local nodeVersion="14.18.1"
-
-  nodejs::install-and-load-nodenv || fail
-
-  nodejs::nodenv::install "${nodeVersion}" || fail
-  nodenv global "${nodeVersion}" || fail
-  
-  nodejs::configure-mismatched-binaries-workaround || fail
+ubuntu-workstation::install-and-update-nodejs() {
+  nodejs::install-and-update::nodenv "14.18.1" || fail
 }
 
-ubuntu-workstation::install-and-update-nodejs::system(){
-  local nodeVersion="14"
-  nodejs::install::apt "${nodeVersion}" || fail
-  nodejs::update-system-wide-packages || fail
-}
-
-ubuntu-workstation::install-and-update-ruby::rbenv() {
-  # To get a version number, use: rbenv install -l
-  local rubyVersion="2.7.4"
-
-  ruby::install-dependencies::apt || fail
+ubuntu-workstation::install-and-update-ruby() {
   ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::install-and-load-rbenv || fail
-
-  ruby::rbenv::install "${rubyVersion}" || fail
-  rbenv global "${rubyVersion}" || fail
-}
-
-ubuntu-workstation::install-and-update-ruby::system() {
-  ruby::install::apt || fail
-  ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::update-system-wide-packages || fail
+  ruby::install-and-update::rbenv "2.7.4" || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
-  apt::install \
-    python-is-python3 \
-    python3 \
-    python3-pip \
-      || fail
+  python::install-and-update::apt || fail
 }
 
 ubuntu-workstation::install-desktop-software::apt() {
