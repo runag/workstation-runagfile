@@ -21,14 +21,8 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
 fi
 
 ubuntu-workstation::deploy-vm-server() {
-  # perform cleanup
-  apt::autoremove || fail
-
-  # perform apt update and upgrade
-  apt::lazy-update || fail
-  if [ "${CI:-}" != "true" ]; then
-    apt::dist-upgrade || fail
-  fi
+  # perform autoremove, update and upgrade
+  apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
 
   # install open-vm-tools
   if vmware::is-inside-vm; then

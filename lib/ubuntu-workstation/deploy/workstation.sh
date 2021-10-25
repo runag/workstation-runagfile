@@ -45,14 +45,8 @@ ubuntu-workstation::deploy-workstation-base() {
   # disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
-  # perform cleanup
-  task::run apt::autoremove || fail
-
-  # update and upgrade
-  task::run apt::lazy-update || fail
-  if [ "${CI:-}" != "true" ]; then
-    task::run apt::dist-upgrade || fail
-  fi
+  # perform autoremove, update and upgrade
+  apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
 
   # install tools to use by the rest of the script
   task::run apt::install-tools || fail
