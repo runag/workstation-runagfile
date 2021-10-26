@@ -73,7 +73,7 @@ ubuntu-workstation::install-and-update-nodejs() {
 
 ubuntu-workstation::install-and-update-ruby() {
   ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::install-and-update::rbenv "2.7.4" || fail
+  ruby::install-update-and-set-global::rbenv "2.7.4" || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
