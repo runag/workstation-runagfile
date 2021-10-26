@@ -68,7 +68,7 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
-  nodejs::install-and-update::nodenv "14.18.1" || fail
+  nodejs::install-and-set-global::nodenv "14.18.1" || fail
 }
 
 ubuntu-workstation::install-and-update-ruby() {
