@@ -182,5 +182,4 @@ ubuntu-workstation::configure-gnome() {(
 
   # dark theme
   gnome-set desktop.interface gtk-theme 'Yaru-dark' || fail
-  
 )}
