@@ -16,21 +16,10 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add ubuntu-workstation::deploy-shellrc || fail
-  sopka-menu::add ubuntu-workstation::change-hostname || fail
 fi
 
 ubuntu-workstation::deploy-shellrc() {
   ubuntu-workstation::install-shellrc || fail
 
   log::success "Done ubuntu-workstation::deploy-shellrc" || fail
-}
-
-ubuntu-workstation::change-hostname() {
-  local hostname
-  echo "Please enter new hostname:"
-  IFS="" read -r hostname || fail
-
-  linux::dangerously-set-hostname "${hostname}" || fail
-
-  log::success "Done ubuntu-workstation::change-hostname" || fail
 }
