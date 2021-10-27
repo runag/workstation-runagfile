@@ -15,8 +15,9 @@
 #  limitations under the License.
 
 if declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add workstation::merge-editor-configs || fail
+  sopka-menu::add workstation::remove-node-and-ruby-installations || fail
   sopka-menu::add workstation::edit || fail
+  sopka-menu::add workstation::merge-editor-configs || fail
 fi
 
 edit() {
@@ -60,4 +61,10 @@ workstation::install-npm-credentials() {
 
 workstation::make-keys-directory-if-not-exists() {
   dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys" 700 || fail
+}
+
+workstation::remove-node-and-ruby-installations() {
+  rm -rf "${HOME}/.nodenv/versions"/* || fail
+  rm -rf "${HOME}/.rbenv/versions"/* || fail
+  rm -rf "${HOME}/.cache/yarn"/* || fail
 }
