@@ -17,6 +17,11 @@
 ubuntu-workstation::configure-system() {
   # increase inotify limits
   linux::configure-inotify || fail
+
+  # install vm-network-loss-workaround
+  if vmware::is-inside-vm; then
+    ubuntu-workstation::install-vm-network-loss-workaround || fail
+  fi
 }
 
 ubuntu-workstation::configure-servers() {
