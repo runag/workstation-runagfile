@@ -32,6 +32,7 @@ ubuntu-workstation::install-terminal-software() {
     apache2-utils \
     awscli \
     certbot \
+    direnv \
     ffmpeg \
     git \
     gnupg \

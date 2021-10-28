@@ -49,7 +49,13 @@ ubuntu-workstation::deploy-workstation-base() {
   task::run apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
 
   # install tools to use by the rest of the script
-  task::run apt::install-tools || fail
+  task::run apt::install-sopka-essential-dependencies || fail
+
+  # install display-if-restart-required dependencies
+  task::run apt::install-display-if-restart-required-dependencies || fail
+
+  # install benchmark
+  task::run benchmark::install::apt || fail
 
   # shellrc
   task::run ubuntu-workstation::install-shellrc || fail
