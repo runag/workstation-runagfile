@@ -40,7 +40,9 @@ ubuntu-workstation::deploy-tailscale::stage-2() {
   # install tailscale
   if ! command -v tailscale >/dev/null; then
     tailscale::install || fail
-    tailscale::install-issue-2541-workaround || fail
+    if vmware::is-inside-vm; then
+      tailscale::install-issue-2541-workaround || fail
+    fi
   fi
 
   # logout if SOPKA_UPDATE_SECRETS is set
