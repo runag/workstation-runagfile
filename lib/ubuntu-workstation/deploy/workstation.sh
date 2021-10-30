@@ -90,6 +90,7 @@ ubuntu-workstation::deploy-workstation-base() {
     task::run ubuntu-workstation::configure-desktop-software || fail
   fi
 
+
   # possible interactive part (so without task::run)
 
   # install vscode configuration
@@ -101,7 +102,8 @@ ubuntu-workstation::deploy-workstation-base() {
   # install sublime text configuration
   workstation::sublime-text::install-config || fail
 
-  # snap stuff
+
+  # snap stuff, no task:run because snap can't understand that he has no tty to output to and just dumps escape codes at large
   ubuntu-workstation::install-desktop-software::snap || fail
 
   log::success "Done ubuntu-workstation::deploy-workstation-base" || fail
