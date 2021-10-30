@@ -103,7 +103,8 @@ ubuntu-workstation::deploy-workstation-base() {
   workstation::sublime-text::install-config || fail
 
 
-  # snap stuff, no task:run because snap can't understand that he has no tty to output to and just dumps escape codes at large
+  # snap stuff
+  # without task:run here, snap can't understand that he has no terminal to output to and just dumps escape codes to log at large
   ubuntu-workstation::install-desktop-software::snap || fail
 
   log::success "Done ubuntu-workstation::deploy-workstation-base" || fail
