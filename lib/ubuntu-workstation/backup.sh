@@ -37,7 +37,7 @@ ubuntu-workstation::backup::install-restic-password-file() {
   local key="$1"
 
   workstation::make-keys-directory-if-not-exists || fail
-  dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys/restic" 700 || fail
+  dir::make-if-not-exists-and-set-permissions "${HOME}/.keys/restic" 700 || fail
 
   gpg::decrypt-and-install-file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
@@ -210,7 +210,7 @@ ubuntu-workstation::backup::mount() {
     fusermount -u "${mountPoint}" || fail
   fi
 
-  dir::make-if-not-exists-but-chmod-anyway "${mountPoint}" 700 || fail
+  dir::make-if-not-exists-and-set-permissions "${mountPoint}" 700 || fail
 
   restic mount "${mountPoint}" || fail
 }

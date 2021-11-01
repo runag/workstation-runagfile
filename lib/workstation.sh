@@ -60,7 +60,7 @@ workstation::install-npm-credentials() {
 }
 
 workstation::make-keys-directory-if-not-exists() {
-  dir::make-if-not-exists-but-chmod-anyway "${HOME}/.keys" 700 || fail
+  dir::make-if-not-exists-and-set-permissions "${HOME}/.keys" 700 || fail
 }
 
 workstation::remove-nodejs-and-ruby-installations() {
