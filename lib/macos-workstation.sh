@@ -136,8 +136,8 @@ macos-workstation::configure() {
   # increase maxfiles limits
   macos::increase-maxfiles-limit || fail
 
-  # hide folders
-  macos-workstation::hide-folders || fail
+  # hide directories
+  macos-workstation::hide-dirs || fail
 
   # shell aliases
   shellrc::install-loader "${HOME}/.bashrc" || fail
@@ -191,7 +191,7 @@ macos-workstation::configure() {
   log::success "Done macos-workstation::configure" || fail
 }
 
-macos-workstation::hide-folders() {
+macos-workstation::hide-dirs() {
   macos::hide-dir "${HOME}/Applications" || fail
   macos::hide-dir "${HOME}/Desktop" || fail
   macos::hide-dir "${HOME}/Documents" || fail
