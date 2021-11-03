@@ -192,13 +192,13 @@ macos-workstation::configure() {
 }
 
 macos-workstation::hide-folders() {
-  macos::hide-folder "${HOME}/Applications" || fail
-  macos::hide-folder "${HOME}/Desktop" || fail
-  macos::hide-folder "${HOME}/Documents" || fail
-  macos::hide-folder "${HOME}/Movies" || fail
-  macos::hide-folder "${HOME}/Music" || fail
-  macos::hide-folder "${HOME}/Pictures" || fail
-  macos::hide-folder "${HOME}/Public" || fail
-  macos::hide-folder "${HOME}/Virtual Machines.localized" || fail
-  macos::hide-folder "${HOME}/VirtualBox VMs" || fail
+  macos::hide-dir "${HOME}/Applications" || fail
+  macos::hide-dir "${HOME}/Desktop" || fail
+  macos::hide-dir "${HOME}/Documents" || fail
+  macos::hide-dir "${HOME}/Movies" || fail
+  macos::hide-dir "${HOME}/Music" || fail
+  macos::hide-dir "${HOME}/Pictures" || fail
+  macos::hide-dir "${HOME}/Public" || fail
+  macos::hide-dir "${HOME}/Virtual Machines.localized" || fail
+  macos::hide-dir "${HOME}/VirtualBox VMs" || fail
 }

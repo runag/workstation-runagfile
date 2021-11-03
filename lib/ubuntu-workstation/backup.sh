@@ -55,7 +55,7 @@ ubuntu-workstation::backup::deploy() {
   ubuntu-workstation::backup::install-restic-password-file "stan" || fail
 
   # install ssh key
-  ssh::make-user-config-directory-if-not-exists || fail
+  ssh::make-user-config-dir-if-not-exists || fail
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" || fail
   bitwarden::write-notes-to-file-if-not-exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
 
