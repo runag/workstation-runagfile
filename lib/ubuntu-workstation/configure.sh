@@ -142,7 +142,8 @@ ubuntu-workstation::configure-gnome() {(
     local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
     
     gnome-set "${profilePath}" exit-action 'hold' || fail
-    gnome-set "${profilePath}" login-shell true || fail
+    # TODO: I think I need to try to live with the defaults
+    # gnome-set "${profilePath}" login-shell true || fail
   fi
 
   gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
