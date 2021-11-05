@@ -28,7 +28,9 @@ ubuntu-workstation::deploy-tailscale() {
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
     bitwarden::unlock-and-sync || fail
     local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
-    SOPKA_TASK_STDERR_FILTER=task::install-filter bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
+    # shellcheck disable=2034
+    local SOPKA_TASK_STDERR_FILTER=task::install-filter
+    bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
   fi
 
   log::success "Done ubuntu-workstation::deploy-tailscale" || fail
