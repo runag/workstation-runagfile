@@ -50,6 +50,7 @@ ubuntu-workstation::install-terminal-software() {
     ssh-import-id \
     tmux \
     whois \
+    xclip \
     zsh \
       || fail
 }
@@ -128,6 +129,9 @@ ubuntu-workstation::install-desktop-software::snap() {
   # vscode
   vscode::install::snap || fail
   workstation::vscode::install-extensions || fail
+
+  # micro
+  sudo snap install micro --classic || fail
 
   # chromium
   sudo snap install chromium || fail
