@@ -132,6 +132,7 @@ ubuntu-workstation::install-desktop-software::snap() {
 
   # micro
   sudo snap install micro --classic || fail
+  shellrc::install-editor-rc micro || fail
 
   # chromium
   sudo snap install chromium || fail
@@ -183,7 +184,6 @@ ubuntu-workstation::install-obs-studio() {
 ubuntu-workstation::install-shellrc() {
   shellrc::install-loader "${HOME}/.bashrc" || fail
   shellrc::install-sopka-path-rc || fail
-  shellrc::install-nano-editor-rc || fail
 }
 
 ubuntu-workstation::install-all-gpg-keys() {

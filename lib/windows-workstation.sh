@@ -26,7 +26,7 @@ windows-workstation::deploy() {
 
   # shell aliases
   shellrc::install-loader "${HOME}/.bashrc" || fail
-  shellrc::install-nano-editor-rc || fail
+  shellrc::install-editor-rc nano || fail
   shellrc::install-sopka-path-rc || fail
 
   # git
