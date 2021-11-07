@@ -24,12 +24,12 @@ ubuntu-workstation::vm-network-loss-workaround() {
 }
 
 ubuntu-workstation::install-vm-network-loss-workaround() {
-  file::sudo-write /usr/local/bin/vm-network-loss-workaround 755 <<EOF || fail
+  file::sudo-write /usr/local/bin/vm-network-loss-workaround 755 <<SHELL || fail
 #!/usr/bin/env bash
 $(sopka::print-license)
 $(declare -f ubuntu-workstation::vm-network-loss-workaround)
 ubuntu-workstation::vm-network-loss-workaround || { echo "Unable to perform ubuntu-workstation::vm-network-loss-workaround" >&2; exit 1; }
-EOF
+SHELL
 
   file::sudo-write /etc/systemd/system/vm-network-loss-workaround.service <<EOF || fail
 [Unit]

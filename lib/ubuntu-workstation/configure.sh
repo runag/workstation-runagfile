@@ -55,7 +55,7 @@ ubuntu-workstation::configure-firefox() {
 ubuntu-workstation::configure-imwhell() {
   local repetitions="2"
   local outputFile="${HOME}/.imwheelrc"
-  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+  tee "${outputFile}" <<EOF || fail "Unable to write file: ${outputFile} ($?)"
 ".*"
 None,      Up,   Button4, ${repetitions}
 None,      Down, Button5, ${repetitions}
@@ -63,13 +63,13 @@ Control_L, Up,   Control_L|Button4
 Control_L, Down, Control_L|Button5
 Shift_L,   Up,   Shift_L|Button4
 Shift_L,   Down, Shift_L|Button5
-SHELL
+EOF
 
   dir::make-if-not-exists "${HOME}/.config" 755 || fail
   dir::make-if-not-exists "${HOME}/.config/autostart" 700 || fail
 
   local outputFile="${HOME}/.config/autostart/imwheel.desktop"
-  tee "${outputFile}" <<SHELL || fail "Unable to write file: ${outputFile} ($?)"
+  tee "${outputFile}" <<EOF || fail "Unable to write file: ${outputFile} ($?)"
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/imwheel
@@ -81,7 +81,7 @@ Name[en_US]=IMWheel
 Name=IMWheel
 Comment[en_US]=Custom scroll speed
 Comment=Custom scroll speed
-SHELL
+EOF
 
   /usr/bin/imwheel --kill
 }
