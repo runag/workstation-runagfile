@@ -35,7 +35,7 @@ ubuntu-workstation::deploy-vm-server() {
   # install and configure sshd
   sshd::disable-password-authentication || fail
   apt::install openssh-server || fail
-  sudo systemctl --now enable ssh || fail
+  sudo systemctl --quiet --now enable ssh || fail
   sudo systemctl reload ssh || fail
 
   # import ssh key

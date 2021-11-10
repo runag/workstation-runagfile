@@ -53,6 +53,6 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-  sudo systemctl reenable vm-network-loss-workaround.timer || fail
+  sudo systemctl --quiet reenable vm-network-loss-workaround.timer || fail
   sudo systemctl start vm-network-loss-workaround.timer || fail
 }

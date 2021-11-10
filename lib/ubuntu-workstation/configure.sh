@@ -26,7 +26,7 @@ ubuntu-workstation::configure-system() {
 
 ubuntu-workstation::configure-servers() {
   # postgresql
-  sudo systemctl --now enable postgresql || fail
+  sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create-role-if-not-exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 

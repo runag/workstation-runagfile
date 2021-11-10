@@ -134,10 +134,10 @@ EOF
   sudo loginctl enable-linger "${USER}" || fail
 
   # enable the service and start the timer
-  systemctl --user reenable "workstation-backup.timer" || fail
+  systemctl --user --quiet reenable "workstation-backup.timer" || fail
   systemctl --user start "workstation-backup.timer" || fail
 
-  systemctl --user reenable "workstation-backup-maintenance.timer" || fail
+  systemctl --user --quiet reenable "workstation-backup-maintenance.timer" || fail
   systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
 
@@ -237,8 +237,8 @@ ubuntu-workstation::backup::stop-maintenance() {
 ubuntu-workstation::backup::disable-timers() {
   systemctl --user stop "workstation-backup.timer" || fail
   systemctl --user stop "workstation-backup-maintenance.timer" || fail
-  systemctl --user disable "workstation-backup.timer" || fail
-  systemctl --user disable "workstation-backup-maintenance.timer" || fail
+  systemctl --user --quiet disable "workstation-backup.timer" || fail
+  systemctl --user --quiet disable "workstation-backup-maintenance.timer" || fail
 }
 
 ubuntu-workstation::backup::status() {
