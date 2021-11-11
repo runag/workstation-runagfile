@@ -70,12 +70,12 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
-  nodejs::install-and-set-global::nodenv "16.13.0" || fail
+  nodejs::install-by-nodenv-and-set-global "16.13.0" || fail
 }
 
 ubuntu-workstation::install-and-update-ruby() {
   ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::install-and-set-global::rbenv "3.0.2" || fail
+  ruby::install-and-set-global-by-rbenv "3.0.2" || fail
 
   shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
 }

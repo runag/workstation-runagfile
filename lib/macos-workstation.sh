@@ -148,13 +148,13 @@ macos-workstation::configure() {
 
   # ruby
   ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::install-rbenv-shellrc || fail
-  ruby::load-rbenv || fail
+  rbenv::install-shellrc || fail
+  rbenv::load-shellrc || fail
 
   # nodejs
-  nodejs::install-nodenv-shellrc || fail
-  nodejs::configure-mismatched-binaries-workaround || fail
-  nodejs::load-nodenv || fail
+  nodenv::install-shellrc || fail
+  nodenv::configure-mismatched-binaries-workaround || fail
+  nodenv::load-shellrc || fail
 
   # vscode
   workstation::vscode::install-config || fail

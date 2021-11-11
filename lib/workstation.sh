@@ -55,8 +55,8 @@ workstation::install-rubygems-credentials() {
 }
 
 workstation::install-npm-credentials() {
-  nodejs::load-nodenv || fail
-  bitwarden::use password "my npm publish token" nodejs::auth-token || fail
+  nodenv::load-shellrc || fail
+  bitwarden::use password "my npm publish token" npm::auth-token || fail
 }
 
 workstation::make-keys-directory-if-not-exists() {
