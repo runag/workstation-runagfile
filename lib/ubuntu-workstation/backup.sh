@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# ubuntu-workstation::backup::deploy is the main entrypoint to deploy backup service
+
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add ubuntu-workstation::backup::deploy || fail
   sopka-menu::add ubuntu-workstation::backup::create || fail
