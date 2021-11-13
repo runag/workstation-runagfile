@@ -17,7 +17,16 @@ limitations under the License.
 
 A script to configure my workstation. I run it on a freshly installed Linux, MacOS, or Windows.
 
-It will do the following:
+This script helps me to configure my workstation, but it's rather generic and could also be useful for other people.
+
+Still, it contains steps which are of personal preference and needs.
+
+To keep those steps as declarative as I could possible express in Bash, I made a separate library [Sopka](https://github.com/senotrusov/sopka).
+
+Basically, this Sopkafile you are looking at is the things I want to setup and configure for that exact task (my workstation) and [Sopka](https://github.com/senotrusov/sopka) is the abstract library that makes it all possible.
+
+
+# What this script will do
 
 1. Installs the basic software I frequently use.
 2. Installs keys and software licenses from my bitwarden database.
