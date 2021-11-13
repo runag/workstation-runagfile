@@ -25,6 +25,7 @@ To keep those steps as declarative as I could possible express in Bash, I made a
 
 Basically, this Sopkafile you are looking at is the things I want to setup and configure for that exact task (my workstation) and [Sopka](https://github.com/senotrusov/sopka) is the abstract library that makes it all possible.
 
+![Sopka menu screenshot](docs/sopka-menu-screenshot.png)
 
 # What this script will do
 
