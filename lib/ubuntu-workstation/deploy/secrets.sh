@@ -14,12 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
-  if [ -n "${DISPLAY:-}" ]; then
-    sopka-menu::add ubuntu-workstation::deploy-secrets || fail
-  fi
-fi
-
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
 ubuntu-workstation::deploy-secrets::preliminary-stage(){
   apt::lazy-update || fail

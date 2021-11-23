@@ -14,14 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
-  if [ -n "${DISPLAY:-}" ]; then
-    sopka-menu::add ubuntu-workstation::deploy-workstation-base || fail
-    sopka-menu::add ubuntu-workstation::deploy-full-workstation || fail
-    sopka-menu::add-delimiter || fail
-  fi
-fi
-
 ubuntu-workstation::deploy-full-workstation() {
   ubuntu-workstation::deploy-workstation-base || fail
 

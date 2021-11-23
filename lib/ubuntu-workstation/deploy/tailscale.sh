@@ -14,10 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add ubuntu-workstation::deploy-tailscale || fail
-fi
-
 ubuntu-workstation::deploy-tailscale() {
   # install gpg keys
   ubuntu-workstation::install-all-gpg-keys || fail

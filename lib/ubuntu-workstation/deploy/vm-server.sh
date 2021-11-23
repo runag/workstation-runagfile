@@ -14,12 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
-  if vmware::is-inside-vm; then
-    sopka-menu::add ubuntu-workstation::deploy-vm-server || fail
-  fi
-fi
-
 ubuntu-workstation::deploy-vm-server() {
   # remove unattended-upgrades
   apt::remove unattended-upgrades || fail
