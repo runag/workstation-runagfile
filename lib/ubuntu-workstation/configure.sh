@@ -120,7 +120,7 @@ ubuntu-workstation::configure-home-folders() {
     xdg-user-dirs-update || fail
   fi
 
-  (umask 177 && touch "${HOME}/.hidden") || fail
+  ( umask 0177 && touch "${HOME}/.hidden" ) || fail
   file::append-line-unless-present "Desktop" "${HOME}/.hidden" || fail
   file::append-line-unless-present "snap" "${HOME}/.hidden" || fail
 }
