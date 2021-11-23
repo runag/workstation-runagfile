@@ -18,8 +18,8 @@ ubuntu-workstation::keys::populate-sopka-menu() {
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     local dir; for dir in "/media/${USER}"/KEYS-* ; do
       if [ -d "$dir" ]; then
-        sopka-menu::add "ubuntu-workstation::keys::maintain-checksums $(printf "%q" "${dir}")" || fail
-        sopka-menu::add "ubuntu-workstation::keys::make-backups $(printf "%q" "${dir}")" || fail
+        sopka-menu::add ubuntu-workstation::keys::maintain-checksums "${dir}" || fail
+        sopka-menu::add ubuntu-workstation::keys::make-backups "${dir}" || fail
       fi
     done
   fi

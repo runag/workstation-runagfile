@@ -16,6 +16,7 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
   if vmware::is-inside-vm; then
+    sopka-menu::add-header Deploy || fail
     sopka-menu::add ubuntu-workstation::deploy-host-folders-access || fail
   fi
 fi

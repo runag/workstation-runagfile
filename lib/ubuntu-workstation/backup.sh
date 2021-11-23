@@ -17,6 +17,7 @@
 # ubuntu-workstation::backup::deploy is the main entrypoint to deploy backup service
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add-header Backup || fail
   sopka-menu::add ubuntu-workstation::backup::deploy || fail
   sopka-menu::add ubuntu-workstation::backup::create || fail
   sopka-menu::add ubuntu-workstation::backup::list-snapshots || fail
@@ -26,6 +27,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka-menu::add ubuntu-workstation::backup::unlock || fail
   sopka-menu::add ubuntu-workstation::backup::mount || fail
   sopka-menu::add ubuntu-workstation::backup::umount || fail
+  sopka-menu::add-delimiter || fail
   sopka-menu::add ubuntu-workstation::backup::start || fail
   sopka-menu::add ubuntu-workstation::backup::stop || fail
   sopka-menu::add ubuntu-workstation::backup::start-maintenance || fail
@@ -33,6 +35,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka-menu::add ubuntu-workstation::backup::disable-timers || fail
   sopka-menu::add ubuntu-workstation::backup::status || fail
   sopka-menu::add ubuntu-workstation::backup::log || fail
+  sopka-menu::add-delimiter || fail
 fi
 
 ubuntu-workstation::backup::install-restic-password-file() {

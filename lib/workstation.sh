@@ -15,16 +15,14 @@
 #  limitations under the License.
 
 if declare -f sopka-menu::add >/dev/null; then
+  sopka-menu::add-header Miscellaneous || fail
   sopka-menu::add workstation::remove-nodejs-and-ruby-installations || fail
-  sopka-menu::add workstation::edit || fail
+  sopka-menu::add workstation::edit-sopka-and-sopkafile || fail
   sopka-menu::add workstation::merge-editor-configs || fail
+  sopka-menu::add-delimiter || fail
 fi
 
-edit() {
-  workstation::edit || fail
-}
-
-workstation::edit() {
+workstation::edit-sopka-and-sopkafile() {
   code "${HOME}/.sopka/sopkafiles/github-senotrusov-sopkafile/sopka.code-workspace"
   smerge "${HOME}/.sopka"
   sleep 3

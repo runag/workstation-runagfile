@@ -19,5 +19,4 @@ fs::recursive-source "${BASH_SOURCE[0]}" "lib" || fail
 
 if declare -f sopka-menu::add >/dev/null; then
   sopka-menu::add-defaults || fail
-  sopka-menu::sort || fail
 fi
