@@ -1,2 +1,4 @@
 mads-hartmann.bash-ide-vscode
+sianglim.slim
 timonwong.shellcheck
+william-voyek.vscode-nginx

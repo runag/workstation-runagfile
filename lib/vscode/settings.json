@@ -1,7 +1,6 @@
 {
     "window.titleBarStyle": "custom",
     "workbench.tree.indent": 25,
-    "solargraph.useBundler": true,
     "editor.tabSize": 2,
     "editor.detectIndentation": false,
     "explorer.autoReveal": false,
@@ -28,7 +27,15 @@
     "workbench.startupEditor": "none",
     "editor.minimap.enabled": false,
     "editor.fastScrollSensitivity": 4,
-    "editor.fontSize": 16,
-    "editor.lineHeight": 22,
+    "editor.fontSize": 15,
+    "editor.lineHeight": 20,
     "diffEditor.renderSideBySide": false,
+    "editor.rulers": [
+      120
+    ],
+    "workbench.colorCustomizations": {
+      "editor.findMatchBackground": "#981a9c",
+      "xeditor.findMatchHighlightBackground": "#2a6e57"
+    },
+    "window.zoomLevel": 1
 }

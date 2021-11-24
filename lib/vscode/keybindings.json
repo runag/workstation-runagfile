@@ -13,5 +13,13 @@
     "key": "ctrl+shift+alt+down",
     "command": "-editor.action.copyLinesDownAction",
     "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+insert",
+    "command": "workbench.action.increaseViewSize"
+  },
+  {
+    "key": "ctrl+shift+delete",
+    "command": "workbench.action.decreaseViewSize"
   }
 ]
