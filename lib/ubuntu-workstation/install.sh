@@ -75,7 +75,7 @@ ubuntu-workstation::install-and-update-nodejs() {
 
 ubuntu-workstation::install-and-update-ruby() {
   ruby::dangerously-append-nodocument-to-gemrc || fail
-  ruby::install-and-set-global-by-rbenv "3.0.2" || fail
+  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install-and-set-global-by-rbenv "3.0.2" || fail
 
   shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
 }
