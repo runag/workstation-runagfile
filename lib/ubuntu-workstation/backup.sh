@@ -250,10 +250,10 @@ ubuntu-workstation::backup::status() {
   systemctl --user status "workstation-backup.service"
   systemctl --user status "workstation-backup-maintenance.service"
 
-  printf "\n\n"
-
-  systemctl --user list-timers "workstation-backup.timer" --all || fail
-  systemctl --user list-timers "workstation-backup-maintenance.timer" --all || fail
+  # printf "\n\n"
+  #
+  # systemctl --user list-timers "workstation-backup.timer" --all || fail
+  # systemctl --user list-timers "workstation-backup-maintenance.timer" --all || fail
 
   printf "\n\n"
 
