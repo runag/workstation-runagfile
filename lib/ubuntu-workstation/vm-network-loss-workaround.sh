@@ -16,7 +16,7 @@
 
 ubuntu-workstation::vm-network-loss-workaround() {
   if ip address show ens33 >/dev/null 2>&1; then
-    if ! ip address show ens33 | grep -qF "inet"; then
+    if ! ip address show ens33 | grep -qF "inet "; then
       echo "ubuntu-workstation::vm-network-loss-workaround: about to restart network"
       sudo systemctl restart NetworkManager.service || { echo "Unable to restart network" >&2; exit 1; }
       sudo dhclient || { echo "Error running dhclient" >&2; exit 1; }
