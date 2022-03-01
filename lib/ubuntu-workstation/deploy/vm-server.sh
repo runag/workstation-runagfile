@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ ubuntu-workstation::deploy-vm-server() {
   apt::remove unattended-upgrades || fail
 
   # perform autoremove, update and upgrade
-  apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
+  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
 
   # install open-vm-tools
-  if vmware::is-inside-vm; then
+  if vmware::is_inside_vm; then
     apt::install open-vm-tools || fail
   fi
 
   # install and configure sshd
-  sshd::disable-password-authentication || fail
+  sshd::disable_password_authentication || fail
   apt::install openssh-server || fail
   sudo systemctl --quiet --now enable ssh || fail
   sudo systemctl reload ssh || fail

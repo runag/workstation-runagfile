@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add windows-workstation::deploy || fail
+if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add windows-workstation::deploy || fail
 fi
 
 windows-workstation::deploy() {
@@ -25,22 +25,22 @@ windows-workstation::deploy() {
   command -v code >/dev/null || fail "code command is not found"
 
   # shell aliases
-  shellrc::install-loader "${HOME}/.bashrc" || fail
-  shellrc::install-editor-rc nano || fail
-  shellrc::install-sopka-path-rc || fail
+  shellrc::install_loader "${HOME}/.bashrc" || fail
+  shellrc::install_editor_rc nano || fail
+  shellrc::install_sopka_path_rc || fail
 
   # git
   workstation::configure-git || fail
 
   # vscode
   workstation::vscode::install-config || fail
-  workstation::vscode::install-extensions || fail
+  workstation::vscode::install_extensions || fail
 
   # sublime merge config
-  workstation::sublime-merge::install-config || fail
+  workstation::sublime_merge::install-config || fail
 
   # sublime text config
-  workstation::sublime-text::install-config || fail
+  workstation::sublime_text::install-config || fail
 
   # secrets
   if [ -t 0 ]; then
@@ -55,7 +55,7 @@ windows-workstation::deploy() {
       workstation::install-npm-credentials || fail
 
       # sublime text license
-      workstation::sublime-text::install-license || fail
+      workstation::sublime_text::install-license || fail
     ) || fail
   fi
 

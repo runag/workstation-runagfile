@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add macos-workstation::deploy || fail
-  sopka-menu::add macos-workstation::configure || fail
+if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add macos-workstation::deploy || fail
+  sopka_menu::add macos-workstation::configure || fail
 fi
 
 macos-workstation::deploy() {
@@ -29,7 +29,7 @@ macos-workstation::deploy() {
 
 macos-workstation::install-basic-packages() {
   # install homebrew
-  macos::install-homebrew || fail
+  macos::install_homebrew || fail
 
   # update and upgrade homebrew
   brew update || fail
@@ -134,45 +134,45 @@ macos-workstation::install-developer-packages() {
 
 macos-workstation::configure() {
   # increase maxfiles limits
-  macos::increase-maxfiles-limit || fail
+  macos::increase_maxfiles_limit || fail
 
   # hide directories
   macos-workstation::hide-dirs || fail
 
   # shell aliases
-  shellrc::install-loader "${HOME}/.bashrc" || fail
-  shellrc::install-loader "${HOME}/.zshrc" || fail
-  shellrc::install-editor-rc nano || fail
-  shellrc::install-sopka-path-rc || fail
-  shellrc::install-direnv-rc || fail
+  shellrc::install_loader "${HOME}/.bashrc" || fail
+  shellrc::install_loader "${HOME}/.zshrc" || fail
+  shellrc::install_editor_rc nano || fail
+  shellrc::install_sopka_path_rc || fail
+  shellrc::install_direnv_rc || fail
 
   # ruby
-  ruby::dangerously-append-nodocument-to-gemrc || fail
-  rbenv::install-shellrc || fail
-  rbenv::load-shellrc || fail
+  ruby::dangerously_append_nodocument_to_gemrc || fail
+  rbenv::install_shellrc || fail
+  rbenv::load_shellrc || fail
 
   # nodejs
-  nodenv::install-shellrc || fail
-  nodenv::configure-mismatched-binaries-workaround || fail
-  nodenv::load-shellrc || fail
+  nodenv::install_shellrc || fail
+  nodenv::configure_mismatched_binaries_workaround || fail
+  nodenv::load_shellrc || fail
 
   # vscode
   workstation::vscode::install-config || fail
-  workstation::vscode::install-extensions || fail
+  workstation::vscode::install_extensions || fail
 
   # sublime merge config
-  workstation::sublime-merge::install-config || fail
+  workstation::sublime_merge::install-config || fail
 
   # sublime text config
-  workstation::sublime-text::install-config || fail
+  workstation::sublime_text::install-config || fail
 
   # secrets
   if [ -t 0 ]; then
     (
       # add ssh key, configure ssh to use it
       workstation::install-ssh-keys || fail
-      ssh::macos-keychain::configure-use-on-all-hosts || fail
-      bitwarden::use password "my password for ssh private key" ssh::macos-keychain || fail
+      ssh::macos_keychain::configure_use_on_all_hosts || fail
+      bitwarden::use password "my password for ssh private key" ssh::macos_keychain || fail
 
       # rubygems
       workstation::install-rubygems-credentials || fail
@@ -181,7 +181,7 @@ macos-workstation::configure() {
       workstation::install-npm-credentials || fail
 
       # sublime text license
-      workstation::sublime-text::install-license || fail
+      workstation::sublime_text::install-license || fail
     ) || fail
   fi
 
@@ -192,13 +192,13 @@ macos-workstation::configure() {
 }
 
 macos-workstation::hide-dirs() {
-  macos::hide-dir "${HOME}/Applications" || fail
-  macos::hide-dir "${HOME}/Desktop" || fail
-  macos::hide-dir "${HOME}/Documents" || fail
-  macos::hide-dir "${HOME}/Movies" || fail
-  macos::hide-dir "${HOME}/Music" || fail
-  macos::hide-dir "${HOME}/Pictures" || fail
-  macos::hide-dir "${HOME}/Public" || fail
-  macos::hide-dir "${HOME}/Virtual Machines.localized" || fail
-  macos::hide-dir "${HOME}/VirtualBox VMs" || fail
+  macos::hide_dir "${HOME}/Applications" || fail
+  macos::hide_dir "${HOME}/Desktop" || fail
+  macos::hide_dir "${HOME}/Documents" || fail
+  macos::hide_dir "${HOME}/Movies" || fail
+  macos::hide_dir "${HOME}/Music" || fail
+  macos::hide_dir "${HOME}/Pictures" || fail
+  macos::hide_dir "${HOME}/Public" || fail
+  macos::hide_dir "${HOME}/Virtual Machines.localized" || fail
+  macos::hide_dir "${HOME}/VirtualBox VMs" || fail
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
 ubuntu-workstation::deploy-secrets::preliminary-stage(){
-  apt::lazy-update || fail
-  apt::install-gnome-keyring-and-libsecret || fail
+  apt::lazy_update || fail
+  apt::install_gnome_keyring_and_libsecret || fail
 
-  git::install-libsecret-credential-helper || fail
-  git::use-libsecret-credential-helper || fail
+  git::install_libsecret_credential_helper || fail
+  git::use_libsecret_credential_helper || fail
 }
 
 ubuntu-workstation::deploy-secrets() {
-  bitwarden::beyond-session task::run-with-install-filter ubuntu-workstation::deploy-secrets::preliminary-stage || fail
+  bitwarden::beyond_session task::run_with_install_filter ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
   # install gpg keys
   ubuntu-workstation::install-all-gpg-keys || fail
@@ -34,10 +34,10 @@ ubuntu-workstation::deploy-secrets() {
 
   # install ssh key, configure ssh  to use it
   workstation::install-ssh-keys || fail
-  bitwarden::use password "my password for ssh private key" ssh::gnome-keyring-credentials || fail
+  bitwarden::use password "my password for ssh private key" ssh::gnome_keyring_credentials || fail
 
   # git access token
-  bitwarden::use password "my github personal access token" git::gnome-keyring-credentials "${MY_GITHUB_LOGIN}" || fail
+  bitwarden::use password "my github personal access token" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
 
   # rubygems
   workstation::install-rubygems-credentials || fail
@@ -46,10 +46,10 @@ ubuntu-workstation::deploy-secrets() {
   workstation::install-npm-credentials || fail
 
   # install sublime license key
-  workstation::sublime-text::install-license || fail
+  workstation::sublime_text::install-license || fail
 
   # configure git to use gpg signing key
-  git::configure-signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
+  git::configure_signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
 
   log::success "Done ubuntu-workstation::deploy-secrets" || fail
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -22,24 +22,24 @@ ubuntu-workstation::deploy-host-folders-access() {
   ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
   # mount host folder
-  local credentialsFile="${HOME}/.keys/host-filesystem-access.cifs-credentials"
+  local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
 
   workstation::make-keys-directory-if-not-exists || fail
-  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentialsFile}" || fail
+  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentials_file}" || fail
 
   # shellcheck disable=2034
-  local SOPKA_TASK_STDERR_FILTER=task::install-filter
-  bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentialsFile}" || fail
+  local SOPKA_TASK_STDERR_FILTER=task::install_filter
+  bitwarden::beyond_session task::run_with_short_title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentials_file}" || fail
 
   log::success "Done ubuntu-workstation::deploy-host-folders-access" || fail
 }
 
 ubuntu-workstation::deploy-host-folders-access::stage-2() {
-  local credentialsFile="$1"
+  local credentials_file="$1"
 
-  local hostIpAddress; hostIpAddress="$(vmware::get-host-ip-address)" || fail
+  local host_ip_address; host_ip_address="$(vmware::get_host_ip_address)" || fail
 
   apt::install cifs-utils || fail
-  cifs::mount "//${hostIpAddress}/my" "${HOME}/my" "${credentialsFile}" || fail
-  cifs::mount "//${hostIpAddress}/ephemeral-data" "${HOME}/ephemeral-data" "${credentialsFile}" || fail
+  cifs::mount "//${host_ip_address}/my" "${HOME}/my" "${credentials_file}" || fail
+  cifs::mount "//${host_ip_address}/ephemeral-data" "${HOME}/ephemeral-data" "${credentials_file}" || fail
 }

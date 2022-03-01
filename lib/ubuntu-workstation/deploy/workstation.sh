@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ ubuntu-workstation::deploy-full-workstation() {
   (
     ubuntu-workstation::deploy-secrets || fail
 
-    if vmware::is-inside-vm; then
+    if vmware::is_inside_vm; then
       ubuntu-workstation::deploy-host-folders-access || fail
     fi
 
@@ -33,19 +33,19 @@ ubuntu-workstation::deploy-full-workstation() {
 }
 
 ubuntu-workstation::deploy-workstation-base() {
-  export SOPKA_TASK_STDERR_FILTER=task::install-filter
+  export SOPKA_TASK_STDERR_FILTER=task::install_filter
 
   # disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
 
   # perform autoremove, update and upgrade
-  task::run apt::autoremove-lazy-update-and-maybe-dist-upgrade || fail
+  task::run apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
 
   # install tools to use by the rest of the script
-  task::run apt::install-sopka-essential-dependencies || fail
+  task::run apt::install_sopka_essential_dependencies || fail
 
   # install display-if-restart-required dependencies
-  task::run apt::install-display-if-restart-required-dependencies || fail
+  task::run apt::install_display_if_restart_required_dependencies || fail
 
   # install benchmark
   task::run benchmark::install::apt || fail
@@ -74,7 +74,7 @@ ubuntu-workstation::deploy-workstation-base() {
 
   # programming languages
   task::run ubuntu-workstation::install-and-update-nodejs || fail
-  task::run-with-rubygems-fail-detector ubuntu-workstation::install-and-update-ruby || fail
+  task::run_with_rubygems_fail_detector ubuntu-workstation::install-and-update-ruby || fail
   task::run ubuntu-workstation::install-and-update-python || fail
 
   # install & configure desktop software
@@ -90,10 +90,10 @@ ubuntu-workstation::deploy-workstation-base() {
   workstation::vscode::install-config || fail
 
   # install sublime merge configuration
-  workstation::sublime-merge::install-config || fail
+  workstation::sublime_merge::install-config || fail
 
   # install sublime text configuration
-  workstation::sublime-text::install-config || fail
+  workstation::sublime_text::install-config || fail
 
 
   # snap stuff

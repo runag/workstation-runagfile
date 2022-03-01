@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,14 +25,14 @@ ubuntu-workstation::vm-network-loss-workaround() {
 }
 
 ubuntu-workstation::install-vm-network-loss-workaround() {
-  file::sudo-write /usr/local/bin/vm-network-loss-workaround 755 <<SHELL || fail
+  file::sudo_write /usr/local/bin/vm-network-loss-workaround 755 <<SHELL || fail
 #!/usr/bin/env bash
-$(sopka::print-license)
+$(sopka::print_license)
 $(declare -f ubuntu-workstation::vm-network-loss-workaround)
 ubuntu-workstation::vm-network-loss-workaround || { echo "Unable to perform ubuntu-workstation::vm-network-loss-workaround" >&2; exit 1; }
 SHELL
 
-  file::sudo-write /etc/systemd/system/vm-network-loss-workaround.service <<EOF || fail
+  file::sudo_write /etc/systemd/system/vm-network-loss-workaround.service <<EOF || fail
 [Unit]
 Description=vm-network-loss-workaround
 
@@ -42,7 +42,7 @@ ExecStart=/usr/local/bin/vm-network-loss-workaround
 WorkingDirectory=/
 EOF
 
-  file::sudo-write /etc/systemd/system/vm-network-loss-workaround.timer <<EOF || fail
+  file::sudo_write /etc/systemd/system/vm-network-loss-workaround.timer <<EOF || fail
 [Unit]
 Description=vm-network-loss-workaround
 

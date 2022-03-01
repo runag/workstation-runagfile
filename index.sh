@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 fs::source "${BASH_SOURCE[0]}" "config.sh" || fail
-fs::recursive-source "${BASH_SOURCE[0]}" "lib" || fail
+fs::recursive_source "${BASH_SOURCE[0]}" "lib" || fail
 
-if declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add-defaults || fail
+if declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_defaults || fail
 fi

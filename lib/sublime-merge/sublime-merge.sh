@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,24 +14,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::sublime-merge::install-config() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
+workstation::sublime_merge::install-config() {
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime-merge::install-config-file "${selfDir}/Diff.sublime-settings" || fail
-  sublime-merge::install-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime_merge::install_config_file "${self_dir}/Diff.sublime-settings" || fail
+  sublime_merge::install_config_file "${self_dir}/Preferences.sublime-settings" || fail
 }
 
-workstation::sublime-merge::install-license() {
-  local configPath; configPath="$(sublime-merge::get-config-path)" || fail
+workstation::sublime_merge::install-license() {
+  local config_path; config_path="$(sublime_merge::get_config_path)" || fail
 
-  dir::make-if-not-exists "${configPath}/Local" 700 || fail
+  dir::make_if_not_exists "${config_path}/Local" 700 || fail
 
-  bitwarden::write-notes-to-file-if-not-exists "my sublime merge license" "${configPath}/Local/License.sublime_license" || fail
+  bitwarden::write_notes_to_file_if_not_exists "my sublime merge license" "${config_path}/Local/License.sublime_license" || fail
 }
 
-workstation::sublime-merge::merge-config() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
+workstation::sublime_merge::merge-config() {
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
-  sublime-merge::merge-config-file "${selfDir}/Diff.sublime-settings" || fail
-  sublime-merge::merge-config-file "${selfDir}/Preferences.sublime-settings" || fail
+  sublime_merge::merge_config_file "${self_dir}/Diff.sublime-settings" || fail
+  sublime_merge::merge_config_file "${self_dir}/Preferences.sublime-settings" || fail
 }

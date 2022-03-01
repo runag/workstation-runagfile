@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add-header Miscellaneous || fail
-  sopka-menu::add workstation::remove-nodejs-and-ruby-installations || fail
-  sopka-menu::add workstation::edit-sopka-and-sopkafile || fail
-  sopka-menu::add workstation::merge-editor-configs || fail
-  sopka-menu::add-delimiter || fail
+if declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header Miscellaneous || fail
+  sopka_menu::add workstation::remove-nodejs-and-ruby-installations || fail
+  sopka_menu::add workstation::edit-sopka-and-sopkafile || fail
+  sopka_menu::add workstation::merge-editor-configs || fail
+  sopka_menu::add_delimiter || fail
 fi
 
 workstation::edit-sopka-and-sopkafile() {
@@ -31,8 +31,8 @@ workstation::edit-sopka-and-sopkafile() {
 
 workstation::merge-editor-configs() {
   workstation::vscode::merge-config || fail
-  workstation::sublime-merge::merge-config || fail
-  workstation::sublime-text::merge-config || fail
+  workstation::sublime_merge::merge-config || fail
+  workstation::sublime_text::merge-config || fail
 }
 
 workstation::configure-git() {
@@ -42,23 +42,23 @@ workstation::configure-git() {
 }
 
 workstation::install-ssh-keys() {
-  ssh::make-user-config-dir-if-not-exists || fail
-  bitwarden::write-notes-to-file-if-not-exists "my ssh private key" "${HOME}/.ssh/id_ed25519" || fail
-  bitwarden::write-notes-to-file-if-not-exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" || fail
+  ssh::make_user_config_dir_if_not_exists || fail
+  bitwarden::write_notes_to_file_if_not_exists "my ssh private key" "${HOME}/.ssh/id_ed25519" || fail
+  bitwarden::write_notes_to_file_if_not_exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" || fail
 }
 
 workstation::install-rubygems-credentials() {
-  dir::make-if-not-exists "${HOME}/.gem" 755 || fail
-  bitwarden::write-notes-to-file-if-not-exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+  dir::make_if_not_exists "${HOME}/.gem" 755 || fail
+  bitwarden::write_notes_to_file_if_not_exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
 }
 
 workstation::install-npm-credentials() {
-  nodenv::load-shellrc || fail
-  bitwarden::use password "my npm publish token" npm::auth-token || fail
+  nodenv::load_shellrc || fail
+  bitwarden::use password "my npm publish token" npm::auth_token || fail
 }
 
 workstation::make-keys-directory-if-not-exists() {
-  dir::make-if-not-exists-and-set-permissions "${HOME}/.keys" 700 || fail
+  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
 }
 
 workstation::remove-nodejs-and-ruby-installations() {

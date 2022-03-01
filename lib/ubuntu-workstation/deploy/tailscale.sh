@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,33 +21,33 @@ ubuntu-workstation::deploy-tailscale() {
   # install bitwarden cli and login
   ubuntu-workstation::install-bitwarden-cli-and-login || fail
 
-  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is-logged-out; then
-    bitwarden::unlock-and-sync || fail
-    local tailscaleKey; tailscaleKey="$(bw get password "my tailscale reusable key")" || fail
+  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is_logged_out; then
+    bitwarden::unlock_and_sync || fail
+    local tailscale_key; tailscale_key="$(bw get password "my tailscale reusable key")" || fail
     # shellcheck disable=2034
-    local SOPKA_TASK_STDERR_FILTER=task::install-filter
-    bitwarden::beyond-session task::run-with-short-title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscaleKey}" || fail
+    local SOPKA_TASK_STDERR_FILTER=task::install_filter
+    bitwarden::beyond_session task::run_with_short_title ubuntu-workstation::deploy-tailscale::stage-2 "${tailscale_key}" || fail
   fi
 
   log::success "Done ubuntu-workstation::deploy-tailscale" || fail
 }
 
 ubuntu-workstation::deploy-tailscale::stage-2() {
-  local tailscaleKey="$1"
+  local tailscale_key="$1"
 
   # install tailscale
   if ! command -v tailscale >/dev/null; then
     tailscale::install || fail
-    if vmware::is-inside-vm; then
-      tailscale::install-issue-2541-workaround || fail
+    if vmware::is_inside_vm; then
+      tailscale::install_issue_2541_workaround || fail
     fi
   fi
 
   # logout if SOPKA_UPDATE_SECRETS is set
-  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && ! tailscale::is-logged-out; then
+  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && ! tailscale::is_logged_out; then
     sudo tailscale logout || fail
   fi
 
   # configure tailscale
-  sudo tailscale up --authkey "${tailscaleKey}" || fail
+  sudo tailscale up --authkey "${tailscale_key}" || fail
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,29 +14,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::vscode::install-extensions() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::install-extensions "${selfDir}/extensions.txt" || fail
+workstation::vscode::install_extensions() {
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  vscode::install_extensions "${self_dir}/extensions.txt" || fail
 }
 
 workstation::vscode::install-config() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  local configPath; configPath="$(vscode::get-config-path)" || fail
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  local config_path; config_path="$(vscode::get_config_path)" || fail
 
-  dir::make-if-not-exists "${configPath}/User" 775 || fail # TODO: Maybe it's better to put mode 700 here?
+  dir::make_if_not_exists "${config_path}/User" 775 || fail # TODO: Maybe it's better to put mode 700 here?
 
-  config::install "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
-  config::install "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
+  config::install "${self_dir}/settings.json" "${config_path}/User/settings.json" || fail
+  config::install "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
 }
 
 workstation::vscode::merge-config() {
-  local selfDir; selfDir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  local configPath; configPath="$(vscode::get-config-path)" || fail
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  local config_path; config_path="$(vscode::get_config_path)" || fail
 
-  config::merge "${selfDir}/settings.json" "${configPath}/User/settings.json" || fail
-  config::merge "${selfDir}/keybindings.json" "${configPath}/User/keybindings.json" || fail
+  config::merge "${self_dir}/settings.json" "${config_path}/User/settings.json" || fail
+  config::merge "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
 
-  local extensionsList; extensionsList="$(vscode::list-extensions-to-temp-file)" || fail "Unable get extensions list"
-  config::merge "${selfDir}/extensions.txt" "${extensionsList}" || fail
-  rm "${extensionsList}" || fail
+  local extensions_list; extensions_list="$(vscode::list_extensions_to_temp_file)" || fail "Unable get extensions list"
+  config::merge "${self_dir}/extensions.txt" "${extensions_list}" || fail
+  rm "${extensions_list}" || fail
 }

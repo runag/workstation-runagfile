@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 ubuntu-workstation::install-system-software() {
   # install open-vm-tools
-  if vmware::is-inside-vm; then
+  if vmware::is_inside_vm; then
     apt::install open-vm-tools || fail
   fi
 
@@ -70,23 +70,23 @@ ubuntu-workstation::install-servers() {
 }
 
 ubuntu-workstation::install-and-update-nodejs() {
-  nodejs::install-by-nodenv-and-set-global "16.13.0" || fail
+  nodejs::install_by_nodenv_and_set_global "16.13.0" || fail
 }
 
 ubuntu-workstation::install-and-update-ruby() {
-  ruby::dangerously-append-nodocument-to-gemrc || fail
-  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install-and-set-global-by-rbenv "3.0.2" || fail
+  ruby::dangerously_append_nodocument_to_gemrc || fail
+  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv "3.0.2" || fail
 
   shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
 }
 
 ubuntu-workstation::install-and-update-python() {
-  python::install-and-update::apt || fail
+  python::install_and_update::apt || fail
 }
 
 ubuntu-workstation::install-desktop-software::apt() {
   # open-vm-tools-desktop
-  if vmware::is-inside-vm; then
+  if vmware::is_inside_vm; then
     apt::install open-vm-tools-desktop || fail
   fi
 
@@ -94,8 +94,8 @@ ubuntu-workstation::install-desktop-software::apt() {
   apt::install dconf-editor || fail
 
   # sublime text and sublime merge
-  sublime-merge::install::apt || fail
-  sublime-text::install::apt || fail
+  sublime_merge::install::apt || fail
+  sublime_text::install::apt || fail
 
   # meld
   apt::install meld || fail
@@ -112,7 +112,7 @@ ubuntu-workstation::install-desktop-software::apt() {
   fi
 
   # software for bare metal workstation
-  if linux::is-bare-metal; then
+  if linux::is_bare_metal; then
     # copyq
     ubuntu-workstation::install-copyq || fail
 
@@ -128,11 +128,11 @@ ubuntu-workstation::install-desktop-software::apt() {
 ubuntu-workstation::install-desktop-software::snap() {
   # vscode
   vscode::install::snap || fail
-  workstation::vscode::install-extensions || fail
+  workstation::vscode::install_extensions || fail
 
   # micro
   sudo snap install micro --classic || fail
-  shellrc::install-editor-rc micro || fail
+  shellrc::install_editor_rc micro || fail
 
   # chromium
   sudo snap install chromium || fail
@@ -141,7 +141,7 @@ ubuntu-workstation::install-desktop-software::snap() {
   sudo snap install bitwarden || fail
 
   # software for bare metal workstation
-  if linux::is-bare-metal; then
+  if linux::is_bare_metal; then
     # skype
     sudo snap install skype --classic || fail
 
@@ -156,17 +156,17 @@ ubuntu-workstation::install-desktop-software::snap() {
 ubuntu-workstation::install-vitals() {
   apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
 
-  local extensionUuid="Vitals@CoreCoding.com"
-  local extensionsDir="${HOME}/.local/share/gnome-shell/extensions"
+  local extension_uuid="Vitals@CoreCoding.com"
+  local extensions_dir="${HOME}/.local/share/gnome-shell/extensions"
 
-  dir::make-if-not-exists "${HOME}/.local" 755 || fail
-  dir::make-if-not-exists "${HOME}/.local/share" 755 || fail
-  dir::make-if-not-exists "${HOME}/.local/share/gnome-shell" 700 || fail
-  dir::make-if-not-exists "${extensionsDir}" 700 || fail
+  dir::make_if_not_exists "${HOME}/.local" 755 || fail
+  dir::make_if_not_exists "${HOME}/.local/share" 755 || fail
+  dir::make_if_not_exists "${HOME}/.local/share/gnome-shell" 700 || fail
+  dir::make_if_not_exists "${extensions_dir}" 700 || fail
 
-  git::place-up-to-date-clone "https://github.com/corecoding/Vitals" "${extensionsDir}/${extensionUuid}" || fail
+  git::place_up_to_date_clone "https://github.com/corecoding/Vitals" "${extensions_dir}/${extension_uuid}" || fail
 
-  gnome-extensions enable "${extensionUuid}" || fail
+  gnome-extensions enable "${extension_uuid}" || fail
 }
 
 ubuntu-workstation::install-copyq() {
@@ -182,8 +182,8 @@ ubuntu-workstation::install-obs-studio() {
 }
 
 ubuntu-workstation::install-shellrc() {
-  shellrc::install-loader "${HOME}/.bashrc" || fail
-  shellrc::install-sopka-path-rc || fail
+  shellrc::install_loader "${HOME}/.bashrc" || fail
+  shellrc::install_sopka_path_rc || fail
 }
 
 ubuntu-workstation::install-all-gpg-keys() {
@@ -192,14 +192,14 @@ ubuntu-workstation::install-all-gpg-keys() {
 
 ubuntu-workstation::install-gpg-key() {
   local key="$1"
-  gpg::import-key-with-ultimate-ownertrust "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
+  gpg::import_key_with_ultimate_ownertrust "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
 }
 
 ubuntu-workstation::install-bitwarden-cli-and-login() {
-  bitwarden::install-cli::snap || fail
+  bitwarden::install_cli::snap || fail
 
-  if ! bitwarden::is-logged-in; then
-    gpg::decrypt-and-source-script "/media/${USER}/KEYS-DAILY/keys/bitwarden/stan-api-key.sh.asc" || fail
+  if ! bitwarden::is_logged_in; then
+    gpg::decrypt_and_source_script "/media/${USER}/KEYS-DAILY/keys/bitwarden/stan-api-key.sh.asc" || fail
     bitwarden::login --apikey || fail
   fi
 }

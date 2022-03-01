@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,35 +16,35 @@
 
 # ubuntu-workstation::backup::deploy is the main entrypoint to deploy backup service
 
-if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add-header Backup || fail
-  sopka-menu::add ubuntu-workstation::backup::deploy || fail
-  sopka-menu::add ubuntu-workstation::backup::create || fail
-  sopka-menu::add ubuntu-workstation::backup::list-snapshots || fail
-  sopka-menu::add ubuntu-workstation::backup::check-and-read-data || fail
-  sopka-menu::add ubuntu-workstation::backup::forget-and-prune || fail
-  sopka-menu::add ubuntu-workstation::backup::perform-maintenance || fail
-  sopka-menu::add ubuntu-workstation::backup::unlock || fail
-  sopka-menu::add ubuntu-workstation::backup::mount || fail
-  sopka-menu::add ubuntu-workstation::backup::umount || fail
-  sopka-menu::add-delimiter || fail
-  sopka-menu::add ubuntu-workstation::backup::start || fail
-  sopka-menu::add ubuntu-workstation::backup::stop || fail
-  sopka-menu::add ubuntu-workstation::backup::start-maintenance || fail
-  sopka-menu::add ubuntu-workstation::backup::stop-maintenance || fail
-  sopka-menu::add ubuntu-workstation::backup::disable-timers || fail
-  sopka-menu::add ubuntu-workstation::backup::status || fail
-  sopka-menu::add ubuntu-workstation::backup::log || fail
-  sopka-menu::add-delimiter || fail
+if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header Backup || fail
+  sopka_menu::add ubuntu-workstation::backup::deploy || fail
+  sopka_menu::add ubuntu-workstation::backup::create || fail
+  sopka_menu::add ubuntu-workstation::backup::list-snapshots || fail
+  sopka_menu::add ubuntu-workstation::backup::check-and-read-data || fail
+  sopka_menu::add ubuntu-workstation::backup::forget-and-prune || fail
+  sopka_menu::add ubuntu-workstation::backup::perform-maintenance || fail
+  sopka_menu::add ubuntu-workstation::backup::unlock || fail
+  sopka_menu::add ubuntu-workstation::backup::mount || fail
+  sopka_menu::add ubuntu-workstation::backup::umount || fail
+  sopka_menu::add_delimiter || fail
+  sopka_menu::add ubuntu-workstation::backup::start || fail
+  sopka_menu::add ubuntu-workstation::backup::stop || fail
+  sopka_menu::add ubuntu-workstation::backup::start-maintenance || fail
+  sopka_menu::add ubuntu-workstation::backup::stop-maintenance || fail
+  sopka_menu::add ubuntu-workstation::backup::disable-timers || fail
+  sopka_menu::add ubuntu-workstation::backup::status || fail
+  sopka_menu::add ubuntu-workstation::backup::log || fail
+  sopka_menu::add_delimiter || fail
 fi
 
 ubuntu-workstation::backup::install-restic-password-file() {
   local key="$1"
 
   workstation::make-keys-directory-if-not-exists || fail
-  dir::make-if-not-exists-and-set-permissions "${HOME}/.keys/restic" 700 || fail
+  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
 
-  gpg::decrypt-and-install-file \
+  gpg::decrypt_and_install_file \
     "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
     "${HOME}/.keys/restic/${key}.restic-password" || fail
 }
@@ -60,32 +60,32 @@ ubuntu-workstation::backup::deploy() {
   ubuntu-workstation::backup::install-restic-password-file "stan" || fail
 
   # install ssh key
-  ssh::make-user-config-dir-if-not-exists || fail
-  bitwarden::write-notes-to-file-if-not-exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" || fail
-  bitwarden::write-notes-to-file-if-not-exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
+  ssh::make_user_config_dir_if_not_exists || fail
+  bitwarden::write_notes_to_file_if_not_exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" || fail
+  bitwarden::write_notes_to_file_if_not_exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
   workstation::make-keys-directory-if-not-exists || fail
-  bitwarden::write-password-to-file-if-not-exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
+  bitwarden::write_password_to_file_if_not_exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
-  bitwarden::beyond-session task::run-with-install-filter ubuntu-workstation::backup::deploy::stage-2 || fail
+  bitwarden::beyond_session task::run_with_install_filter ubuntu-workstation::backup::deploy::stage-2 || fail
 
   log::success "Done ubuntu-workstation::backup::deploy" || fail
 }
 
 ubuntu-workstation::backup::deploy::stage-2() {
-  local remoteHost; remoteHost="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
-  ssh::add-host-to-known-hosts "${remoteHost}" || fail
+  local remote_host; remote_host="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
+  ssh::add_host_to_known_hosts "${remote_host}" || fail
 
-  if vmware::is-inside-vm; then
-    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo-write /etc/sudoers.d/dmidecode 440 || fail
+  if vmware::is_inside_vm; then
+    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo_write /etc/sudoers.d/dmidecode 440 || fail
   fi
 
   ubuntu-workstation::backup::install-systemd-services || fail
 }
 
 ubuntu-workstation::backup::install-systemd-services() {
-  systemd::write-user-unit "workstation-backup.service" <<EOF || fail
+  systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
@@ -98,7 +98,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-  systemd::write-user-unit "workstation-backup.timer" <<EOF || fail
+  systemd::write_user_unit "workstation-backup.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup
 
@@ -110,7 +110,7 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-  systemd::write-user-unit "workstation-backup-maintenance.service" <<EOF || fail
+  systemd::write_user_unit "workstation-backup-maintenance.service" <<EOF || fail
 [Unit]
 Description=Workstation backup maintenance
 
@@ -123,7 +123,7 @@ PrivateTmp=true
 NoNewPrivileges=false
 EOF
 
-  systemd::write-user-unit "workstation-backup-maintenance.timer" <<EOF || fail
+  systemd::write_user_unit "workstation-backup-maintenance.timer" <<EOF || fail
 [Unit]
 Description=Backup service timer for workstation backup maintenance
 
@@ -147,20 +147,20 @@ EOF
 }
 
 ubuntu-workstation::backup::load-config() {
-  local machineHostname machineId sshDestination
+  local machine_hostname machine_id ssh_destination
 
-  machineHostname="$(hostname)" || fail
+  machine_hostname="$(hostname)" || fail
 
-  if vmware::is-inside-vm; then
-    machineId="$(vmware::get-machine-uuid)" || fail
+  if vmware::is_inside_vm; then
+    machine_id="$(vmware::get_machine_uuid)" || fail
   else
-    machineId="$(cat /etc/machine-id)" || fail
+    machine_id="$(cat /etc/machine-id)" || fail
   fi
 
-  sshDestination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
+  ssh_destination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
 
   export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/stan.restic-password"
-  export RESTIC_REPOSITORY="sftp:${sshDestination}:backups/restic/workstation-backups/${machineHostname}-${machineId}"
+  export RESTIC_REPOSITORY="sftp:${ssh_destination}:backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
 }
 
 ubuntu-workstation::backup::create() {
@@ -207,20 +207,20 @@ ubuntu-workstation::backup::unlock() {
 ubuntu-workstation::backup::mount() {
   ubuntu-workstation::backup::load-config || fail
 
-  local mountPoint="${HOME}/workstation-backup"
+  local mount_point="${HOME}/workstation-backup"
 
-  if findmnt --mountpoint "${mountPoint}" >/dev/null; then
-    fusermount -u "${mountPoint}" || fail
+  if findmnt --mountpoint "${mount_point}" >/dev/null; then
+    fusermount -u "${mount_point}" || fail
   fi
 
-  dir::make-if-not-exists-and-set-permissions "${mountPoint}" 700 || fail
+  dir::make_if_not_exists_and_set_permissions "${mount_point}" 700 || fail
 
-  restic mount "${mountPoint}" || fail
+  restic mount "${mount_point}" || fail
 }
 
 ubuntu-workstation::backup::umount() {
-  local mountPoint="${HOME}/workstation-backup"
-  fusermount -u -z "${mountPoint}" || fail
+  local mount_point="${HOME}/workstation-backup"
+  fusermount -u -z "${mount_point}" || fail
 }
 
 ubuntu-workstation::backup::start() {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka-menu::add >/dev/null; then
-  sopka-menu::add-header Deploy || fail
+if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header Deploy || fail
 
   if [ -n "${DISPLAY:-}" ]; then
-    sopka-menu::add ubuntu-workstation::deploy-full-workstation || fail
-    sopka-menu::add ubuntu-workstation::deploy-secrets || fail
-    sopka-menu::add ubuntu-workstation::deploy-workstation-base || fail
+    sopka_menu::add ubuntu-workstation::deploy-full-workstation || fail
+    sopka_menu::add ubuntu-workstation::deploy-secrets || fail
+    sopka_menu::add ubuntu-workstation::deploy-workstation-base || fail
   fi
 
-  if vmware::is-inside-vm; then
-    sopka-menu::add ubuntu-workstation::deploy-host-folders-access || fail
-    sopka-menu::add ubuntu-workstation::deploy-vm-server || fail
+  if vmware::is_inside_vm; then
+    sopka_menu::add ubuntu-workstation::deploy-host-folders-access || fail
+    sopka_menu::add ubuntu-workstation::deploy-vm-server || fail
   fi
 
-  sopka-menu::add ubuntu-workstation::deploy-shellrc || fail
-  sopka-menu::add ubuntu-workstation::deploy-tailscale || fail
+  sopka_menu::add ubuntu-workstation::deploy-shellrc || fail
+  sopka_menu::add ubuntu-workstation::deploy-tailscale || fail
 
-  sopka-menu::add-delimiter || fail
+  sopka_menu::add_delimiter || fail
 fi

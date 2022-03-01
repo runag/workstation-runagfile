@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Copyright 2012-2021 Stanislav Senotrusov <stan@senotrusov.com>
+#  Copyright 2012-2022 Stanislav Senotrusov <stan@senotrusov.com>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 ubuntu-workstation::configure-system() {
   # increase inotify limits
-  linux::configure-inotify || fail
+  linux::configure_inotify || fail
 
   # install vm-network-loss-workaround
-  if vmware::is-inside-vm; then
+  if vmware::is_inside_vm; then
     ubuntu-workstation::install-vm-network-loss-workaround || fail
   fi
 }
@@ -27,13 +27,13 @@ ubuntu-workstation::configure-system() {
 ubuntu-workstation::configure-servers() {
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
-  postgresql::create-role-if-not-exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
+  postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 
 ubuntu-workstation::configure-desktop-software() {
   # configure firefox
   ubuntu-workstation::configure-firefox || fail
-  firefox::enable-wayland || fail
+  firefox::enable_wayland || fail
 
   # configure imwheel
   if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
@@ -48,14 +48,14 @@ ubuntu-workstation::configure-desktop-software() {
 }
 
 ubuntu-workstation::configure-firefox() {
-  firefox::set-pref "mousewheel.default.delta_multiplier_x" 200 || fail
-  firefox::set-pref "mousewheel.default.delta_multiplier_y" 200 || fail
+  firefox::set_pref "mousewheel.default.delta_multiplier_x" 200 || fail
+  firefox::set_pref "mousewheel.default.delta_multiplier_y" 200 || fail
 }
 
 ubuntu-workstation::configure-imwhell() {
   local repetitions="2"
-  local outputFile="${HOME}/.imwheelrc"
-  tee "${outputFile}" <<EOF || fail "Unable to write file: ${outputFile} ($?)"
+  local output_file="${HOME}/.imwheelrc"
+  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
 ".*"
 None,      Up,   Button4, ${repetitions}
 None,      Down, Button5, ${repetitions}
@@ -65,11 +65,11 @@ Shift_L,   Up,   Shift_L|Button4
 Shift_L,   Down, Shift_L|Button5
 EOF
 
-  dir::make-if-not-exists "${HOME}/.config" 755 || fail
-  dir::make-if-not-exists "${HOME}/.config/autostart" 700 || fail
+  dir::make_if_not_exists "${HOME}/.config" 755 || fail
+  dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
 
-  local outputFile="${HOME}/.config/autostart/imwheel.desktop"
-  tee "${outputFile}" <<EOF || fail "Unable to write file: ${outputFile} ($?)"
+  local output_file="${HOME}/.config/autostart/imwheel.desktop"
+  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/imwheel
@@ -87,31 +87,31 @@ EOF
 }
 
 ubuntu-workstation::configure-home-folders() {
-  local dirsFile="${HOME}/.config/user-dirs.dirs"
+  local dirs_file="${HOME}/.config/user-dirs.dirs"
 
-  if [ -f "${dirsFile}" ]; then
-    local tempFile; tempFile="$(mktemp)" || fail
+  if [ -f "${dirs_file}" ]; then
+    local temp_file; temp_file="$(mktemp)" || fail
 
     if [ -d "${HOME}/Desktop" ]; then
       # shellcheck disable=SC2016
-      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${tempFile}" || fail
+      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${temp_file}" || fail
     fi
 
     if [ -d "${HOME}/Downloads" ]; then
       # shellcheck disable=SC2016
-      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${tempFile}" || fail
+      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${temp_file}" || fail
     fi
 
-    mv "${tempFile}" "${dirsFile}" || fail
+    mv "${temp_file}" "${dirs_file}" || fail
 
     echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
 
-    dir::remove-if-exists-and-empty "${HOME}/Documents" || fail
-    dir::remove-if-exists-and-empty "${HOME}/Music" || fail
-    dir::remove-if-exists-and-empty "${HOME}/Pictures" || fail
-    dir::remove-if-exists-and-empty "${HOME}/Public" || fail
-    dir::remove-if-exists-and-empty "${HOME}/Templates" || fail
-    dir::remove-if-exists-and-empty "${HOME}/Videos" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Documents" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Music" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Pictures" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Public" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Templates" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Videos" || fail
 
     if [ -f "${HOME}/examples.desktop" ]; then
       rm "${HOME}/examples.desktop" || fail
@@ -121,8 +121,8 @@ ubuntu-workstation::configure-home-folders() {
   fi
 
   ( umask 0177 && touch "${HOME}/.hidden" ) || fail
-  file::append-line-unless-present "Desktop" "${HOME}/.hidden" || fail
-  file::append-line-unless-present "snap" "${HOME}/.hidden" || fail
+  file::append_line_unless_present "Desktop" "${HOME}/.hidden" || fail
+  file::append_line_unless_present "snap" "${HOME}/.hidden" || fail
 }
 
 ubuntu-workstation::configure-gnome() {(
@@ -136,14 +136,14 @@ ubuntu-workstation::configure-gnome() {(
   gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
 
   # Terminal
-  local profileId profilePath
+  local profile_id profile_path
 
-  if profileId="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
-    local profilePath="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profileId:1:-1}/"
+  if profile_id="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
+    local profile_path="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile_id:1:-1}/"
     
-    gnome-set "${profilePath}" exit-action 'hold' || fail
+    gnome-set "${profile_path}" exit-action 'hold' || fail
     # TODO: I think I need to try to live with the defaults
-    # gnome-set "${profilePath}" login-shell true || fail
+    # gnome-set "${profile_path}" login-shell true || fail
   fi
 
   gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
