@@ -30,18 +30,6 @@ Write-Output "Setting execution policy..."
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
 
-# Install scoop
-if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
-  Write-Output "Installing scoop..." 
-  # Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force
-  Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://get.scoop.sh")
-}
-
-if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
-  throw "Unable to find scoop"
-}
-
-
 # Install and configure chocolatey
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   Write-Output "Installing chocolatey..." 
@@ -89,11 +77,6 @@ Git-Clone-or-Pull "https://github.com/senotrusov/sopka.git" "$env:USERPROFILE\.s
 Git-Clone-or-Pull "https://github.com/senotrusov/sopkafile.git" "$env:USERPROFILE\.sopkafile"
 
 
-# Install scoop packages
-scoop install restic
-if ($LASTEXITCODE -ne 0) { throw "Unable to install restic" }
-
-
 # Install choco packages
 if ("$env:CI" -eq "true") {
   # gpg4win hangs forever in CI
@@ -120,9 +103,6 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-tools" }
 if ("$env:CI" -ne "true") { # I don't need to update them in CI
   choco upgrade all --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
-
-  scoop update *
-  if ($LASTEXITCODE -ne 0) { throw "Unable to update scoop packages" }
 }
 
 
