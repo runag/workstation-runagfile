@@ -19,6 +19,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron:  '45 10 * * *'
 
 jobs:
   macos-workstation:
