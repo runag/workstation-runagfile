@@ -71,7 +71,7 @@ That script will do the following:
 1. Installs chocolatey
 2. Installs git
 3. Clones [sopka](https://github.com/senotrusov/sopka) and [sopkafile](https://github.com/senotrusov/sopkafile) repositories
-4. Installs packages from:
+4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
     * [basic-tools.config](lib/choco/basic-tools.config)
