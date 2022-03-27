@@ -58,23 +58,45 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.
 
 ## Windows
 
-1. Start PowerShell as administrator, run the following and wait for it to complete:
+### 1. First stage deploy script (in powershell)
+
+Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
 iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex
 ```
 
-2. At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
+That script will do the following:
+
+1. Installs chocolatey
+2. Installs git
+3. Clones [sopka](https://github.com/senotrusov/sopka) and [sopkafile](https://github.com/senotrusov/sopkafile) repositories
+4. Installs packages from:
+    * lib\choco\bare-metal-desktop.config (if not in virtual machine)
+    * lib\choco\developer-tools.config (you will be asked if it's needed)
+    * lib\choco\basic-tools.config
+7. Upgrades all installed choco packages
+8. Sets ssh-agent service startup type to automatic and runs in
+
+### 2. Second stage deploy script (in bash)
+
+At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
 
 ```sh
 ~/.sopka/bin/sopka
 ```
 
-3. Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
+### 3. Set execution policy to "Bypass"
+
+Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
 
 ```sh
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
 ```
+
+### 4. Install winssh-pageant
+
+https://github.com/ndbeals/winssh-pageant
 
 ## Secret items which are expected to be found in a Bitwarden
 
