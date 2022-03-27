@@ -39,9 +39,6 @@ windows-workstation::deploy() {
   # sublime merge config
   workstation::sublime_merge::install-config || fail
 
-  # sublime text config
-  workstation::sublime_text::install-config || fail
-
   # secrets
   if [ -t 0 ]; then
     (
@@ -53,9 +50,6 @@ windows-workstation::deploy() {
 
       # npm
       workstation::install-npm-credentials || fail
-
-      # sublime text license
-      workstation::sublime_text::install-license || fail
     ) || fail
   fi
 

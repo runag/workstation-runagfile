@@ -86,6 +86,14 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 ~/.sopka/bin/sopka
 ```
 
+Select ``windows-workstation::deploy``. It will do the following:
+
+1. Installs shellrc loader
+2. Selects nano as default editor
+3. Adds sopka to PATH
+4. Configures git, vscode, sublime merge
+5. Installs ssh keys, rubygems and npm credentials
+
 ### 3. Set execution policy to "Bypass"
 
 Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
