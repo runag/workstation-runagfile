@@ -72,9 +72,9 @@ That script will do the following:
 2. Installs git
 3. Clones [sopka](https://github.com/senotrusov/sopka) and [sopkafile](https://github.com/senotrusov/sopkafile) repositories
 4. Installs packages from:
-    * lib\choco\bare-metal-desktop.config (if not in virtual machine)
-    * lib\choco\developer-tools.config (you will be asked if it's needed)
-    * lib\choco\basic-tools.config
+    * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
+    * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
+    * [basic-tools.config](lib/choco/basic-tools.config)
 7. Upgrades all installed choco packages
 8. Sets ssh-agent service startup type to automatic and runs in
 
