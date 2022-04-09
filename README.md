@@ -27,7 +27,7 @@ Basically, this Sopkafile you are looking at is the things I want to setup and c
 
 ![Sopka menu screenshot](docs/sopka-menu-screenshot.png)
 
-# What this script will do
+## What this script will do
 
 1. Installs the basic software I frequently use.
 2. Installs keys and software licenses from my bitwarden database.
@@ -39,26 +39,31 @@ This script is idempotent. It can be run multiple times to produce a system whic
 
 The file ``config.sh`` contains my name and email to use in configuration. Please remove them if you happen to fork this script.
 
-## Linux
+## How to run it
+
+### on Linux
+
+#### Option A: if you have a console with scrollbuffer
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
 ```
 
-### deploy-vm-server on console without scroll buffer
+#### Option B: run deploy-vm-server on console without scroll buffer
+
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu-workstation::deploy-vm-server 2>&1 | tee -a deploy-vm-server.log
 ```
 
-## MacOS
+### on MacOS
 
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
 ```
 
-## Windows
+### on Windows
 
-### 1. First stage deploy script (in powershell)
+#### 1. First stage deploy script (in powershell)
 
 Start PowerShell as administrator, run the following and wait for it to complete:
 
@@ -78,7 +83,7 @@ That script will do the following:
 7. Upgrades all installed choco packages
 8. Sets ssh-agent service startup type to automatic and runs in
 
-### 2. Second stage deploy script (in bash)
+#### 2. Second stage deploy script (in bash)
 
 At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
 
@@ -94,7 +99,7 @@ Select ``windows-workstation::deploy``. It will do the following:
 4. Configures git, vscode, sublime merge
 5. Installs ssh keys, rubygems and npm credentials
 
-### 3. Set execution policy to "Bypass"
+#### 3. Set execution policy to "Bypass"
 
 Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
 
@@ -102,7 +107,7 @@ Start PowerShell as a regular user, and make sure you really understand conseque
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
 ```
 
-### 4. Install winssh-pageant
+#### 4. Install winssh-pageant
 
 https://github.com/ndbeals/winssh-pageant
 
