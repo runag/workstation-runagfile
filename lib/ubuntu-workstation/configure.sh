@@ -18,6 +18,11 @@ ubuntu-workstation::configure-system() {
   # increase inotify limits
   linux::configure_inotify || fail
 
+  # configure btrfs
+  fstab::add_mount_option btrfs commit=5 || fail
+  fstab::add_mount_option btrfs flushoncommit || fail
+  fstab::add_mount_option btrfs noatime || fail
+
   # install vm-network-loss-workaround
   if vmware::is_inside_vm; then
     ubuntu-workstation::install-vm-network-loss-workaround || fail
