@@ -187,6 +187,7 @@ macos-workstation::configure() {
 
   # git
   workstation::configure-git || fail
+  workstation::configure-git-user || fail
 
   log::success "Done macos-workstation::configure" || fail
 }

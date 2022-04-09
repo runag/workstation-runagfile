@@ -31,6 +31,7 @@ windows-workstation::deploy() {
 
   # git
   workstation::configure-git || fail
+  workstation::configure-git-user || fail
 
   # vscode
   workstation::vscode::install-config || fail

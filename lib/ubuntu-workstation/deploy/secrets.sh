@@ -26,6 +26,9 @@ ubuntu-workstation::deploy-secrets::preliminary-stage(){
 ubuntu-workstation::deploy-secrets() {
   bitwarden::beyond_session task::run_with_install_filter ubuntu-workstation::deploy-secrets::preliminary-stage || fail
 
+  # configure git user
+  task::run workstation::configure-git-user || fail
+
   # install gpg keys
   ubuntu-workstation::install-all-gpg-keys || fail
 
