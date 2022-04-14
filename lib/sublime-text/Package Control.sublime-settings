@@ -7,14 +7,11 @@
 	[
 		"Better CoffeeScript",
 		"Crontab",
-		"FileIcons",
 		"nginx",
 		"Package Control",
 		"Pug",
 		"Ruby Slim",
 		"Sass",
-		"SideBarEnhancements",
-		"Terminal",
 		"Vue Syntax Highlight"
 	],
 }

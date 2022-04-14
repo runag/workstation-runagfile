@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
-ubuntu-workstation::deploy-secrets::preliminary-stage(){
+ubuntu_workstation::deploy-secrets::preliminary-stage(){
   apt::lazy_update || fail
   apt::install_gnome_keyring_and_libsecret || fail
 
@@ -23,36 +23,36 @@ ubuntu-workstation::deploy-secrets::preliminary-stage(){
   git::use_libsecret_credential_helper || fail
 }
 
-ubuntu-workstation::deploy-secrets() {
-  bitwarden::beyond_session task::run_with_install_filter ubuntu-workstation::deploy-secrets::preliminary-stage || fail
+ubuntu_workstation::deploy-secrets() {
+  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy-secrets::preliminary-stage || fail
 
   # configure git user
-  task::run workstation::configure-git-user || fail
+  task::run workstation::configure_git_user || fail
 
   # install gpg keys
-  ubuntu-workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install-all-gpg-keys || fail
 
   # install bitwarden cli and login
-  ubuntu-workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install-bitwarden-cli-and-login || fail
 
   # install ssh key, configure ssh  to use it
-  workstation::install-ssh-keys || fail
+  workstation::install_ssh_keys || fail
   bitwarden::use password "my password for ssh private key" ssh::gnome_keyring_credentials || fail
 
   # git access token
   bitwarden::use password "my github personal access token" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
 
   # rubygems
-  workstation::install-rubygems-credentials || fail
+  workstation::install_rubygems_credentials || fail
 
   # npm
-  workstation::install-npm-credentials || fail
+  workstation::install_npm_credentials || fail
 
   # install sublime license key
-  workstation::sublime_text::install-license || fail
+  workstation::sublime_text::install_license || fail
 
   # configure git to use gpg signing key
   git::configure_signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
 
-  log::success "Done ubuntu-workstation::deploy-secrets" || fail
+  log::success "Done ubuntu_workstation::deploy-secrets" || fail
 }

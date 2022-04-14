@@ -14,13 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::keys::populate-sopka-menu() {
+ubuntu_workstation::keys::populate_sopka_menu() {
   if [[ "${OSTYPE}" =~ ^linux ]]; then
     local dir; for dir in "/media/${USER}"/KEYS-* ; do
       if [ -d "$dir" ]; then
         sopka_menu::add_header Keys || fail
-        sopka_menu::add ubuntu-workstation::keys::maintain-checksums "${dir}" || fail
-        sopka_menu::add ubuntu-workstation::keys::make-backups "${dir}" || fail
+        sopka_menu::add ubuntu_workstation::keys::maintain_checksums "${dir}" || fail
+        sopka_menu::add ubuntu_workstation::keys::make_backups "${dir}" || fail
         sopka_menu::add_delimiter || fail
       fi
     done
@@ -28,10 +28,10 @@ ubuntu-workstation::keys::populate-sopka-menu() {
 }
 
 if declare -f sopka_menu::add >/dev/null; then
-  ubuntu-workstation::keys::populate-sopka-menu || fail
+  ubuntu_workstation::keys::populate_sopka_menu || fail
 fi
 
-ubuntu-workstation::keys::maintain-checksums() {
+ubuntu_workstation::keys::maintain_checksums() {
   local media="$1"
 
   local dir; for dir in "${media}"/*keys* ; do
@@ -47,7 +47,7 @@ ubuntu-workstation::keys::maintain-checksums() {
   done
 }
 
-ubuntu-workstation::keys::make-backups() {
+ubuntu_workstation::keys::make_backups() {
   local media="$1"
   
   local dest_dir; dest_dir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail

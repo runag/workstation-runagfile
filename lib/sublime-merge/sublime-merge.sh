@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::sublime_merge::install-config() {
+workstation::sublime_merge::install_config() {
   local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
   sublime_merge::install_config_file "${self_dir}/Diff.sublime-settings" || fail
   sublime_merge::install_config_file "${self_dir}/Preferences.sublime-settings" || fail
 }
 
-workstation::sublime_merge::install-license() {
+workstation::sublime_merge::install_license() {
   local config_path; config_path="$(sublime_merge::get_config_path)" || fail
 
   dir::make_if_not_exists "${config_path}/Local" 700 || fail
@@ -29,7 +29,7 @@ workstation::sublime_merge::install-license() {
   bitwarden::write_notes_to_file_if_not_exists "my sublime merge license" "${config_path}/Local/License.sublime_license" || fail
 }
 
-workstation::sublime_merge::merge-config() {
+workstation::sublime_merge::merge_config() {
   local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
 
   sublime_merge::merge_config_file "${self_dir}/Diff.sublime-settings" || fail

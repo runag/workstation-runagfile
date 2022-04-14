@@ -14,8 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::deploy-shellrc() {
-  ubuntu-workstation::install-shellrc || fail
+ubuntu_workstation::deploy-shellrc() {
+  ubuntu_workstation::install-shellrc || fail
 
-  log::success "Done ubuntu-workstation::deploy-shellrc" || fail
+  log::success "Done ubuntu_workstation::deploy-shellrc" || fail
 }

@@ -14,27 +14,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::deploy-host-folders-access() {
+ubuntu_workstation::deploy-host-folders-access() {
   # install gpg keys
-  ubuntu-workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install-all-gpg-keys || fail
 
   # install bitwarden cli and login
-  ubuntu-workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install-bitwarden-cli-and-login || fail
 
   # mount host folder
   local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
 
-  workstation::make-keys-directory-if-not-exists || fail
+  workstation::make_keys_directory_if_not_exists || fail
   bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentials_file}" || fail
 
   # shellcheck disable=2034
   local SOPKA_TASK_STDERR_FILTER=task::install_filter
-  bitwarden::beyond_session task::run_with_short_title ubuntu-workstation::deploy-host-folders-access::stage-2 "${credentials_file}" || fail
+  bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy-host-folders-access::stage-2 "${credentials_file}" || fail
 
-  log::success "Done ubuntu-workstation::deploy-host-folders-access" || fail
+  log::success "Done ubuntu_workstation::deploy-host-folders-access" || fail
 }
 
-ubuntu-workstation::deploy-host-folders-access::stage-2() {
+ubuntu_workstation::deploy-host-folders-access::stage-2() {
   local credentials_file="$1"
 
   local host_ip_address; host_ip_address="$(vmware::get_host_ip_address)" || fail

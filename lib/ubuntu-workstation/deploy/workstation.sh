@@ -14,25 +14,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::deploy-full-workstation() {
-  ubuntu-workstation::deploy-workstation-base || fail
+ubuntu_workstation::deploy-full-workstation() {
+  ubuntu_workstation::deploy-workstation-base || fail
 
   # subshell to deploy secrets
   (
-    ubuntu-workstation::deploy-secrets || fail
+    ubuntu_workstation::deploy-secrets || fail
 
     if vmware::is_inside_vm; then
-      ubuntu-workstation::deploy-host-folders-access || fail
+      ubuntu_workstation::deploy-host-folders-access || fail
     fi
 
-    ubuntu-workstation::deploy-tailscale || fail
-    ubuntu-workstation::backup::deploy || fail
+    ubuntu_workstation::deploy-tailscale || fail
+    ubuntu_workstation::backup::deploy || fail
   ) || fail
 
-  log::success "Done ubuntu-workstation::deploy-full-workstation" || fail
+  log::success "Done ubuntu_workstation::deploy-full-workstation" || fail
 }
 
-ubuntu-workstation::deploy-workstation-base() {
+ubuntu_workstation::deploy-workstation-base() {
   export SOPKA_TASK_STDERR_FILTER=task::install_filter
 
   # disable screen lock
@@ -51,54 +51,54 @@ ubuntu-workstation::deploy-workstation-base() {
   task::run benchmark::install::apt || fail
 
   # shellrc
-  task::run ubuntu-workstation::install-shellrc || fail
+  task::run ubuntu_workstation::install-shellrc || fail
 
   # install system software
-  task::run ubuntu-workstation::install-system-software || fail
+  task::run ubuntu_workstation::install-system-software || fail
 
   # configure system
-  task::run ubuntu-workstation::configure-system || fail
+  task::run ubuntu_workstation::configure-system || fail
 
   # install terminal software
-  task::run ubuntu-workstation::install-terminal-software || fail
+  task::run ubuntu_workstation::install-terminal-software || fail
 
   # configure git
-  task::run workstation::configure-git || fail
+  task::run workstation::configure_git || fail
 
   # install build tools
-  task::run ubuntu-workstation::install-build-tools || fail
+  task::run ubuntu_workstation::install-build-tools || fail
 
   # install and configure servers
-  task::run ubuntu-workstation::install-servers || fail
-  task::run ubuntu-workstation::configure-servers || fail
+  task::run ubuntu_workstation::install-servers || fail
+  task::run ubuntu_workstation::configure-servers || fail
 
   # programming languages
-  task::run ubuntu-workstation::install-and-update-nodejs || fail
-  task::run_with_rubygems_fail_detector ubuntu-workstation::install-and-update-ruby || fail
-  task::run ubuntu-workstation::install-and-update-python || fail
+  task::run ubuntu_workstation::install-and-update-nodejs || fail
+  task::run_with_rubygems_fail_detector ubuntu_workstation::install-and-update-ruby || fail
+  task::run ubuntu_workstation::install-and-update-python || fail
 
   # install & configure desktop software
-  task::run ubuntu-workstation::install-desktop-software::apt || fail
+  task::run ubuntu_workstation::install-desktop-software::apt || fail
   if [ -n "${DISPLAY:-}" ]; then
-    task::run ubuntu-workstation::configure-desktop-software || fail
+    task::run ubuntu_workstation::configure-desktop-software || fail
   fi
 
 
   # possible interactive part (so without task::run)
 
   # install vscode configuration
-  workstation::vscode::install-config || fail
+  workstation::vscode::install_config || fail
 
   # install sublime merge configuration
-  workstation::sublime_merge::install-config || fail
+  workstation::sublime_merge::install_config || fail
 
   # install sublime text configuration
-  workstation::sublime_text::install-config || fail
+  workstation::sublime_text::install_config || fail
 
 
   # snap stuff
   # without task:run here, snap can't understand that he has no terminal to output to and just dumps escape codes to log at large
-  ubuntu-workstation::install-desktop-software::snap || fail
+  ubuntu_workstation::install-desktop-software::snap || fail
 
-  log::success "Done ubuntu-workstation::deploy-workstation-base" || fail
+  log::success "Done ubuntu_workstation::deploy-workstation-base" || fail
 }

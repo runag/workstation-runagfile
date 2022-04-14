@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::deploy-vm-server() {
+ubuntu_workstation::deploy-vm-server() {
   # remove unattended-upgrades
   apt::remove unattended-upgrades || fail
 
@@ -39,5 +39,5 @@ ubuntu-workstation::deploy-vm-server() {
   # install avahi daemon
   apt::install avahi-daemon || fail
 
-  log::success "Done ubuntu-workstation::deploy-vm-server" || fail
+  log::success "Done ubuntu_workstation::deploy-vm-server" || fail
 }

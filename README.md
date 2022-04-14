@@ -52,7 +52,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.
 #### Option B: run deploy-vm-server on console without scroll buffer
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu-workstation::deploy-vm-server 2>&1 | tee -a deploy-vm-server.log
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu_workstation::deploy-vm-server 2>&1 | tee -a deploy-vm-server.log
 ```
 
 ### on MacOS
@@ -91,12 +91,12 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 ~/.sopka/bin/sopka
 ```
 
-Select ``windows-workstation::deploy``. It will do the following:
+Select ``windows_workstation::deploy``. It will do the following:
 
 1. Installs shellrc loader
 2. Selects nano as default editor
 3. Adds sopka to PATH
-4. Configures git, vscode, sublime merge
+4. Configures git, vscode, sublime merge, sublime text
 5. Installs ssh keys, rubygems and npm credentials
 
 #### 3. Set execution policy to "Bypass"

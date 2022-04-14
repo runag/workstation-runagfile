@@ -19,7 +19,7 @@ workstation::vscode::install_extensions() {
   vscode::install_extensions "${self_dir}/extensions.txt" || fail
 }
 
-workstation::vscode::install-config() {
+workstation::vscode::install_config() {
   local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
@@ -29,7 +29,7 @@ workstation::vscode::install-config() {
   config::install "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
 }
 
-workstation::vscode::merge-config() {
+workstation::vscode::merge_config() {
   local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local config_path; config_path="$(vscode::get_config_path)" || fail
 

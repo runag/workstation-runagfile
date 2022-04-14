@@ -14,34 +14,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# ubuntu-workstation::backup::deploy is the main entrypoint to deploy backup service
+# ubuntu_workstation::backup::deploy is the main entrypoint to deploy backup service
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Backup || fail
-  sopka_menu::add ubuntu-workstation::backup::deploy || fail
-  sopka_menu::add ubuntu-workstation::backup::create || fail
-  sopka_menu::add ubuntu-workstation::backup::list-snapshots || fail
-  sopka_menu::add ubuntu-workstation::backup::check-and-read-data || fail
-  sopka_menu::add ubuntu-workstation::backup::forget-and-prune || fail
-  sopka_menu::add ubuntu-workstation::backup::perform-maintenance || fail
-  sopka_menu::add ubuntu-workstation::backup::unlock || fail
-  sopka_menu::add ubuntu-workstation::backup::mount || fail
-  sopka_menu::add ubuntu-workstation::backup::umount || fail
+  sopka_menu::add ubuntu_workstation::backup::deploy || fail
+  sopka_menu::add ubuntu_workstation::backup::create || fail
+  sopka_menu::add ubuntu_workstation::backup::list-snapshots || fail
+  sopka_menu::add ubuntu_workstation::backup::check-and-read-data || fail
+  sopka_menu::add ubuntu_workstation::backup::forget-and-prune || fail
+  sopka_menu::add ubuntu_workstation::backup::perform-maintenance || fail
+  sopka_menu::add ubuntu_workstation::backup::unlock || fail
+  sopka_menu::add ubuntu_workstation::backup::mount || fail
+  sopka_menu::add ubuntu_workstation::backup::umount || fail
   sopka_menu::add_delimiter || fail
-  sopka_menu::add ubuntu-workstation::backup::start || fail
-  sopka_menu::add ubuntu-workstation::backup::stop || fail
-  sopka_menu::add ubuntu-workstation::backup::start-maintenance || fail
-  sopka_menu::add ubuntu-workstation::backup::stop-maintenance || fail
-  sopka_menu::add ubuntu-workstation::backup::disable-timers || fail
-  sopka_menu::add ubuntu-workstation::backup::status || fail
-  sopka_menu::add ubuntu-workstation::backup::log || fail
+  sopka_menu::add ubuntu_workstation::backup::start || fail
+  sopka_menu::add ubuntu_workstation::backup::stop || fail
+  sopka_menu::add ubuntu_workstation::backup::start-maintenance || fail
+  sopka_menu::add ubuntu_workstation::backup::stop-maintenance || fail
+  sopka_menu::add ubuntu_workstation::backup::disable-timers || fail
+  sopka_menu::add ubuntu_workstation::backup::status || fail
+  sopka_menu::add ubuntu_workstation::backup::log || fail
   sopka_menu::add_delimiter || fail
 fi
 
-ubuntu-workstation::backup::install-restic-password-file() {
+ubuntu_workstation::backup::install-restic-password-file() {
   local key="$1"
 
-  workstation::make-keys-directory-if-not-exists || fail
+  workstation::make_keys_directory_if_not_exists || fail
   dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
 
   gpg::decrypt_and_install_file \
@@ -49,15 +49,15 @@ ubuntu-workstation::backup::install-restic-password-file() {
     "${HOME}/.keys/restic/${key}.restic-password" || fail
 }
 
-ubuntu-workstation::backup::deploy() {
+ubuntu_workstation::backup::deploy() {
   # install gpg keys to decrypt bitwarden api key and restic key
-  ubuntu-workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install-all-gpg-keys || fail
 
   # install bitwarden cli and login
-  ubuntu-workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install-bitwarden-cli-and-login || fail
 
   # install restic key
-  ubuntu-workstation::backup::install-restic-password-file "stan" || fail
+  ubuntu_workstation::backup::install-restic-password-file "stan" || fail
 
   # install ssh key
   ssh::make_user_config_dir_if_not_exists || fail
@@ -65,15 +65,15 @@ ubuntu-workstation::backup::deploy() {
   bitwarden::write_notes_to_file_if_not_exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
-  workstation::make-keys-directory-if-not-exists || fail
+  workstation::make_keys_directory_if_not_exists || fail
   bitwarden::write_password_to_file_if_not_exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
-  bitwarden::beyond_session task::run_with_install_filter ubuntu-workstation::backup::deploy::stage-2 || fail
+  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::backup::deploy::stage-2 || fail
 
-  log::success "Done ubuntu-workstation::backup::deploy" || fail
+  log::success "Done ubuntu_workstation::backup::deploy" || fail
 }
 
-ubuntu-workstation::backup::deploy::stage-2() {
+ubuntu_workstation::backup::deploy::stage-2() {
   local remote_host; remote_host="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
   ssh::add_host_to_known_hosts "${remote_host}" || fail
 
@@ -81,17 +81,17 @@ ubuntu-workstation::backup::deploy::stage-2() {
     echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo_write /etc/sudoers.d/dmidecode 440 || fail
   fi
 
-  ubuntu-workstation::backup::install-systemd-services || fail
+  ubuntu_workstation::backup::install-systemd-services || fail
 }
 
-ubuntu-workstation::backup::install-systemd-services() {
+ubuntu_workstation::backup::install-systemd-services() {
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::create
+ExecStart=${SOPKA_BIN_PATH} ubuntu_workstation::backup::create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -116,7 +116,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} ubuntu-workstation::backup::perform-maintenance
+ExecStart=${SOPKA_BIN_PATH} ubuntu_workstation::backup::perform-maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -146,7 +146,7 @@ EOF
   systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
 
-ubuntu-workstation::backup::load-config() {
+ubuntu_workstation::backup::load-config() {
   local machine_hostname machine_id ssh_destination
 
   machine_hostname="$(hostname)" || fail
@@ -163,8 +163,8 @@ ubuntu-workstation::backup::load-config() {
   export RESTIC_REPOSITORY="sftp:${ssh_destination}:backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
 }
 
-ubuntu-workstation::backup::create() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::create() {
+  ubuntu_workstation::backup::load-config || fail
 
   if ! restic cat config >/dev/null 2>&1; then
     restic init || fail
@@ -173,18 +173,18 @@ ubuntu-workstation::backup::create() {
   (cd "${HOME}" && restic backup --one-file-system --exclude "${HOME}/.*" --exclude "${HOME}/snap" .) || fail
 }
 
-ubuntu-workstation::backup::list-snapshots() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::list-snapshots() {
+  ubuntu_workstation::backup::load-config || fail
   restic snapshots || fail
 }
 
-ubuntu-workstation::backup::check-and-read-data() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::check-and-read-data() {
+  ubuntu_workstation::backup::load-config || fail
   restic check --check-unused --read-data || fail
 }
 
-ubuntu-workstation::backup::forget-and-prune() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::forget-and-prune() {
+  ubuntu_workstation::backup::load-config || fail
   restic forget \
     --prune \
     --keep-within 14d \
@@ -193,19 +193,19 @@ ubuntu-workstation::backup::forget-and-prune() {
     --keep-monthly 25 || fail
 }
 
-ubuntu-workstation::backup::perform-maintenance() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::perform-maintenance() {
+  ubuntu_workstation::backup::load-config || fail
   restic check || fail
-  ubuntu-workstation::backup::forget-and-prune || fail
+  ubuntu_workstation::backup::forget-and-prune || fail
 }
 
-ubuntu-workstation::backup::unlock() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::unlock() {
+  ubuntu_workstation::backup::load-config || fail
   restic unlock || fail
 }
 
-ubuntu-workstation::backup::mount() {
-  ubuntu-workstation::backup::load-config || fail
+ubuntu_workstation::backup::mount() {
+  ubuntu_workstation::backup::load-config || fail
 
   local mount_point="${HOME}/workstation-backup"
 
@@ -218,35 +218,35 @@ ubuntu-workstation::backup::mount() {
   restic mount "${mount_point}" || fail
 }
 
-ubuntu-workstation::backup::umount() {
+ubuntu_workstation::backup::umount() {
   local mount_point="${HOME}/workstation-backup"
   fusermount -u -z "${mount_point}" || fail
 }
 
-ubuntu-workstation::backup::start() {
+ubuntu_workstation::backup::start() {
   systemctl --user --no-block start "workstation-backup.service" || fail
 }
 
-ubuntu-workstation::backup::stop() {
+ubuntu_workstation::backup::stop() {
   systemctl --user stop "workstation-backup.service" || fail
 }
 
-ubuntu-workstation::backup::start-maintenance() {
+ubuntu_workstation::backup::start-maintenance() {
   systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
 }
 
-ubuntu-workstation::backup::stop-maintenance() {
+ubuntu_workstation::backup::stop-maintenance() {
   systemctl --user stop "workstation-backup-maintenance.service" || fail
 }
 
-ubuntu-workstation::backup::disable-timers() {
+ubuntu_workstation::backup::disable-timers() {
   systemctl --user stop "workstation-backup.timer" || fail
   systemctl --user stop "workstation-backup-maintenance.timer" || fail
   systemctl --user --quiet disable "workstation-backup.timer" || fail
   systemctl --user --quiet disable "workstation-backup-maintenance.timer" || fail
 }
 
-ubuntu-workstation::backup::status() {
+ubuntu_workstation::backup::status() {
   systemctl --user status "workstation-backup.service"
   systemctl --user status "workstation-backup-maintenance.service"
 
@@ -261,6 +261,6 @@ ubuntu-workstation::backup::status() {
   systemctl --user status "workstation-backup-maintenance.timer"
 }
 
-ubuntu-workstation::backup::log() {
+ubuntu_workstation::backup::log() {
   journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
 }

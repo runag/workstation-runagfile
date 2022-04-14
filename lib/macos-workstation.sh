@@ -15,19 +15,19 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add macos-workstation::deploy || fail
-  sopka_menu::add macos-workstation::configure || fail
+  sopka_menu::add macos_workstation::deploy || fail
+  sopka_menu::add macos_workstation::configure || fail
 fi
 
-macos-workstation::deploy() {
-  macos-workstation::install-basic-packages || fail
-  macos-workstation::install-developer-packages || fail
-  macos-workstation::configure || fail
+macos_workstation::deploy() {
+  macos_workstation::install_basic_packages || fail
+  macos_workstation::install_developer_packages || fail
+  macos_workstation::configure || fail
   
-  log::success "Done macos-workstation::deploy" || fail
+  log::success "Done macos_workstation::deploy" || fail
 }
 
-macos-workstation::install-basic-packages() {
+macos_workstation::install_basic_packages() {
   # install homebrew
   macos::install_homebrew || fail
 
@@ -56,16 +56,14 @@ macos-workstation::install-basic-packages() {
   brew install --cask obs || fail
 }
 
-macos-workstation::install-developer-packages() {
+macos_workstation::install_developer_packages() {
   # basic tools
   brew install jq || fail
   brew install midnight-commander || fail
-  brew install ranger || fail
   brew install ncdu || fail
   brew install htop || fail
   brew install p7zip || fail
   brew install sysbench || fail
-  brew install hwloc || fail
   brew install tmux || fail
 
   # dev tools
@@ -126,18 +124,14 @@ macos-workstation::install-developer-packages() {
 
   # bitwarden-cli
   brew install bitwarden-cli || fail
-
-  # sshfs
-  # That will fail in CI test environment, so I disabled error checking here. Perhaps there is a better solution for that.
-  brew install sshfs || true
 }
 
-macos-workstation::configure() {
+macos_workstation::configure() {
   # increase maxfiles limits
   macos::increase_maxfiles_limit || fail
 
   # hide directories
-  macos-workstation::hide-dirs || fail
+  macos_workstation::hide_dirs || fail
 
   # shell aliases
   shellrc::install_loader "${HOME}/.bashrc" || fail
@@ -157,42 +151,43 @@ macos-workstation::configure() {
   nodenv::load_shellrc || fail
 
   # vscode
-  workstation::vscode::install-config || fail
+  workstation::vscode::install_config || fail
   workstation::vscode::install_extensions || fail
 
   # sublime merge config
-  workstation::sublime_merge::install-config || fail
+  workstation::sublime_merge::install_config || fail
 
   # sublime text config
-  workstation::sublime_text::install-config || fail
+  workstation::sublime_text::install_config || fail
 
   # secrets
   if [ -t 0 ]; then
+    # subshell to deploy secrets
     (
       # add ssh key, configure ssh to use it
-      workstation::install-ssh-keys || fail
+      workstation::install_ssh_keys || fail
       ssh::macos_keychain::configure_use_on_all_hosts || fail
       bitwarden::use password "my password for ssh private key" ssh::macos_keychain || fail
 
       # rubygems
-      workstation::install-rubygems-credentials || fail
+      workstation::install_rubygems_credentials || fail
 
       # npm
-      workstation::install-npm-credentials || fail
+      workstation::install_npm_credentials || fail
 
       # sublime text license
-      workstation::sublime_text::install-license || fail
+      workstation::sublime_text::install_license || fail
     ) || fail
   fi
 
   # git
-  workstation::configure-git || fail
-  workstation::configure-git-user || fail
+  workstation::configure_git || fail
+  workstation::configure_git_user || fail
 
-  log::success "Done macos-workstation::configure" || fail
+  log::success "Done macos_workstation::configure" || fail
 }
 
-macos-workstation::hide-dirs() {
+macos_workstation::hide_dirs() {
   macos::hide_dir "${HOME}/Applications" || fail
   macos::hide_dir "${HOME}/Desktop" || fail
   macos::hide_dir "${HOME}/Documents" || fail

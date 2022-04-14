@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::configure-system() {
+ubuntu_workstation::configure-system() {
   # increase inotify limits
   linux::configure_inotify || fail
 
@@ -25,39 +25,39 @@ ubuntu-workstation::configure-system() {
 
   # install vm-network-loss-workaround
   if vmware::is_inside_vm; then
-    ubuntu-workstation::install-vm-network-loss-workaround || fail
+    ubuntu_workstation::install_vm_network_loss_workaround || fail
   fi
 }
 
-ubuntu-workstation::configure-servers() {
+ubuntu_workstation::configure-servers() {
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 
-ubuntu-workstation::configure-desktop-software() {
+ubuntu_workstation::configure-desktop-software() {
   # configure firefox
-  ubuntu-workstation::configure-firefox || fail
+  ubuntu_workstation::configure-firefox || fail
   firefox::enable_wayland || fail
 
   # configure imwheel
   if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-    ubuntu-workstation::configure-imwhell || fail
+    ubuntu_workstation::configure-imwhell || fail
   fi
 
   # configure home folders
-  ubuntu-workstation::configure-home-folders || fail
+  ubuntu_workstation::configure-home-folders || fail
 
   # configure gnome desktop
-  ubuntu-workstation::configure-gnome || fail
+  ubuntu_workstation::configure-gnome || fail
 }
 
-ubuntu-workstation::configure-firefox() {
+ubuntu_workstation::configure-firefox() {
   firefox::set_pref "mousewheel.default.delta_multiplier_x" 200 || fail
   firefox::set_pref "mousewheel.default.delta_multiplier_y" 200 || fail
 }
 
-ubuntu-workstation::configure-imwhell() {
+ubuntu_workstation::configure-imwhell() {
   local repetitions="2"
   local output_file="${HOME}/.imwheelrc"
   tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
@@ -91,7 +91,7 @@ EOF
   /usr/bin/imwheel --kill
 }
 
-ubuntu-workstation::configure-home-folders() {
+ubuntu_workstation::configure-home-folders() {
   local dirs_file="${HOME}/.config/user-dirs.dirs"
 
   if [ -f "${dirs_file}" ]; then
@@ -130,7 +130,7 @@ ubuntu-workstation::configure-home-folders() {
   file::append_line_unless_present "snap" "${HOME}/.hidden" || fail
 }
 
-ubuntu-workstation::configure-gnome() {(
+ubuntu_workstation::configure-gnome() {(
   # use dconf-editor to find key/value pairs
   #
   # Please do not use dbus-launch here because it will introduce side-effect to

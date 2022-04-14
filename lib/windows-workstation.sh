@@ -15,44 +15,59 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add windows-workstation::deploy || fail
+  sopka_menu::add windows_workstation::deploy || fail
+  sopka_menu::add windows_workstation::non_personal_deploy || fail
 fi
 
-windows-workstation::deploy() {
-  # check dependencies
-  command -v bw >/dev/null || fail "bw command is not found"
-  command -v jq >/dev/null || fail "jq command is not found"
-  command -v code >/dev/null || fail "code command is not found"
-
+windows_workstation::non_personal_deploy() {
   # shell aliases
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_editor_rc nano || fail
   shellrc::install_sopka_path_rc || fail
 
   # git
-  workstation::configure-git || fail
-  workstation::configure-git-user || fail
+  workstation::configure_git || fail
+}
+
+windows_workstation::deploy() {
+  # non-personal deploy
+  windows_workstation::non_personal_deploy || fail
+
+  # check dependencies
+  command -v bw >/dev/null || fail "bw command is not found"
+  command -v jq >/dev/null || fail "jq command is not found"
+  command -v code >/dev/null || fail "code command is not found"
+
+  # git user
+  workstation::configure_git_user || fail
 
   # vscode
-  workstation::vscode::install-config || fail
+  workstation::vscode::install_config || fail
   workstation::vscode::install_extensions || fail
 
   # sublime merge config
-  workstation::sublime_merge::install-config || fail
+  workstation::sublime_merge::install_config || fail
+
+  # sublime text config
+  workstation::sublime_text::install_config || fail
 
   # secrets
   if [ -t 0 ]; then
+    # subshell to deploy secrets
     (
       # add ssh key
-      workstation::install-ssh-keys || fail
+      workstation::install_ssh_keys || fail
 
       # rubygems
-      workstation::install-rubygems-credentials || fail
+      workstation::install_rubygems_credentials || fail
 
       # npm
-      workstation::install-npm-credentials || fail
+      workstation::install_npm_credentials || fail
+
+      # sublime text license
+      workstation::sublime_text::install_license || fail
     ) || fail
   fi
 
-  log::success "Done windows-workstation::deploy" || fail
+  log::success "Done windows_workstation::deploy" || fail
 }

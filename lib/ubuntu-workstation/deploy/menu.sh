@@ -18,18 +18,18 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Deploy || fail
 
   if [ -n "${DISPLAY:-}" ]; then
-    sopka_menu::add ubuntu-workstation::deploy-full-workstation || fail
-    sopka_menu::add ubuntu-workstation::deploy-secrets || fail
-    sopka_menu::add ubuntu-workstation::deploy-workstation-base || fail
+    sopka_menu::add ubuntu_workstation::deploy-full-workstation || fail
+    sopka_menu::add ubuntu_workstation::deploy-secrets || fail
+    sopka_menu::add ubuntu_workstation::deploy-workstation-base || fail
   fi
 
   if vmware::is_inside_vm; then
-    sopka_menu::add ubuntu-workstation::deploy-host-folders-access || fail
-    sopka_menu::add ubuntu-workstation::deploy-vm-server || fail
+    sopka_menu::add ubuntu_workstation::deploy-host-folders-access || fail
+    sopka_menu::add ubuntu_workstation::deploy-vm-server || fail
   fi
 
-  sopka_menu::add ubuntu-workstation::deploy-shellrc || fail
-  sopka_menu::add ubuntu-workstation::deploy-tailscale || fail
+  sopka_menu::add ubuntu_workstation::deploy-shellrc || fail
+  sopka_menu::add ubuntu_workstation::deploy-tailscale || fail
 
   sopka_menu::add_delimiter || fail
 fi

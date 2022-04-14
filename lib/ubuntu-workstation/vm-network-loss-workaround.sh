@@ -14,22 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu-workstation::vm-network-loss-workaround() {
+ubuntu_workstation::vm_network_loss_workaround() {
   if ip address show ens33 >/dev/null 2>&1; then
     if ! ip address show ens33 | grep -qF "inet "; then
-      echo "ubuntu-workstation::vm-network-loss-workaround: about to restart network"
+      echo "ubuntu_workstation::vm_network_loss_workaround: about to restart network"
       sudo systemctl restart NetworkManager.service || { echo "Unable to restart network" >&2; exit 1; }
       sudo dhclient || { echo "Error running dhclient" >&2; exit 1; }
     fi
   fi
 }
 
-ubuntu-workstation::install-vm-network-loss-workaround() {
+ubuntu_workstation::install_vm_network_loss_workaround() {
   file::sudo_write /usr/local/bin/vm-network-loss-workaround 755 <<SHELL || fail
 #!/usr/bin/env bash
 $(sopka::print_license)
-$(declare -f ubuntu-workstation::vm-network-loss-workaround)
-ubuntu-workstation::vm-network-loss-workaround || { echo "Unable to perform ubuntu-workstation::vm-network-loss-workaround" >&2; exit 1; }
+$(declare -f ubuntu_workstation::vm_network_loss_workaround)
+ubuntu_workstation::vm_network_loss_workaround || { echo "Unable to perform ubuntu_workstation::vm_network_loss_workaround" >&2; exit 1; }
 SHELL
 
   file::sudo_write /etc/systemd/system/vm-network-loss-workaround.service <<EOF || fail
