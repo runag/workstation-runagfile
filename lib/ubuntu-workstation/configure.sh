@@ -19,9 +19,11 @@ ubuntu_workstation::configure-system() {
   linux::configure_inotify || fail
 
   # configure btrfs
-  fstab::add_mount_option btrfs commit=5 || fail
-  fstab::add_mount_option btrfs flushoncommit || fail
-  fstab::add_mount_option btrfs noatime || fail
+  if [ "${CI:-}" != "true" ]; then
+    fstab::add_mount_option btrfs commit=5 || fail
+    fstab::add_mount_option btrfs flushoncommit || fail
+    fstab::add_mount_option btrfs noatime || fail
+  fi
 
   # install vm-network-loss-workaround
   if vmware::is_inside_vm; then
