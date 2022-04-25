@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::install-system-software() {
+ubuntu_workstation::install_system_software() {
   # install open-vm-tools
   if vmware::is_inside_vm; then
     apt::install open-vm-tools || fail
@@ -27,7 +27,7 @@ ubuntu_workstation::install-system-software() {
   apt::install inotify-tools || fail
 }
 
-ubuntu_workstation::install-terminal-software() {
+ubuntu_workstation::install_terminal_software() {
   apt::install \
     apache2-utils \
     awscli \
@@ -55,7 +55,7 @@ ubuntu_workstation::install-terminal-software() {
       || fail
 }
 
-ubuntu_workstation::install-build-tools() {
+ubuntu_workstation::install_build_tools() {
   apt::install \
     build-essential \
     libsqlite3-dev \
@@ -63,28 +63,29 @@ ubuntu_workstation::install-build-tools() {
       || fail
 }
 
-ubuntu_workstation::install-servers() {
+ubuntu_workstation::install_servers() {
   apt::install memcached || fail
   apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
 }
 
-ubuntu_workstation::install-and-update-nodejs() {
-  nodejs::install_by_nodenv_and_set_global "16.13.0" || fail
+ubuntu_workstation::install_and_update_nodejs() {
+  nodejs::install_by_nodenv_and_set_global || fail
 }
 
-ubuntu_workstation::install-and-update-ruby() {
+ubuntu_workstation::install_and_update_ruby() {
   ruby::dangerously_append_nodocument_to_gemrc || fail
-  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv "3.0.2" || fail
+
+  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv || fail
 
   shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
 }
 
-ubuntu_workstation::install-and-update-python() {
+ubuntu_workstation::install_and_update_python() {
   python::install_and_update::apt || fail
 }
 
-ubuntu_workstation::install-desktop-software::apt() {
+ubuntu_workstation::install_desktop_software::apt() {
   # open-vm-tools-desktop
   if vmware::is_inside_vm; then
     apt::install open-vm-tools-desktop || fail
@@ -114,18 +115,18 @@ ubuntu_workstation::install-desktop-software::apt() {
   # software for bare metal workstation
   if linux::is_bare_metal; then
     # copyq
-    ubuntu_workstation::install-copyq || fail
+    ubuntu_workstation::install_copyq || fail
 
     # hardware monitoring
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-    ubuntu_workstation::install-vitals || fail
+    ubuntu_workstation::install_vitals || fail
 
     # OBS studio
-    ubuntu_workstation::install-obs-studio || fail
+    ubuntu_workstation::install_obs_studio || fail
   fi
 }
 
-ubuntu_workstation::install-desktop-software::snap() {
+ubuntu_workstation::install_desktop_software::snap() {
   # vscode
   vscode::install::snap || fail
   workstation::vscode::install_extensions || fail
@@ -153,7 +154,7 @@ ubuntu_workstation::install-desktop-software::snap() {
   fi
 }
 
-ubuntu_workstation::install-vitals() {
+ubuntu_workstation::install_vitals() {
   apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
 
   local extension_uuid="Vitals@CoreCoding.com"
@@ -169,37 +170,32 @@ ubuntu_workstation::install-vitals() {
   gnome-extensions enable "${extension_uuid}" || fail
 }
 
-ubuntu_workstation::install-copyq() {
+ubuntu_workstation::install_copyq() {
   sudo add-apt-repository --yes ppa:hluk/copyq || fail
   apt::update || fail
   apt::install copyq || fail
 }
 
-ubuntu_workstation::install-obs-studio() {
+ubuntu_workstation::install_obs_studio() {
   sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
   apt::update || fail
   apt::install obs-studio guvcview || fail
 }
 
-ubuntu_workstation::install-shellrc() {
+ubuntu_workstation::install_shellrc() {
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
 }
 
-ubuntu_workstation::install-all-gpg-keys() {
-  ubuntu_workstation::install-gpg-key "84C200370DF103F0ADF5028FF4D70B8640424BEA" || fail
+ubuntu_workstation::install_gpg_keys() {
+  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_KEY_PATH}" || fail
 }
 
-ubuntu_workstation::install-gpg-key() {
-  local key="$1"
-  gpg::import_key_with_ultimate_ownertrust "${key}" "/media/${USER}/KEYS-DAILY/keys/gpg/${key:(-8)}/${key:(-8)}-secret-subkeys.asc" || fail
-}
-
-ubuntu_workstation::install-bitwarden-cli-and-login() {
+ubuntu_workstation::install_bitwarden_cli_and_login() {
   bitwarden::install_cli::snap || fail
 
   if ! bitwarden::is_logged_in; then
-    gpg::decrypt_and_source_script "/media/${USER}/KEYS-DAILY/keys/bitwarden/stan-api-key.sh.asc" || fail
+    gpg::decrypt_and_source_script "${MY_BITWARDEN_API_KEY_PATH}" || fail
     bitwarden::login --apikey || fail
   fi
 }

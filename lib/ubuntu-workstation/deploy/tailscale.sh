@@ -16,10 +16,10 @@
 
 ubuntu_workstation::deploy-tailscale() {
   # install gpg keys
-  ubuntu_workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
-  ubuntu_workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
   if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] || ! command -v tailscale >/dev/null || tailscale::is_logged_out; then
     bitwarden::unlock_and_sync || fail

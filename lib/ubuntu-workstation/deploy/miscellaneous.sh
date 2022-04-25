@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 ubuntu_workstation::deploy-shellrc() {
-  ubuntu_workstation::install-shellrc || fail
+  ubuntu_workstation::install_shellrc || fail
 
   log::success "Done ubuntu_workstation::deploy-shellrc" || fail
 }

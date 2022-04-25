@@ -16,10 +16,10 @@
 
 ubuntu_workstation::deploy-host-folders-access() {
   # install gpg keys
-  ubuntu_workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
-  ubuntu_workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
   # mount host folder
   local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"

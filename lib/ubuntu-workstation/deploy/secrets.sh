@@ -30,10 +30,10 @@ ubuntu_workstation::deploy-secrets() {
   task::run workstation::configure_git_user || fail
 
   # install gpg keys
-  ubuntu_workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
-  ubuntu_workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
   # install ssh key, configure ssh  to use it
   workstation::install_ssh_keys || fail

@@ -39,25 +39,21 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
 fi
 
 ubuntu_workstation::backup::install-restic-password-file() {
-  local key="$1"
-
   workstation::make_keys_directory_if_not_exists || fail
   dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
 
-  gpg::decrypt_and_install_file \
-    "/media/${USER}/KEYS-DAILY/keys/restic/${key}.restic-password.asc" \
-    "${HOME}/.keys/restic/${key}.restic-password" || fail
+  gpg::decrypt_and_install_file "${MY_RESTIC_PASSWORD_FILE}" "${HOME}/.keys/restic/workstation-backups.restic-password" || fail
 }
 
 ubuntu_workstation::backup::deploy() {
   # install gpg keys to decrypt bitwarden api key and restic key
-  ubuntu_workstation::install-all-gpg-keys || fail
+  ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
-  ubuntu_workstation::install-bitwarden-cli-and-login || fail
+  ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
   # install restic key
-  ubuntu_workstation::backup::install-restic-password-file "stan" || fail
+  ubuntu_workstation::backup::install-restic-password-file || fail
 
   # install ssh key
   ssh::make_user_config_dir_if_not_exists || fail
@@ -159,7 +155,7 @@ ubuntu_workstation::backup::load-config() {
 
   ssh_destination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
 
-  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/stan.restic-password"
+  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation-backups.restic-password"
   export RESTIC_REPOSITORY="sftp:${ssh_destination}:backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
 }
 

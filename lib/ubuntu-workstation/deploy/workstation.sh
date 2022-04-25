@@ -51,34 +51,34 @@ ubuntu_workstation::deploy-workstation-base() {
   task::run benchmark::install::apt || fail
 
   # shellrc
-  task::run ubuntu_workstation::install-shellrc || fail
+  task::run ubuntu_workstation::install_shellrc || fail
 
   # install system software
-  task::run ubuntu_workstation::install-system-software || fail
+  task::run ubuntu_workstation::install_system_software || fail
 
   # configure system
   task::run ubuntu_workstation::configure-system || fail
 
   # install terminal software
-  task::run ubuntu_workstation::install-terminal-software || fail
+  task::run ubuntu_workstation::install_terminal_software || fail
 
   # configure git
   task::run workstation::configure_git || fail
 
   # install build tools
-  task::run ubuntu_workstation::install-build-tools || fail
+  task::run ubuntu_workstation::install_build_tools || fail
 
   # install and configure servers
-  task::run ubuntu_workstation::install-servers || fail
+  task::run ubuntu_workstation::install_servers || fail
   task::run ubuntu_workstation::configure-servers || fail
 
   # programming languages
-  task::run ubuntu_workstation::install-and-update-nodejs || fail
-  task::run_with_rubygems_fail_detector ubuntu_workstation::install-and-update-ruby || fail
-  task::run ubuntu_workstation::install-and-update-python || fail
+  task::run ubuntu_workstation::install_and_update_nodejs || fail
+  task::run_with_rubygems_fail_detector ubuntu_workstation::install_and_update_ruby || fail
+  task::run ubuntu_workstation::install_and_update_python || fail
 
   # install & configure desktop software
-  task::run ubuntu_workstation::install-desktop-software::apt || fail
+  task::run ubuntu_workstation::install_desktop_software::apt || fail
   if [ -n "${DISPLAY:-}" ]; then
     task::run ubuntu_workstation::configure-desktop-software || fail
   fi
@@ -98,7 +98,7 @@ ubuntu_workstation::deploy-workstation-base() {
 
   # snap stuff
   # without task:run here, snap can't understand that he has no terminal to output to and just dumps escape codes to log at large
-  ubuntu_workstation::install-desktop-software::snap || fail
+  ubuntu_workstation::install_desktop_software::snap || fail
 
   log::success "Done ubuntu_workstation::deploy-workstation-base" || fail
 }
