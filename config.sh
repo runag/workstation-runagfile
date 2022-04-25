@@ -24,9 +24,11 @@ export MY_GITHUB_LOGIN="senotrusov"
 # Secrets
 export MY_KEYS_VOLUME="/media/${USER}/KEYS-DAILY"
 
-export MY_BITWARDEN_API_KEY_PATH="${MY_KEYS_VOLUME}/keys/bitwarden/stan-api-key.sh.asc"
 export MY_GPG_KEY="84C200370DF103F0ADF5028FF4D70B8640424BEA"
+export MY_GPG_SIGNING_KEY "38F6833D4C62D3AF8102789772080E033B1F76B5"
 export MY_GPG_KEY_PATH="${MY_KEYS_VOLUME}/keys/gpg/${MY_GPG_KEY:(-8)}/${MY_GPG_KEY:(-8)}-secret-subkeys.asc"
+
+export MY_BITWARDEN_API_KEY_PATH="${MY_KEYS_VOLUME}/keys/bitwarden/stan-api-key.sh.asc"
 export MY_RESTIC_PASSWORD_FILE="${MY_KEYS_VOLUME}/keys/restic/stan.restic-password.asc"
 
 

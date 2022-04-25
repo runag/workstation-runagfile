@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 # install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
-ubuntu_workstation::deploy_secrets::preliminary-stage(){
+ubuntu_workstation::deploy_secrets::preliminary_stage(){
   apt::lazy_update || fail
   apt::install_gnome_keyring_and_libsecret || fail
 
@@ -24,7 +24,7 @@ ubuntu_workstation::deploy_secrets::preliminary-stage(){
 }
 
 ubuntu_workstation::deploy_secrets() {
-  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::preliminary-stage || fail
+  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::preliminary_stage || fail
 
   # configure git user
   task::run workstation::configure_git_user || fail
@@ -52,5 +52,5 @@ ubuntu_workstation::deploy_secrets() {
   workstation::sublime_text::install_license || fail
 
   # configure git to use gpg signing key
-  git::configure_signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
+  git::configure_signing_key "${MY_GPG_SIGNING_KEY}!" || fail
 }
