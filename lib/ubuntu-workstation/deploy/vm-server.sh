@@ -38,6 +38,4 @@ ubuntu_workstation::deploy_vm_server() {
 
   # install avahi daemon
   apt::install avahi-daemon || fail
-
-  log::success "Done ubuntu_workstation::deploy_vm_server" || fail
 }

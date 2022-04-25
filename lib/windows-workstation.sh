@@ -68,6 +68,4 @@ windows_workstation::deploy() {
       workstation::sublime_text::install_license || fail
     ) || fail
   fi
-
-  log::success "Done windows_workstation::deploy" || fail
 }

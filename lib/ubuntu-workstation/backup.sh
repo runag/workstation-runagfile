@@ -65,8 +65,6 @@ ubuntu_workstation::backup::deploy() {
   bitwarden::write_password_to_file_if_not_exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
   bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::backup::deploy::stage_two || fail
-
-  log::success "Done ubuntu_workstation::backup::deploy" || fail
 }
 
 ubuntu_workstation::backup::deploy::stage_two() {

@@ -28,8 +28,6 @@ ubuntu_workstation::deploy_tailscale() {
     local SOPKA_TASK_STDERR_FILTER=task::install_filter
     bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_tailscale::stage_two "${tailscale_key}" || fail
   fi
-
-  log::success "Done ubuntu_workstation::deploy_tailscale" || fail
 }
 
 ubuntu_workstation::deploy_tailscale::stage_two() {

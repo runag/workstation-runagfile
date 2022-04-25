@@ -28,8 +28,6 @@ ubuntu_workstation::deploy_full_workstation() {
     ubuntu_workstation::deploy_tailscale || fail
     ubuntu_workstation::backup::deploy || fail
   ) || fail
-
-  log::success "Done ubuntu_workstation::deploy_full_workstation" || fail
 }
 
 ubuntu_workstation::deploy_workstation_base() {
@@ -99,6 +97,4 @@ ubuntu_workstation::deploy_workstation_base() {
   # snap stuff
   # without task:run here, snap can't understand that he has no terminal to output to and just dumps escape codes to log at large
   ubuntu_workstation::install_desktop_software::snap || fail
-
-  log::success "Done ubuntu_workstation::deploy_workstation_base" || fail
 }

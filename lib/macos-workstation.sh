@@ -23,8 +23,6 @@ macos_workstation::deploy() {
   macos_workstation::install_basic_packages || fail
   macos_workstation::install_developer_packages || fail
   macos_workstation::configure || fail
-  
-  log::success "Done macos_workstation::deploy" || fail
 }
 
 macos_workstation::install_basic_packages() {
@@ -183,8 +181,6 @@ macos_workstation::configure() {
   # git
   workstation::configure_git || fail
   workstation::configure_git_user || fail
-
-  log::success "Done macos_workstation::configure" || fail
 }
 
 macos_workstation::hide_dirs() {

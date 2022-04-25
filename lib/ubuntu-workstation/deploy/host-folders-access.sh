@@ -30,8 +30,6 @@ ubuntu_workstation::deploy_host_folders_access() {
   # shellcheck disable=2034
   local SOPKA_TASK_STDERR_FILTER=task::install_filter
   bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_host_folders_access::stage_two "${credentials_file}" || fail
-
-  log::success "Done ubuntu_workstation::deploy_host_folders_access" || fail
 }
 
 ubuntu_workstation::deploy_host_folders_access::stage_two() {

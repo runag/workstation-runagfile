@@ -16,6 +16,4 @@
 
 ubuntu_workstation::deploy_shellrc() {
   ubuntu_workstation::install_shellrc || fail
-
-  log::success "Done ubuntu_workstation::deploy_shellrc" || fail
 }

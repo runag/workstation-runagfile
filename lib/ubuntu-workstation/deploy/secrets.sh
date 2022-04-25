@@ -53,6 +53,4 @@ ubuntu_workstation::deploy_secrets() {
 
   # configure git to use gpg signing key
   git::configure_signingkey "38F6833D4C62D3AF8102789772080E033B1F76B5!" || fail
-
-  log::success "Done ubuntu_workstation::deploy_secrets" || fail
 }
