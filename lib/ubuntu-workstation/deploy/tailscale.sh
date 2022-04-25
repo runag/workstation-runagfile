@@ -26,13 +26,13 @@ ubuntu_workstation::deploy-tailscale() {
     local tailscale_key; tailscale_key="$(bw get password "my tailscale reusable key")" || fail
     # shellcheck disable=2034
     local SOPKA_TASK_STDERR_FILTER=task::install_filter
-    bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy-tailscale::stage-2 "${tailscale_key}" || fail
+    bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy-tailscale::stage-two "${tailscale_key}" || fail
   fi
 
   log::success "Done ubuntu_workstation::deploy-tailscale" || fail
 }
 
-ubuntu_workstation::deploy-tailscale::stage-2() {
+ubuntu_workstation::deploy-tailscale::stage-two() {
   local tailscale_key="$1"
 
   # install tailscale

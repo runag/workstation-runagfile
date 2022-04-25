@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy-host-folders-access() {
+ubuntu_workstation::deploy_host_folders_access() {
   # install gpg keys
   ubuntu_workstation::install_gpg_keys || fail
 
@@ -29,12 +29,12 @@ ubuntu_workstation::deploy-host-folders-access() {
 
   # shellcheck disable=2034
   local SOPKA_TASK_STDERR_FILTER=task::install_filter
-  bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy-host-folders-access::stage-2 "${credentials_file}" || fail
+  bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_host_folders_access::stage_two "${credentials_file}" || fail
 
-  log::success "Done ubuntu_workstation::deploy-host-folders-access" || fail
+  log::success "Done ubuntu_workstation::deploy_host_folders_access" || fail
 }
 
-ubuntu_workstation::deploy-host-folders-access::stage-2() {
+ubuntu_workstation::deploy_host_folders_access::stage_two() {
   local credentials_file="$1"
 
   local host_ip_address; host_ip_address="$(vmware::get_host_ip_address)" || fail

@@ -22,7 +22,7 @@ ubuntu_workstation::deploy-full-workstation() {
     ubuntu_workstation::deploy-secrets || fail
 
     if vmware::is_inside_vm; then
-      ubuntu_workstation::deploy-host-folders-access || fail
+      ubuntu_workstation::deploy_host_folders_access || fail
     fi
 
     ubuntu_workstation::deploy-tailscale || fail
