@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy-tailscale() {
+ubuntu_workstation::deploy_tailscale() {
   # install gpg keys
   ubuntu_workstation::install_gpg_keys || fail
 
@@ -26,13 +26,13 @@ ubuntu_workstation::deploy-tailscale() {
     local tailscale_key; tailscale_key="$(bw get password "my tailscale reusable key")" || fail
     # shellcheck disable=2034
     local SOPKA_TASK_STDERR_FILTER=task::install_filter
-    bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy-tailscale::stage-two "${tailscale_key}" || fail
+    bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_tailscale::stage_two "${tailscale_key}" || fail
   fi
 
-  log::success "Done ubuntu_workstation::deploy-tailscale" || fail
+  log::success "Done ubuntu_workstation::deploy_tailscale" || fail
 }
 
-ubuntu_workstation::deploy-tailscale::stage-two() {
+ubuntu_workstation::deploy_tailscale::stage_two() {
   local tailscale_key="$1"
 
   # install tailscale

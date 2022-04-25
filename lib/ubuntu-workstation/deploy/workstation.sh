@@ -14,25 +14,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy-full-workstation() {
-  ubuntu_workstation::deploy-workstation-base || fail
+ubuntu_workstation::deploy_full_workstation() {
+  ubuntu_workstation::deploy_workstation_base || fail
 
   # subshell to deploy secrets
   (
-    ubuntu_workstation::deploy-secrets || fail
+    ubuntu_workstation::deploy_secrets || fail
 
     if vmware::is_inside_vm; then
       ubuntu_workstation::deploy_host_folders_access || fail
     fi
 
-    ubuntu_workstation::deploy-tailscale || fail
+    ubuntu_workstation::deploy_tailscale || fail
     ubuntu_workstation::backup::deploy || fail
   ) || fail
 
-  log::success "Done ubuntu_workstation::deploy-full-workstation" || fail
+  log::success "Done ubuntu_workstation::deploy_full_workstation" || fail
 }
 
-ubuntu_workstation::deploy-workstation-base() {
+ubuntu_workstation::deploy_workstation_base() {
   export SOPKA_TASK_STDERR_FILTER=task::install_filter
 
   # disable screen lock
@@ -100,5 +100,5 @@ ubuntu_workstation::deploy-workstation-base() {
   # without task:run here, snap can't understand that he has no terminal to output to and just dumps escape codes to log at large
   ubuntu_workstation::install_desktop_software::snap || fail
 
-  log::success "Done ubuntu_workstation::deploy-workstation-base" || fail
+  log::success "Done ubuntu_workstation::deploy_workstation_base" || fail
 }
