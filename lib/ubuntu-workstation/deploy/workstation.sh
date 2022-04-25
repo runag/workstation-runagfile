@@ -57,7 +57,7 @@ ubuntu_workstation::deploy-workstation-base() {
   task::run ubuntu_workstation::install_system_software || fail
 
   # configure system
-  task::run ubuntu_workstation::configure-system || fail
+  task::run ubuntu_workstation::configure_system || fail
 
   # install terminal software
   task::run ubuntu_workstation::install_terminal_software || fail
@@ -70,7 +70,7 @@ ubuntu_workstation::deploy-workstation-base() {
 
   # install and configure servers
   task::run ubuntu_workstation::install_servers || fail
-  task::run ubuntu_workstation::configure-servers || fail
+  task::run ubuntu_workstation::configure_servers || fail
 
   # programming languages
   task::run ubuntu_workstation::install_and_update_nodejs || fail
@@ -80,7 +80,7 @@ ubuntu_workstation::deploy-workstation-base() {
   # install & configure desktop software
   task::run ubuntu_workstation::install_desktop_software::apt || fail
   if [ -n "${DISPLAY:-}" ]; then
-    task::run ubuntu_workstation::configure-desktop-software || fail
+    task::run ubuntu_workstation::configure_desktop_software || fail
   fi
 
 

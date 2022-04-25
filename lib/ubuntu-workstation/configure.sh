@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::configure-system() {
+ubuntu_workstation::configure_system() {
   # increase inotify limits
   linux::configure_inotify || fail
 
@@ -31,35 +31,35 @@ ubuntu_workstation::configure-system() {
   fi
 }
 
-ubuntu_workstation::configure-servers() {
+ubuntu_workstation::configure_servers() {
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 
-ubuntu_workstation::configure-desktop-software() {
+ubuntu_workstation::configure_desktop_software() {
   # configure firefox
-  ubuntu_workstation::configure-firefox || fail
+  ubuntu_workstation::configure_firefox || fail
   firefox::enable_wayland || fail
 
   # configure imwheel
   if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-    ubuntu_workstation::configure-imwhell || fail
+    ubuntu_workstation::configure_imwhell || fail
   fi
 
   # configure home folders
-  ubuntu_workstation::configure-home-folders || fail
+  ubuntu_workstation::configure_home_folders || fail
 
   # configure gnome desktop
-  ubuntu_workstation::configure-gnome || fail
+  ubuntu_workstation::configure_gnome || fail
 }
 
-ubuntu_workstation::configure-firefox() {
+ubuntu_workstation::configure_firefox() {
   firefox::set_pref "mousewheel.default.delta_multiplier_x" 200 || fail
   firefox::set_pref "mousewheel.default.delta_multiplier_y" 200 || fail
 }
 
-ubuntu_workstation::configure-imwhell() {
+ubuntu_workstation::configure_imwhell() {
   local repetitions="2"
   local output_file="${HOME}/.imwheelrc"
   tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
@@ -93,7 +93,7 @@ EOF
   /usr/bin/imwheel --kill
 }
 
-ubuntu_workstation::configure-home-folders() {
+ubuntu_workstation::configure_home_folders() {
   local dirs_file="${HOME}/.config/user-dirs.dirs"
 
   if [ -f "${dirs_file}" ]; then
@@ -132,67 +132,67 @@ ubuntu_workstation::configure-home-folders() {
   file::append_line_unless_present "snap" "${HOME}/.hidden" || fail
 }
 
-ubuntu_workstation::configure-gnome() {(
+ubuntu_workstation::configure_gnome() {(
   # use dconf-editor to find key/value pairs
   #
   # Please do not use dbus-launch here because it will introduce side-effect to
   # git:add-credentials-to-gnome-keyring and
   # ssh::add-key-password-to-gnome-keyring
   #
-  gnome-set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
-  gnome-get() { gsettings get "org.gnome.$1" "${@:2}"; }
+  gnome_set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
+  gnome_get() { gsettings get "org.gnome.$1" "${@:2}"; }
 
   # Terminal
   local profile_id profile_path
 
-  if profile_id="$(gnome-get Terminal.ProfilesList default 2>/dev/null)"; then
+  if profile_id="$(gnome_get Terminal.ProfilesList default 2>/dev/null)"; then
     local profile_path="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile_id:1:-1}/"
     
-    gnome-set "${profile_path}" exit-action 'hold' || fail
-    # TODO: I think I need to try to live with the defaults
-    # gnome-set "${profile_path}" login-shell true || fail
+    gnome_set "${profile_path}" exit-action 'hold' || fail
+    # TODO: I think I need to try to live with the default non-login shell
+    # gnome_set "${profile_path}" login-shell true || fail
   fi
 
-  gnome-set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
-  gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
-  gnome-set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
+  gnome_set Terminal.Legacy.Settings menu-accelerator-enabled false || fail
+  gnome_set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
+  gnome_set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
 
   # Desktop
-  gnome-set shell.extensions.desktop-icons show-trash false || fail
-  gnome-set shell.extensions.desktop-icons show-home false || fail
+  gnome_set shell.extensions.desktop-icons show-trash false || fail
+  gnome_set shell.extensions.desktop-icons show-home false || fail
 
   # Dash
-  gnome-set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
-  gnome-set shell.extensions.dash-to-dock dock-fixed false || fail
-  gnome-set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
-  gnome-set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
-  gnome-set shell.extensions.dash-to-dock require-pressure-to-show false || fail
-  gnome-set shell.extensions.dash-to-dock show-apps-at-top true || fail
-  gnome-set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
+  gnome_set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
+  gnome_set shell.extensions.dash-to-dock dock-fixed false || fail
+  gnome_set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gnome_set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
+  gnome_set shell.extensions.dash-to-dock require-pressure-to-show false || fail
+  gnome_set shell.extensions.dash-to-dock show-apps-at-top true || fail
+  gnome_set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
 
   # Nautilus
-  gnome-set nautilus.list-view default-zoom-level 'small' || fail
-  gnome-set nautilus.list-view use-tree-view true || fail
-  gnome-set nautilus.preferences default-folder-viewer 'list-view' || fail
-  gnome-set nautilus.preferences show-delete-permanently true || fail
-  gnome-set nautilus.preferences show-hidden-files true || fail
+  gnome_set nautilus.list-view default-zoom-level 'small' || fail
+  gnome_set nautilus.list-view use-tree-view true || fail
+  gnome_set nautilus.preferences default-folder-viewer 'list-view' || fail
+  gnome_set nautilus.preferences show-delete-permanently true || fail
+  gnome_set nautilus.preferences show-hidden-files true || fail
 
   # Automatic timezone
-  gnome-set desktop.datetime automatic-timezone true || fail
+  gnome_set desktop.datetime automatic-timezone true || fail
 
   # Input sources
   # on mac host: ('xkb', 'ru+mac')
-  gnome-set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
+  gnome_set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
 
   # Disable sound alerts
-  gnome-set desktop.sound event-sounds false || fail
+  gnome_set desktop.sound event-sounds false || fail
 
   # Enable fractional scaling
-  # gnome-set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
+  # gnome_set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
 
-  # 1600 DPI mouse
-  # gnome-set desktop.peripherals.mouse speed -0.75 || fail
+  # 3200 DPI mouse
+  gnome_set desktop.peripherals.mouse speed -1 || fail
 
   # dark theme
-  gnome-set desktop.interface gtk-theme 'Yaru-dark' || fail
+  gnome_set desktop.interface gtk-theme 'Yaru-dark' || fail
 )}
