@@ -20,7 +20,6 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add windows_workstation::deploy_authentication || fail
 fi
 
-
 windows_workstation::deploy_full_workstation() {
   windows_workstation::deploy_base_workstation || fail
 
