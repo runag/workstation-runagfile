@@ -15,9 +15,13 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header Windows workstation || fail
+
   sopka_menu::add windows_workstation::deploy_full_workstation || fail
   sopka_menu::add windows_workstation::deploy_base_workstation || fail
   sopka_menu::add windows_workstation::deploy_authentication || fail
+
+  sopka_menu::add_delimiter || fail
 fi
 
 windows_workstation::deploy_full_workstation() {

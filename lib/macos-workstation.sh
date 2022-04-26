@@ -15,12 +15,16 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header macOS workstation || fail
+  
   sopka_menu::add macos_workstation::deploy_full_workstation || fail
   sopka_menu::add macos_workstation::deploy_base_workstation || fail
   sopka_menu::add macos_workstation::deploy_authentication || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
   sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
   sopka_menu::add macos_workstation::start_developer_servers || fail
+
+  sopka_menu::add_delimiter || fail
 fi
 
 macos_workstation::deploy_full_workstation() {
