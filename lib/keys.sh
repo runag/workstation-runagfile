@@ -14,40 +14,52 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::keys::populate_sopka_menu() {
-  if [[ "${OSTYPE}" =~ ^linux ]]; then
-    local dir; for dir in "/media/${USER}"/KEYS-* ; do
-      if [ -d "$dir" ]; then
-        sopka_menu::add_header Keys || fail
-        sopka_menu::add ubuntu_workstation::keys::maintain_checksums "${dir}" || fail
-        sopka_menu::add ubuntu_workstation::keys::make_backups "${dir}" || fail
-        sopka_menu::add_delimiter || fail
-      fi
+keys::populate_sopka_menu() {
+  local dir
+
+  if [[ "${OSTYPE}" =~ ^msys ]]; then
+    keys::add_sopka_menu_for_directory "/k" || fail
+
+  elif [[ "${OSTYPE}" =~ ^darwin ]]; then
+    for dir in "/Volumes"/*KEYS* ; do
+      keys::add_sopka_menu_for_directory "$dir" || fail
     done
+
+  elif [[ "${OSTYPE}" =~ ^linux ]]; then
+    for dir in "/media/${USER}"/*KEYS* ; do
+      keys::add_sopka_menu_for_directory "$dir" || fail
+    done
+
   fi
 }
 
-if declare -f sopka_menu::add >/dev/null; then
-  ubuntu_workstation::keys::populate_sopka_menu || fail
-fi
+keys::add_sopka_menu_for_directory() {
+  local dir="$1"
+  if [ -d "$dir" ]; then
+    sopka_menu::add_header "Keys in ${dir}" || fail
+    sopka_menu::add keys::maintain_checksums "${dir}" || fail
+    sopka_menu::add keys::make_backups "${dir}" || fail
+    sopka_menu::add_delimiter || fail
+  fi
+}
 
-ubuntu_workstation::keys::maintain_checksums() {
+keys::maintain_checksums() {
   local media="$1"
 
   local dir; for dir in "${media}"/*keys* ; do
     if [ -d "${dir}" ]; then
-      linux::with_secure_temp_dir checksums::create_or_update "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available checksums::create_or_update "${dir}" "checksums.txt" || fail
     fi
   done
 
   local dir; for dir in "${media}"/copies/*/* ; do
     if [ -d "${dir}" ]; then
-      linux::with_secure_temp_dir checksums::verify "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }
 
-ubuntu_workstation::keys::make_backups() {
+keys::make_backups() {
   local media="$1"
   
   local dest_dir; dest_dir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
@@ -63,3 +75,7 @@ ubuntu_workstation::keys::make_backups() {
   sync || fail
   echo "${dest_dir}"
 }
+
+if declare -f sopka_menu::add >/dev/null; then
+  keys::populate_sopka_menu || fail
+fi
