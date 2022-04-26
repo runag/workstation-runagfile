@@ -39,31 +39,29 @@ This script is idempotent. It can be run multiple times to produce a system whic
 
 The file ``config.sh`` contains my name, email, and PGP key IDs to use in configuration. Please remove them if you happen to fork this script.
 
-## How to run it
+## How to run it on Linux
 
-### on Linux
-
-#### Option A: if you have a console with scrollbuffer
+### Option A: if you have a console with scrollbuffer
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
 ```
 
-#### Option B: run deploy-vm-server on console without scroll buffer
+### Option B: run deploy-vm-server on console without scroll buffer
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu_workstation::deploy_vm_server 2>&1 | tee -a deploy-vm-server.log
 ```
 
-### on MacOS
+## How to run it on MacOS
 
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
 ```
 
-### on Windows
+## How to run it on on Windows
 
-#### 1. First stage deploy script (in powershell)
+### 1. First stage deploy script (in powershell)
 
 Start PowerShell as administrator, run the following and wait for it to complete:
 
@@ -83,7 +81,7 @@ That script will do the following:
 7. Upgrades all installed choco packages
 8. Sets ssh-agent service startup type to automatic and runs in
 
-#### 2. Second stage deploy script (in bash)
+### 2. Second stage deploy script (in bash)
 
 At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
 
@@ -99,7 +97,7 @@ Select ``windows_workstation::deploy_full_workstation``. It will do the followin
 4. Configures git, vscode, sublime merge, sublime text
 5. Installs ssh keys, rubygems and npm credentials
 
-#### 3. Set execution policy to "Bypass"
+### 3. Set execution policy to "Bypass"
 
 Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
 
@@ -107,7 +105,7 @@ Start PowerShell as a regular user, and make sure you really understand conseque
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
 ```
 
-#### 4. Install winssh-pageant
+### 4. Install winssh-pageant
 
 https://github.com/ndbeals/winssh-pageant
 
