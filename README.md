@@ -91,7 +91,7 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 ~/.sopka/bin/sopka
 ```
 
-Select ``windows_workstation::deploy``. It will do the following:
+Select ``windows_workstation::deploy_full_workstation``. It will do the following:
 
 1. Installs shellrc loader
 2. Selects nano as default editor
