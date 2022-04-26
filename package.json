@@ -7,8 +7,7 @@
   "author": "Stanislav Senotrusov",
   "repository": "senotrusov/sopkafile",
   "scripts": {
-    "lint": "shellcheck $(find . -name '*.sh')",
-    "build": "convert docs/sopka-menu-screenshot.png -resize 50% docs/sopka-menu-screenshot-small.png"
+    "lint": "shellcheck $(find . -name '*.sh')"
   },
   "private": true
 }
