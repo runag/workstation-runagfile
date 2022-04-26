@@ -25,7 +25,7 @@ To keep those steps as declarative as I could possible express in Bash, I made a
 
 Basically, this Sopkafile you are looking at is the things I want to setup and configure for that exact task (my workstation) and [Sopka](https://github.com/senotrusov/sopka) is the abstract library that makes it all possible.
 
-![Sopka menu screenshot](docs/sopka-menu-screenshot.png)
+![Sopka menu screenshot](docs/sopka-menu-screenshot-small.png)
 
 ## What this script will do
 
@@ -33,11 +33,11 @@ Basically, this Sopkafile you are looking at is the things I want to setup and c
 2. Installs keys and software licenses from my bitwarden database.
 3. Makes a few tweaks to the system and to the desktop software.
 4. Installs a few shell aliases.
-5. Installs configuration for the Sublime Text and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
+5. Installs configuration for the Sublime Text, Sublime Merge and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
 
 This script is idempotent. It can be run multiple times to produce a system which is up-to date with the recent software updates and with my configuration changes.
 
-The file ``config.sh`` contains my name and email to use in configuration. Please remove them if you happen to fork this script.
+The file ``config.sh`` contains my name, email, and PGP key IDs to use in configuration. Please remove them if you happen to fork this script.
 
 ## How to run it
 
