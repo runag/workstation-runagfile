@@ -5,13 +5,8 @@
 	],
 	"installed_packages":
 	[
-		"Better CoffeeScript",
-		"Crontab",
-		"nginx",
 		"Package Control",
-		"Pug",
 		"Ruby Slim",
 		"Sass",
-		"Vue Syntax Highlight"
 	],
 }
