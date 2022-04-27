@@ -73,10 +73,16 @@ function Git-Clone-or-Pull($url, $dest){
   }
 }
 
-$sopkafile_path = "$env:USERPROFILE\.sopka\sopkafiles\github-senotrusov-sopkafile"
 
-Git-Clone-or-Pull "https://github.com/senotrusov/sopka.git" "$env:USERPROFILE\.sopka"
-Git-Clone-or-Pull "https://github.com/senotrusov/sopkafile.git" "$sopkafile_path"
+# If you forked this script please patch the next 2 lines
+$sopkafile_repo = "senotrusov/workstation-sopkafile"
+$sopkafile_dest = "workstation-sopkafile-senotrusov-github"
+
+$sopka_path = "$env:USERPROFILE\.sopka"
+$sopkafile_path = "$sopka_path\sopkafiles\$sopkafile_dest"
+
+Git-Clone-or-Pull "https://github.com/senotrusov/sopka.git" "$sopka_path"
+Git-Clone-or-Pull "https://github.com/$sopkafile_repo.git" "$sopkafile_path"
 
 
 # Install choco packages

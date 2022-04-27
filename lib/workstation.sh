@@ -23,10 +23,13 @@ if declare -f sopka_menu::add >/dev/null; then
 fi
 
 workstation::edit_sopka_and_sopkafile() {
-  code "${HOME}/.sopka/sopkafiles/github-senotrusov-sopkafile/sopka.code-workspace"
+  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  local repo_dir; repo_dir="$(cd "${self_dir}/.." >/dev/null 2>&1 && pwd)" || fail
+
+  code "${repo_dir}/sopka.code-workspace"
   smerge "${HOME}/.sopka"
-  sleep 3
-  smerge "${HOME}/.sopka/sopkafiles/github-senotrusov-sopkafile"
+  sleep 5
+  smerge "${repo_dir}"
 }
 
 workstation::merge_editor_configs() {

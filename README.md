@@ -44,19 +44,19 @@ The file ``config.sh`` contains my name, email, and PGP key IDs to use in config
 ### Option A: if you have a console with scrollbuffer
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
 ```
 
 ### Option B: run deploy-vm-server on console without scroll buffer
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run ubuntu_workstation::deploy_vm_server 2>&1 | tee -a deploy-vm-server.log
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run ubuntu_workstation::deploy_vm_server 2>&1 | tee -a deploy-vm-server.log
 ```
 
 ## How to run it on MacOS
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/sopkafile run
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
 ```
 
 ## How to run it on on Windows
@@ -66,14 +66,14 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.
 Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
-iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/sopkafile/main/deploy.ps1" | iex
+iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/workstation-sopkafile/main/deploy.ps1" | iex
 ```
 
 That script will do the following:
 
 1. Installs chocolatey
 2. Installs git
-3. Clones [sopka](https://github.com/senotrusov/sopka) and [sopkafile](https://github.com/senotrusov/sopkafile) repositories
+3. Clones [sopka](https://github.com/senotrusov/sopka) and [workstation-sopkafile](https://github.com/senotrusov/workstation-sopkafile) repositories
 4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
@@ -126,6 +126,10 @@ Record names should be as the following:
 "my tailscale reusable key"
 "my sublime text 3 license"
 ```
+
+## Forking
+
+1. Go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
 
 ## Contributing
 
