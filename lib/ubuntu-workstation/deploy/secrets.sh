@@ -37,10 +37,10 @@ ubuntu_workstation::deploy_secrets() {
 
   # install ssh key, configure ssh  to use it
   workstation::install_ssh_keys || fail
-  bitwarden::use password "my password for ssh private key" ssh::gnome_keyring_credentials || fail
+  bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::gnome_keyring_credentials || fail
 
   # git access token
-  bitwarden::use password "my github personal access token" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
+  bitwarden::use password "${MY_GITHUB_ACCESS_TOKEN_ID}" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
 
   # rubygems
   workstation::install_rubygems_credentials || fail

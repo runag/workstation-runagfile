@@ -26,7 +26,7 @@ workstation::sublime_merge::install_license() {
 
   dir::make_if_not_exists "${config_path}/Local" 700 || fail
 
-  bitwarden::write_notes_to_file_if_not_exists "my sublime merge license" "${config_path}/Local/License.sublime_license" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_SUBLIME_MERGE_LICENSE_ID}" "${config_path}/Local/License.sublime_license" || fail
 }
 
 workstation::sublime_merge::merge_config() {

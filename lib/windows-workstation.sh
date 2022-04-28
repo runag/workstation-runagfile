@@ -57,17 +57,27 @@ windows_workstation::deploy_authentication() {
   command -v bw >/dev/null || fail "bw command is not found"
 
   # git user
-  workstation::configure_git_user || fail
+  if sopka::should_deploy_auth git; then
+    workstation::configure_git_user || fail
+  fi
 
   # ssh key
-  workstation::install_ssh_keys || fail
+  if sopka::should_deploy_auth ssh; then
+    workstation::install_ssh_keys || fail
+  fi
 
   # rubygems
-  workstation::install_rubygems_credentials || fail
+  if sopka::should_deploy_auth rubygems; then
+    workstation::install_rubygems_credentials || fail
+  fi
 
   # npm
-  workstation::install_npm_credentials || fail
+  if sopka::should_deploy_auth npm; then
+    workstation::install_npm_credentials || fail
+  fi
 
   # sublime text license
-  workstation::sublime_text::install_license || fail
+  if sopka::should_deploy_auth sublime_text_3; then
+    workstation::sublime_text::install_license || fail
+  fi
 }

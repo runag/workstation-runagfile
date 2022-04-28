@@ -42,7 +42,7 @@ ubuntu_workstation::backup::install_restic_password_file() {
   workstation::make_keys_directory_if_not_exists || fail
   dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
 
-  gpg::decrypt_and_install_file "${MY_RESTIC_PASSWORD_FILE}" "${HOME}/.keys/restic/workstation-backups.restic-password" || fail
+  gpg::decrypt_and_install_file "${MY_RESTIC_PASSWORD_FILE}" "${HOME}/.keys/restic/workstation.txt" || fail
 }
 
 ubuntu_workstation::backup::deploy() {
@@ -57,12 +57,12 @@ ubuntu_workstation::backup::deploy() {
 
   # install ssh key
   ssh::make_user_config_dir_if_not_exists || fail
-  bitwarden::write_notes_to_file_if_not_exists "my data server ssh private key" "${HOME}/.ssh/id_rsa" || fail
-  bitwarden::write_notes_to_file_if_not_exists "my data server ssh public key" "${HOME}/.ssh/id_rsa.pub" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_rsa" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
   workstation::make_keys_directory_if_not_exists || fail
-  bitwarden::write_password_to_file_if_not_exists "my data server ssh destination" "${HOME}/.keys/my-data-server.ssh-destination" || fail
+  bitwarden::write_password_to_file_if_not_exists "${MY_DATA_SERVER_SSH_DESTINATION_ID}" "${HOME}/.keys/my-data-server.ssh-destination" || fail
 
   bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::backup::deploy::stage_two || fail
 }
@@ -153,7 +153,7 @@ ubuntu_workstation::backup::load_config() {
 
   ssh_destination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
 
-  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation-backups.restic-password"
+  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation.txt"
   export RESTIC_REPOSITORY="sftp:${ssh_destination}:backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
 }
 

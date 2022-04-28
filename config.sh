@@ -15,11 +15,22 @@
 #  limitations under the License.
 
 
-# Authentication for git
+# Auth
+export SOPKA_AUTH_DEPLOY_LIST="backup bitwarden git github gpg npm rubygems ssh sublime_text_3 tailscale windows_cifs"
+
+
+# Git auth
 export MY_GIT_USER_EMAIL="stan@senotrusov.com"
 export MY_GIT_USER_NAME="Stanislav Senotrusov"
 export MY_GITHUB_LOGIN="senotrusov"
 
+
+# GPG key
+export MY_GPG_KEY="84C200370DF103F0ADF5028FF4D70B8640424BEA"
+export MY_GPG_SIGNING_KEY="38F6833D4C62D3AF8102789772080E033B1F76B5"
+
+
+# Key paths
 if [[ "${OSTYPE}" =~ ^msys ]]; then
   export MY_KEYS_PATH="/k/keys"
 elif [[ "${OSTYPE}" =~ ^darwin ]]; then
@@ -28,14 +39,25 @@ elif [[ "${OSTYPE}" =~ ^linux ]]; then
   export MY_KEYS_PATH="/media/${USER}/KEYS-DAILY/keys"
 fi
 
-# More authentication
-export MY_GPG_KEY="84C200370DF103F0ADF5028FF4D70B8640424BEA"
-export MY_GPG_SIGNING_KEY="38F6833D4C62D3AF8102789772080E033B1F76B5"
-export MY_GPG_KEY_PATH="${MY_KEYS_PATH}/gpg/${MY_GPG_KEY:(-8)}/${MY_GPG_KEY:(-8)}-secret-subkeys.asc"
+export MY_GPG_KEY_FILE="${MY_KEYS_PATH}/gpg/workstation/secret-subkeys.asc"
+export MY_BITWARDEN_API_KEY_FILE="${MY_KEYS_PATH}/bitwarden/workstation.sh.asc"
+export MY_RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation.txt.asc"
 
-export MY_BITWARDEN_API_KEY_PATH="${MY_KEYS_PATH}/bitwarden/stan-api-key.sh.asc"
-export MY_RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/stan.restic-password.asc"
 
+# Bitwarden objects
+export MY_DATA_SERVER_SSH_DESTINATION_ID="my data server ssh destination"
+export MY_DATA_SERVER_SSH_PRIVATE_KEY_ID="my data server ssh private key"
+export MY_DATA_SERVER_SSH_PUBLIC_KEY_ID="my data server ssh public key"
+export MY_GITHUB_ACCESS_TOKEN_ID="my github access token"
+export MY_NPM_PUBLISH_TOKEN_ID="my npm publish token"
+export MY_RUBYGEMS_CREDENTIALS_ID="my rubygems credentials"
+export MY_SSH_KEY_PASSWORD_ID="my ssh key password"
+export MY_SSH_PRIVATE_KEY_ID="my ssh private key"
+export MY_SSH_PUBLIC_KEY_ID="my ssh public key"
+export MY_SUBLIME_MERGE_LICENSE_ID="my sublime merge license"
+export MY_SUBLIME_TEXT_3_LICENSE_ID="my sublime text 3 license"
+export MY_TAILSCALE_REUSABLE_KEY_ID="my tailscale reusable key"
+export MY_WINDOWS_CIFS_CREDENTIALS_ID="my windows cifs credentials"
 
 # Ruby & Node versions
 export NODENV_VERSION="16.13.0"

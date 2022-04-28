@@ -49,18 +49,18 @@ workstation::configure_git_user() {
 
 workstation::install_ssh_keys() {
   ssh::make_user_config_dir_if_not_exists || fail
-  bitwarden::write_notes_to_file_if_not_exists "my ssh private key" "${HOME}/.ssh/id_ed25519" || fail
-  bitwarden::write_notes_to_file_if_not_exists "my ssh public key" "${HOME}/.ssh/id_ed25519.pub" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_ed25519" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_ed25519.pub" || fail
 }
 
 workstation::install_rubygems_credentials() {
   dir::make_if_not_exists "${HOME}/.gem" 755 || fail
-  bitwarden::write_notes_to_file_if_not_exists "my rubygems credentials" "${HOME}/.gem/credentials" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_RUBYGEMS_CREDENTIALS_ID}" "${HOME}/.gem/credentials" || fail
 }
 
 workstation::install_npm_credentials() {
   nodenv::load_shellrc || fail
-  bitwarden::use password "my npm publish token" npm::auth_token || fail
+  bitwarden::use password "${MY_NPM_PUBLISH_TOKEN_ID}" npm::auth_token || fail
 }
 
 workstation::make_keys_directory_if_not_exists() {

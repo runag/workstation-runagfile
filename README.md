@@ -109,27 +109,11 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
 
 https://github.com/ndbeals/winssh-pageant
 
-## Secret items which are expected to be found in a Bitwarden
-
-Record names should be as the following:
-
-```
-"my data server ssh destination"
-"my data server ssh private key"
-"my data server ssh public key"
-"my github personal access token"
-"my workstation virtual machine host filesystem access credentials"
-"my password for ssh private key"
-"my rubygems credentials"
-"my ssh private key"
-"my ssh public key"
-"my tailscale reusable key"
-"my sublime text 3 license"
-```
-
 ## Forking
 
+0. Consider forking [yorkstation-sopkafile](https://github.com/senotrusov/yorkstation-sopkafile)
 1. Go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
+2. Go to [config.sh](config.sh) and change things around
 
 ## Contributing
 

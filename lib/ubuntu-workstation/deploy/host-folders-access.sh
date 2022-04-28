@@ -25,7 +25,7 @@ ubuntu_workstation::deploy_host_folders_access() {
   local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
 
   workstation::make_keys_directory_if_not_exists || fail
-  bitwarden::use username password "my workstation virtual machine host filesystem access credentials" cifs::credentials "${credentials_file}" || fail
+  bitwarden::use username password "${MY_WINDOWS_CIFS_CREDENTIALS_ID}" cifs::credentials "${credentials_file}" || fail
 
   # shellcheck disable=2034
   local SOPKA_TASK_STDERR_FILTER=task::install_filter

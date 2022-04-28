@@ -157,22 +157,33 @@ macos_workstation::deploy_configuration() {
   nodenv::configure_mismatched_binaries_workaround || fail
 }
 
+
 macos_workstation::deploy_authentication() {
   # git user
-  workstation::configure_git_user || fail
+  if sopka::should_deploy_auth git; then
+    workstation::configure_git_user || fail
+  fi
 
   # ssh key
-  workstation::install_ssh_keys || fail
-  bitwarden::use password "my password for ssh private key" ssh::macos_keychain || fail
+  if sopka::should_deploy_auth ssh; then
+    workstation::install_ssh_keys || fail
+    bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::macos_keychain || fail
+  fi
 
   # rubygems
-  workstation::install_rubygems_credentials || fail
+  if sopka::should_deploy_auth rubygems; then
+    workstation::install_rubygems_credentials || fail
+  fi
 
   # npm
-  workstation::install_npm_credentials || fail
+  if sopka::should_deploy_auth npm; then
+    workstation::install_npm_credentials || fail
+  fi
 
   # sublime text license
-  workstation::sublime_text::install_license || fail
+  if sopka::should_deploy_auth sublime_text_3; then
+    workstation::sublime_text::install_license || fail
+  fi
 }
 
 macos_workstation::deploy_opionated_configuration() {

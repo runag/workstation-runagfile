@@ -188,14 +188,14 @@ ubuntu_workstation::install_shellrc() {
 }
 
 ubuntu_workstation::install_gpg_keys() {
-  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_KEY_PATH}" || fail
+  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_KEY_FILE}" || fail
 }
 
 ubuntu_workstation::install_bitwarden_cli_and_login() {
   bitwarden::install_cli::snap || fail
 
   if ! bitwarden::is_logged_in; then
-    gpg::decrypt_and_source_script "${MY_BITWARDEN_API_KEY_PATH}" || fail
+    gpg::decrypt_and_source_script "${MY_BITWARDEN_API_KEY_FILE}" || fail
     bitwarden::login --apikey || fail
   fi
 }

@@ -29,7 +29,7 @@ workstation::sublime_text::install_license() {
 
   dir::make_if_not_exists "${config_path}/Local" 700 || fail
 
-  bitwarden::write_notes_to_file_if_not_exists "my sublime text 3 license" "${config_path}/Local/License.sublime_license" || fail
+  bitwarden::write_notes_to_file_if_not_exists "${MY_SUBLIME_TEXT_3_LICENSE_ID}" "${config_path}/Local/License.sublime_license" || fail
 }
 
 workstation::sublime_text::merge_config() {
