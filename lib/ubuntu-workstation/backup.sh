@@ -58,7 +58,7 @@ ubuntu_workstation::backup::deploy() {
   # install ssh key
   ssh::make_user_config_dir_if_not_exists || fail
   bitwarden::write_notes_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_rsa" || fail
-  bitwarden::write_notes_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_rsa.pub" || fail
+  bitwarden::write_password_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_rsa.pub" || fail
 
   # save ssh destination
   workstation::make_keys_directory_if_not_exists || fail

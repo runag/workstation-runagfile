@@ -50,7 +50,7 @@ workstation::configure_git_user() {
 workstation::install_ssh_keys() {
   ssh::make_user_config_dir_if_not_exists || fail
   bitwarden::write_notes_to_file_if_not_exists "${MY_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_ed25519" || fail
-  bitwarden::write_notes_to_file_if_not_exists "${MY_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_ed25519.pub" || fail
+  bitwarden::write_password_to_file_if_not_exists "${MY_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_ed25519.pub" || fail
 }
 
 workstation::install_rubygems_credentials() {

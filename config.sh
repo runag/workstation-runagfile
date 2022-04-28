@@ -45,19 +45,19 @@ export MY_RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation.txt.asc"
 
 
 # Bitwarden objects
-export MY_DATA_SERVER_SSH_DESTINATION_ID="my data server ssh destination"
-export MY_DATA_SERVER_SSH_PRIVATE_KEY_ID="my data server ssh private key"
-export MY_DATA_SERVER_SSH_PUBLIC_KEY_ID="my data server ssh public key"
-export MY_GITHUB_ACCESS_TOKEN_ID="my github access token"
-export MY_NPM_PUBLISH_TOKEN_ID="my npm publish token"
-export MY_RUBYGEMS_CREDENTIALS_ID="my rubygems credentials"
-export MY_SSH_KEY_PASSWORD_ID="my ssh key password"
-export MY_SSH_PRIVATE_KEY_ID="my ssh private key"
-export MY_SSH_PUBLIC_KEY_ID="my ssh public key"
-export MY_SUBLIME_MERGE_LICENSE_ID="my sublime merge license"
-export MY_SUBLIME_TEXT_3_LICENSE_ID="my sublime text 3 license"
-export MY_TAILSCALE_REUSABLE_KEY_ID="my tailscale reusable key"
-export MY_WINDOWS_CIFS_CREDENTIALS_ID="my windows cifs credentials"
+export MY_DATA_SERVER_SSH_DESTINATION_ID="my data server ssh destination" # password
+export MY_DATA_SERVER_SSH_PRIVATE_KEY_ID="my data server ssh private key" # notes
+export MY_DATA_SERVER_SSH_PUBLIC_KEY_ID="my data server ssh public key" # password
+export MY_GITHUB_ACCESS_TOKEN_ID="my github access token" # password
+export MY_NPM_PUBLISH_TOKEN_ID="my npm publish token" # password
+export MY_RUBYGEMS_CREDENTIALS_ID="my rubygems credentials" # notes
+export MY_SSH_KEY_PASSWORD_ID="my ssh key password" # password
+export MY_SSH_PRIVATE_KEY_ID="my ssh private key" # notes
+export MY_SSH_PUBLIC_KEY_ID="my ssh public key" # password
+export MY_SUBLIME_MERGE_LICENSE_ID="my sublime merge license" # notes
+export MY_SUBLIME_TEXT_3_LICENSE_ID="my sublime text 3 license" # notes
+export MY_TAILSCALE_REUSABLE_KEY_ID="my tailscale reusable key" # password
+export MY_WINDOWS_CIFS_CREDENTIALS_ID="my windows cifs credentials" # username, password
 
 # Ruby & Node versions
 export NODENV_VERSION="16.13.0"
