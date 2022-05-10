@@ -185,7 +185,7 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
 
   # Disable sound alerts
-  gnome_set desktop.sound event-sounds false || fail
+  # gnome_set desktop.sound event-sounds false || fail
 
   # Enable fractional scaling
   # gnome_set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
