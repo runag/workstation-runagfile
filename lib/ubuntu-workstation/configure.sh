@@ -164,7 +164,7 @@ ubuntu_workstation::configure_gnome() {(
   # Dash
   gnome_set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
   gnome_set shell.extensions.dash-to-dock dock-fixed false || fail
-  gnome_set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  # gnome_set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
   gnome_set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
   gnome_set shell.extensions.dash-to-dock require-pressure-to-show false || fail
   gnome_set shell.extensions.dash-to-dock show-apps-at-top true || fail
