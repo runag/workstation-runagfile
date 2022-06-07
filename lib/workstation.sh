@@ -17,20 +17,9 @@
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Miscellaneous || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
-  sopka_menu::add workstation::edit_sopka_and_sopkafile || fail
   sopka_menu::add workstation::merge_editor_configs || fail
   sopka_menu::add_delimiter || fail
 fi
-
-workstation::edit_sopka_and_sopkafile() {
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  local repo_dir; repo_dir="$(cd "${self_dir}/.." >/dev/null 2>&1 && pwd)" || fail
-
-  code "${repo_dir}/sopka.code-workspace"
-  smerge "${HOME}/.sopka"
-  sleep 5
-  smerge "${repo_dir}"
-}
 
 workstation::merge_editor_configs() {
   workstation::vscode::merge_config || fail
