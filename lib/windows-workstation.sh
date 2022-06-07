@@ -56,14 +56,14 @@ windows_workstation::deploy_authentication() {
   command -v jq >/dev/null || fail "jq command is not found"
   command -v bw >/dev/null || fail "bw command is not found"
 
-  # git user
-  if sopka::should_deploy_auth git; then
-    workstation::configure_git_user || fail
-  fi
-
   # ssh key
   if sopka::should_deploy_auth ssh; then
     workstation::install_ssh_keys || fail
+  fi
+
+  # git
+  if sopka::should_deploy_auth git; then
+    workstation::configure_git_user || fail
   fi
 
   # rubygems

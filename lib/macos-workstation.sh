@@ -159,15 +159,19 @@ macos_workstation::deploy_configuration() {
 
 
 macos_workstation::deploy_authentication() {
-  # git user
-  if sopka::should_deploy_auth git; then
-    workstation::configure_git_user || fail
-  fi
+  # check dependencies
+  command -v jq >/dev/null || fail "jq command is not found"
+  command -v bw >/dev/null || fail "bw command is not found"
 
   # ssh key
   if sopka::should_deploy_auth ssh; then
     workstation::install_ssh_keys || fail
     bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::macos_keychain || fail
+  fi
+
+  # git
+  if sopka::should_deploy_auth git; then
+    workstation::configure_git_user || fail
   fi
 
   # rubygems

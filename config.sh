@@ -15,20 +15,19 @@
 #  limitations under the License.
 
 
-# Auth
+# List of auth-related things to deploy
 export SOPKA_AUTH_DEPLOY_LIST="backup bitwarden git github gpg npm rubygems ssh sublime_text_3 tailscale windows_cifs"
 
-
-# Git auth
+# Git
 export MY_GIT_USER_EMAIL="stan@senotrusov.com"
 export MY_GIT_USER_NAME="Stanislav Senotrusov"
-export MY_GITHUB_LOGIN="senotrusov"
 
+# Github
+export MY_GITHUB_LOGIN="senotrusov"
 
 # GPG key
 export MY_GPG_KEY="84C200370DF103F0ADF5028FF4D70B8640424BEA"
 export MY_GPG_SIGNING_KEY="38F6833D4C62D3AF8102789772080E033B1F76B5"
-
 
 # Key paths
 if [[ "${OSTYPE}" =~ ^msys ]]; then
@@ -42,7 +41,6 @@ fi
 export MY_GPG_KEY_FILE="${MY_KEYS_PATH}/gpg/workstation/secret-subkeys.asc"
 export MY_BITWARDEN_API_KEY_FILE="${MY_KEYS_PATH}/bitwarden/workstation.sh.asc"
 export MY_RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation.txt.asc"
-
 
 # Bitwarden objects
 export MY_DATA_SERVER_SSH_DESTINATION_ID="my data server ssh destination" # password
