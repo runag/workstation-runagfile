@@ -19,7 +19,7 @@ if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   
   sopka_menu::add macos_workstation::deploy_full_workstation || fail
   sopka_menu::add macos_workstation::deploy_base_workstation || fail
-  sopka_menu::add macos_workstation::deploy_authentication || fail
+  sopka_menu::add macos_workstation::deploy_secrets || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
   sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
   sopka_menu::add macos_workstation::start_developer_servers || fail
@@ -30,8 +30,8 @@ fi
 macos_workstation::deploy_full_workstation() {
   macos_workstation::deploy_base_workstation || fail
 
-  # deploy authentication in a subshell
-  ( macos_workstation::deploy_authentication ) || fail
+  # deploy secrets in a subshell
+  ( macos_workstation::deploy_secrets ) || fail
 }
 
 macos_workstation::deploy_base_workstation() {
@@ -73,7 +73,7 @@ macos_workstation::install_basic_tools() {
 }
 
 macos_workstation::install_developer_tools() {
-  # auth
+  # secrets
   brew install bitwarden-cli || fail
   brew install gnupg || fail
 
@@ -163,34 +163,34 @@ macos_workstation::deploy_configuration() {
 }
 
 
-macos_workstation::deploy_authentication() {
+macos_workstation::deploy_secrets() {
   # check dependencies
   command -v jq >/dev/null || fail "jq command is not found"
   command -v bw >/dev/null || fail "bw command is not found"
 
   # ssh key
-  if sopka::should_deploy_auth ssh; then
+  if sopka::should_deploy_secrets ssh; then
     workstation::install_ssh_keys || fail
     bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::macos_keychain || fail
   fi
 
   # git
-  if sopka::should_deploy_auth git; then
+  if sopka::should_deploy_secrets git; then
     workstation::configure_git_user || fail
   fi
 
   # rubygems
-  if sopka::should_deploy_auth rubygems; then
+  if sopka::should_deploy_secrets rubygems; then
     workstation::install_rubygems_credentials || fail
   fi
 
   # npm
-  if sopka::should_deploy_auth npm; then
+  if sopka::should_deploy_secrets npm; then
     workstation::install_npm_credentials || fail
   fi
 
   # sublime text license
-  if sopka::should_deploy_auth sublime_text_3; then
+  if sopka::should_deploy_secrets sublime_text_3; then
     workstation::sublime_text::install_license || fail
   fi
 }

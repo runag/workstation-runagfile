@@ -19,7 +19,7 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
 
   sopka_menu::add windows_workstation::deploy_full_workstation || fail
   sopka_menu::add windows_workstation::deploy_base_workstation || fail
-  sopka_menu::add windows_workstation::deploy_authentication || fail
+  sopka_menu::add windows_workstation::deploy_secrets || fail
 
   sopka_menu::add_delimiter || fail
 fi
@@ -27,8 +27,8 @@ fi
 windows_workstation::deploy_full_workstation() {
   windows_workstation::deploy_base_workstation || fail
 
-  # deploy authentication in a subshell
-  ( windows_workstation::deploy_authentication ) || fail
+  # deploy secrets in a subshell
+  ( windows_workstation::deploy_secrets ) || fail
 }
 
 windows_workstation::deploy_base_workstation() {
@@ -51,33 +51,33 @@ windows_workstation::deploy_base_workstation() {
   workstation::sublime_text::install_config || fail
 }
 
-windows_workstation::deploy_authentication() {
+windows_workstation::deploy_secrets() {
   # check dependencies
   command -v jq >/dev/null || fail "jq command is not found"
   command -v bw >/dev/null || fail "bw command is not found"
 
   # ssh key
-  if sopka::should_deploy_auth ssh; then
+  if sopka::should_deploy_secrets ssh; then
     workstation::install_ssh_keys || fail
   fi
 
   # git
-  if sopka::should_deploy_auth git; then
+  if sopka::should_deploy_secrets git; then
     workstation::configure_git_user || fail
   fi
 
   # rubygems
-  if sopka::should_deploy_auth rubygems; then
+  if sopka::should_deploy_secrets rubygems; then
     workstation::install_rubygems_credentials || fail
   fi
 
   # npm
-  if sopka::should_deploy_auth npm; then
+  if sopka::should_deploy_secrets npm; then
     workstation::install_npm_credentials || fail
   fi
 
   # sublime text license
-  if sopka::should_deploy_auth sublime_text_3; then
+  if sopka::should_deploy_secrets sublime_text_3; then
     workstation::sublime_text::install_license || fail
   fi
 }

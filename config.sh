@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 
-# List of auth-related things to deploy
-export SOPKA_AUTH_DEPLOY_LIST="backup bitwarden git github gpg npm rubygems ssh sublime_text_3 tailscale windows_cifs"
+# List of secrets-related things to deploy
+export SOPKA_SECRETS_DEPLOY_LIST="backup bitwarden git github gpg npm rubygems ssh sublime_text_3 tailscale windows_cifs"
 
 # Git
 export MY_GIT_USER_EMAIL="stan@senotrusov.com"

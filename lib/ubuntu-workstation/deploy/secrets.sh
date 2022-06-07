@@ -25,23 +25,23 @@ ubuntu_workstation::deploy_secrets() {
   bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::preliminary_stage || fail
 
   # install gpg keys
-  if sopka::should_deploy_auth gpg; then
+  if sopka::should_deploy_secrets gpg; then
     ubuntu_workstation::install_gpg_keys || fail
   fi
 
   # install bitwarden cli and login
-  if sopka::should_deploy_auth bitwarden; then
+  if sopka::should_deploy_secrets bitwarden; then
     ubuntu_workstation::install_bitwarden_cli_and_login || fail
   fi
 
   # ssh key
-  if sopka::should_deploy_auth ssh; then
+  if sopka::should_deploy_secrets ssh; then
     workstation::install_ssh_keys || fail
     bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::gnome_keyring_credentials || fail
   fi
 
   # git
-  if sopka::should_deploy_auth git; then
+  if sopka::should_deploy_secrets git; then
     # git user
     workstation::configure_git_user || fail
 
@@ -54,17 +54,17 @@ ubuntu_workstation::deploy_secrets() {
   fi
 
   # rubygems
-  if sopka::should_deploy_auth rubygems; then
+  if sopka::should_deploy_secrets rubygems; then
     workstation::install_rubygems_credentials || fail
   fi
 
   # npm
-  if sopka::should_deploy_auth npm; then
+  if sopka::should_deploy_secrets npm; then
     workstation::install_npm_credentials || fail
   fi
 
   # sublime text license
-  if sopka::should_deploy_auth sublime_text_3; then
+  if sopka::should_deploy_secrets sublime_text_3; then
     workstation::sublime_text::install_license || fail
   fi
 }
