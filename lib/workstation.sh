@@ -21,12 +21,6 @@ if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_delimiter || fail
 fi
 
-workstation::merge_editor_configs() {
-  workstation::vscode::merge_config || fail
-  workstation::sublime_merge::merge_config || fail
-  workstation::sublime_text::merge_config || fail
-}
-
 workstation::configure_git() {
   git config --global core.autocrlf input || fail
 }
@@ -63,4 +57,10 @@ workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.solargraph" || fail
   rm -rf "${HOME}/.bundle" || fail
   rm -rf "${HOME}/.node-gyp" || fail
+}
+
+workstation::merge_editor_configs() {
+  workstation::vscode::merge_config || fail
+  workstation::sublime_merge::merge_config || fail
+  workstation::sublime_text::merge_config || fail
 }
