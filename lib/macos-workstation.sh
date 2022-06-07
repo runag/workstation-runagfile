@@ -100,7 +100,12 @@ macos_workstation::install_developer_tools() {
   brew install tmux || fail
 
   # specialized console tools
-  brew install awscli || fail
+  if [ "${CI:-}" = "true" ] && [ -e /usr/local/bin/aws ]; then # Check if CI image already contains aws
+    echo "CI image already contains aws"
+  else
+    brew install awscli || fail
+  fi
+
   brew install ffmpeg || fail
   brew install ghostscript || fail
   brew install graphviz || fail
