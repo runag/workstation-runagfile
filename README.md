@@ -111,9 +111,9 @@ https://github.com/ndbeals/winssh-pageant
 
 ## Forking
 
-0. Consider forking [yorkstation-sopkafile](https://github.com/senotrusov/yorkstation-sopkafile)
+0. Consider forking [workstation-thin-sopkafile](https://github.com/senotrusov/workstation-thin-sopkafile) instead of this
 1. Go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
-2. Go to [config.sh](config.sh) and change things around
+2. Go to [config.sh](config.sh) and change things
 
 ## Contributing
 
