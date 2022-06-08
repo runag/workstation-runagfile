@@ -27,7 +27,7 @@ ubuntu_workstation::configure_system() {
 
   # install vm-network-loss-workaround
   if vmware::is_inside_vm; then
-    ubuntu_workstation::install_vm_network_loss_workaround || fail
+    vmware::install_vm_network_loss_workaround || fail
   fi
 }
 
