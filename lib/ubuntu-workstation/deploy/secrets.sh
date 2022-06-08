@@ -14,15 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# install gnome-keyring and libsecret, install and configure git libsecret-credential-helper
-ubuntu_workstation::deploy_secrets::preliminary_stage(){
+# install dependencies
+ubuntu_workstation::deploy_secrets::install_dependencies(){
   apt::lazy_update || fail
   apt::install_gnome_keyring_and_libsecret || fail
   git::install_libsecret_credential_helper || fail
 }
 
 ubuntu_workstation::deploy_secrets() {
-  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::preliminary_stage || fail
+  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::install_dependencies || fail
 
   # install gpg keys
   if sopka::should_deploy_secrets gpg; then
