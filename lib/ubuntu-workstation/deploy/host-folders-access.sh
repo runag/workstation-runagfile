@@ -15,29 +15,33 @@
 #  limitations under the License.
 
 ubuntu_workstation::deploy_host_folders_access() {
+  # install cifs-utils
+  apt::install cifs-utils || fail
+
   # install gpg keys
   ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
   ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
-  # mount host folder
-  local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
-
+  # write credentials to local filesystem
   workstation::make_keys_directory_if_not_exists || fail
+  local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
   bitwarden::use username password "${MY_WINDOWS_CIFS_CREDENTIALS_ID}" cifs::credentials "${credentials_file}" || fail
 
-  # shellcheck disable=2034
-  local SOPKA_TASK_STDERR_FILTER=task::install_filter
-  bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_host_folders_access::stage_two "${credentials_file}" || fail
-}
-
-ubuntu_workstation::deploy_host_folders_access::stage_two() {
-  local credentials_file="$1"
-
+  # get host ip address
   local host_ip_address; host_ip_address="$(vmware::get_host_ip_address)" || fail
 
-  apt::install cifs-utils || fail
+  # mount host folder
+  # shellcheck disable=2034
+  local SOPKA_TASK_STDERR_FILTER=task::install_filter
+  bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_host_folders_access::mount "${host_ip_address}" "${credentials_file}" || fail
+}
+
+ubuntu_workstation::deploy_host_folders_access::mount() {
+  local host_ip_address="$1"
+  local credentials_file="$2"
+
   cifs::mount "//${host_ip_address}/my" "${HOME}/my" "${credentials_file}" || fail
   cifs::mount "//${host_ip_address}/ephemeral-data" "${HOME}/ephemeral-data" "${credentials_file}" || fail
 }
