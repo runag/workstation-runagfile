@@ -34,7 +34,7 @@ ubuntu_workstation::deploy_vm_server() {
 
   # import ssh key
   apt::install ssh-import-id || fail
-  ssh-import-id gh:senotrusov || fail
+  ssh-import-id "gh:${MY_GITHUB_LOGIN}" || fail
 
   # install avahi daemon
   apt::install avahi-daemon || fail
