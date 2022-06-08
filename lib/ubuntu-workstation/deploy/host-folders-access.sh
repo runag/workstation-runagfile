@@ -16,7 +16,7 @@
 
 ubuntu_workstation::deploy_host_folders_access() {
   # install cifs-utils
-  apt::install cifs-utils || fail
+  bitwarden::beyond_session task::run_with_install_filter apt::install cifs-utils || fail
 
   # install gpg keys
   ubuntu_workstation::install_gpg_keys || fail
@@ -33,8 +33,6 @@ ubuntu_workstation::deploy_host_folders_access() {
   local host_ip_address; host_ip_address="$(vmware::get_host_ip_address)" || fail
 
   # mount host folder
-  # shellcheck disable=2034
-  local SOPKA_TASK_STDERR_FILTER=task::install_filter
   bitwarden::beyond_session task::run_with_short_title ubuntu_workstation::deploy_host_folders_access::mount "${host_ip_address}" "${credentials_file}" || fail
 }
 
