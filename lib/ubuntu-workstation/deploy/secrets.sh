@@ -25,46 +25,33 @@ ubuntu_workstation::deploy_secrets() {
   bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::deploy_secrets::install_dependencies || fail
 
   # install gpg keys
-  if sopka::should_deploy_secrets gpg; then
-    ubuntu_workstation::install_gpg_keys || fail
-  fi
+  ubuntu_workstation::install_gpg_keys || fail
 
   # install bitwarden cli and login
-  if sopka::should_deploy_secrets bitwarden; then
-    ubuntu_workstation::install_bitwarden_cli_and_login || fail
-  fi
+  ubuntu_workstation::install_bitwarden_cli_and_login || fail
 
   # ssh key
-  if sopka::should_deploy_secrets ssh; then
-    workstation::install_ssh_keys || fail
-    bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::gnome_keyring_credentials || fail
-  fi
+  workstation::install_ssh_keys || fail
+  bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::gnome_keyring_credentials || fail
 
-  # git
-  if sopka::should_deploy_secrets git; then
-    # git user
-    workstation::configure_git_user || fail
 
-    # git access token
-    git::use_libsecret_credential_helper || fail
-    bitwarden::use password "${MY_GITHUB_ACCESS_TOKEN_ID}" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
+  # git user
+  workstation::configure_git_user || fail
 
-    # configure git to use gpg signing key
-    git::configure_signing_key "${MY_GPG_SIGNING_KEY}!" || fail
-  fi
+  # git access token
+  git::use_libsecret_credential_helper || fail
+  bitwarden::use password "${MY_GITHUB_ACCESS_TOKEN_ID}" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
+
+  # configure git to use gpg signing key
+  git::configure_signing_key "${MY_GPG_SIGNING_KEY}!" || fail
+
 
   # rubygems
-  if sopka::should_deploy_secrets rubygems; then
-    workstation::install_rubygems_credentials || fail
-  fi
+  workstation::install_rubygems_credentials || fail
 
   # npm
-  if sopka::should_deploy_secrets npm; then
-    workstation::install_npm_credentials || fail
-  fi
+  workstation::install_npm_credentials || fail
 
   # sublime text license
-  if sopka::should_deploy_secrets sublime_text_3; then
-    workstation::sublime_text::install_license || fail
-  fi
+  workstation::sublime_text::install_license || fail
 }

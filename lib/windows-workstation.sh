@@ -57,27 +57,17 @@ windows_workstation::deploy_secrets() {
   command -v bw >/dev/null || fail "bw command is not found"
 
   # ssh key
-  if sopka::should_deploy_secrets ssh; then
-    workstation::install_ssh_keys || fail
-  fi
+  workstation::install_ssh_keys || fail
 
   # git
-  if sopka::should_deploy_secrets git; then
-    workstation::configure_git_user || fail
-  fi
+  workstation::configure_git_user || fail
 
   # rubygems
-  if sopka::should_deploy_secrets rubygems; then
-    workstation::install_rubygems_credentials || fail
-  fi
+  workstation::install_rubygems_credentials || fail
 
   # npm
-  if sopka::should_deploy_secrets npm; then
-    workstation::install_npm_credentials || fail
-  fi
+  workstation::install_npm_credentials || fail
 
   # sublime text license
-  if sopka::should_deploy_secrets sublime_text_3; then
-    workstation::sublime_text::install_license || fail
-  fi
+  workstation::sublime_text::install_license || fail
 }
