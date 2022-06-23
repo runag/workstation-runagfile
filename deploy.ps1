@@ -128,5 +128,5 @@ Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 Update-SessionEnvironment
 
 
-# Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby gems compilation
+# Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby's gems compilation
 ridk install 2 3
