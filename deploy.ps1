@@ -120,3 +120,13 @@ if ($install_developer_tools -eq 0) {
   Set-Service -Name ssh-agent -StartupType Automatic
   Set-Service -Name ssh-agent -Status Running
 }
+
+
+# Load chocolatey environment
+$env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
+Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+Update-SessionEnvironment
+
+
+# Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby gems compilation
+ridk install 2 3
