@@ -130,3 +130,7 @@ Update-SessionEnvironment
 
 # Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby's gems compilation
 ridk install 2 3
+if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development toolchain" }
+
+ridk exec pacman --sync pass --noconfirm
+if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
