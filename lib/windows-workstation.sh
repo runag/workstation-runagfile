@@ -17,21 +17,19 @@
 if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Windows workstation || fail
 
-  sopka_menu::add windows_workstation::deploy_full_workstation || fail
-  sopka_menu::add windows_workstation::deploy_base_workstation || fail
+  sopka_menu::add windows_workstation::deploy_workstation || fail
+  sopka_menu::add windows_workstation::deploy_configuration || fail
   sopka_menu::add windows_workstation::deploy_secrets || fail
 
   sopka_menu::add_delimiter || fail
 fi
 
-windows_workstation::deploy_full_workstation() {
-  windows_workstation::deploy_base_workstation || fail
-
-  # deploy secrets in a subshell
-  ( windows_workstation::deploy_secrets ) || fail
+windows_workstation::deploy_workstation() {
+  windows_workstation::deploy_configuration || fail
+  windows_workstation::deploy_secrets || fail
 }
 
-windows_workstation::deploy_base_workstation() {
+windows_workstation::deploy_configuration() {
   # shell aliases
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_editor_rc nano || fail
@@ -52,10 +50,6 @@ windows_workstation::deploy_base_workstation() {
 }
 
 windows_workstation::deploy_secrets() {
-  # check dependencies
-  command -v jq >/dev/null || fail "jq command is not found"
-  command -v bw >/dev/null || fail "bw command is not found"
-
   # ssh key
   workstation::install_ssh_keys || fail
 
