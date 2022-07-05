@@ -14,13 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::run_benchmark() {
-  benchmark::run || fail
-}
-
-ubuntu_workstation::display_if_restart_required() {
-  linux::display_if_restart_required || fail
-}
 
 ubuntu_workstation::dangerously_set_hostname() {
   echo "Please keep in mind that the script to change hostname is not perfect, please take time to review the script and it's results"
@@ -29,6 +22,14 @@ ubuntu_workstation::dangerously_set_hostname() {
   local hostname; IFS="" read -r hostname || fail
 
   linux::dangerously_set_hostname "${hostname}" || fail
+}
+
+ubuntu_workstation::display_if_restart_required() {
+  linux::display_if_restart_required || fail
+}
+
+ubuntu_workstation::run_benchmark() {
+  benchmark::run || fail
 }
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
