@@ -49,7 +49,11 @@ windows_workstation::deploy_configuration() {
   workstation::sublime_text::install_config || fail
 }
 
-windows_workstation::deploy_secrets() {
+windows_workstation::deploy_secrets() {(
+  # Add MSYS2 path to access pass and tree that are installed via pacman
+  # Maybe I should somehow add that path to my workstation globally, but I'm not sure what side effects it might bring
+  export PATH="${PATH}:/c/tools/msys64/usr/bin" 
+
   # ssh key
   workstation::install_ssh_keys || fail
 
@@ -64,4 +68,4 @@ windows_workstation::deploy_secrets() {
 
   # sublime text license
   workstation::sublime_text::install_license || fail
-}
+)}
