@@ -17,24 +17,23 @@
 if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header macOS workstation || fail
   
-  sopka_menu::add macos_workstation::deploy_full_workstation || fail
-  sopka_menu::add macos_workstation::deploy_base_workstation || fail
-  sopka_menu::add macos_workstation::deploy_secrets || fail
+  sopka_menu::add macos_workstation::deploy_workstation || fail
+  sopka_menu::add macos_workstation::deploy_software_packages || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
+  sopka_menu::add macos_workstation::deploy_secrets || fail
   sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
   sopka_menu::add macos_workstation::start_developer_servers || fail
 
   sopka_menu::add_delimiter || fail
 fi
 
-macos_workstation::deploy_full_workstation() {
-  macos_workstation::deploy_base_workstation || fail
-
-  # deploy secrets in a subshell
-  ( macos_workstation::deploy_secrets ) || fail
+macos_workstation::deploy_workstation() {
+  macos_workstation::deploy_software_packages || fail
+  macos_workstation::deploy_configuration || fail
+  macos_workstation::deploy_secrets || fail
 }
 
-macos_workstation::deploy_base_workstation() {
+macos_workstation::deploy_software_packages() {
   # install homebrew
   macos::install_homebrew || fail
 
@@ -45,9 +44,6 @@ macos_workstation::deploy_base_workstation() {
   # install packages
   macos_workstation::install_basic_tools || fail
   macos_workstation::install_developer_tools || fail
-
-  # deploy configuration
-  macos_workstation::deploy_configuration || fail
 }
 
 macos_workstation::install_basic_tools() {
@@ -74,7 +70,6 @@ macos_workstation::install_basic_tools() {
 
 macos_workstation::install_developer_tools() {
   # secrets
-  brew install bitwarden-cli || fail
   brew install gnupg || fail
 
   # servers
@@ -120,12 +115,6 @@ macos_workstation::install_developer_tools() {
   brew install yarn || fail
 }
 
-macos_workstation::start_developer_servers() {
-  brew services start memcached || fail
-  brew services start redis || fail
-  brew services start postgresql || fail
-}
-
 macos_workstation::deploy_configuration() {
   # shell aliases
   shellrc::install_loader "${HOME}/.bashrc" || fail
@@ -162,12 +151,7 @@ macos_workstation::deploy_configuration() {
   nodenv::configure_mismatched_binaries_workaround || fail
 }
 
-
 macos_workstation::deploy_secrets() {
-  # check dependencies
-  command -v jq >/dev/null || fail "jq command is not found"
-  command -v bw >/dev/null || fail "bw command is not found"
-
   # ssh key
   workstation::install_ssh_keys || fail
   bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::macos_keychain || fail
@@ -196,4 +180,10 @@ macos_workstation::deploy_opionated_configuration() {
   macos::hide_dir "${HOME}/Public" || fail
   macos::hide_dir "${HOME}/Virtual Machines.localized" || fail
   macos::hide_dir "${HOME}/VirtualBox VMs" || fail
+}
+
+macos_workstation::start_developer_servers() {
+  brew services start memcached || fail
+  brew services start redis || fail
+  brew services start postgresql || fail
 }
