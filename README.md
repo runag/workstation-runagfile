@@ -30,7 +30,7 @@ Basically, this Sopkafile you are looking at is the things I want to setup and c
 ## What this script will do
 
 1. Installs the basic software I frequently use.
-2. Installs keys and software licenses from my bitwarden database.
+2. Installs keys and software licenses from a secrets database.
 3. Makes a few tweaks to the system and to the desktop software.
 4. Installs a few shell aliases.
 5. Installs configuration for the Sublime Text, Sublime Merge and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
