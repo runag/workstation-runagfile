@@ -30,7 +30,10 @@ fi
 macos_workstation::deploy_workstation() {
   macos_workstation::deploy_software_packages || fail
   macos_workstation::deploy_configuration || fail
-  macos_workstation::deploy_secrets || fail
+
+  if [ "${CI:-}" != "true" ]; then
+    macos_workstation::deploy_secrets || fail
+  fi
 }
 
 macos_workstation::deploy_software_packages() {
