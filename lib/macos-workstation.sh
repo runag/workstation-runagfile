@@ -15,9 +15,10 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header macOS workstation || fail
+  sopka_menu::add_header "macOS workstation" || fail
   
   sopka_menu::add macos_workstation::deploy_workstation || fail
+  sopka_menu::add macos_workstation::deploy_workstation_without_secrets || fail
   sopka_menu::add macos_workstation::deploy_software_packages || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
   sopka_menu::add macos_workstation::deploy_secrets || fail
@@ -28,12 +29,13 @@ if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
 fi
 
 macos_workstation::deploy_workstation() {
+  macos_workstation::deploy_workstation_without_secrets || fail
+  macos_workstation::deploy_secrets || fail
+}
+
+macos_workstation::deploy_workstation_without_secrets() {
   macos_workstation::deploy_software_packages || fail
   macos_workstation::deploy_configuration || fail
-
-  if [ "${CI:-}" != "true" ]; then
-    macos_workstation::deploy_secrets || fail
-  fi
 }
 
 macos_workstation::deploy_software_packages() {
