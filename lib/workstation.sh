@@ -21,6 +21,10 @@ if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_delimiter || fail
 fi
 
+workstation::make_keys_directory_if_not_exists() {
+  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
+}
+
 workstation::configure_git() {
   git config --global core.autocrlf input || fail
 }
@@ -44,10 +48,6 @@ workstation::install_rubygems_credentials() {
 workstation::install_npm_credentials() {
   nodenv::load_shellrc || fail
   bitwarden::use password "${MY_NPM_PUBLISH_TOKEN_ID}" npm::auth_token || fail
-}
-
-workstation::make_keys_directory_if_not_exists() {
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
 }
 
 workstation::remove_nodejs_and_ruby_installations() {
