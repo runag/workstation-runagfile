@@ -157,21 +157,7 @@ macos_workstation::deploy_configuration() {
 }
 
 macos_workstation::deploy_secrets() {
-  # ssh key
-  workstation::install_ssh_keys || fail
-  bitwarden::use password "${MY_SSH_KEY_PASSWORD_ID}" ssh::macos_keychain || fail
-
-  # git
-  workstation::configure_git_user || fail
-
-  # rubygems
-  workstation::install_rubygems_credentials || fail
-
-  # npm
-  workstation::install_npm_credentials || fail
-
-  # sublime text license
-  workstation::sublime_text::install_license || fail
+  workstation::deploy_secrets || fail
 }
 
 macos_workstation::deploy_opionated_configuration() {

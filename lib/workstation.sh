@@ -15,14 +15,61 @@
 #  limitations under the License.
 
 if declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header Miscellaneous || fail
+  sopka_menu::add_header "Workstation" || fail
+  sopka_menu::add workstation::pass_init || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
   sopka_menu::add workstation::merge_editor_configs || fail
+  sopka_menu::add workstation::deploy_password_store || fail
+  sopka_menu::add workstation::deploy_secrets || fail
   sopka_menu::add_delimiter || fail
 fi
 
-workstation::make_keys_directory_if_not_exists() {
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
+workstation::deploy_password_store() {
+  # install gpg keys
+  workstation::install_gpg_keys || fail
+
+  # import password store
+  workstation::import_password_store || fail
+}
+
+workstation::deploy_secrets() {
+  # install gpg keys
+  workstation::install_gpg_keys || fail
+
+  # import password store
+  workstation::import_password_store || fail
+
+  # ssh key
+  workstation::install_ssh_keys || fail
+
+  # git
+  workstation::configure_git_user || fail
+  workstation::configure_git_signing_key || fail
+  workstation::configure_git_credentials || fail
+
+  # rubygems
+  workstation::install_rubygems_credentials || fail
+
+  # npm
+  workstation::install_npm_credentials || fail
+
+  # sublime text license
+  workstation::sublime_text::install_license || fail
+
+  # sublime merge license
+  # workstation::sublime_merge::install_license || fail
+}
+
+workstation::install_gpg_keys() {
+  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_OFFLINE_KEY_FILE}" || fail
+}
+
+workstation::import_password_store() {
+  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
+}
+
+workstation::install_ssh_keys() {
+  ssh::install_ssh_key_from_pass "${MY_SSH_KEY_PATH}" || fail
 }
 
 workstation::configure_git() {
@@ -34,20 +81,33 @@ workstation::configure_git_user() {
   git config --global user.email "${MY_GIT_USER_EMAIL}" || fail
 }
 
-workstation::install_ssh_keys() {
-  ssh::make_user_config_dir_if_not_exists || fail
-  bitwarden::write_notes_to_file_if_not_exists "${MY_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_ed25519" || fail
-  bitwarden::write_password_to_file_if_not_exists "${MY_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_ed25519.pub" || fail
+workstation::configure_git_signing_key() {
+  git::configure_signing_key "${MY_GPG_SIGNING_KEY}!" || fail
+}
+
+workstation::configure_git_credentials() {
+  if [[ "${OSTYPE}" =~ ^linux ]]; then
+    git::use_libsecret_credential_helper || fail
+    pass::use "${MY_GITHUB_ACCESS_TOKEN_PATH}" git::gnome_keyring_credentials "${MY_GITHUB_LOGIN}" || fail
+  fi
 }
 
 workstation::install_rubygems_credentials() {
   dir::make_if_not_exists "${HOME}/.gem" 755 || fail
-  bitwarden::write_notes_to_file_if_not_exists "${MY_RUBYGEMS_CREDENTIALS_ID}" "${HOME}/.gem/credentials" || fail
+  pass::use "${MY_RUBYGEMS_CREDENTIALS_PATH}" rubygems::credentials || fail
 }
 
 workstation::install_npm_credentials() {
   nodenv::load_shellrc || fail
-  bitwarden::use password "${MY_NPM_PUBLISH_TOKEN_ID}" npm::auth_token || fail
+  pass::use "${MY_NPM_PUBLISH_TOKEN_PATH}" npm::auth_token || fail
+}
+
+workstation::make_keys_directory_if_not_exists() {
+  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
+}
+
+workstation::pass_init() {
+  pass init "${MY_GPG_KEY}" || fail
 }
 
 workstation::remove_nodejs_and_ruby_installations() {

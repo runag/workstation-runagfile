@@ -14,7 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::configure_system() {
+ubuntu_workstation::deploy_configuration() {
+  # configure git
+  workstation::configure_git || fail
+
   # increase inotify limits
   linux::configure_inotify || fail
 
@@ -29,68 +32,32 @@ ubuntu_workstation::configure_system() {
   if vmware::is_inside_vm; then
     vmware::install_vm_network_loss_workaround || fail
   fi
-}
 
-ubuntu_workstation::configure_servers() {
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 }
 
-ubuntu_workstation::configure_desktop_software() {
-  # configure firefox
-  ubuntu_workstation::configure_firefox || fail
-  firefox::enable_wayland || fail
+ubuntu_workstation::deploy_opionated_configuration() {
+  # install vscode configuration
+  workstation::vscode::install_config || fail
 
-  # configure imwheel
-  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-    ubuntu_workstation::configure_imwhell || fail
-  fi
+  # install sublime merge configuration
+  workstation::sublime_merge::install_config || fail
+
+  # install sublime text configuration
+  workstation::sublime_text::install_config || fail
 
   # configure home folders
   ubuntu_workstation::configure_home_folders || fail
 
   # configure gnome desktop
   ubuntu_workstation::configure_gnome || fail
-}
 
-ubuntu_workstation::configure_firefox() {
-  firefox::set_pref "mousewheel.default.delta_multiplier_x" 200 || fail
-  firefox::set_pref "mousewheel.default.delta_multiplier_y" 200 || fail
-}
-
-ubuntu_workstation::configure_imwhell() {
-  local repetitions="2"
-  local output_file="${HOME}/.imwheelrc"
-  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
-".*"
-None,      Up,   Button4, ${repetitions}
-None,      Down, Button5, ${repetitions}
-Control_L, Up,   Control_L|Button4
-Control_L, Down, Control_L|Button5
-Shift_L,   Up,   Shift_L|Button4
-Shift_L,   Down, Shift_L|Button5
-EOF
-
-  dir::make_if_not_exists "${HOME}/.config" 755 || fail
-  dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
-
-  local output_file="${HOME}/.config/autostart/imwheel.desktop"
-  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
-[Desktop Entry]
-Type=Application
-Exec=/usr/bin/imwheel
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-OnlyShowIn=GNOME;XFCE;
-Name[en_US]=IMWheel
-Name=IMWheel
-Comment[en_US]=Custom scroll speed
-Comment=Custom scroll speed
-EOF
-
-  /usr/bin/imwheel --kill
+  # enable and configure imwheel
+  # imwheel somehow fixes the bug when mouse scrolling stops working if you move the mouse at the same time
+  # I observed it only when running ubuntu inside vmware workstation
+  ubuntu_workstation::configure_imwhell || fail
 }
 
 ubuntu_workstation::configure_home_folders() {
@@ -128,6 +95,7 @@ ubuntu_workstation::configure_home_folders() {
   fi
 
   ( umask 0177 && touch "${HOME}/.hidden" ) || fail
+  
   file::append_line_unless_present "Desktop" "${HOME}/.hidden" || fail
   file::append_line_unless_present "snap" "${HOME}/.hidden" || fail
 }
@@ -157,14 +125,10 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
   gnome_set Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
 
-  # Desktop
-  gnome_set shell.extensions.desktop-icons show-trash false || fail
-  gnome_set shell.extensions.desktop-icons show-home false || fail
-
   # Dash
   gnome_set shell.extensions.dash-to-dock dash-max-icon-size 32 || fail
   gnome_set shell.extensions.dash-to-dock dock-fixed false || fail
-  # gnome_set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gnome_set shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
   gnome_set shell.extensions.dash-to-dock hide-delay 0.10000000000000001 || fail
   gnome_set shell.extensions.dash-to-dock require-pressure-to-show false || fail
   gnome_set shell.extensions.dash-to-dock show-apps-at-top true || fail
@@ -185,14 +149,49 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]" || fail
 
   # Disable sound alerts
-  # gnome_set desktop.sound event-sounds false || fail
+  gnome_set desktop.sound event-sounds false || fail
 
-  # Enable fractional scaling
-  # gnome_set mutter experimental-features "['scale-monitor-framebuffer', 'x11-randr-fractional-scaling']" || fail
+  # Mouse, 3200 dpi
+  gnome_set desktop.peripherals.mouse speed -1 || fail
 
-  # 3200 DPI mouse
-  # gnome_set desktop.peripherals.mouse speed -1 || fail
-
-  # dark theme
+  # Theme
+  gnome_set desktop.interface color-scheme 'prefer-dark' || fail
   gnome_set desktop.interface gtk-theme 'Yaru-dark' || fail
+
+  # disable screen lock
+  gnome_set desktop.session idle-delay 0 || fail
 )}
+
+ubuntu_workstation::configure_imwhell() {
+  local repetitions="2"
+  local output_file="${HOME}/.imwheelrc"
+  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
+".*"
+None,      Up,   Button4, ${repetitions}
+None,      Down, Button5, ${repetitions}
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+EOF
+
+  dir::make_if_not_exists "${HOME}/.config" 755 || fail
+  dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
+
+  local output_file="${HOME}/.config/autostart/imwheel.desktop"
+  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/imwheel
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;XFCE;
+Name[en_US]=IMWheel
+Name=IMWheel
+Comment[en_US]=Custom scroll speed
+Comment=Custom scroll speed
+EOF
+
+  /usr/bin/imwheel --kill
+}

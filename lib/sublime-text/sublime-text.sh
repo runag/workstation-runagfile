@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 workstation::sublime_text::install_config() {
   sublime_text::install_package_control || fail
 
@@ -29,7 +28,7 @@ workstation::sublime_text::install_license() {
 
   dir::make_if_not_exists "${config_path}/Local" 700 || fail
 
-  bitwarden::write_notes_to_file_if_not_exists "${MY_SUBLIME_TEXT_3_LICENSE_ID}" "${config_path}/Local/License.sublime_license" || fail
+  pass::use "${MY_SUBLIME_TEXT_LICENSE_PATH}" --body pass::file "${config_path}/Local/License.sublime_license" --mode 0600 || fail
 }
 
 workstation::sublime_text::merge_config() {

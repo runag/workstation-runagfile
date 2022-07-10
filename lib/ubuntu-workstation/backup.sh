@@ -28,6 +28,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add ubuntu_workstation::backup::unlock || fail
   sopka_menu::add ubuntu_workstation::backup::mount || fail
   sopka_menu::add ubuntu_workstation::backup::umount || fail
+  sopka_menu::add ubuntu_workstation::backup::shell || fail
   sopka_menu::add_delimiter || fail
   sopka_menu::add ubuntu_workstation::backup::start || fail
   sopka_menu::add ubuntu_workstation::backup::stop || fail
@@ -40,43 +41,49 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
 fi
 
 ubuntu_workstation::backup::deploy() {
-  # install gpg keys to decrypt bitwarden api key and restic key
-  ubuntu_workstation::install_gpg_keys || fail
-
-  # install bitwarden cli and login
-  ubuntu_workstation::install_bitwarden_cli_and_login || fail
-
-  # install restic key
-  ubuntu_workstation::backup::install_restic_password_file || fail
-
-  # install ssh key
-  ssh::make_user_config_dir_if_not_exists || fail
-  bitwarden::write_notes_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PRIVATE_KEY_ID}" "${HOME}/.ssh/id_rsa" || fail
-  bitwarden::write_password_to_file_if_not_exists "${MY_DATA_SERVER_SSH_PUBLIC_KEY_ID}" "${HOME}/.ssh/id_rsa.pub" || fail
-
-  # save ssh destination
-  workstation::make_keys_directory_if_not_exists || fail
-  bitwarden::write_password_to_file_if_not_exists "${MY_DATA_SERVER_SSH_DESTINATION_ID}" "${HOME}/.keys/my-data-server.ssh-destination" || fail
-
-  bitwarden::beyond_session task::run_with_install_filter ubuntu_workstation::backup::deploy::stage_two || fail
-}
-
-ubuntu_workstation::backup::install_restic_password_file() {
-  workstation::make_keys_directory_if_not_exists || fail
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
-
-  gpg::decrypt_and_install_file "${MY_RESTIC_PASSWORD_FILE}" "${HOME}/.keys/restic/workstation.txt" || fail
-}
-
-ubuntu_workstation::backup::deploy::stage_two() {
-  local remote_host; remote_host="$(sed s/.*@// "${HOME}/.keys/my-data-server.ssh-destination")" || fail
-  ssh::add_host_to_known_hosts "${remote_host}" || fail
-
+  # required for vmware::get_machine_uuid
   if vmware::is_inside_vm; then
     echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo_write /etc/sudoers.d/dmidecode 440 || fail
   fi
 
+  # install restic key
+  workstation::make_keys_directory_if_not_exists || fail
+  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
+  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${HOME}/.keys/restic/workstation-backup.txt" --mode 0600 || fail
+
+  # install ssh key
+  ssh::install_ssh_key_from_pass "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}" || fail
+
+  # install ssh config
+  local ssh_key_dir; ssh_key_dir="$(dirname "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}")" || fail
+  pass::use "${ssh_key_dir}/config" --body pass::file "${HOME}/.ssh/config" --mode 0600 || fail
+
+  # add remote to known hosts
+  # local remote_host; remote_host="$(pass::use "${ssh_key_dir}/remote" --get host)" || fail
+  # ssh::add_host_to_known_hosts "${remote_host}" || fail
+  pass::use "${ssh_key_dir}/known_hosts" --body pass::file_with_block "${HOME}/.ssh/known_hosts" "# workstation-backup" --mode 0600 || fail
+
+  # install systemd services
   ubuntu_workstation::backup::install_systemd_services || fail
+}
+
+ubuntu_workstation::backup::load_config() {
+  local machine_hostname machine_id
+
+  machine_hostname="$(hostname)" || fail
+
+  if vmware::is_inside_vm; then
+    machine_id="$(vmware::get_machine_uuid)" || fail
+  else
+    machine_id="$(cat /etc/machine-id)" || fail
+  fi
+
+  export BACKUP_MOUNT_POINT="${HOME}/workstation-backup" # HERE
+  export BACKUP_REMOTE_HOST="workstation-backup"
+  export BACKUP_REMOTE_PATH="backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
+
+  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation-backup.txt"
+  export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
 }
 
 ubuntu_workstation::backup::install_systemd_services() {
@@ -139,23 +146,6 @@ EOF
 
   systemctl --user --quiet reenable "workstation-backup-maintenance.timer" || fail
   systemctl --user start "workstation-backup-maintenance.timer" || fail
-}
-
-ubuntu_workstation::backup::load_config() {
-  local machine_hostname machine_id ssh_destination
-
-  machine_hostname="$(hostname)" || fail
-
-  if vmware::is_inside_vm; then
-    machine_id="$(vmware::get_machine_uuid)" || fail
-  else
-    machine_id="$(cat /etc/machine-id)" || fail
-  fi
-
-  ssh_destination="$(cat "${HOME}/.keys/my-data-server.ssh-destination")" || fail
-
-  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation.txt"
-  export RESTIC_REPOSITORY="sftp:${ssh_destination}:backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
 }
 
 ubuntu_workstation::backup::create() {
@@ -234,6 +224,12 @@ ubuntu_workstation::backup::umount() {
   ubuntu_workstation::backup::load_config || fail
 
   fusermount -u -z "${BACKUP_MOUNT_POINT}" || fail
+}
+
+ubuntu_workstation::backup::shell() {
+  ubuntu_workstation::backup::load_config || fail
+  
+  ssh -t "${BACKUP_REMOTE_HOST}" "cd $(printf "%q" "${BACKUP_REMOTE_PATH}"); exec \$SHELL -l"
 }
 
 

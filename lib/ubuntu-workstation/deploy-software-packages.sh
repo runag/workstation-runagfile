@@ -14,20 +14,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::install_system_software() {
+ubuntu_workstation::deploy_software_packages() {
+  # perform autoremove, update and upgrade
+  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
+
+  # install tools to use by the rest of the script
+  apt::install_sopka_essential_dependencies || fail
+
+  # install display-if-restart-required dependencies
+  apt::install_display_if_restart_required_dependencies || fail
+
+  # install gnome-keyring and libsecret (for git and ssh)
+  apt::install_gnome_keyring_and_libsecret || fail
+  git::install_libsecret_credential_helper || fail
+
+  # install benchmark
+  benchmark::install::apt || fail
+
+  # shellrc
+  shellrc::install_loader "${HOME}/.bashrc" || fail
+  shellrc::install_sopka_path_rc || fail
+  shellrc::install_editor_rc nano || fail
+
   # install open-vm-tools
   if vmware::is_inside_vm; then
-    apt::install open-vm-tools || fail
+    apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
-
-  # install cloud guest utils
-  apt::install cloud-guest-utils || fail
 
   # install inotify tools
   apt::install inotify-tools || fail
-}
 
-ubuntu_workstation::install_terminal_software() {
+  # install terminal-based software
   apt::install \
     apache2-utils \
     awscli \
@@ -53,53 +70,55 @@ ubuntu_workstation::install_terminal_software() {
     xclip \
     zsh \
       || fail
-}
 
-ubuntu_workstation::install_build_tools() {
+  # install build tools
   apt::install \
     build-essential \
     libsqlite3-dev \
     libssl-dev \
       || fail
-}
 
-ubuntu_workstation::install_servers() {
+  # install servers
   apt::install memcached || fail
   apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
-}
 
-ubuntu_workstation::install_and_update_nodejs() {
+  # nodejs
   nodejs::install_by_nodenv_and_set_global || fail
-}
 
-ubuntu_workstation::install_and_update_ruby() {
+  # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
-
+  shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
   RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv || fail
 
-  shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
-}
-
-ubuntu_workstation::install_and_update_python() {
+  # python
   python::install_and_update::apt || fail
-}
 
-ubuntu_workstation::install_desktop_software::apt() {
-  # open-vm-tools-desktop
-  if vmware::is_inside_vm; then
-    apt::install open-vm-tools-desktop || fail
-  fi
 
-  # install dconf-editor
-  apt::install dconf-editor || fail
+  ### desktop software
+
+  # vscode
+  vscode::install::snap || fail
+  workstation::vscode::install_extensions || fail
 
   # sublime text and sublime merge
   sublime_merge::install::apt || fail
   sublime_text::install::apt || fail
 
+  # micro text editor
+  sudo snap install micro --classic || fail
+
   # meld
   apt::install meld || fail
+
+  # chromium
+  sudo snap install chromium || fail
+
+  # bitwarden
+  sudo snap install bitwarden || fail
+
+  # qtpass
+  apt::install qtpass || fail
 
   # gparted
   apt::install gparted || fail
@@ -107,39 +126,11 @@ ubuntu_workstation::install_desktop_software::apt() {
   # GNU Privacy Assistant
   apt::install gpa || fail
 
+  # install dconf-editor
+  apt::install dconf-editor || fail
+
   # imwheel
-  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
-    apt::install imwheel || fail
-  fi
-
-  # software for bare metal workstation
-  if linux::is_bare_metal; then
-    # copyq
-    ubuntu_workstation::install_copyq || fail
-
-    # hardware monitoring
-    apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-    ubuntu_workstation::install_vitals || fail
-
-    # OBS studio
-    ubuntu_workstation::install_obs_studio || fail
-  fi
-}
-
-ubuntu_workstation::install_desktop_software::snap() {
-  # vscode
-  vscode::install::snap || fail
-  workstation::vscode::install_extensions || fail
-
-  # micro
-  sudo snap install micro --classic || fail
-  shellrc::install_editor_rc micro || fail
-
-  # chromium
-  sudo snap install chromium || fail
-
-  # bitwarden
-  sudo snap install bitwarden || fail
+  apt::install imwheel || fail
 
   # software for bare metal workstation
   if linux::is_bare_metal; then
@@ -151,7 +142,29 @@ ubuntu_workstation::install_desktop_software::snap() {
 
     # discord
     sudo snap install discord || fail
+
+    # OBS studio
+    ubuntu_workstation::install_obs_studio || fail
+
+    # copyq
+    ubuntu_workstation::install_copyq || fail
+
+    # hardware monitoring
+    apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
+    ubuntu_workstation::install_vitals || fail
   fi
+}
+
+ubuntu_workstation::install_obs_studio() {
+  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+  apt::update || fail
+  apt::install obs-studio guvcview || fail
+}
+
+ubuntu_workstation::install_copyq() {
+  sudo add-apt-repository --yes ppa:hluk/copyq || fail
+  apt::update || fail
+  apt::install copyq || fail
 }
 
 ubuntu_workstation::install_vitals() {
@@ -168,34 +181,4 @@ ubuntu_workstation::install_vitals() {
   git::place_up_to_date_clone "https://github.com/corecoding/Vitals" "${extensions_dir}/${extension_uuid}" || fail
 
   gnome-extensions enable "${extension_uuid}" || fail
-}
-
-ubuntu_workstation::install_copyq() {
-  sudo add-apt-repository --yes ppa:hluk/copyq || fail
-  apt::update || fail
-  apt::install copyq || fail
-}
-
-ubuntu_workstation::install_obs_studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-  apt::update || fail
-  apt::install obs-studio guvcview || fail
-}
-
-ubuntu_workstation::install_shellrc() {
-  shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_sopka_path_rc || fail
-}
-
-ubuntu_workstation::install_gpg_keys() {
-  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_KEY_FILE}" || fail
-}
-
-ubuntu_workstation::install_bitwarden_cli_and_login() {
-  bitwarden::install_cli::snap || fail
-
-  if ! bitwarden::is_logged_in; then
-    gpg::decrypt_and_source_script "${MY_BITWARDEN_API_KEY_FILE}" || fail
-    bitwarden::login --apikey || fail
-  fi
 }
