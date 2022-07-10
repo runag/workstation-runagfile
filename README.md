@@ -97,18 +97,6 @@ Select ``windows_workstation::deploy_workstation``. It will do the following:
 4. Configures git, vscode, sublime merge, sublime text
 5. Installs ssh keys, rubygems and npm credentials
 
-### 3. Set execution policy to "Bypass"
-
-Start PowerShell as a regular user, and make sure you really understand consequences of the next command before you run it:
-
-```sh
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
-```
-
-### 4. Install winssh-pageant
-
-https://github.com/ndbeals/winssh-pageant
-
 ## Forking
 
 1. Go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
