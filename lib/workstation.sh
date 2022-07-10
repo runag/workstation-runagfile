@@ -16,28 +16,24 @@
 
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Workstation" || fail
-  sopka_menu::add workstation::pass_init || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
   sopka_menu::add workstation::merge_editor_configs || fail
-  sopka_menu::add workstation::deploy_password_store || fail
-  sopka_menu::add workstation::deploy_secrets || fail
+  sopka_menu::add_delimiter || fail
+
+  sopka_menu::add_header "Workstation: pass" || fail
+  sopka_menu::add workstation::pass::deploy || fail
+  sopka_menu::add workstation::pass::import_offline || fail
+  sopka_menu::add workstation::pass::sync_offline || fail
+  sopka_menu::add workstation::pass::init || fail
   sopka_menu::add_delimiter || fail
 fi
-
-workstation::deploy_password_store() {
-  # install gpg keys
-  workstation::install_gpg_keys || fail
-
-  # import password store
-  workstation::import_password_store || fail
-}
 
 workstation::deploy_secrets() {
   # install gpg keys
   workstation::install_gpg_keys || fail
 
   # import password store
-  workstation::import_password_store || fail
+  workstation::pass::import_offline || fail
 
   # ssh key
   workstation::install_ssh_keys || fail
@@ -62,10 +58,6 @@ workstation::deploy_secrets() {
 
 workstation::install_gpg_keys() {
   gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_OFFLINE_KEY_FILE}" || fail
-}
-
-workstation::import_password_store() {
-  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
 }
 
 workstation::install_ssh_keys() {
@@ -107,9 +99,6 @@ workstation::make_keys_directory_if_not_exists() {
   dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
 }
 
-workstation::pass_init() {
-  pass init "${MY_GPG_KEY}" || fail
-}
 
 workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.nodenv/versions"/* || fail
@@ -124,4 +113,24 @@ workstation::merge_editor_configs() {
   workstation::vscode::merge_config || fail
   workstation::sublime_merge::merge_config || fail
   workstation::sublime_text::merge_config || fail
+}
+
+workstation::pass::deploy() {
+  # install gpg keys
+  workstation::install_gpg_keys || fail
+
+  # import password store
+  workstation::pass::import_offline || fail
+}
+
+workstation::pass::import_offline() {
+  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
+}
+
+workstation::pass::sync_offline() {
+  pass::sync_to "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
+}
+
+workstation::pass::init() {
+  pass init "${MY_GPG_KEY}" || fail
 }
