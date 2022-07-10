@@ -74,6 +74,7 @@ workstation::install_ssh_keys() {
 
 workstation::configure_git() {
   git config --global core.autocrlf input || fail
+  git config --global init.defaultBranch main || fail
 }
 
 workstation::configure_git_user() {
