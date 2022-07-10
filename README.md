@@ -79,7 +79,7 @@ That script will do the following:
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
     * [basic-tools.config](lib/choco/basic-tools.config)
 7. Upgrades all installed choco packages
-8. Sets ssh-agent service startup type to automatic and runs in
+8. Sets ssh-agent service startup type to automatic and runs it
 
 ### 2. Second stage deploy script (in bash)
 
