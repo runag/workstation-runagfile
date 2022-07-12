@@ -19,10 +19,12 @@ if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   
   sopka_menu::add macos_workstation::deploy_workstation || fail
   sopka_menu::add macos_workstation::deploy_workstation_without_secrets || fail
+  sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
+  sopka_menu::add_delimiter || fail
   sopka_menu::add macos_workstation::deploy_software_packages || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
   sopka_menu::add macos_workstation::deploy_secrets || fail
-  sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
+  sopka_menu::add_delimiter || fail
   sopka_menu::add macos_workstation::start_developer_servers || fail
 
   sopka_menu::add_delimiter || fail
@@ -121,25 +123,14 @@ macos_workstation::install_developer_tools() {
 }
 
 macos_workstation::deploy_configuration() {
-  # shell aliases
+  # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_loader "${HOME}/.zshrc" || fail
-  shellrc::install_editor_rc nano || fail
   shellrc::install_sopka_path_rc || fail
   shellrc::install_direnv_rc || fail
 
   # git
   workstation::configure_git || fail
-
-  # vscode
-  workstation::vscode::install_config || fail
-  workstation::vscode::install_extensions || fail
-
-  # sublime merge config
-  workstation::sublime_merge::install_config || fail
-
-  # sublime text config
-  workstation::sublime_text::install_config || fail
 
   # configure ssh client
   ssh::macos_keychain::configure_use_on_all_hosts || fail
@@ -161,6 +152,19 @@ macos_workstation::deploy_secrets() {
 }
 
 macos_workstation::deploy_opionated_configuration() {
+  # shellrc
+  shellrc::install_editor_rc nano || fail
+
+  # vscode
+  workstation::vscode::install_extensions || fail
+  workstation::vscode::install_config || fail
+
+  # sublime merge config
+  workstation::sublime_merge::install_config || fail
+
+  # sublime text config
+  workstation::sublime_text::install_config || fail
+
   # hide directories
   macos::hide_dir "${HOME}/Applications" || fail
   macos::hide_dir "${HOME}/Desktop" || fail

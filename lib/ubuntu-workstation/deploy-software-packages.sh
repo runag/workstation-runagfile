@@ -99,7 +99,6 @@ ubuntu_workstation::deploy_software_packages() {
 
   # vscode
   vscode::install::snap || fail
-  workstation::vscode::install_extensions || fail
 
   # sublime text and sublime merge
   sublime_merge::install::apt || fail

@@ -18,6 +18,11 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Windows workstation || fail
 
   sopka_menu::add windows_workstation::deploy_workstation || fail
+  sopka_menu::add windows_workstation::deploy_workstation_without_secrets || fail
+  sopka_menu::add windows_workstation::deploy_opionated_configuration || fail
+
+  sopka_menu::add_delimiter || fail
+
   sopka_menu::add windows_workstation::deploy_configuration || fail
   sopka_menu::add windows_workstation::deploy_secrets || fail
 
@@ -25,22 +30,30 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
 fi
 
 windows_workstation::deploy_workstation() {
-  windows_workstation::deploy_configuration || fail
+  windows_workstation::deploy_workstation_without_secrets || fail
   windows_workstation::deploy_secrets || fail
 }
 
+windows_workstation::deploy_workstation_without_secrets() {
+  windows_workstation::deploy_configuration || fail
+}
+
 windows_workstation::deploy_configuration() {
-  # shell aliases
+  # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_editor_rc nano || fail
   shellrc::install_sopka_path_rc || fail
 
   # git
   workstation::configure_git || fail
+}
+
+windows_workstation::deploy_opionated_configuration() {
+  # shellrc
+  shellrc::install_editor_rc nano || fail
 
   # vscode
-  workstation::vscode::install_config || fail
   workstation::vscode::install_extensions || fail
+  workstation::vscode::install_config || fail
 
   # sublime merge config
   workstation::sublime_merge::install_config || fail
