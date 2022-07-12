@@ -47,7 +47,7 @@ export MY_SUBLIME_MERGE_LICENSE_PATH="sublime-merge/license" # body
 export MY_SUBLIME_TEXT_LICENSE_PATH="sublime-text/license" # body
 export MY_TAILSCALE_REUSABLE_KEY_PATH="tailscale/reusable-key" # password
 export MY_WINDOWS_CIFS_CREDENTIALS_PATH="windows/cifs-credentials" # username, password
-export MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH="restic/stan" # password
+export MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH="restic/workstation-backup" # password
 export MY_WORKSTATION_BACKUP_SSH_KEY_PATH="ssh/workstation-backup/id_ed25519_workstation_backup" # ssh key
 
 # Ruby & Node versions
