@@ -71,6 +71,9 @@ ubuntu_workstation::deploy_software_packages() {
     zsh \
       || fail
 
+  # gparted dependencies for FAT partitions
+  apt::install dosfstools mtools || fail
+
   # install build tools
   apt::install \
     build-essential \
