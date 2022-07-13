@@ -78,9 +78,9 @@ ubuntu_workstation::backup::load_config() {
     machine_id="$(cat /etc/machine-id)" || fail
   fi
 
-  export BACKUP_MOUNT_POINT="${HOME}/workstation-backup" # HERE
+  export BACKUP_MOUNT_POINT="${HOME}/restore/workstation-backup" # HERE
   export BACKUP_REMOTE_HOST="workstation-backup"
-  export BACKUP_REMOTE_PATH="backups/restic/workstation-backups/${machine_hostname}-${machine_id}"
+  export BACKUP_REMOTE_PATH="backups/restic/linux-workstation/${machine_hostname}-${machine_id}"
 
   export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation-backup.txt"
   export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
