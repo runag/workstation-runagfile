@@ -90,10 +90,10 @@ workstation::install_rubygems_credentials() {
   pass::use "${MY_RUBYGEMS_CREDENTIALS_PATH}" rubygems::credentials || fail
 }
 
-workstation::install_npm_credentials() {
-  nodenv::load_shellrc || fail
+workstation::install_npm_credentials() {(
+  nodenv::load_shellrc_if_exists || fail
   pass::use "${MY_NPM_PUBLISH_TOKEN_PATH}" npm::auth_token || fail
-}
+)}
 
 workstation::make_keys_directory_if_not_exists() {
   dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
