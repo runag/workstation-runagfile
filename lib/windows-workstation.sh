@@ -64,7 +64,6 @@ windows_workstation::deploy_opionated_configuration() {
 
 windows_workstation::deploy_secrets() {(
   # Add MSYS2 path to access pass and tree that are installed via pacman
-  # Maybe I should somehow add that path to my workstation globally, but I'm not sure what side effects it might bring
   export PATH="${PATH}:/c/tools/msys64/usr/bin"
 
   workstation::deploy_secrets || fail
