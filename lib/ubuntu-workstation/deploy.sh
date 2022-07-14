@@ -17,7 +17,8 @@
 ubuntu_workstation::deploy_workstation() {
   ubuntu_workstation::deploy_workstation_without_secrets || fail
 
-  task::run_with_install_filter ubuntu_workstation::deploy_secrets || fail
+  ubuntu_workstation::deploy_secrets || fail
+  
   task::run_with_install_filter ubuntu_workstation::backup::deploy || fail
 
   if vmware::is_inside_vm; then
