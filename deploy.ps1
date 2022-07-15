@@ -134,3 +134,5 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development 
 
 ridk exec pacman --sync pass --noconfirm
 if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
+
+New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass"

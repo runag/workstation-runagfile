@@ -62,9 +62,6 @@ windows_workstation::deploy_opionated_configuration() {
   workstation::sublime_text::install_config || fail
 }
 
-windows_workstation::deploy_secrets() {(
-  # Add MSYS2 path to access pass and tree that are installed via pacman
-  export PATH="${PATH}:/c/tools/msys64/usr/bin"
-
+windows_workstation::deploy_secrets() {
   workstation::deploy_secrets || fail
-)}
+}
