@@ -20,7 +20,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
 
   if [ -n "${DISPLAY:-}" ]; then
     sopka_menu::add ubuntu_workstation::deploy_workstation || fail
-    sopka_menu::add ubuntu_workstation::deploy_workstation_with_deploy_opionated_configuration || fail
+    sopka_menu::add ubuntu_workstation::deploy_workstation_with_opionated_configuration || fail
     sopka_menu::add ubuntu_workstation::deploy_workstation_without_secrets || fail
 
     sopka_menu::add_delimiter || fail

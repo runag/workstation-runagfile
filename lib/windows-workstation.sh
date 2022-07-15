@@ -18,7 +18,7 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header Windows workstation || fail
 
   sopka_menu::add windows_workstation::deploy_workstation || fail
-  sopka_menu::add windows_workstation::deploy_workstation_with_deploy_opionated_configuration || fail
+  sopka_menu::add windows_workstation::deploy_workstation_with_opionated_configuration || fail
   sopka_menu::add windows_workstation::deploy_workstation_without_secrets || fail
 
   sopka_menu::add_delimiter || fail
@@ -35,7 +35,7 @@ windows_workstation::deploy_workstation() {
   windows_workstation::deploy_secrets || fail
 }
 
-windows_workstation::deploy_workstation_with_deploy_opionated_configuration() {
+windows_workstation::deploy_workstation_with_opionated_configuration() {
   windows_workstation::deploy_workstation || fail
   windows_workstation::deploy_opionated_configuration || fail
 }
