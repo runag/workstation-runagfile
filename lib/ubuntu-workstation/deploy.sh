@@ -28,6 +28,11 @@ ubuntu_workstation::deploy_workstation() {
   task::run_with_install_filter ubuntu_workstation::deploy_tailscale || fail
 }
 
+ubuntu_workstation::deploy_workstation_with_deploy_opionated_configuration() {
+  ubuntu_workstation::deploy_workstation || fail
+  ubuntu_workstation::deploy_opionated_configuration || fail
+}
+
 ubuntu_workstation::deploy_workstation_without_secrets() {
   # deploy software packages
   task::run_with_install_filter ubuntu_workstation::deploy_software_packages || fail
