@@ -151,9 +151,8 @@ ubuntu_workstation::deploy_software_packages() {
     # copyq
     ubuntu_workstation::install_copyq || fail
 
-    # hardware monitoring
+    # monitor control
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-    ubuntu_workstation::install_vitals || fail
   fi
 }
 
@@ -167,20 +166,4 @@ ubuntu_workstation::install_copyq() {
   sudo add-apt-repository --yes ppa:hluk/copyq || fail
   apt::update || fail
   apt::install copyq || fail
-}
-
-ubuntu_workstation::install_vitals() {
-  apt::install gnome-shell-extensions gir1.2-gtop-2.0 lm-sensors || fail
-
-  local extension_uuid="Vitals@CoreCoding.com"
-  local extensions_dir="${HOME}/.local/share/gnome-shell/extensions"
-
-  dir::make_if_not_exists "${HOME}/.local" 755 || fail
-  dir::make_if_not_exists "${HOME}/.local/share" 755 || fail
-  dir::make_if_not_exists "${HOME}/.local/share/gnome-shell" 700 || fail
-  dir::make_if_not_exists "${extensions_dir}" 700 || fail
-
-  git::place_up_to_date_clone "https://github.com/corecoding/Vitals" "${extensions_dir}/${extension_uuid}" || fail
-
-  gnome-extensions enable "${extension_uuid}" || fail
 }
