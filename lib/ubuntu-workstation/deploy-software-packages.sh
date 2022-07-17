@@ -144,6 +144,7 @@ ubuntu_workstation::deploy_software_packages() {
 
     # discord
     sudo snap install discord || fail
+    sudo snap connect discord:system-observe || fail
 
     # OBS studio
     ubuntu_workstation::install_obs_studio || fail
