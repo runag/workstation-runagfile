@@ -72,11 +72,6 @@ ubuntu_workstation::configure_home_folders() {
       echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${temp_file}" || fail
     fi
 
-    if [ -d "${HOME}/Pictures" ]; then
-      # shellcheck disable=SC2016
-      echo 'XDG_PICTURES_DIR="${HOME}/Pictures"' >>"${temp_file}" || fail
-    fi
-
     if [ -d "${HOME}/Downloads" ]; then
       # shellcheck disable=SC2016
       echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${temp_file}" || fail
@@ -88,6 +83,7 @@ ubuntu_workstation::configure_home_folders() {
 
     dir::remove_if_exists_and_empty "${HOME}/Documents" || fail
     dir::remove_if_exists_and_empty "${HOME}/Music" || fail
+    dir::remove_if_exists_and_empty "${HOME}/Pictures" || fail
     dir::remove_if_exists_and_empty "${HOME}/Public" || fail
     dir::remove_if_exists_and_empty "${HOME}/Templates" || fail
     dir::remove_if_exists_and_empty "${HOME}/Videos" || fail
