@@ -100,7 +100,7 @@ ubuntu_workstation::deploy_host_folders_access() {
   local username; username="$(pass::use "${MY_WINDOWS_CIFS_CREDENTIALS_PATH}" --get username)" || fail
 
   # write credentials to local filesystem
-  local credentials_file="${HOME}/.keys/host-filesystem-access.cifs-credentials"
+  local credentials_file="${MY_KEYS_PATH}/host-filesystem-access.cifs-credentials"
 
   workstation::make_keys_directory_if_not_exists || fail
   

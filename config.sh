@@ -23,6 +23,8 @@ export MY_GIT_USER_NAME="Stanislav Senotrusov"
 export MY_GITHUB_LOGIN="senotrusov"
 
 # Key paths
+export MY_KEYS_PATH="${HOME}/.keys"
+
 if [[ "${OSTYPE}" =~ ^msys ]]; then
   export MY_KEYS_OFFLINE_PATH="/k/keys"
 elif [[ "${OSTYPE}" =~ ^darwin ]]; then

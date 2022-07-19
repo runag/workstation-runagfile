@@ -96,7 +96,7 @@ workstation::install_npm_credentials() {(
 )}
 
 workstation::make_keys_directory_if_not_exists() {
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys" 700 || fail
+  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}" 700 || fail
 }
 
 

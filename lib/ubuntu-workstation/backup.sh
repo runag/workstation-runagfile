@@ -48,8 +48,8 @@ ubuntu_workstation::backup::deploy() {
 
   # install restic key
   workstation::make_keys_directory_if_not_exists || fail
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.keys/restic" 700 || fail
-  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${HOME}/.keys/restic/workstation-backup.txt" --mode 0600 || fail
+  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}/restic" 700 || fail
+  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${MY_KEYS_PATH}/restic/workstation-backup.txt" --mode 0600 || fail
 
   # install ssh key
   ssh::install_ssh_key_from_pass "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}" || fail
@@ -82,7 +82,7 @@ ubuntu_workstation::backup::load_config() {
   export BACKUP_REMOTE_HOST="workstation-backup"
   export BACKUP_REMOTE_PATH="backups/restic/linux-workstation/${machine_hostname}-${machine_id}"
 
-  export RESTIC_PASSWORD_FILE="${HOME}/.keys/restic/workstation-backup.txt"
+  export RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation-backup.txt"
   export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
 }
 
