@@ -192,9 +192,9 @@ ubuntu_workstation::backup::forget::perform() {
   restic forget \
     --group-by "host,paths,tags" \
     --keep-within 14d \
-    --keep-daily 32 \
-    --keep-weekly 14 \
-    --keep-monthly 24 || fail
+    --keep-within-daily 30d \
+    --keep-within-weekly 3m \
+    --keep-within-monthly 2y || fail
 }
 
 ubuntu_workstation::backup::prune() {
