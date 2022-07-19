@@ -43,6 +43,7 @@ export MY_PASSWORD_STORE_OFFLINE_DIR="${MY_KEYS_OFFLINE_PATH}/password-store/wor
 
 export MY_GITHUB_ACCESS_TOKEN_PATH="github/access-token" # password
 export MY_NPM_PUBLISH_TOKEN_PATH="npm/publish-token" # password
+export MY_PRIVATE_SOPKAFILES_LIST_PATH="sopka/private-sopkafiles" # ssh key
 export MY_RUBYGEMS_CREDENTIALS_PATH="rubygems/credentials" # body
 export MY_SSH_KEY_PATH="ssh/workstation/id_ed25519" # ssh key
 export MY_SUBLIME_MERGE_LICENSE_PATH="sublime-merge/license" # body

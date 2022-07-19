@@ -16,8 +16,9 @@
 
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Workstation" || fail
-  sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
+  sopka_menu::add workstation::add_private_sopkafiles || fail
   sopka_menu::add workstation::merge_editor_configs || fail
+  sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
   sopka_menu::add_delimiter || fail
 
   sopka_menu::add_header "Workstation: pass" || fail
@@ -133,4 +134,9 @@ workstation::pass::sync_offline() {
 
 workstation::pass::init() {
   pass init "${MY_GPG_KEY}" || fail
+}
+
+workstation::add_private_sopkafiles() {
+  pass::use "${MY_PRIVATE_SOPKAFILES_LIST_PATH}" --body --pipe | sopkafile::add_from_list
+  test "${PIPESTATUS[*]}" = "0 0" || fail
 }
