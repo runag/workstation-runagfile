@@ -167,13 +167,45 @@ ubuntu_workstation::configure_imwhell() {
   local repetitions="2"
   local output_file="${HOME}/.imwheelrc"
   tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
+"^krita$"
+None,      Up,   Button4
+None,      Down, Button5
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Control_R, Up,   Control_R|Button4
+Control_R, Down, Control_R|Button5
+Alt_L,     Up,   Alt_L|Button4
+Alt_L,     Down, Alt_L|Button5
+Alt_R,     Up,   Alt_R|Button4
+Alt_R,     Down, Alt_R|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+Shift_R,   Up,   Shift_R|Button4
+Shift_R,   Down, Shift_R|Button5
+Meta_L,    Up,   Meta_L|Button4
+Meta_L,    Down, Meta_L|Button5
+Meta_R,    Up,   Meta_R|Button4
+Meta_R,    Down, Meta_R|Button5
+
 ".*"
 None,      Up,   Button4, ${repetitions}
 None,      Down, Button5, ${repetitions}
 Control_L, Up,   Control_L|Button4
 Control_L, Down, Control_L|Button5
+Control_R, Up,   Control_R|Button4
+Control_R, Down, Control_R|Button5
+Alt_L,     Up,   Alt_L|Button4
+Alt_L,     Down, Alt_L|Button5
+Alt_R,     Up,   Alt_R|Button4
+Alt_R,     Down, Alt_R|Button5
 Shift_L,   Up,   Shift_L|Button4
 Shift_L,   Down, Shift_L|Button5
+Shift_R,   Up,   Shift_R|Button4
+Shift_R,   Down, Shift_R|Button5
+Meta_L,    Up,   Meta_L|Button4
+Meta_L,    Down, Meta_L|Button5
+Meta_R,    Up,   Meta_R|Button4
+Meta_R,    Down, Meta_R|Button5
 EOF
 
   dir::make_if_not_exists "${HOME}/.config" 755 || fail
