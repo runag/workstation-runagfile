@@ -37,6 +37,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add ubuntu_workstation::backup::disable_timers || fail
   sopka_menu::add ubuntu_workstation::backup::status || fail
   sopka_menu::add ubuntu_workstation::backup::log || fail
+  sopka_menu::add ubuntu_workstation::backup::log_follow || fail
   sopka_menu::add_delimiter || fail
 fi
 
@@ -78,9 +79,11 @@ ubuntu_workstation::backup::load_config() {
     machine_id="$(cat /etc/machine-id)" || fail
   fi
 
-  export BACKUP_MOUNT_POINT="${HOME}/restore/workstation-backup" # HERE
+  export BACKUP_MOUNT_POINT="${HOME}/backups/mounts/workstation"
+  export BACKUP_RESTORE_PATH="${HOME}/backups/restores/workstation"
   export BACKUP_REMOTE_HOST="workstation-backup"
-  export BACKUP_REMOTE_PATH="backups/restic/linux-workstation/${machine_hostname}-${machine_id}"
+  export BACKUP_REMOTE_PATH="backups/restic-data/workstation/${machine_hostname}"
+  export BACKUP_MACHINE_ID_TAG="machine-id:${machine_id}"
 
   export RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation-backup.txt"
   export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
@@ -159,7 +162,12 @@ ubuntu_workstation::backup::create() {
 }
 
 ubuntu_workstation::backup::create::perform() {
-  restic backup --one-file-system . || fail
+  restic backup \
+    --one-file-system \
+    --tag "${BACKUP_MACHINE_ID_TAG}" \
+    --exclude "${HOME}/snap" \
+    --exclude "${HOME}/.cache" \
+    . || fail
 }
 
 ubuntu_workstation::backup::list_snapshots() {
@@ -182,6 +190,7 @@ ubuntu_workstation::backup::forget() {
 
 ubuntu_workstation::backup::forget::perform() {
   restic forget \
+    --group-by "host,paths,tags" \
     --keep-within 14d \
     --keep-daily 32 \
     --keep-weekly 14 \
@@ -211,6 +220,8 @@ ubuntu_workstation::backup::unlock() {
 ubuntu_workstation::backup::mount() {
   ubuntu_workstation::backup::load_config || fail
 
+  mkdir -p "${BACKUP_MOUNT_POINT}" || fail
+
   if findmnt --mountpoint "${BACKUP_MOUNT_POINT}" >/dev/null; then
     fusermount -u "${BACKUP_MOUNT_POINT}" || fail
   fi
@@ -224,6 +235,14 @@ ubuntu_workstation::backup::umount() {
   ubuntu_workstation::backup::load_config || fail
 
   fusermount -u -z "${BACKUP_MOUNT_POINT}" || fail
+}
+
+ubuntu_workstation::backup::restore() {
+  ubuntu_workstation::backup::load_config || fail
+
+  mkdir -p "${BACKUP_RESTORE_PATH}" || fail
+
+  restic restore --target "${BACKUP_RESTORE_PATH}" --verify latest || fail
 }
 
 ubuntu_workstation::backup::shell() {
@@ -274,4 +293,8 @@ ubuntu_workstation::backup::status() {
 
 ubuntu_workstation::backup::log() {
   journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
+}
+
+ubuntu_workstation::backup::log_follow() {
+  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today --follow || fail
 }
