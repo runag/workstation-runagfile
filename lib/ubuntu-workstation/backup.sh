@@ -69,21 +69,21 @@ ubuntu_workstation::backup::deploy() {
 }
 
 ubuntu_workstation::backup::load_config() {
-  local machine_hostname machine_id
+  export BACKUP_REMOTE_HOST="workstation-backup"
 
-  machine_hostname="$(hostname)" || fail
-
-  if vmware::is_inside_vm; then
-    machine_id="$(vmware::get_machine_uuid)" || fail
+  export BACKUP_MACHINE_ID; if vmware::is_inside_vm; then
+    BACKUP_MACHINE_ID="$(vmware::get_machine_uuid)" || fail
   else
-    machine_id="$(cat /etc/machine-id)" || fail
+    BACKUP_MACHINE_ID="$(cat /etc/machine-id)" || fail
   fi
 
-  export BACKUP_MOUNT_POINT="${HOME}/backups/mounts/workstation"
-  export BACKUP_RESTORE_PATH="${HOME}/backups/restores/workstation"
-  export BACKUP_REMOTE_HOST="workstation-backup"
-  export BACKUP_REMOTE_PATH="backups/restic-data/workstation/${machine_hostname}"
-  export BACKUP_MACHINE_ID_TAG="machine-id:${machine_id}"
+  local machine_hostname; machine_hostname="$(hostname)" || fail
+  
+  export BACKUP_REPOSITORY_NAME="workstation/${machine_hostname}"
+
+  export BACKUP_REMOTE_PATH="backups/restic-data/${BACKUP_REPOSITORY_NAME}"
+  export BACKUP_MOUNT_POINT="${HOME}/backups/mounts/${BACKUP_REPOSITORY_NAME}"
+  export BACKUP_RESTORE_PATH="${HOME}/backups/restores/${BACKUP_REPOSITORY_NAME}"
 
   export RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation-backup.txt"
   export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
@@ -164,7 +164,7 @@ ubuntu_workstation::backup::create() {
 ubuntu_workstation::backup::create::perform() {
   restic backup \
     --one-file-system \
-    --tag "${BACKUP_MACHINE_ID_TAG}" \
+    --tag "machine-id:${BACKUP_MACHINE_ID}" \
     --exclude "${HOME}/snap" \
     --exclude "${HOME}/.cache" \
     . || fail
@@ -239,6 +239,10 @@ ubuntu_workstation::backup::umount() {
 
 ubuntu_workstation::backup::restore() {
   ubuntu_workstation::backup::load_config || fail
+
+  if [ -d "${BACKUP_RESTORE_PATH}" ]; then
+    fail "Restore directory already exists, unable to restore"
+  fi
 
   mkdir -p "${BACKUP_RESTORE_PATH}" || fail
 
