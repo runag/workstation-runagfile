@@ -54,6 +54,7 @@ ubuntu_workstation::deploy_software_packages() {
     git \
     gnupg \
     graphviz \
+    hexdiff \
     htop \
     imagemagick \
     iperf3 \
