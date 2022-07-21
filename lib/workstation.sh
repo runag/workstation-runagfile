@@ -100,7 +100,6 @@ workstation::make_keys_directory_if_not_exists() {
   dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}" 700 || fail
 }
 
-
 workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.nodenv/versions"/* || fail
   rm -rf "${HOME}/.rbenv/versions"/* || fail

@@ -73,3 +73,9 @@ ubuntu_workstation::display_if_restart_required() {
 ubuntu_workstation::run_benchmark() {
   benchmark::run || fail
 }
+
+ubuntu_workstation::hide-file() {
+  ( umask 0177 && touch "${HOME}/.hidden" ) || fail
+  file::append_line_unless_present "$1" "${HOME}/.hidden" || fail
+}
+

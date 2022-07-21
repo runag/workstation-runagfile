@@ -23,7 +23,7 @@ ubuntu_workstation::deploy_configuration() {
 
   # configure btrfs
   if [ "${CI:-}" != "true" ]; then
-    fstab::add_mount_option btrfs commit=5 || fail
+    fstab::add_mount_option btrfs commit=15 || fail
     fstab::add_mount_option btrfs flushoncommit || fail
     fstab::add_mount_option btrfs noatime || fail
   fi
@@ -49,8 +49,14 @@ ubuntu_workstation::deploy_opionated_configuration() {
   # install sublime text configuration
   workstation::sublime_text::install_config || fail
 
-  # configure home folders
-  ubuntu_workstation::configure_home_folders || fail
+  # hide some folders
+  ubuntu_workstation::hide-file "Desktop" || fail
+  ubuntu_workstation::hide-file "Documents" || fail
+  ubuntu_workstation::hide-file "Music" || fail
+  ubuntu_workstation::hide-file "Public" || fail
+  ubuntu_workstation::hide-file "Templates" || fail
+  ubuntu_workstation::hide-file "Videos" || fail
+  ubuntu_workstation::hide-file "snap" || fail
 
   # configure gnome desktop
   ubuntu_workstation::configure_gnome || fail
@@ -61,52 +67,10 @@ ubuntu_workstation::deploy_opionated_configuration() {
   ubuntu_workstation::configure_imwhell || fail
 }
 
-ubuntu_workstation::configure_home_folders() {
-  local dirs_file="${HOME}/.config/user-dirs.dirs"
-
-  if [ -f "${dirs_file}" ]; then
-    local temp_file; temp_file="$(mktemp)" || fail
-
-    if [ -d "${HOME}/Desktop" ]; then
-      # shellcheck disable=SC2016
-      echo 'XDG_DESKTOP_DIR="${HOME}/Desktop"' >>"${temp_file}" || fail
-    fi
-
-    if [ -d "${HOME}/Downloads" ]; then
-      # shellcheck disable=SC2016
-      echo 'XDG_DOWNLOADS_DIR="${HOME}/Downloads"' >>"${temp_file}" || fail
-    fi
-
-    mv "${temp_file}" "${dirs_file}" || fail
-
-    echo 'enabled=false' >"${HOME}/.config/user-dirs.conf" || fail
-
-    dir::remove_if_exists_and_empty "${HOME}/Documents" || fail
-    dir::remove_if_exists_and_empty "${HOME}/Music" || fail
-    dir::remove_if_exists_and_empty "${HOME}/Pictures" || fail
-    dir::remove_if_exists_and_empty "${HOME}/Public" || fail
-    dir::remove_if_exists_and_empty "${HOME}/Templates" || fail
-    dir::remove_if_exists_and_empty "${HOME}/Videos" || fail
-
-    if [ -f "${HOME}/examples.desktop" ]; then
-      rm "${HOME}/examples.desktop" || fail
-    fi
-
-    xdg-user-dirs-update || fail
-  fi
-
-  ( umask 0177 && touch "${HOME}/.hidden" ) || fail
-  
-  file::append_line_unless_present "Desktop" "${HOME}/.hidden" || fail
-  file::append_line_unless_present "snap" "${HOME}/.hidden" || fail
-}
-
 ubuntu_workstation::configure_gnome() {(
   # use dconf-editor to find key/value pairs
   #
-  # Please do not use dbus-launch here because it will introduce side-effect to
-  # git:add-credentials-to-gnome-keyring and
-  # ssh::add-key-password-to-gnome-keyring
+  # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring" and "ssh::add-key-password-to-gnome-keyring"
   #
   gnome_set() { gsettings set "org.gnome.$1" "${@:2}" || fail; }
   gnome_get() { gsettings get "org.gnome.$1" "${@:2}"; }
@@ -134,13 +98,13 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set shell.extensions.dash-to-dock require-pressure-to-show false || fail
   gnome_set shell.extensions.dash-to-dock show-apps-at-top true || fail
   gnome_set shell.extensions.dash-to-dock show-delay 0.10000000000000001 || fail
+  gnome_set shell.extensions.dash-to-dock show-mounts-only-mounted true || fail
 
   # Nautilus
   gnome_set nautilus.list-view default-zoom-level 'small' || fail
   gnome_set nautilus.list-view use-tree-view true || fail
   gnome_set nautilus.preferences default-folder-viewer 'list-view' || fail
   gnome_set nautilus.preferences show-delete-permanently true || fail
-  gnome_set nautilus.preferences show-hidden-files true || fail
 
   # Automatic timezone
   gnome_set desktop.datetime automatic-timezone true || fail
@@ -165,8 +129,8 @@ ubuntu_workstation::configure_gnome() {(
 
 ubuntu_workstation::configure_imwhell() {
   local repetitions="2"
-  local output_file="${HOME}/.imwheelrc"
-  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
+ 
+  tee "${HOME}/.imwheelrc" <<EOF || fail
 "^krita$"
 None,      Up,   Button4
 None,      Down, Button5
@@ -211,8 +175,7 @@ EOF
   dir::make_if_not_exists "${HOME}/.config" 755 || fail
   dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
 
-  local output_file="${HOME}/.config/autostart/imwheel.desktop"
-  tee "${output_file}" <<EOF || fail "Unable to write file: ${output_file} ($?)"
+  tee "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/imwheel

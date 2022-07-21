@@ -45,53 +45,6 @@ ubuntu_workstation::deploy_secrets() {
   workstation::deploy_secrets || fail
 }
 
-ubuntu_workstation::deploy_vm_server() {
-  # remove unattended-upgrades
-  apt::remove unattended-upgrades || fail
-
-  # perform autoremove, update and upgrade
-  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
-
-  # install open-vm-tools
-  if vmware::is_inside_vm; then
-    apt::install open-vm-tools || fail
-  fi
-
-  # install and configure sshd
-  sshd::disable_password_authentication || fail
-  apt::install openssh-server || fail
-  sudo systemctl --quiet --now enable ssh || fail
-  sudo systemctl reload ssh || fail
-
-  # import ssh key
-  apt::install ssh-import-id || fail
-  ssh-import-id "gh:${MY_GITHUB_LOGIN}" || fail
-
-  # install avahi daemon
-  apt::install avahi-daemon || fail
-}
-
-ubuntu_workstation::deploy_tailscale() {
-  # install tailscale
-  if ! command -v tailscale >/dev/null; then
-    tailscale::install || fail
-  fi
-
-  if vmware::is_inside_vm; then
-    tailscale::install_issue_2541_workaround || fail
-  fi
-
-  # logout if SOPKA_UPDATE_SECRETS is set
-  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && tailscale::is_logged_in; then
-    sudo tailscale logout || fail
-  fi
-
-  if ! tailscale::is_logged_in; then
-    local tailscale_key; tailscale_key="$(pass::use "${MY_TAILSCALE_REUSABLE_KEY_PATH}")" || fail
-    sudo tailscale up --authkey "${tailscale_key}" || fail  
-  fi
-}
-
 ubuntu_workstation::deploy_host_folders_access() {
   # install cifs-utils
   apt::install cifs-utils || fail
@@ -121,4 +74,52 @@ ubuntu_workstation::mount_host_folder() {
 ubuntu_workstation::mount_host_folders() {
   ubuntu_workstation::mount_host_folder "my" || fail
   ubuntu_workstation::mount_host_folder "ephemeral-data" || fail
+}
+
+ubuntu_workstation::deploy_tailscale() {
+  # install tailscale
+  if ! command -v tailscale >/dev/null; then
+    tailscale::install || fail
+  fi
+
+  if vmware::is_inside_vm; then
+    # https://github.com/tailscale/tailscale/issues/2541
+    tailscale::install_issue_2541_workaround || fail
+  fi
+
+  # logout if SOPKA_UPDATE_SECRETS is set
+  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && tailscale::is_logged_in; then
+    sudo tailscale logout || fail
+  fi
+
+  if ! tailscale::is_logged_in; then
+    local tailscale_key; tailscale_key="$(pass::use "${MY_TAILSCALE_REUSABLE_KEY_PATH}")" || fail
+    sudo tailscale up --authkey "${tailscale_key}" || fail  
+  fi
+}
+
+ubuntu_workstation::deploy_vm_server() {
+  # remove unattended-upgrades
+  apt::remove unattended-upgrades || fail
+
+  # perform autoremove, update and upgrade
+  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
+
+  # install open-vm-tools
+  if vmware::is_inside_vm; then
+    apt::install open-vm-tools || fail
+  fi
+
+  # install and configure sshd
+  sshd::disable_password_authentication || fail
+  apt::install openssh-server || fail
+  sudo systemctl --quiet --now enable ssh || fail
+  sudo systemctl reload ssh || fail
+
+  # import ssh key
+  apt::install ssh-import-id || fail
+  ssh-import-id "gh:${MY_GITHUB_LOGIN}" || fail
+
+  # install avahi daemon
+  apt::install avahi-daemon || fail
 }

@@ -148,24 +148,17 @@ ubuntu_workstation::deploy_software_packages() {
     sudo snap connect discord:system-observe || fail
 
     # OBS studio
-    ubuntu_workstation::install_obs_studio || fail
+    sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+    apt::update || fail
+    apt::install obs-studio guvcview || fail
 
     # copyq
-    ubuntu_workstation::install_copyq || fail
+    sudo add-apt-repository --yes ppa:hluk/copyq || fail
+    apt::update || fail
+    apt::install copyq || fail
 
     # monitor control
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
   fi
 }
 
-ubuntu_workstation::install_obs_studio() {
-  sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-  apt::update || fail
-  apt::install obs-studio guvcview || fail
-}
-
-ubuntu_workstation::install_copyq() {
-  sudo add-apt-repository --yes ppa:hluk/copyq || fail
-  apt::update || fail
-  apt::install copyq || fail
-}
