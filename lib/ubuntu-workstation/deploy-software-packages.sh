@@ -140,6 +140,9 @@ ubuntu_workstation::deploy_software_packages() {
 
   # software for bare metal workstation
   if linux::is_bare_metal; then
+    # nvme-cli
+    sudo apt-get install nvme-cli || fail
+    
     # skype
     sudo snap install skype --classic || fail
 
