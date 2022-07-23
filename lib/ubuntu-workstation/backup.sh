@@ -165,6 +165,7 @@ ubuntu_workstation::backup::create::perform() {
   restic backup \
     --one-file-system \
     --tag "machine-id:${BACKUP_MACHINE_ID}" \
+    --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     --exclude "${HOME}/.cache" \
     . || fail
