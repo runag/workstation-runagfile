@@ -10,15 +10,15 @@
   "editor.minimap.enabled": false,
   // "editor.mouseWheelScrollSensitivity": 2,
   "editor.multiCursorModifier": "ctrlCmd",
-  // "editor.parameterHints.enabled": false,
-  // "editor.quickSuggestions": false,
+  "editor.parameterHints.enabled": false, // this turns off suggestions
+  "editor.quickSuggestions": false, // this turns off suggestions
   "editor.rulers": [
     120
   ],
   "editor.smoothScrolling": true,
-  // "editor.suggestOnTriggerCharacters": false,
+  "editor.suggestOnTriggerCharacters": false, // this turns off suggestions
   "editor.tabSize": 2,
-  // "editor.wordBasedSuggestions": false,
+  "editor.wordBasedSuggestions": false, // this turns off suggestions
   "explorer.autoReveal": false,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
