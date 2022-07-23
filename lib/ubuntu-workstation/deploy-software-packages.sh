@@ -154,6 +154,15 @@ ubuntu_workstation::deploy_software_packages() {
     sudo snap install discord || fail
     sudo snap connect discord:system-observe || fail
 
+    # spotify
+    sudo snap install spotify || fail
+
+    # inkscape
+    sudo snap install inkscape || fail
+
+    # krita
+    sudo snap install krita || fail
+
     # OBS studio
     sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
     apt::update || fail
