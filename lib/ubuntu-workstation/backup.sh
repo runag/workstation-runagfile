@@ -70,12 +70,7 @@ ubuntu_workstation::backup::deploy() {
 
 ubuntu_workstation::backup::load_config() {
   export BACKUP_REMOTE_HOST="workstation-backup"
-
-  export BACKUP_MACHINE_ID; if vmware::is_inside_vm; then
-    BACKUP_MACHINE_ID="$(vmware::get_machine_uuid)" || fail
-  else
-    BACKUP_MACHINE_ID="$(cat /etc/machine-id)" || fail
-  fi
+  export BACKUP_MACHINE_ID; BACKUP_MACHINE_ID="$(os::machine_id)" || fail
 
   local machine_hostname; machine_hostname="$(hostname)" || fail
   
