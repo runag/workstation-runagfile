@@ -98,6 +98,9 @@ ubuntu_workstation::deploy_software_packages() {
   # python
   python::install_and_update::apt || fail
 
+  # file-digests
+  gem install file-digests || fail
+
 
   ### desktop software
 
