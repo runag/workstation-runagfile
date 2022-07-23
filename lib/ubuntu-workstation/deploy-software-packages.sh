@@ -122,6 +122,7 @@ ubuntu_workstation::deploy_software_packages() {
 
   # bitwarden
   sudo snap install bitwarden || fail
+  sudo snap connect bitwarden:password-manager-service || fail
 
   # qtpass
   apt::install qtpass || fail
