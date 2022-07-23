@@ -70,11 +70,9 @@ ubuntu_workstation::backup::deploy() {
 
 ubuntu_workstation::backup::load_config() {
   export BACKUP_REMOTE_HOST="workstation-backup"
-  export BACKUP_MACHINE_ID; BACKUP_MACHINE_ID="$(os::machine_id)" || fail
 
-  local machine_hostname; machine_hostname="$(hostname)" || fail
-  
-  export BACKUP_REPOSITORY_NAME="workstation/${machine_hostname}"
+  export BACKUP_MACHINE_ID; BACKUP_MACHINE_ID="$(os::machine_id)" || fail
+  export BACKUP_REPOSITORY_NAME; BACKUP_REPOSITORY_NAME="workstation/$(os::hostname)" || fail
 
   export BACKUP_REMOTE_PATH="backups/restic-data/${BACKUP_REPOSITORY_NAME}"
   export BACKUP_MOUNT_POINT="${HOME}/backups/mounts/${BACKUP_REPOSITORY_NAME}"
@@ -234,6 +232,8 @@ ubuntu_workstation::backup::umount() {
 }
 
 ubuntu_workstation::backup::restore() {
+  local snapshot="${1:-"latest"}"
+
   ubuntu_workstation::backup::load_config || fail
 
   if [ -d "${BACKUP_RESTORE_PATH}" ]; then
@@ -242,7 +242,7 @@ ubuntu_workstation::backup::restore() {
 
   mkdir -p "${BACKUP_RESTORE_PATH}" || fail
 
-  restic restore --target "${BACKUP_RESTORE_PATH}" --verify latest || fail
+  restic restore --target "${BACKUP_RESTORE_PATH}" --verify "${snapshot}" || fail
 }
 
 ubuntu_workstation::backup::shell() {
