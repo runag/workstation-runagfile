@@ -162,6 +162,13 @@ ubuntu_workstation::deploy_software_packages() {
 
     # monitor control
     apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
+
+    # My MSI laptop hardware control
+    if grep -qFx "GF65 Thin 9SD" /sys/devices/virtual/dmi/id/product_name && \
+       grep -qFx "Micro-Star International Co., Ltd." /sys/devices/virtual/dmi/id/board_vendor; then
+      git::place_up_to_date_clone "https://github.com/senotrusov/msi-ec" "${HOME}/.msi-ec" || fail
+      apt::install linux-headers-generic || fail
+      ( cd "${HOME}/.msi-ec" && make && sudo make install ) || fail
+    fi
   fi
 }
-
