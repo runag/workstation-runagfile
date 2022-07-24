@@ -11,7 +11,11 @@
   // "editor.mouseWheelScrollSensitivity": 2,
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.parameterHints.enabled": false, // this turns off suggestions
-  "editor.quickSuggestions": false, // this turns off suggestions
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  }, // this turns off suggestions
   "editor.rulers": [
     120
   ],
