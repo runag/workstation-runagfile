@@ -55,6 +55,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   fi
 
   sopka_menu::add ubuntu_workstation::scrub_root || fail
+  sopka_menu::add ubuntu_workstation::fstrim_boot || fail
 
   sopka_menu::add_delimiter || fail
 fi
@@ -83,4 +84,8 @@ ubuntu_workstation::hide-file() {
 
 ubuntu_workstation::scrub_root() {
   sudo btrfs scrub start -B -d /home || fail
+}
+
+ubuntu_workstation::fstrim_boot() {
+  sudo fstrim -v /boot || fail
 }

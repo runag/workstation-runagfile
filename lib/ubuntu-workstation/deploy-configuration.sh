@@ -24,6 +24,7 @@ ubuntu_workstation::deploy_configuration() {
   # configure btrfs
   if [ "${CI:-}" != "true" ]; then
     fstab::add_mount_option btrfs commit=15 || fail
+    fstab::add_mount_option btrfs discard=async || fail
     fstab::add_mount_option btrfs flushoncommit || fail
     fstab::add_mount_option btrfs noatime || fail
   fi
