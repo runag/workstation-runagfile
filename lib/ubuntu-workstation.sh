@@ -54,6 +54,8 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
     sopka_menu::add ubuntu_workstation::run_benchmark || fail
   fi
 
+  sopka_menu::add ubuntu_workstation::scrub_root || fail
+
   sopka_menu::add_delimiter || fail
 fi
 
@@ -79,3 +81,6 @@ ubuntu_workstation::hide-file() {
   file::append_line_unless_present "$1" "${HOME}/.hidden" || fail
 }
 
+ubuntu_workstation::scrub_root() {
+  sudo btrfs scrub start -B -d /home || fail
+}
