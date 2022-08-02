@@ -118,7 +118,7 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set desktop.sound event-sounds false || fail
 
   # Mouse, 3200 dpi
-  gnome_set desktop.peripherals.mouse speed -1 || fail
+  gnome_set desktop.peripherals.mouse speed -0.9 || fail
 
   # Theme
   gnome_set desktop.interface color-scheme 'prefer-dark' || fail
