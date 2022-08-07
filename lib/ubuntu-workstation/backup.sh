@@ -28,7 +28,9 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add ubuntu_workstation::backup::unlock || fail
   sopka_menu::add ubuntu_workstation::backup::mount || fail
   sopka_menu::add ubuntu_workstation::backup::umount || fail
+  sopka_menu::add ubuntu_workstation::backup::restore || fail
   sopka_menu::add ubuntu_workstation::backup::shell || fail
+  sopka_menu::add ubuntu_workstation::backup::remote_shell || fail
   sopka_menu::add_delimiter || fail
   sopka_menu::add ubuntu_workstation::backup::start || fail
   sopka_menu::add ubuntu_workstation::backup::stop || fail
@@ -68,19 +70,15 @@ ubuntu_workstation::backup::deploy() {
   ubuntu_workstation::backup::install_systemd_services || fail
 }
 
-ubuntu_workstation::backup::load_config() {
-  export BACKUP_REMOTE_HOST="workstation-backup"
+ubuntu_workstation::backup::with_env() {(
+  export RESTIC_PASSWORD_FILE="${BACKUP_RESTIC_PASSWORD_FILE}"
+  export RESTIC_REPOSITORY="${BACKUP_RESTIC_REPOSITORY}"
+  "$@"
+)}
 
-  export BACKUP_MACHINE_ID; BACKUP_MACHINE_ID="$(os::machine_id)" || fail
-  export BACKUP_REPOSITORY_NAME; BACKUP_REPOSITORY_NAME="workstation/$(os::hostname)" || fail
-
-  export BACKUP_REMOTE_PATH="backups/restic-data/${BACKUP_REPOSITORY_NAME}"
-  export BACKUP_MOUNT_POINT="${HOME}/backups/mounts/${BACKUP_REPOSITORY_NAME}"
-  export BACKUP_RESTORE_PATH="${HOME}/backups/restores/${BACKUP_REPOSITORY_NAME}"
-
-  export RESTIC_PASSWORD_FILE="${MY_KEYS_PATH}/restic/workstation-backup"
-  export RESTIC_REPOSITORY="sftp:${BACKUP_REMOTE_HOST}:${BACKUP_REMOTE_PATH}"
-}
+ubuntu_workstation::backup::restic() {(
+  ubuntu_workstation::backup::with_env restic "$@"
+)}
 
 ubuntu_workstation::backup::install_systemd_services() {
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
@@ -145,19 +143,19 @@ EOF
 }
 
 ubuntu_workstation::backup::create() {
-  ubuntu_workstation::backup::load_config || fail
-
-  if ! restic cat config >/dev/null 2>&1; then
-    restic init || fail "Unable to init restic repository"
+  if ! ubuntu_workstation::backup::restic cat config >/dev/null 2>&1; then
+    ubuntu_workstation::backup::restic init || fail "Unable to init restic repository"
   fi
 
   (cd "${HOME}" && ubuntu_workstation::backup::create::perform) || fail "Unable to create restic backup"
 }
 
 ubuntu_workstation::backup::create::perform() {
-  restic backup \
+  local machine_id; machine_id="$(os::machine_id)" || fail
+
+  ubuntu_workstation::backup::restic backup \
     --one-file-system \
-    --tag "machine-id:${BACKUP_MACHINE_ID}" \
+    --tag "machine-id:${machine_id}" \
     --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     --exclude "${HOME}/.cache" \
@@ -165,25 +163,15 @@ ubuntu_workstation::backup::create::perform() {
 }
 
 ubuntu_workstation::backup::list_snapshots() {
-  ubuntu_workstation::backup::load_config || fail
-
-  restic snapshots || fail
+  ubuntu_workstation::backup::restic snapshots || fail
 }
 
 ubuntu_workstation::backup::check_and_read_data() {
-  ubuntu_workstation::backup::load_config || fail
-
-  restic check --check-unused --read-data || fail
+  ubuntu_workstation::backup::restic check --check-unused --read-data || fail
 }
 
 ubuntu_workstation::backup::forget() {
-  ubuntu_workstation::backup::load_config || fail
-
-  ubuntu_workstation::backup::forget::perform || fail
-}
-
-ubuntu_workstation::backup::forget::perform() {
-  restic forget \
+  ubuntu_workstation::backup::restic forget \
     --group-by "host,paths,tags" \
     --keep-within 14d \
     --keep-within-daily 30d \
@@ -192,28 +180,20 @@ ubuntu_workstation::backup::forget::perform() {
 }
 
 ubuntu_workstation::backup::prune() {
-  ubuntu_workstation::backup::load_config || fail
-
-  restic prune || fail
+  ubuntu_workstation::backup::restic prune || fail
 }
 
 ubuntu_workstation::backup::maintenance() {
-  ubuntu_workstation::backup::load_config || fail
-
-  restic check || fail
+  ubuntu_workstation::backup::restic check || fail
   ubuntu_workstation::backup::forget || fail
   ubuntu_workstation::backup::prune || fail
 }
 
 ubuntu_workstation::backup::unlock() {
-  ubuntu_workstation::backup::load_config || fail
-  
-  restic unlock || fail
+  ubuntu_workstation::backup::restic unlock || fail
 }
 
 ubuntu_workstation::backup::mount() {
-  ubuntu_workstation::backup::load_config || fail
-
   mkdir -p "${BACKUP_MOUNT_POINT}" || fail
 
   if findmnt --mountpoint "${BACKUP_MOUNT_POINT}" >/dev/null; then
@@ -222,19 +202,15 @@ ubuntu_workstation::backup::mount() {
 
   dir::make_if_not_exists_and_set_permissions "${BACKUP_MOUNT_POINT}" 700 || fail
 
-  restic mount "${BACKUP_MOUNT_POINT}" || fail
+  ubuntu_workstation::backup::restic mount "${BACKUP_MOUNT_POINT}" || fail
 }
 
 ubuntu_workstation::backup::umount() {
-  ubuntu_workstation::backup::load_config || fail
-
   fusermount -u -z "${BACKUP_MOUNT_POINT}" || fail
 }
 
 ubuntu_workstation::backup::restore() {
   local snapshot="${1:-"latest"}"
-
-  ubuntu_workstation::backup::load_config || fail
 
   if [ -d "${BACKUP_RESTORE_PATH}" ]; then
     fail "Restore directory already exists, unable to restore"
@@ -242,13 +218,15 @@ ubuntu_workstation::backup::restore() {
 
   mkdir -p "${BACKUP_RESTORE_PATH}" || fail
 
-  restic restore --target "${BACKUP_RESTORE_PATH}" --verify "${snapshot}" || fail
+  ubuntu_workstation::backup::restic restore --target "${BACKUP_RESTORE_PATH}" --verify "${snapshot}" || fail
 }
 
 ubuntu_workstation::backup::shell() {
-  ubuntu_workstation::backup::load_config || fail
-  
-  ssh -t "${BACKUP_REMOTE_HOST}" "cd $(printf "%q" "${BACKUP_REMOTE_PATH}"); exec \$SHELL -l"
+  ubuntu_workstation::backup::with_env "${SHELL}"
+}
+
+ubuntu_workstation::backup::remote_shell() {
+  ssh -t "${BACKUP_REMOTE_HOST}" "cd $(printf "%q" "${BACKUP_REMOTE_PATH}"); exec \"\${SHELL}\" -l"
 }
 
 
