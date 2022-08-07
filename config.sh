@@ -39,7 +39,7 @@ export MY_GPG_SIGNING_KEY="38F6833D4C62D3AF8102789772080E033B1F76B5"
 export MY_GPG_OFFLINE_KEY_FILE="${MY_KEYS_OFFLINE_PATH}/gpg/workstation/secret-subkeys.asc"
 
 # Password store
-export MY_PASSWORD_STORE_OFFLINE_DIR="${MY_KEYS_OFFLINE_PATH}/password-store/workstation"
+export MY_PASSWORD_STORE_OFFLINE_PATH="${MY_KEYS_OFFLINE_PATH}/password-store/workstation"
 
 export MY_GITHUB_ACCESS_TOKEN_PATH="github/access-token" # password
 export MY_NPM_PUBLISH_TOKEN_PATH="npm/publish-token" # password

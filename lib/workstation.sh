@@ -124,11 +124,11 @@ workstation::pass::deploy() {
 }
 
 workstation::pass::import_offline() {
-  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
+  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
 }
 
 workstation::pass::sync_offline() {
-  pass::sync_to "${MY_PASSWORD_STORE_OFFLINE_DIR}" || fail
+  pass::sync_to "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
 }
 
 workstation::pass::init() {
