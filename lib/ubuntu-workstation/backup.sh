@@ -52,7 +52,7 @@ ubuntu_workstation::backup::deploy() {
   # install restic key
   workstation::make_keys_directory_if_not_exists || fail
   dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}/restic" 700 || fail
-  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${MY_KEYS_PATH}/restic/workstation-backup" --mode 0600 || fail
+  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${BACKUP_RESTIC_PASSWORD_FILE}" --mode 0600 || fail
 
   # install ssh key
   ssh::install_ssh_key_from_pass "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}" || fail
@@ -62,9 +62,7 @@ ubuntu_workstation::backup::deploy() {
   pass::use "${ssh_key_dir}/config" --body pass::file "${HOME}/.ssh/config" --mode 0600 || fail
 
   # add remote to known hosts
-  # local remote_host; remote_host="$(pass::use "${ssh_key_dir}/remote" --get host)" || fail
-  # ssh::add_host_to_known_hosts "${remote_host}" || fail
-  pass::use "${ssh_key_dir}/known_hosts" --body pass::file_with_block "${HOME}/.ssh/known_hosts" "# workstation-backup" --mode 0600 || fail
+  pass::use "${ssh_key_dir}/known_hosts" --body pass::file_with_block "${HOME}/.ssh/known_hosts" "# backup-server" --mode 0600 || fail
 
   # install systemd services
   ubuntu_workstation::backup::install_systemd_services || fail
