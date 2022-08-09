@@ -47,7 +47,7 @@ EOF
 Description=Timer for Github repositories backup
 
 [Timer]
-OnCalendar=weekly
+OnCalendar=daily
 Persistent=true
 RandomizedDelaySec=600
 
