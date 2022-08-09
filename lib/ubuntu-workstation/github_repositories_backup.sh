@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# TODO: when running as systemd job, sometimes there are no 'Already up to date' message"
+
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Github repositories backup" || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::deploy || fail

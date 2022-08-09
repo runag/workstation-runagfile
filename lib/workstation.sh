@@ -144,19 +144,24 @@ workstation::add_private_sopkafiles() {
 workstation::backup_my_github_repositories() {
   local backup_path="${HOME}/my/my-github-backup"
 
-  dir::make_if_not_exists "${backup_path}" || fail
-
   local github_access_token; github_access_token="$(pass::use "${MY_GITHUB_ACCESS_TOKEN_PATH}")" || fail
 
-  local page_number=1
+  local fail_flag; fail_flag="$(mktemp -u)" || fail
 
   local full_name
   local git_url
+  local page_number=1
 
-  # url for public repos for the specific user
-  # --url "https://api.github.com/users/${MY_GITHUB_LOGIN}/repos?page=${page_number}&per_page=100" |\
+  if [ -t 0 ]; then # stdin is a terminal
+    local fail_command="fail"
+  else
+    local fail_command="true"
+  fi
+
+  dir::make_if_not_exists "${backup_path}" || fail
 
   while true; do
+    # url for public repos for the specific user "https://api.github.com/users/${MY_GITHUB_LOGIN}/repos?page=${page_number}&per_page=100"
     curl \
       --fail \
       --show-error \
@@ -166,12 +171,16 @@ workstation::backup_my_github_repositories() {
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${full_name}..." || fail
-      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || true # ignore the result, try to backup all of them
+      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || { touch "${fail_flag}"; "${fail_command}"; }
     done
 
     local saved_pipe_status=("${PIPESTATUS[@]}")
 
     if [ "${saved_pipe_status[*]}" = "0 4 0" ]; then
+      if [ -f "${fail_flag}" ]; then
+        rm "${fail_flag}" || fail
+        fail
+      fi
       return
     elif [ "${saved_pipe_status[*]}" != "0 0 0" ]; then
       fail "Abnormal termination: ${saved_pipe_status[*]}"
@@ -179,4 +188,9 @@ workstation::backup_my_github_repositories() {
 
     ((page_number++))
   done
+
+  if [ -f "${fail_flag}" ]; then
+    rm "${fail_flag}" || fail
+    fail
+  fi
 }
