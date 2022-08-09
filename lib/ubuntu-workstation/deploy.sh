@@ -20,6 +20,7 @@ ubuntu_workstation::deploy_workstation() {
   ubuntu_workstation::deploy_secrets || fail
   
   task::run_with_install_filter ubuntu_workstation::backup::deploy || fail
+  task::run_with_install_filter ubuntu_workstation::github_repositories_backup::deploy || fail
 
   if vmware::is_inside_vm; then
     task::run_with_install_filter ubuntu_workstation::deploy_host_folders_access || fail

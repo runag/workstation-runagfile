@@ -19,6 +19,7 @@ if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add workstation::add_private_sopkafiles || fail
   sopka_menu::add workstation::merge_editor_configs || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
+  sopka_menu::add workstation::backup_my_github_repositories || fail
   sopka_menu::add_delimiter || fail
 
   sopka_menu::add_header "Workstation: pass" || fail
@@ -138,4 +139,44 @@ workstation::pass::init() {
 workstation::add_private_sopkafiles() {
   pass::use "${MY_PRIVATE_SOPKAFILES_LIST_PATH}" --body --pipe | sopkafile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
+}
+
+workstation::backup_my_github_repositories() {
+  local backup_path="${HOME}/my/my-github-backup"
+
+  dir::make_if_not_exists "${backup_path}" || fail
+
+  local github_access_token; github_access_token="$(pass::use "${MY_GITHUB_ACCESS_TOKEN_PATH}")" || fail
+
+  local page_number=1
+
+  local full_name
+  local git_url
+
+  # url for public repos for the specific user
+  # --url "https://api.github.com/users/${MY_GITHUB_LOGIN}/repos?page=${page_number}&per_page=100" |\
+
+  while true; do
+    curl \
+      --fail \
+      --show-error \
+      --silent \
+      --user "${MY_GITHUB_LOGIN}:${github_access_token}" \
+      --url "https://api.github.com/user/repos?page=${page_number}&per_page=100&visibility=all" |\
+    jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
+    while IFS=$'\t' read -r full_name git_url; do
+      log::notice "Backing up ${full_name}..." || fail
+      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || fail
+    done
+
+    local saved_pipe_status=("${PIPESTATUS[@]}")
+
+    if [ "${saved_pipe_status[*]}" = "0 4 0" ]; then
+      return
+    elif [ "${saved_pipe_status[*]}" != "0 0 0" ]; then
+      fail "Abnormal termination: ${saved_pipe_status[*]}"
+    fi
+
+    ((page_number++))
+  done
 }
