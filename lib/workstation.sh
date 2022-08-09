@@ -166,7 +166,7 @@ workstation::backup_my_github_repositories() {
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${full_name}..." || fail
-      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || fail
+      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || true # ignore the result, try to backup all of them
     done
 
     local saved_pipe_status=("${PIPESTATUS[@]}")
