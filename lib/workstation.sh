@@ -166,10 +166,12 @@ workstation::backup_my_github_repositories() {
     # url for public repos for the specific user "https://api.github.com/users/${MY_GITHUB_LOGIN}/repos?page=${page_number}&per_page=100"
     curl \
       --fail \
+      --retry 10 \
+      --retry-connrefused \
       --show-error \
       --silent \
-      --user "${MY_GITHUB_LOGIN}:${github_access_token}" \
-      --url "https://api.github.com/user/repos?page=${page_number}&per_page=100&visibility=all" |\
+      --url "https://api.github.com/user/repos?page=${page_number}&per_page=100&visibility=all" \
+      --user "${MY_GITHUB_LOGIN}:${github_access_token}" |\
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${full_name}..." || fail
