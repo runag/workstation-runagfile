@@ -113,29 +113,26 @@ if ("$env:CI" -ne "true") { # I don't need to update them in CI
   if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
 }
 
-
-# Configure developer tools
+# Developer tools
 if ($install_developer_tools -eq 0) {
-  # ssh-agent
+  # Enable ssh-agent
   Set-Service -Name ssh-agent -StartupType Automatic
   Set-Service -Name ssh-agent -Status Running
+
+  # Load chocolatey environment
+  $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
+  Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+  Update-SessionEnvironment
+
+  # Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby's gems compilation
+  ridk install 2 3
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development toolchain" }
+
+  gem install file-digests
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install file-digests" }
+
+  ridk exec pacman --sync pass --noconfirm
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
+
+  New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass"
 }
-
-
-# Load chocolatey environment
-$env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
-Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-Update-SessionEnvironment
-
-
-# Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby's gems compilation
-ridk install 2 3
-if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development toolchain" }
-
-gem install file-digests
-if ($LASTEXITCODE -ne 0) { throw "Unable to install file-digests" }
-
-ridk exec pacman --sync pass --noconfirm
-if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
-
-New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass"
