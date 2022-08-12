@@ -65,7 +65,7 @@ ubuntu_workstation::deploy_opionated_configuration() {
   # enable and configure imwheel
   # imwheel somehow fixes the bug when mouse scrolling stops working if you move the mouse at the same time
   # I observed it only when running ubuntu inside vmware workstation
-  ubuntu_workstation::configure_imwhell || fail
+  # ubuntu_workstation::configure_imwhell || fail
 }
 
 ubuntu_workstation::configure_gnome() {(
