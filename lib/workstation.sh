@@ -93,7 +93,7 @@ workstation::install_rubygems_credentials() {
 }
 
 workstation::install_npm_credentials() {(
-  nodenv::load_shellrc_if_exists || fail
+  asdf::load_if_installed || fail
   pass::use "${MY_NPM_PUBLISH_TOKEN_PATH}" npm::auth_token || fail
 )}
 
@@ -102,8 +102,17 @@ workstation::make_keys_directory_if_not_exists() {
 }
 
 workstation::remove_nodejs_and_ruby_installations() {
+  if asdf plugin list | grep -qFx nodejs; then
+    asdf uninstall nodejs || fail
+  fi
+
+  if asdf plugin list | grep -qFx ruby; then
+    asdf uninstall ruby || fail
+  fi
+
   rm -rf "${HOME}/.nodenv/versions"/* || fail
   rm -rf "${HOME}/.rbenv/versions"/* || fail
+
   rm -rf "${HOME}/.cache/yarn" || fail
   rm -rf "${HOME}/.solargraph" || fail
   rm -rf "${HOME}/.bundle" || fail

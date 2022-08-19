@@ -54,7 +54,6 @@ export MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH="restic/backup" # password
 export MY_WORKSTATION_BACKUP_SSH_KEY_PATH="ssh/backup-server/id_ed25519_backup_server" # ssh key
 
 # Ruby & Node versions
-export NODENV_VERSION="16.15.1"
 export RBENV_VERSION="3.1.2"
 
 # Backup
