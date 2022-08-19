@@ -35,6 +35,7 @@ ubuntu_workstation::deploy_software_packages() {
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
   shellrc::install_editor_rc nano || fail
+  shellrc::install_direnv_rc || fail
 
   # install open-vm-tools
   if vmware::is_inside_vm; then
