@@ -96,6 +96,7 @@ ubuntu_workstation::deploy_software_packages() {
   nodejs::install_by_asdf_and_set_global || fail
 
   # ruby
+  ruby::install_dependencies_by_apt || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
   shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
   RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv || fail
