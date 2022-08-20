@@ -100,7 +100,7 @@ ubuntu_workstation::deploy_software_packages() {
   rbenv::install || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::disable_spring || fail
-  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_by_rbenv_and_set_global || fail
+  ruby::without-docs ruby::install_by_rbenv_and_set_global || fail
 
   # python
   python::install_and_update::apt || fail
