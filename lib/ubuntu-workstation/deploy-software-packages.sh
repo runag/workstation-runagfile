@@ -92,14 +92,15 @@ ubuntu_workstation::deploy_software_packages() {
   asdf::install_dependencies_by_apt || fail
   asdf::install_with_shellrc || fail
 
-  nodejs::install_asdf_specific_dependencies_by_apt || fail
+  nodejs::install_dependencies_by_apt || fail
   nodejs::install_by_asdf_and_set_global || fail
 
   # ruby
   ruby::install_dependencies_by_apt || fail
+  rbenv::install || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
-  shellrc::write "disable-spring" <<< "export DISABLE_SPRING=true" || fail
-  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_and_set_global_by_rbenv || fail
+  ruby::disable_spring || fail
+  RUBY_CONFIGURE_OPTS="--disable-install-doc" ruby::install_by_rbenv_and_set_global || fail
 
   # python
   python::install_and_update::apt || fail
