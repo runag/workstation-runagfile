@@ -120,6 +120,8 @@ ubuntu_workstation::deploy_software_packages() {
 
   # micro text editor
   sudo snap install micro --classic || fail
+  micro -plugin install bookmark || fail
+  micro -plugin install filemanager || fail
 
   # meld
   apt::install meld || fail
