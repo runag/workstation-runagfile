@@ -28,6 +28,10 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add windows_workstation::deploy_secrets || fail
 
   sopka_menu::add_delimiter || fail
+
+  sopka_menu::add windows_workstation::configure_sopka_git_directories_as_safe || fail
+
+  sopka_menu::add_delimiter || fail
 fi
 
 windows_workstation::deploy_workstation() {
@@ -41,33 +45,45 @@ windows_workstation::deploy_workstation_with_opionated_configuration() {
 }
 
 windows_workstation::deploy_workstation_without_secrets() {
+  windows_workstation::deploy_software_packages || fail
   windows_workstation::deploy_configuration || fail
 }
 
-windows_workstation::deploy_configuration() {
+windows_workstation::deploy_software_packages() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
+}
 
-  # git
+windows_workstation::deploy_configuration() {
+  # configure git
   workstation::configure_git || fail
 }
 
 windows_workstation::deploy_opionated_configuration() {
-  # shellrc
+  # set editor
   shellrc::install_editor_rc nano || fail
 
-  # vscode
+  # install vscode configuration
   workstation::vscode::install_extensions || fail
   workstation::vscode::install_config || fail
 
-  # sublime merge config
+  # install sublime merge configuration
   workstation::sublime_merge::install_config || fail
 
-  # sublime text config
+  # install sublime text configuration
   workstation::sublime_text::install_config || fail
 }
 
 windows_workstation::deploy_secrets() {
   workstation::deploy_secrets || fail
+}
+
+windows_workstation::configure_sopka_git_directories_as_safe() {
+  local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
+
+  git config --global --add safe.directory "${user_profile}/.sopka/.git"
+  git config --global --add safe.directory "${user_profile}/.sopka/sopkafiles/workstation-sopkafile-senotrusov-github/.git"
+  git config --global --add safe.directory "${user_profile}/.sopka"
+  git config --global --add safe.directory "${user_profile}/.sopka/sopkafiles/workstation-sopkafile-senotrusov-github"
 }
