@@ -19,8 +19,10 @@
 export MY_GIT_USER_EMAIL="stan@senotrusov.com"
 export MY_GIT_USER_NAME="Stanislav Senotrusov"
 
+
 # Github
 export MY_GITHUB_LOGIN="senotrusov"
+
 
 # Key paths
 export MY_KEYS_PATH="${HOME}/.keys"
@@ -33,10 +35,12 @@ elif [[ "${OSTYPE}" =~ ^linux ]]; then
   export MY_KEYS_OFFLINE_PATH="/media/${USER}/KEYS-DAILY/keys"
 fi
 
+
 # GPG key
 export MY_GPG_KEY="84C200370DF103F0ADF5028FF4D70B8640424BEA"
 export MY_GPG_SIGNING_KEY="38F6833D4C62D3AF8102789772080E033B1F76B5"
 export MY_GPG_OFFLINE_KEY_FILE="${MY_KEYS_OFFLINE_PATH}/gpg/workstation/secret-subkeys.asc"
+
 
 # Password store
 export MY_PASSWORD_STORE_OFFLINE_PATH="${MY_KEYS_OFFLINE_PATH}/password-store/workstation"
@@ -53,8 +57,10 @@ export MY_WINDOWS_CIFS_CREDENTIALS_PATH="windows/cifs-credentials" # username, p
 export MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH="restic/backup" # password
 export MY_WORKSTATION_BACKUP_SSH_KEY_PATH="ssh/backup-server/id_ed25519_backup_server" # ssh key
 
+
 # Ruby & Node versions
 export RBENV_VERSION="3.1.2"
+
 
 # Backup
 export BACKUP_REMOTE_HOST="backup-server"
