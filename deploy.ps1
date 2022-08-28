@@ -87,7 +87,7 @@ Git-Clone-or-Pull "https://github.com/$sopkafile_repo.git" "$sopkafile_path"
 
 # Install choco packages
 if ("$env:CI" -eq "true") {
-  # gpg4win hangs forever in CI
+  # remove gpg4win as hangs forever in CI
   ( Get-Content "$sopkafile_path\lib\choco\bare-metal-desktop.config" |
     Select-String -Pattern '"gpg4win"' -NotMatch ) |
   Set-Content "$sopkafile_path\lib\choco\bare-metal-desktop.config"
@@ -134,5 +134,5 @@ if ($install_developer_tools -eq 0) {
   ridk exec pacman --sync pass --noconfirm
   if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
 
-  New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass"
+  New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass" -Force
 }

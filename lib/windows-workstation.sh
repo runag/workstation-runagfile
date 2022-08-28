@@ -41,30 +41,33 @@ windows_workstation::deploy_workstation_with_opionated_configuration() {
 }
 
 windows_workstation::deploy_workstation_without_secrets() {
+  windows_workstation::deploy_software_packages || fail
   windows_workstation::deploy_configuration || fail
 }
 
-windows_workstation::deploy_configuration() {
+windows_workstation::deploy_software_packages() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
+}
 
-  # git
+windows_workstation::deploy_configuration() {
+  # configure git
   workstation::configure_git || fail
 }
 
 windows_workstation::deploy_opionated_configuration() {
-  # shellrc
+  # set editor
   shellrc::install_editor_rc nano || fail
 
-  # vscode
+  # install vscode configuration
   workstation::vscode::install_extensions || fail
   workstation::vscode::install_config || fail
 
-  # sublime merge config
+  # install sublime merge configuration
   workstation::sublime_merge::install_config || fail
 
-  # sublime text config
+  # install sublime text configuration
   workstation::sublime_text::install_config || fail
 }
 

@@ -40,6 +40,9 @@ ubuntu_workstation::deploy_configuration() {
 }
 
 ubuntu_workstation::deploy_opionated_configuration() {
+  # set editor
+  shellrc::install_editor_rc nano || fail
+
   # install vscode configuration
   workstation::vscode::install_extensions || fail
   workstation::vscode::install_config || fail
