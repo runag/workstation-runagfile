@@ -28,6 +28,10 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add windows_workstation::deploy_secrets || fail
 
   sopka_menu::add_delimiter || fail
+
+  sopka_menu::add windows_workstation::configure_sopka_git_directories_as_safe || fail
+
+  sopka_menu::add_delimiter || fail
 fi
 
 windows_workstation::deploy_workstation() {
@@ -73,4 +77,13 @@ windows_workstation::deploy_opionated_configuration() {
 
 windows_workstation::deploy_secrets() {
   workstation::deploy_secrets || fail
+}
+
+windows_workstation::configure_sopka_git_directories_as_safe() {
+  local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
+
+  git config --global --add safe.directory "${user_profile}/.sopka/.git"
+  git config --global --add safe.directory "${user_profile}/.sopka/sopkafiles/workstation-sopkafile-senotrusov-github/.git"
+  git config --global --add safe.directory "${user_profile}/.sopka"
+  git config --global --add safe.directory "${user_profile}/.sopka/sopkafiles/workstation-sopkafile-senotrusov-github"
 }
