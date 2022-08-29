@@ -88,11 +88,11 @@ ubuntu_workstation::deploy_software_packages() {
   apt::install redis-server || fail
 
   # nodejs
+  nodejs::install_dependencies_by_apt || fail
+
   asdf::install_dependencies_by_apt || fail
   asdf::install_with_shellrc || fail
-
-  nodejs::install_dependencies_by_apt || fail
-  nodejs::install_by_asdf_and_set_global || fail
+  asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
   ruby::install_dependencies_by_apt || fail
