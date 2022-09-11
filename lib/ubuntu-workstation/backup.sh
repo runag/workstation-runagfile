@@ -157,6 +157,7 @@ ubuntu_workstation::backup::create::perform() {
     --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     --exclude "${HOME}/.cache" \
+    --exclude "${HOME}/.local/share/Trash" \
     . || fail
 }
 
