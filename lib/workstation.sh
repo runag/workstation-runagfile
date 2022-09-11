@@ -134,11 +134,22 @@ workstation::pass::deploy() {
 }
 
 workstation::pass::import_offline() {
-  pass::import_store "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
+  pass::import_git_store "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
 }
 
 workstation::pass::sync_offline() {
-  pass::sync_to "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
+  # [remote "local-workstation"]
+  # 	url = ~/.password-store/.git
+  # 	fetch = +refs/heads/*:refs/remotes/local-workstation/*
+  # [branch "main"]
+  #         remote = local-workstation
+  #         merge = refs/heads/main
+  #
+  # git -C "${MY_PASSWORD_STORE_OFFLINE_PATH}" pull || fail
+
+  # TODO: are they are truly equivalent? .git/FETCH_HEAD changes depends of what way I use
+
+  git -C "${MY_PASSWORD_STORE_OFFLINE_PATH}" pull "${HOME}/.password-store" || fail
 }
 
 workstation::pass::init() {
