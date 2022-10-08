@@ -18,15 +18,10 @@ ubuntu_workstation::deploy_workstation() {
   ubuntu_workstation::deploy_workstation_without_secrets || fail
 
   ubuntu_workstation::deploy_secrets || fail
-  
-  task::run_with_install_filter ubuntu_workstation::backup::deploy || fail
-  task::run_with_install_filter ubuntu_workstation::github_repositories_backup::deploy || fail
-
-  if vmware::is_inside_vm; then
-    task::run_with_install_filter ubuntu_workstation::deploy_host_folders_access || fail
-  fi
 
   task::run_with_install_filter ubuntu_workstation::deploy_tailscale || fail
+
+  task::run_with_install_filter ubuntu_workstation::backup::deploy || fail
 }
 
 ubuntu_workstation::deploy_workstation_with_opionated_configuration() {
@@ -61,7 +56,7 @@ ubuntu_workstation::deploy_host_folders_access() {
   local remote_host; remote_host="$(vmware::get_host_ip_address)" || fail
 
   # mount host folder
-  REMOTE_HOST="${remote_host}" CREDENTIALS_FILE="${credentials_file}" ubuntu_workstation::mount_host_folders || fail
+  REMOTE_HOST="${remote_host}" CREDENTIALS_FILE="${credentials_file}" ubuntu_workstation::mount_all_host_folders || fail
 }
 
 # shellcheck disable=2153
@@ -69,9 +64,8 @@ ubuntu_workstation::mount_host_folder() {
   cifs::mount "//${REMOTE_HOST}/$1" "${HOME}/${2:-"$1"}" "${CREDENTIALS_FILE}" || fail
 }
 
-ubuntu_workstation::mount_host_folders() {
+ubuntu_workstation::mount_all_host_folders() {
   ubuntu_workstation::mount_host_folder "my" || fail
-  ubuntu_workstation::mount_host_folder "ephemeral-data" || fail
 }
 
 ubuntu_workstation::deploy_tailscale() {
