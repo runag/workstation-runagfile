@@ -24,8 +24,8 @@ if declare -f sopka_menu::add >/dev/null; then
 
   sopka_menu::add_header "Workstation: pass" || fail
   sopka_menu::add workstation::pass::deploy || fail
-  sopka_menu::add workstation::pass::import_offline || fail
-  sopka_menu::add workstation::pass::sync_offline || fail
+  sopka_menu::add workstation::pass::import_offline_to_local || fail
+  sopka_menu::add workstation::pass::sync_local_to_offline || fail
   sopka_menu::add workstation::pass::init || fail
   sopka_menu::add_delimiter || fail
 fi
@@ -35,7 +35,7 @@ workstation::deploy_secrets() {
   workstation::install_gpg_keys || fail
 
   # import password store
-  workstation::pass::import_offline || fail
+  workstation::pass::import_offline_to_local || fail
 
   # ssh key
   workstation::install_ssh_keys || fail
@@ -130,14 +130,14 @@ workstation::pass::deploy() {
   workstation::install_gpg_keys || fail
 
   # import password store
-  workstation::pass::import_offline || fail
+  workstation::pass::import_offline_to_local || fail
 }
 
-workstation::pass::import_offline() {
+workstation::pass::import_offline_to_local() {
   pass::import_git_store "${MY_PASSWORD_STORE_OFFLINE_PATH}" || fail
 }
 
-workstation::pass::sync_offline() {
+workstation::pass::sync_local_to_offline() {
   # [remote "local-workstation"]
   # 	url = ~/.password-store/.git
   # 	fetch = +refs/heads/*:refs/remotes/local-workstation/*
