@@ -17,7 +17,8 @@
 # ubuntu_workstation::backup::deploy is the main entrypoint to deploy backup service
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header Backup || fail
+  sopka_menu::add_header "Backup" || fail
+
   sopka_menu::add ubuntu_workstation::backup::deploy || fail
   sopka_menu::add ubuntu_workstation::backup::create || fail
   sopka_menu::add ubuntu_workstation::backup::list_snapshots || fail
@@ -31,7 +32,9 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add ubuntu_workstation::backup::restore || fail
   sopka_menu::add ubuntu_workstation::backup::shell || fail
   sopka_menu::add ubuntu_workstation::backup::remote_shell || fail
-  sopka_menu::add_delimiter || fail
+
+  sopka_menu::add_subheader "Backup services" || fail
+  
   sopka_menu::add ubuntu_workstation::backup::start || fail
   sopka_menu::add ubuntu_workstation::backup::stop || fail
   sopka_menu::add ubuntu_workstation::backup::start_maintenance || fail
@@ -40,7 +43,6 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add ubuntu_workstation::backup::status || fail
   sopka_menu::add ubuntu_workstation::backup::log || fail
   sopka_menu::add ubuntu_workstation::backup::log_follow || fail
-  sopka_menu::add_delimiter || fail
 fi
 
 ubuntu_workstation::backup::deploy() {

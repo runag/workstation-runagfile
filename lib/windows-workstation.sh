@@ -15,23 +15,15 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header Windows workstation || fail
+  sopka_menu::add_header "Windows workstation" || fail
 
   sopka_menu::add windows_workstation::deploy_workstation || fail
   sopka_menu::add windows_workstation::deploy_workstation_with_opionated_configuration || fail
   sopka_menu::add windows_workstation::deploy_workstation_without_secrets || fail
-
-  sopka_menu::add_delimiter || fail
-
   sopka_menu::add windows_workstation::deploy_configuration || fail
   sopka_menu::add windows_workstation::deploy_opionated_configuration || fail
   sopka_menu::add windows_workstation::deploy_secrets || fail
-
-  sopka_menu::add_delimiter || fail
-
   sopka_menu::add windows_workstation::configure_sopka_git_directories_as_safe || fail
-
-  sopka_menu::add_delimiter || fail
 fi
 
 windows_workstation::deploy_workstation() {

@@ -39,9 +39,9 @@ keys::add_sopka_menu_for_directory() {
   local dir="$1"
   if [ -d "$dir" ] && [ -d "$dir"/*keys* ]; then
     sopka_menu::add_header "Keys in ${dir}" || fail
+    
     sopka_menu::add keys::maintain_checksums "${dir}" || fail
     sopka_menu::add keys::make_backups "${dir}" || fail
-    sopka_menu::add_delimiter || fail
   fi
 }
 

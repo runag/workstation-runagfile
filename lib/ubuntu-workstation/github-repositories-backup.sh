@@ -18,16 +18,15 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Github repositories backup" || fail
+  
   sopka_menu::add ubuntu_workstation::github_repositories_backup::deploy || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::create || fail
-  sopka_menu::add_delimiter || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::start || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::stop || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::disable_timers || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::status || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::log || fail
   sopka_menu::add ubuntu_workstation::github_repositories_backup::log_follow || fail
-  sopka_menu::add_delimiter || fail
 fi
 
 ubuntu_workstation::github_repositories_backup::deploy() {

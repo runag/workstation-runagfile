@@ -22,16 +22,11 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
     sopka_menu::add ubuntu_workstation::deploy_workstation || fail
     sopka_menu::add ubuntu_workstation::deploy_workstation_with_opionated_configuration || fail
     sopka_menu::add ubuntu_workstation::deploy_workstation_without_secrets || fail
-
-    sopka_menu::add_delimiter || fail
-
     sopka_menu::add ubuntu_workstation::deploy_software_packages || fail
     sopka_menu::add ubuntu_workstation::deploy_configuration || fail
     sopka_menu::add ubuntu_workstation::deploy_opionated_configuration || fail
     sopka_menu::add ubuntu_workstation::deploy_secrets || fail
   fi
-
-  sopka_menu::add_delimiter || fail
 
   if vmware::is_inside_vm; then
     sopka_menu::add ubuntu_workstation::deploy_host_folders_access || fail
@@ -39,8 +34,6 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   fi
 
   sopka_menu::add ubuntu_workstation::deploy_tailscale || fail
-
-  sopka_menu::add_delimiter || fail
 
   sopka_menu::add_header "Ubuntu workstation: misc" || fail
 
@@ -56,8 +49,6 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
 
   sopka_menu::add ubuntu_workstation::scrub_root || fail
   sopka_menu::add ubuntu_workstation::fstrim_boot || fail
-
-  sopka_menu::add_delimiter || fail
 fi
 
 ubuntu_workstation::dangerously_set_hostname() {

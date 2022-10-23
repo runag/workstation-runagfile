@@ -15,19 +15,19 @@
 #  limitations under the License.
 
 if declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Workstation" || fail
+  sopka_menu::add_header "Workstation: misc" || fail
+  
   sopka_menu::add workstation::add_private_sopkafiles || fail
   sopka_menu::add workstation::merge_editor_configs || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
   sopka_menu::add workstation::backup_my_github_repositories || fail
-  sopka_menu::add_delimiter || fail
 
   sopka_menu::add_header "Workstation: pass" || fail
+
   sopka_menu::add workstation::pass::deploy || fail
   sopka_menu::add workstation::pass::import_offline_to_local || fail
   sopka_menu::add workstation::pass::sync_local_to_offline || fail
   sopka_menu::add workstation::pass::init || fail
-  sopka_menu::add_delimiter || fail
 fi
 
 workstation::deploy_secrets() {
