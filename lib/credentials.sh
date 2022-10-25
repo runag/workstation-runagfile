@@ -79,8 +79,3 @@ workstation::install_npm_credentials() {(
 workstation::make_keys_directory_if_not_exists() {
   dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}" 700 || fail
 }
-
-workstation::add_private_sopkafiles() {
-  pass::use "${MY_PRIVATE_SOPKAFILES_LIST_PATH}" --body --pipe | sopkafile::add_from_list
-  test "${PIPESTATUS[*]}" = "0 0" || fail
-}
