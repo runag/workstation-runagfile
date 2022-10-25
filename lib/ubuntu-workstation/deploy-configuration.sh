@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy_configuration() {
+ubuntu_workstation::deploy::configuration() {
   # configure git
   workstation::configure_git || fail
 
@@ -37,9 +37,7 @@ ubuntu_workstation::deploy_configuration() {
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
-}
 
-ubuntu_workstation::deploy_opionated_configuration() {
   # set editor
   shellrc::install_editor_rc nano || fail
 

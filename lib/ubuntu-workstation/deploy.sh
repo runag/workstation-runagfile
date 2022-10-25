@@ -14,31 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy_workstation() {
-  ubuntu_workstation::deploy_workstation_without_secrets || fail
-
-  ubuntu_workstation::deploy_secrets || fail
-
-  task::run_with_install_filter ubuntu_workstation::deploy_tailscale || fail
-
-  task::run_with_install_filter ubuntu_workstation::backup::deploy || fail
+ubuntu_workstation::deploy::credentials() {
+  workstation::deploy::credentials || fail
 }
 
-ubuntu_workstation::deploy_workstation_with_opionated_configuration() {
-  ubuntu_workstation::deploy_workstation || fail
-  ubuntu_workstation::deploy_opionated_configuration || fail
-}
-
-ubuntu_workstation::deploy_workstation_without_secrets() {
-  task::run_with_install_filter ubuntu_workstation::deploy_software_packages || fail
-  task::run_with_install_filter ubuntu_workstation::deploy_configuration || fail
-}
-
-ubuntu_workstation::deploy_secrets() {
-  workstation::deploy_secrets || fail
-}
-
-ubuntu_workstation::deploy_host_folders_access() {
+ubuntu_workstation::deploy::host_folders_access() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
@@ -68,7 +48,7 @@ ubuntu_workstation::mount_all_host_folders() {
   ubuntu_workstation::mount_host_folder "my" || fail
 }
 
-ubuntu_workstation::deploy_tailscale() {
+ubuntu_workstation::deploy::tailscale() {
   # install tailscale
   if ! command -v tailscale >/dev/null; then
     tailscale::install || fail
@@ -90,7 +70,7 @@ ubuntu_workstation::deploy_tailscale() {
   fi
 }
 
-ubuntu_workstation::deploy_vm_server() {
+ubuntu_workstation::deploy::vm_server() {
   # remove unattended-upgrades
   apt::remove unattended-upgrades || fail
 
@@ -110,8 +90,9 @@ ubuntu_workstation::deploy_vm_server() {
 
   # import ssh key
   apt::install ssh-import-id || fail
-  ssh-import-id "gh:${MY_GITHUB_LOGIN}" || fail
 
   # install avahi daemon
   apt::install avahi-daemon || fail
+
+  echo "You may run 'ssh-import-id gh:<YOUR_GITHUB_LOGIN>' to import ssh key from github" >&2
 }

@@ -23,13 +23,13 @@ if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add macos_workstation::deploy_software_packages || fail
   sopka_menu::add macos_workstation::deploy_configuration || fail
   sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
-  sopka_menu::add macos_workstation::deploy_secrets || fail
+  sopka_menu::add macos_workstation::deploy::credentials || fail
   sopka_menu::add macos_workstation::start_developer_servers || fail
 fi
 
 macos_workstation::deploy_workstation() {
   macos_workstation::deploy_workstation_without_secrets || fail
-  macos_workstation::deploy_secrets || fail
+  macos_workstation::deploy::credentials || fail
 }
 
 macos_workstation::deploy_workstation_with_opionated_configuration() {
@@ -150,8 +150,8 @@ macos_workstation::deploy_configuration() {
   nodenv::configure_mismatched_binaries_workaround || fail
 }
 
-macos_workstation::deploy_secrets() {
-  workstation::deploy_secrets || fail
+macos_workstation::deploy::credentials() {
+  workstation::deploy::credentials || fail
 }
 
 macos_workstation::deploy_opionated_configuration() {

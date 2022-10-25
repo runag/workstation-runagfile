@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::deploy_secrets() {
+workstation::deploy::credentials() {
   # install gpg keys
   workstation::install_gpg_keys || fail
 

@@ -22,13 +22,13 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add windows_workstation::deploy_workstation_without_secrets || fail
   sopka_menu::add windows_workstation::deploy_configuration || fail
   sopka_menu::add windows_workstation::deploy_opionated_configuration || fail
-  sopka_menu::add windows_workstation::deploy_secrets || fail
+  sopka_menu::add windows_workstation::deploy::credentials || fail
   sopka_menu::add windows_workstation::configure_sopka_git_directories_as_safe || fail
 fi
 
 windows_workstation::deploy_workstation() {
   windows_workstation::deploy_workstation_without_secrets || fail
-  windows_workstation::deploy_secrets || fail
+  windows_workstation::deploy::credentials || fail
 }
 
 windows_workstation::deploy_workstation_with_opionated_configuration() {
@@ -67,8 +67,8 @@ windows_workstation::deploy_opionated_configuration() {
   workstation::sublime_text::install_config || fail
 }
 
-windows_workstation::deploy_secrets() {
-  workstation::deploy_secrets || fail
+windows_workstation::deploy::credentials() {
+  workstation::deploy::credentials || fail
 }
 
 windows_workstation::configure_sopka_git_directories_as_safe() {
