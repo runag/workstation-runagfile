@@ -19,8 +19,8 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Ubuntu workstation: deploy" || fail
 
   if [ -n "${DISPLAY:-}" ]; then
-    sopka_menu::add ubuntu_workstation::deploy::packages || fail
-    sopka_menu::add ubuntu_workstation::deploy::configuration || fail
+    sopka_menu::add workstation::ubuntu::install_packages || fail
+    sopka_menu::add workstation::ubuntu::configure || fail
     sopka_menu::add ubuntu_workstation::deploy::credentials || fail
   fi
 

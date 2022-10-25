@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy::configuration() {
+workstation::ubuntu::configure() {
   # configure git
   workstation::configure_git || fail
 
@@ -61,17 +61,17 @@ ubuntu_workstation::deploy::configuration() {
   ubuntu_workstation::hide-file "snap" || fail
 
   # configure gnome desktop
-  ubuntu_workstation::configure_gnome || fail
+  workstation::ubuntu::configure_gnome || fail
 
   # enable and configure imwheel
   # NOTE: When running ubuntu guest in vmware workstation, mouse scrolling stops if you scroll and move your mouse
   # at the same time. Imwheel somehow fixes that.
   if vmware::is_inside_vm; then
-    ubuntu_workstation::configure_imwhell || fail
+    workstation::ubuntu::configure_imwhell || fail
   fi
 }
 
-ubuntu_workstation::configure_gnome() {(
+workstation::ubuntu::configure_gnome() {(
   # use dconf-editor to find key/value pairs
   #
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring" and "ssh::add-key-password-to-gnome-keyring"
@@ -131,7 +131,7 @@ ubuntu_workstation::configure_gnome() {(
   gnome_set desktop.session idle-delay 0 || fail
 )}
 
-ubuntu_workstation::configure_imwhell() {
+workstation::ubuntu::configure_imwhell() {
   local repetitions="2"
  
   tee "${HOME}/.imwheelrc" <<EOF || fail

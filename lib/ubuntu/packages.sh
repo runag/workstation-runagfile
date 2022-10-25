@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy::packages() {
+workstation::ubuntu::install_packages() {
   # perform autoremove, update and upgrade
   apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
 
