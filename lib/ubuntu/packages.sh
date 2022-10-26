@@ -21,13 +21,13 @@ workstation::ubuntu::install_packages() {
   apt::dist_upgrade_unless_ci || fail
 
   # install tools to use by the rest of the script
-  apt::install_sopka_essential_dependencies || fail
+  linux::install_sopka_essential_dependencies::apt || fail
 
-  # install display-if-restart-required dependencies
-  apt::install_display_if_restart_required_dependencies || fail
+  # install checkrestart for use in linux::display_if_restart_required
+  linux::display_if_restart_required::install::apt || fail
 
   # install gnome-keyring and libsecret (for git and ssh)
-  apt::install_gnome_keyring_and_libsecret || fail
+  linux::install_gnome_keyring_and_libsecret::apt || fail
   git::install_libsecret_credential_helper || fail
 
   # install benchmark
