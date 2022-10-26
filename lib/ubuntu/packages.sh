@@ -108,7 +108,7 @@ workstation::ubuntu::install_packages() {
   python::install_and_update::apt || fail
 
   # file-digests
-  gem install file-digests || fail
+  task::run_with_rubygems_fail_detector gem install file-digests || fail
 
 
   ### desktop software
