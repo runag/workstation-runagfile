@@ -23,15 +23,15 @@ workstation::ubuntu::install_packages() {
   # install tools to use by the rest of the script
   linux::install_sopka_essential_dependencies::apt || fail
 
-  # install checkrestart for use in linux::display_if_restart_required
-  linux::display_if_restart_required::install::apt || fail
-
   # install gnome-keyring and libsecret (for git and ssh)
   linux::install_gnome_keyring_and_libsecret::apt || fail
   git::install_libsecret_credential_helper || fail
 
   # install benchmark
   benchmark::install::apt || fail
+
+  # install checkrestart for use in linux::display_if_restart_required
+  linux::display_if_restart_required::install::apt || fail
 
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
@@ -150,6 +150,12 @@ workstation::ubuntu::install_packages() {
   micro -plugin install bookmark || fail
   micro -plugin install filemanager || fail
 
+  # inkscape
+  sudo snap install inkscape || fail
+
+  # krita
+  sudo snap install krita || fail
+
   # software for bare metal workstation
   if linux::is_bare_metal; then
     # nvme-cli
@@ -167,12 +173,6 @@ workstation::ubuntu::install_packages() {
 
     # spotify
     sudo snap install spotify || fail
-
-    # inkscape
-    sudo snap install inkscape || fail
-
-    # krita
-    sudo snap install krita || fail
 
     # OBS studio
     # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
