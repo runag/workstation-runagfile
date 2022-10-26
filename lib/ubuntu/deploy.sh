@@ -75,7 +75,9 @@ ubuntu_workstation::deploy::vm_server() {
   apt::remove unattended-upgrades || fail
 
   # perform autoremove, update and upgrade
-  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
+  apt::autoremove || fail
+  apt::update || fail
+  apt::dist_upgrade_unless_ci || fail
 
   # install open-vm-tools
   if vmware::is_inside_vm; then

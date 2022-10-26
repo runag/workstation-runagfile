@@ -16,7 +16,9 @@
 
 workstation::ubuntu::install_packages() {
   # perform autoremove, update and upgrade
-  apt::autoremove_lazy_update_and_maybe_dist_upgrade || fail
+  apt::autoremove || fail
+  apt::update || fail
+  apt::dist_upgrade_unless_ci || fail
 
   # install tools to use by the rest of the script
   apt::install_sopka_essential_dependencies || fail
@@ -87,11 +89,12 @@ workstation::ubuntu::install_packages() {
   apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
 
-  # nodejs
-  nodejs::install_dependencies_by_apt || fail
-
+  # asdf
   asdf::install_dependencies_by_apt || fail
   asdf::install_with_shellrc || fail
+
+  # nodejs
+  nodejs::install_dependencies_by_apt || fail
   asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
@@ -111,26 +114,14 @@ workstation::ubuntu::install_packages() {
   ### desktop software
 
   # vscode
-  vscode::install::snap || fail
+  vscode::install::apt || fail
 
   # sublime text and sublime merge
   sublime_merge::install::apt || fail
   sublime_text::install::apt || fail
 
-  # micro text editor
-  sudo snap install micro --classic || fail
-  micro -plugin install bookmark || fail
-  micro -plugin install filemanager || fail
-
   # meld
   apt::install meld || fail
-
-  # chromium
-  sudo snap install chromium || fail
-
-  # bitwarden
-  sudo snap install bitwarden || fail
-  sudo snap connect bitwarden:password-manager-service || fail
 
   # qtpass
   apt::install qtpass || fail
@@ -147,6 +138,18 @@ workstation::ubuntu::install_packages() {
   # imwheel
   apt::install imwheel || fail
 
+  # chromium
+  sudo snap install chromium || fail
+
+  # bitwarden
+  sudo snap install bitwarden || fail
+  sudo snap connect bitwarden:password-manager-service || fail
+
+  # micro text editor
+  sudo snap install micro --classic || fail
+  micro -plugin install bookmark || fail
+  micro -plugin install filemanager || fail
+
   # software for bare metal workstation
   if linux::is_bare_metal; then
     # nvme-cli
@@ -156,11 +159,11 @@ workstation::ubuntu::install_packages() {
     sudo snap install skype --classic || fail
 
     # telegram desktop
-    sudo snap install telegram-desktop || fail
+    # sudo snap install telegram-desktop || fail
 
     # discord
-    sudo snap install discord || fail
-    sudo snap connect discord:system-observe || fail
+    # sudo snap install discord || fail
+    # sudo snap connect discord:system-observe || fail
 
     # spotify
     sudo snap install spotify || fail
@@ -172,23 +175,25 @@ workstation::ubuntu::install_packages() {
     sudo snap install krita || fail
 
     # OBS studio
-    sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-    apt::update || fail
-    apt::install obs-studio guvcview || fail
+    # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+    # apt::update || fail
+    # apt::install obs-studio guvcview || fail
 
     # copyq
-    sudo add-apt-repository --yes ppa:hluk/copyq || fail
-    apt::update || fail
-    apt::install copyq || fail
+    # sudo add-apt-repository --yes ppa:hluk/copyq || fail
+    # apt::update || fail
+    # apt::install copyq || fail
 
-    # monitor control
-    apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
+    # display control
+    # apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
     # My MSI laptop hardware control
     if grep -qFx "GF65 Thin 9SD" /sys/devices/virtual/dmi/id/product_name && \
        grep -qFx "Micro-Star International Co., Ltd." /sys/devices/virtual/dmi/id/board_vendor; then
-      git::place_up_to_date_clone "https://github.com/senotrusov/msi-ec" "${HOME}/.msi-ec" || fail
+
       apt::install linux-headers-generic || fail
+      git::place_up_to_date_clone "https://github.com/senotrusov/msi-ec" "${HOME}/.msi-ec" || fail
+
       ( cd "${HOME}/.msi-ec" && make && sudo make install ) || fail
     fi
   fi
