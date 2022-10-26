@@ -23,16 +23,6 @@ workstation::ubuntu::install_packages() {
   # install tools to use by the rest of the script
   linux::install_sopka_essential_dependencies::apt || fail
 
-  # install gnome-keyring and libsecret (for git and ssh)
-  linux::install_gnome_keyring_and_libsecret::apt || fail
-  git::install_libsecret_credential_helper || fail
-
-  # install benchmark
-  benchmark::install::apt || fail
-
-  # install checkrestart for use in linux::display_if_restart_required
-  linux::display_if_restart_required::install::apt || fail
-
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
@@ -109,6 +99,16 @@ workstation::ubuntu::install_packages() {
 
   # file-digests
   task::run_with_rubygems_fail_detector gem install file-digests || fail
+
+  # install gnome-keyring and libsecret (for git and ssh)
+  linux::install_gnome_keyring_and_libsecret::apt || fail
+  git::install_libsecret_credential_helper || fail
+
+  # install benchmark
+  benchmark::install::apt || fail
+
+  # install checkrestart for use in linux::display_if_restart_required
+  linux::display_if_restart_required::install::apt || fail
 
 
   ### desktop software
