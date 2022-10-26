@@ -90,18 +90,18 @@ workstation::ubuntu::install_packages() {
   apt::install redis-server || fail
 
   # asdf
-  asdf::install_dependencies_by_apt || fail
+  asdf::install_dependencies::apt || fail
   asdf::install_with_shellrc || fail
 
   # nodejs
-  nodejs::install_dependencies_by_apt || fail
+  nodejs::install_dependencies::apt || fail
   asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::disable_spring || fail
 
-  ruby::install_dependencies_by_apt || fail
+  ruby::install_dependencies::apt || fail
   ruby::without-docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
   # python
