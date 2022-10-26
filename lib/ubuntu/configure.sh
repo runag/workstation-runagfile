@@ -15,6 +15,11 @@
 #  limitations under the License.
 
 workstation::ubuntu::configure() {
+  # disable unattended-upgrades
+  if vmware::is_inside_vm; then
+    apt::remove unattended-upgrades || fail
+  fi
+
   # configure git
   workstation::configure_git || fail
 
