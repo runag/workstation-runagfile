@@ -98,11 +98,11 @@ workstation::ubuntu::install_packages() {
   asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
-  ruby::install_dependencies_by_apt || fail
-  rbenv::install || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::disable_spring || fail
-  ruby::without-docs ruby::install_by_rbenv_and_set_global || fail
+
+  ruby::install_dependencies_by_apt || fail
+  ruby::without-docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
   # python
   python::install_and_update::apt || fail

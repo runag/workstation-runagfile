@@ -58,10 +58,6 @@ export MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH="restic/backup" # password
 export MY_WORKSTATION_BACKUP_SSH_KEY_PATH="ssh/backup-server/id_ed25519_backup_server" # ssh key
 
 
-# Ruby & Node versions
-export RBENV_VERSION="3.1.2"
-
-
 # Backup
 export BACKUP_REMOTE_HOST="backup-server"
 export BACKUP_REPOSITORY_NAME; BACKUP_REPOSITORY_NAME="workstation/$(os::hostname)" || fail
