@@ -33,9 +33,6 @@ workstation::ubuntu::install_packages() {
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
 
-  # install inotify tools
-  apt::install inotify-tools || fail
-
   # install terminal-based software
   apt::install \
     apache2-utils \
@@ -64,6 +61,9 @@ workstation::ubuntu::install_packages() {
     zsh \
       || fail
 
+  # install inotify tools
+  apt::install inotify-tools || fail
+
   # gparted dependencies for FAT partitions
   apt::install dosfstools mtools || fail
 
@@ -90,7 +90,6 @@ workstation::ubuntu::install_packages() {
   # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::disable_spring || fail
-
   ruby::install_dependencies::apt || fail
   ruby::without-docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
