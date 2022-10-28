@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::ubuntu::install_packages() {
+workstation::linux::install_packages() {
   # perform autoremove, update and upgrade
   apt::autoremove || fail
   apt::update || fail

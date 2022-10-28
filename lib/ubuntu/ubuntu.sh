@@ -19,8 +19,8 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Ubuntu workstation: deploy" || fail
 
   if [ -n "${DISPLAY:-}" ]; then
-    sopka_menu::add workstation::ubuntu::install_packages || fail
-    sopka_menu::add workstation::ubuntu::configure || fail
+    sopka_menu::add workstation::linux::install_packages || fail
+    sopka_menu::add workstation::linux::configure || fail
     sopka_menu::add ubuntu_workstation::deploy::credentials || fail
   fi
 
@@ -62,11 +62,6 @@ ubuntu_workstation::display_if_restart_required() {
 
 ubuntu_workstation::run_benchmark() {
   benchmark::run || fail
-}
-
-ubuntu_workstation::hide-file() {
-  ( umask 0177 && touch "${HOME}/.hidden" ) || fail
-  file::append_line_unless_present "$1" "${HOME}/.hidden" || fail
 }
 
 ubuntu_workstation::scrub_root() {
