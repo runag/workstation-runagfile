@@ -24,12 +24,13 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
     sopka_menu::add workstation::linux::deploy_credentials || fail
   fi
 
+  sopka_menu::add workstation::linux::deploy_tailscale || fail
+
   if vmware::is_inside_vm; then
     sopka_menu::add workstation::linux::deploy_host_folder_mounts || fail
   fi
 
   sopka_menu::add workstation::linux::deploy_lan_server || fail
-  sopka_menu::add workstation::linux::deploy_tailscale || fail
 
 
   sopka_menu::add_header "Linux workstation: misc" || fail
@@ -74,4 +75,8 @@ workstation::linux::scrub_root() {
 
 workstation::linux::fstrim_boot() {
   sudo fstrim -v /boot || fail
+}
+
+workstation::linux::deploy_credentials() {
+  workstation::deploy::credentials || fail
 }

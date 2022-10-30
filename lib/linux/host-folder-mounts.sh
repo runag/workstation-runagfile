@@ -14,10 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::deploy_credentials() {
-  workstation::deploy::credentials || fail
-}
-
 workstation::linux::deploy_host_folder_mounts() {
   # install cifs-utils
   apt::install cifs-utils || fail
@@ -46,55 +42,4 @@ workstation::linux::mount_host_folders() {
 # shellcheck disable=2153
 workstation::linux::mount_host_folder() {
   cifs::mount "//${REMOTE_HOST}/$1" "${HOME}/${2:-"$1"}" "${CREDENTIALS_FILE}" || fail
-}
-
-workstation::linux::deploy_tailscale() {
-  # install tailscale
-  if ! command -v tailscale >/dev/null; then
-    tailscale::install || fail
-  fi
-
-  if vmware::is_inside_vm; then
-    # https://github.com/tailscale/tailscale/issues/2541
-    tailscale::install_issue_2541_workaround || fail
-  fi
-
-  # logout if SOPKA_UPDATE_SECRETS is set
-  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && tailscale::is_logged_in; then
-    sudo tailscale logout || fail
-  fi
-
-  if ! tailscale::is_logged_in; then
-    local tailscale_key; tailscale_key="$(pass::use "${MY_TAILSCALE_REUSABLE_KEY_PATH}")" || fail
-    sudo tailscale up --authkey "${tailscale_key}" || fail  
-  fi
-}
-
-workstation::linux::deploy_lan_server() {
-  # remove unattended-upgrades
-  apt::remove unattended-upgrades || fail
-
-  # perform autoremove, update and upgrade
-  apt::autoremove || fail
-  apt::update || fail
-  apt::dist_upgrade_unless_ci || fail
-
-  # install open-vm-tools
-  if vmware::is_inside_vm; then
-    apt::install open-vm-tools || fail
-  fi
-
-  # install and configure sshd
-  sshd::disable_password_authentication || fail
-  apt::install openssh-server || fail
-  sudo systemctl --quiet --now enable ssh || fail
-  sudo systemctl reload ssh || fail
-
-  # import ssh key
-  apt::install ssh-import-id || fail
-
-  # install avahi daemon
-  apt::install avahi-daemon || fail
-
-  echo "You may run 'ssh-import-id gh:<YOUR_GITHUB_LOGIN>' to import ssh key from github" >&2
 }
