@@ -16,38 +16,42 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
 
-  sopka_menu::add_header "Ubuntu workstation: deploy" || fail
+  sopka_menu::add_header "Linux workstation: deploy" || fail
 
   if [ -n "${DISPLAY:-}" ]; then
     sopka_menu::add workstation::linux::install_packages || fail
     sopka_menu::add workstation::linux::configure || fail
-    sopka_menu::add ubuntu_workstation::deploy::credentials || fail
+    sopka_menu::add workstation::linux::deploy::credentials || fail
   fi
 
   if vmware::is_inside_vm; then
-    sopka_menu::add ubuntu_workstation::deploy::host_folders_access || fail
-    sopka_menu::add ubuntu_workstation::deploy::vm_server || fail
+    sopka_menu::add workstation::linux::deploy::host_folders_access || fail
+    sopka_menu::add workstation::linux::deploy::vm_server || fail
   fi
 
-  sopka_menu::add ubuntu_workstation::deploy::tailscale || fail
+  sopka_menu::add workstation::linux::deploy::tailscale || fail
 
-  sopka_menu::add_header "Ubuntu workstation: misc" || fail
 
-  sopka_menu::add ubuntu_workstation::dangerously_set_hostname || fail
+  sopka_menu::add_header "Linux workstation: misc" || fail
+
+  sopka_menu::add workstation::linux::dangerously_set_hostname || fail
 
   if linux::display_if_restart_required::is_available; then
-    sopka_menu::add ubuntu_workstation::display_if_restart_required || fail
+    sopka_menu::add workstation::linux::display_if_restart_required || fail
   fi
 
   if benchmark::is_available; then
-    sopka_menu::add ubuntu_workstation::run_benchmark || fail
+    sopka_menu::add workstation::linux::run_benchmark || fail
   fi
 
-  sopka_menu::add ubuntu_workstation::scrub_root || fail
-  sopka_menu::add ubuntu_workstation::fstrim_boot || fail
+
+  sopka_menu::add_header "Linux workstation: storage" || fail
+
+  sopka_menu::add workstation::linux::scrub_root || fail
+  sopka_menu::add workstation::linux::fstrim_boot || fail
 fi
 
-ubuntu_workstation::dangerously_set_hostname() {
+workstation::linux::dangerously_set_hostname() {
   echo "Please keep in mind that the script to change hostname is not perfect, please take time to review the script and it's results"
   echo "Please enter new hostname:"
   
@@ -56,18 +60,18 @@ ubuntu_workstation::dangerously_set_hostname() {
   linux::dangerously_set_hostname "${hostname}" || fail
 }
 
-ubuntu_workstation::display_if_restart_required() {
+workstation::linux::display_if_restart_required() {
   linux::display_if_restart_required || fail
 }
 
-ubuntu_workstation::run_benchmark() {
+workstation::linux::run_benchmark() {
   benchmark::run || fail
 }
 
-ubuntu_workstation::scrub_root() {
+workstation::linux::scrub_root() {
   sudo btrfs scrub start -B -d /home || fail
 }
 
-ubuntu_workstation::fstrim_boot() {
+workstation::linux::fstrim_boot() {
   sudo fstrim -v /boot || fail
 }

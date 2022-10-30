@@ -14,11 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-ubuntu_workstation::deploy::credentials() {
+workstation::linux::deploy::credentials() {
   workstation::deploy::credentials || fail
 }
 
-ubuntu_workstation::deploy::host_folders_access() {
+workstation::linux::deploy::host_folders_access() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
@@ -36,19 +36,19 @@ ubuntu_workstation::deploy::host_folders_access() {
   local remote_host; remote_host="$(vmware::get_host_ip_address)" || fail
 
   # mount host folder
-  REMOTE_HOST="${remote_host}" CREDENTIALS_FILE="${credentials_file}" ubuntu_workstation::mount_all_host_folders || fail
+  REMOTE_HOST="${remote_host}" CREDENTIALS_FILE="${credentials_file}" workstation::linux::mount_all_host_folders || fail
 }
 
 # shellcheck disable=2153
-ubuntu_workstation::mount_host_folder() {
+workstation::linux::mount_host_folder() {
   cifs::mount "//${REMOTE_HOST}/$1" "${HOME}/${2:-"$1"}" "${CREDENTIALS_FILE}" || fail
 }
 
-ubuntu_workstation::mount_all_host_folders() {
-  ubuntu_workstation::mount_host_folder "my" || fail
+workstation::linux::mount_all_host_folders() {
+  workstation::linux::mount_host_folder "my" || fail
 }
 
-ubuntu_workstation::deploy::tailscale() {
+workstation::linux::deploy::tailscale() {
   # install tailscale
   if ! command -v tailscale >/dev/null; then
     tailscale::install || fail
@@ -70,7 +70,7 @@ ubuntu_workstation::deploy::tailscale() {
   fi
 }
 
-ubuntu_workstation::deploy::vm_server() {
+workstation::linux::deploy::vm_server() {
   # remove unattended-upgrades
   apt::remove unattended-upgrades || fail
 

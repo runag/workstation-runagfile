@@ -17,16 +17,16 @@
 
 # export SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH="/mnt/top-level-subvolume"
 
-ubuntu_workstation::snapshots::is_available() {
+workstation::linux::snapshots::are_available() {
   [ "$(findmnt --mountpoint /     --noheadings --output FSTYPE,FSROOT --raw 2>/dev/null)" = "btrfs /@" ] &&
   [ "$(findmnt --mountpoint /home --noheadings --output FSTYPE,FSROOT --raw 2>/dev/null)" = "btrfs /@home" ]
 }
 
-ubuntu_workstation::snapshots::deploy() {
-  ubuntu_workstation::snapshots::add_top_level_subvolume_mount || fail
+workstation::linux::snapshots::deploy() {
+  workstation::linux::snapshots::add_top_level_subvolume_mount || fail
 }
 
-ubuntu_workstation::snapshots::add_top_level_subvolume_mount() {
+workstation::linux::snapshots::add_top_level_subvolume_mount() {
   local mount_source; mount_source="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || softfail || return $?
 
   dir::sudo_make_if_not_exists "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" || softfail || return $?

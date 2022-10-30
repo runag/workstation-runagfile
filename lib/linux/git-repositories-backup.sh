@@ -20,17 +20,17 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add_header "Github repositories backup services" || fail
 
   sopka_menu::add workstation::backup_my_github_repositories || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::deploy || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::create || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::start || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::stop || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::disable_timers || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::status || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::log || fail
-  sopka_menu::add ubuntu_workstation::github_repositories_backup::log_follow || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::deploy || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::create || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::start || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::stop || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::disable_timers || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::status || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::log || fail
+  sopka_menu::add workstation::linux::github_repositories_backup::log_follow || fail
 fi
 
-ubuntu_workstation::github_repositories_backup::deploy() {
+workstation::linux::github_repositories_backup::deploy() {
   systemd::write_user_unit "github-repositories-backup.service" <<EOF || fail
 [Unit]
 Description=Github repositories backup
@@ -65,34 +65,34 @@ EOF
   systemctl --user start "github-repositories-backup.timer" || fail
 }
 
-ubuntu_workstation::github_repositories_backup::create() {
+workstation::linux::github_repositories_backup::create() {
   workstation::backup_my_github_repositories || fail
 }
 
-ubuntu_workstation::github_repositories_backup::start() {
+workstation::linux::github_repositories_backup::start() {
   systemctl --user --no-block start "github-repositories-backup.service" || fail
 }
 
-ubuntu_workstation::github_repositories_backup::stop() {
+workstation::linux::github_repositories_backup::stop() {
   systemctl --user stop "github-repositories-backup.service" || fail
 }
 
-ubuntu_workstation::github_repositories_backup::disable_timers() {
+workstation::linux::github_repositories_backup::disable_timers() {
   systemctl --user stop "github-repositories-backup.timer" || fail
   systemctl --user --quiet disable "github-repositories-backup.timer" || fail
 }
 
-ubuntu_workstation::github_repositories_backup::status() {
+workstation::linux::github_repositories_backup::status() {
   systemctl --user status "github-repositories-backup.service"
   printf "\n\n"
   systemctl --user status "github-repositories-backup.timer"
 }
 
-ubuntu_workstation::github_repositories_backup::log() {
+workstation::linux::github_repositories_backup::log() {
   journalctl --user -u "github-repositories-backup.service" --since today || fail
 }
 
-ubuntu_workstation::github_repositories_backup::log_follow() {
+workstation::linux::github_repositories_backup::log_follow() {
   journalctl --user -u "github-repositories-backup.service" --since today --follow || fail
 }
 

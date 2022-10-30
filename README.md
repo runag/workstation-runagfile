@@ -50,7 +50,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.
 ### Option B: run deploy-vm-server on console without scroll buffer
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run ubuntu_workstation::deploy::vm_server 2>&1 | tee -a deploy-vm-server.log
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run workstation::linux::deploy::vm_server 2>&1 | tee -a deploy-vm-server.log
 ```
 
 ## How to run it on MacOS
