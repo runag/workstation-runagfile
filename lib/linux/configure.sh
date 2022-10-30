@@ -72,13 +72,13 @@ workstation::linux::configure() {
   workstation::linux::hide-file "snap" || fail
 
   # configure gnome desktop
-  workstation::gnome::configure || fail
+  workstation::linux::gnome::configure || fail
 
   # configure and start imwheel
   # NOTE: When running ubuntu guest in vmware workstation, mouse scrolling stops if you scroll and move your mouse
   # at the same time. Imwheel somehow fixes that.
-  workstation::imwheel::configure 2 || fail
-  workstation::imwheel::reenable || fail
+  workstation::linux::imwheel::configure 2 || fail
+  workstation::linux::imwheel::reenable || fail
 }
 
 workstation::linux::hide-file() {

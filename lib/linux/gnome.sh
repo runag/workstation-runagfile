@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::gnome::configure() {(
+workstation::linux::gnome::configure() {(
   # use dconf-editor to find key/value pairs
   #
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring" and "ssh::add-key-password-to-gnome-keyring"

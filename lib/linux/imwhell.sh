@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::imwheel::configure() {
+workstation::linux::imwheel::configure() {
   local repetitions="${1:-1}"
 
   file::write "${HOME}/.imwheelrc" <<EOF || fail
@@ -60,7 +60,7 @@ Meta_R,    Down, Meta_R|Button5
 EOF
 }
 
-workstation::imwheel::reenable() {
+workstation::linux::imwheel::reenable() {
   dir::make_if_not_exists "${HOME}/.config" 755 || fail
   dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
 
@@ -81,7 +81,7 @@ EOF
   /usr/bin/imwheel --kill
 }
 
-workstation::imwheel::disable() {
+workstation::linux::imwheel::disable() {
   rm "${HOME}/.config/autostart/imwheel.desktop" || fail
   pkill --full "/usr/bin/imwheel"
   [[ $? =~ ^[01]$ ]] || fail
