@@ -74,14 +74,15 @@ function Git-Clone-or-Pull($url, $dest){
 }
 
 
-# If you forked this script please patch the next 2 lines
+# If you forked this script, please change the following
+$sopka_repo = "senotrusov/sopka"
 $sopkafile_repo = "senotrusov/workstation-sopkafile"
 $sopkafile_dest = "workstation-sopkafile-senotrusov-github"
 
 $sopka_path = "$env:USERPROFILE\.sopka"
 $sopkafile_path = "$sopka_path\sopkafiles\$sopkafile_dest"
 
-Git-Clone-or-Pull "https://github.com/senotrusov/sopka.git" "$sopka_path"
+Git-Clone-or-Pull "https://github.com/$sopka_repo.git" "$sopka_path"
 Git-Clone-or-Pull "https://github.com/$sopkafile_repo.git" "$sopkafile_path"
 
 

@@ -13,53 +13,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+
 # 🚞 Sopkafile to configure my workstation
 
-A script to configure my workstation. I run it on a freshly installed Linux, MacOS, or Windows.
-
-This script helps me to configure my workstation, but it's rather generic and could also be useful for other people.
-
-Still, it contains steps which are of personal preference and needs.
-
-To keep those steps as declarative as I could possible express in Bash, I made a separate library [Sopka](https://github.com/senotrusov/sopka).
-
-Basically, this Sopkafile you are looking at is the things I want to setup and configure for that exact task (my workstation) and [Sopka](https://github.com/senotrusov/sopka) is the abstract library that makes it all possible.
+A collection of scripts to deploy my workstation. I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. I hope other people could find them useful. Scripts are idempotent, they could be run multiple times. There is also a library, [Sopka](https://github.com/senotrusov/sopka), that helps this scripts to look nice and declarative.
 
 ![Sopka menu screenshot](docs/sopka-menu-screenshot.png)
 
-## What this script will do
 
-1. Installs the basic software I frequently use.
-2. Installs keys and software licenses from a secrets database.
-3. Makes a few tweaks to the system and to the desktop software.
-4. Installs a few shell aliases.
-5. Installs configuration for the Sublime Text, Sublime Merge and Visual Studio Code (there is also a script to keep configuration in the repository up to date with the local changes).
-
-This script is idempotent. It can be run multiple times to produce a system which is up-to date with the recent software updates and with my configuration changes.
-
-The file ``config.sh`` contains my name, email, and PGP key IDs to use in configuration. Please remove them if you happen to fork this script.
-
-## How to run it on Linux
-
-### Option A: if you have a console with scrollbuffer
+## Deploy workstation on Linux
 
 ```sh
 bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
 ```
 
-### Option B: run deploy-vm-server on console without scroll buffer
 
-```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run workstation::linux::deploy_vm_server 2>&1 | tee -a deploy-vm-server.log
-```
-
-## How to run it on MacOS
+## Deploy workstation on MacOS 
 
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
 ```
 
-## How to run it on on Windows
+
+## Deploy workstation on Windows 
 
 ### 1. First stage deploy script (in powershell)
 
@@ -92,20 +68,13 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 ~/.sopka/bin/sopka
 ```
 
-Select ``windows_workstation::deploy_workstation``. It will do the following:
+Select from menu things that you need.
 
-1. Installs shellrc loader
-2. Selects nano as default editor
-3. Adds sopka to PATH
-4. Configures git, vscode, sublime merge, sublime text
-5. Installs ssh keys, rubygems and npm credentials
 
-## Forking
+## If you fork this script
 
-1. Go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
-2. Go to [config.sh](config.sh) and change things
+1. Please go to [deploy.ps1](deploy.ps1) and find "If you forked this script"
 
-If you just want to perform some minor changes, consider forking [workstation-thin-sopkafile](https://github.com/senotrusov/workstation-thin-sopkafile) instead of this.
 
 ## Contributing
 

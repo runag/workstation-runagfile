@@ -17,33 +17,13 @@
 if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "macOS workstation" || fail
   
-  sopka_menu::add macos_workstation::deploy_workstation || fail
-  sopka_menu::add macos_workstation::deploy_workstation_with_opionated_configuration || fail
-  sopka_menu::add macos_workstation::deploy_workstation_without_secrets || fail
-  sopka_menu::add macos_workstation::deploy_software_packages || fail
-  sopka_menu::add macos_workstation::deploy_configuration || fail
-  sopka_menu::add macos_workstation::deploy_opionated_configuration || fail
-  sopka_menu::add macos_workstation::deploy::credentials || fail
-  sopka_menu::add macos_workstation::start_developer_servers || fail
+  sopka_menu::add workstation::macos::install_packages || fail
+  sopka_menu::add workstation::macos::configure || fail
+  sopka_menu::add workstation::macos::deploy_credentials || fail
+  sopka_menu::add workstation::macos::start_developer_servers || fail
 fi
 
-macos_workstation::deploy_workstation() {
-  macos_workstation::deploy_workstation_without_secrets || fail
-  macos_workstation::deploy::credentials || fail
-}
-
-macos_workstation::deploy_workstation_with_opionated_configuration() {
-  macos_workstation::deploy_workstation || fail
-  macos_workstation::deploy_opionated_configuration || fail
-}
-
-
-macos_workstation::deploy_workstation_without_secrets() {
-  macos_workstation::deploy_software_packages || fail
-  macos_workstation::deploy_configuration || fail
-}
-
-macos_workstation::deploy_software_packages() {
+workstation::macos::install_packages() {
   # install homebrew
   macos::install_homebrew || fail
 
@@ -51,12 +31,6 @@ macos_workstation::deploy_software_packages() {
   brew update || fail
   brew upgrade || fail
 
-  # install packages
-  macos_workstation::install_basic_tools || fail
-  macos_workstation::install_developer_tools || fail
-}
-
-macos_workstation::install_basic_tools() {
   # fan and battery
   brew install --cask macs-fan-control || fail
   brew install --cask coconutbattery || fail
@@ -67,7 +41,6 @@ macos_workstation::install_basic_tools() {
   brew install --cask grandperspective || fail
   brew install --cask libreoffice || fail
   brew install --cask skype || fail
-  brew install --cask telegram || fail
   brew install --cask the-unarchiver || fail
 
   # chromium
@@ -76,9 +49,7 @@ macos_workstation::install_basic_tools() {
   # media tools
   brew install --cask vlc || fail
   brew install --cask obs || fail
-}
 
-macos_workstation::install_developer_tools() {
   # secrets
   brew install gnupg || fail
 
@@ -125,12 +96,13 @@ macos_workstation::install_developer_tools() {
   brew install yarn || fail
 }
 
-macos_workstation::deploy_configuration() {
+workstation::macos::configure() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_loader "${HOME}/.zshrc" || fail
   shellrc::install_sopka_path_rc || fail
   shellrc::install_direnv_rc || fail
+  shellrc::install_editor_rc nano || fail
 
   # git
   workstation::configure_git || fail
@@ -148,15 +120,6 @@ macos_workstation::deploy_configuration() {
   # nodejs
   nodenv::install_shellrc || fail
   nodenv::configure_mismatched_binaries_workaround || fail
-}
-
-macos_workstation::deploy::credentials() {
-  workstation::deploy::credentials || fail
-}
-
-macos_workstation::deploy_opionated_configuration() {
-  # shellrc
-  shellrc::install_editor_rc nano || fail
 
   # vscode
   workstation::vscode::install_extensions || fail
@@ -180,7 +143,11 @@ macos_workstation::deploy_opionated_configuration() {
   macos::hide_dir "${HOME}/VirtualBox VMs" || fail
 }
 
-macos_workstation::start_developer_servers() {
+workstation::macos::deploy_credentials() {
+  workstation::deploy::credentials || fail
+}
+
+workstation::macos::start_developer_servers() {
   brew services start memcached || fail
   brew services start redis || fail
   brew services start postgresql || fail

@@ -17,42 +17,22 @@
 if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Windows workstation" || fail
 
-  sopka_menu::add windows_workstation::deploy_workstation || fail
-  sopka_menu::add windows_workstation::deploy_workstation_with_opionated_configuration || fail
-  sopka_menu::add windows_workstation::deploy_workstation_without_secrets || fail
-  sopka_menu::add windows_workstation::deploy_configuration || fail
-  sopka_menu::add windows_workstation::deploy_opionated_configuration || fail
-  sopka_menu::add windows_workstation::deploy::credentials || fail
-  sopka_menu::add windows_workstation::configure_sopka_git_directories_as_safe || fail
+  sopka_menu::add workstation::windows::install_packages || fail
+  sopka_menu::add workstation::windows::configure || fail
+  sopka_menu::add workstation::windows::deploy_credentials || fail
+  sopka_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
 fi
 
-windows_workstation::deploy_workstation() {
-  windows_workstation::deploy_workstation_without_secrets || fail
-  windows_workstation::deploy::credentials || fail
-}
-
-windows_workstation::deploy_workstation_with_opionated_configuration() {
-  windows_workstation::deploy_workstation || fail
-  windows_workstation::deploy_opionated_configuration || fail
-}
-
-windows_workstation::deploy_workstation_without_secrets() {
-  windows_workstation::deploy_software_packages || fail
-  windows_workstation::deploy_configuration || fail
-}
-
-windows_workstation::deploy_software_packages() {
+workstation::windows::install_packages() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_sopka_path_rc || fail
 }
 
-windows_workstation::deploy_configuration() {
+workstation::windows::configure() {
   # configure git
   workstation::configure_git || fail
-}
 
-windows_workstation::deploy_opionated_configuration() {
   # set editor
   shellrc::install_editor_rc nano || fail
 
@@ -67,11 +47,11 @@ windows_workstation::deploy_opionated_configuration() {
   workstation::sublime_text::install_config || fail
 }
 
-windows_workstation::deploy::credentials() {
+workstation::windows::deploy_credentials() {
   workstation::deploy::credentials || fail
 }
 
-windows_workstation::configure_sopka_git_directories_as_safe() {
+workstation::windows::configure_sopka_git_directories_as_safe() {
   local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
 
   git config --global --add safe.directory "${user_profile}/.sopka/.git"

@@ -21,14 +21,14 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   if [ -n "${DISPLAY:-}" ]; then
     sopka_menu::add workstation::linux::install_packages || fail
     sopka_menu::add workstation::linux::configure || fail
-    sopka_menu::add workstation::linux::deploy::credentials || fail
+    sopka_menu::add workstation::linux::deploy_credentials || fail
   fi
 
   if vmware::is_inside_vm; then
-    sopka_menu::add workstation::linux::deploy_host_folders_access || fail
-    sopka_menu::add workstation::linux::deploy_vm_server || fail
+    sopka_menu::add workstation::linux::deploy_host_folder_mounts || fail
   fi
 
+  sopka_menu::add workstation::linux::deploy_lan_server || fail
   sopka_menu::add workstation::linux::deploy_tailscale || fail
 
 
