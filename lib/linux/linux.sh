@@ -25,11 +25,11 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   fi
 
   if vmware::is_inside_vm; then
-    sopka_menu::add workstation::linux::deploy::host_folders_access || fail
-    sopka_menu::add workstation::linux::deploy::vm_server || fail
+    sopka_menu::add workstation::linux::deploy_host_folders_access || fail
+    sopka_menu::add workstation::linux::deploy_vm_server || fail
   fi
 
-  sopka_menu::add workstation::linux::deploy::tailscale || fail
+  sopka_menu::add workstation::linux::deploy_tailscale || fail
 
 
   sopka_menu::add_header "Linux workstation: misc" || fail

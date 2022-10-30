@@ -18,7 +18,7 @@ workstation::linux::deploy::credentials() {
   workstation::deploy::credentials || fail
 }
 
-workstation::linux::deploy::host_folders_access() {
+workstation::linux::deploy_host_folders_access() {
   # install cifs-utils
   apt::install cifs-utils || fail
 
@@ -48,7 +48,7 @@ workstation::linux::mount_all_host_folders() {
   workstation::linux::mount_host_folder "my" || fail
 }
 
-workstation::linux::deploy::tailscale() {
+workstation::linux::deploy_tailscale() {
   # install tailscale
   if ! command -v tailscale >/dev/null; then
     tailscale::install || fail
@@ -70,7 +70,7 @@ workstation::linux::deploy::tailscale() {
   fi
 }
 
-workstation::linux::deploy::vm_server() {
+workstation::linux::deploy_vm_server() {
   # remove unattended-upgrades
   apt::remove unattended-upgrades || fail
 
