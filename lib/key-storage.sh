@@ -14,38 +14,38 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-keys::populate_sopka_menu() {
+key-storage::populate_sopka_menu() {
   local dir
 
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    keys::add_sopka_menu_for_directory "/k" || fail
+    key-storage::add_sopka_menu_for_directory "/k" || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     for dir in "/Volumes/"*KEYS* ; do
-      keys::add_sopka_menu_for_directory "$dir" || fail
+      key-storage::add_sopka_menu_for_directory "$dir" || fail
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     for dir in "/media/${USER}/"*KEYS* ; do
-      keys::add_sopka_menu_for_directory "$dir" || fail
+      key-storage::add_sopka_menu_for_directory "$dir" || fail
     done
 
   fi
 
-  keys::add_sopka_menu_for_directory "." || fail
+  key-storage::add_sopka_menu_for_directory "." || fail
 }
 
-keys::add_sopka_menu_for_directory() {
+key-storage::add_sopka_menu_for_directory() {
   local dir="$1"
   if [ -d "$dir" ] && [ -d "$dir/"*keys* ]; then
-    sopka_menu::add_header "Keys in ${dir}" || fail
+    sopka_menu::add_header "Key storage in ${dir}" || fail
     
-    sopka_menu::add keys::maintain_checksums "${dir}" || fail
-    sopka_menu::add keys::make_copies "${dir}" || fail
+    sopka_menu::add key-storage::maintain_checksums "${dir}" || fail
+    sopka_menu::add key-storage::make_copies "${dir}" || fail
   fi
 }
 
-keys::maintain_checksums() {
+key-storage::maintain_checksums() {
   local media="$1"
 
   local dir; for dir in "${media}/"*keys* ; do
@@ -61,7 +61,7 @@ keys::maintain_checksums() {
   done
 }
 
-keys::make_copies() {
+key-storage::make_copies() {
   local media="$1"
 
   local copies_dir="${media}/copies"
@@ -80,5 +80,5 @@ keys::make_copies() {
 }
 
 if declare -f sopka_menu::add >/dev/null; then
-  keys::populate_sopka_menu || fail
+  key-storage::populate_sopka_menu || fail
 fi
