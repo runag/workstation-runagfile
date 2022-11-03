@@ -78,4 +78,6 @@ Select from menu things that you need.
 
 ## Contributing
 
-Please check shell scripts before commiting any changes with `npm run lint`.
+Please use [ShellCheck](https://www.shellcheck.net/).
+
+I mostly follow [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html).
