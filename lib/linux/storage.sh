@@ -15,14 +15,15 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
-
-  sopka_menu::add_header "Linux workstation: deploy" || fail
-
-  sopka_menu::add workstation::linux::install_packages || fail
-  sopka_menu::add workstation::linux::configure || fail
-  sopka_menu::add workstation::linux::deploy_tailscale || fail
-  if vmware::is_inside_vm; then
-    sopka_menu::add workstation::linux::deploy_host_folder_mounts || fail
-  fi
-  sopka_menu::add workstation::linux::deploy_lan_server || fail
+  sopka_menu::add_header "Linux workstation: storage" || fail
+  sopka_menu::add workstation::linux::scrub_root || fail
+  sopka_menu::add workstation::linux::fstrim_boot || fail
 fi
+
+workstation::linux::scrub_root() {
+  sudo btrfs scrub start -B -d /home || fail
+}
+
+workstation::linux::fstrim_boot() {
+  sudo fstrim -v /boot || fail
+}
