@@ -41,7 +41,7 @@ keys::add_sopka_menu_for_directory() {
     sopka_menu::add_header "Keys in ${dir}" || fail
     
     sopka_menu::add keys::maintain_checksums "${dir}" || fail
-    sopka_menu::add keys::make_backups "${dir}" || fail
+    sopka_menu::add keys::make_copies "${dir}" || fail
   fi
 }
 
@@ -61,7 +61,7 @@ keys::maintain_checksums() {
   done
 }
 
-keys::make_backups() {
+keys::make_copies() {
   local media="$1"
 
   local copies_dir="${media}/copies"
