@@ -21,12 +21,12 @@ keys::populate_sopka_menu() {
     keys::add_sopka_menu_for_directory "/k" || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
-    for dir in "/Volumes"/*KEYS* ; do
+    for dir in "/Volumes/"*KEYS* ; do
       keys::add_sopka_menu_for_directory "$dir" || fail
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
-    for dir in "/media/${USER}"/*KEYS* ; do
+    for dir in "/media/${USER}/"*KEYS* ; do
       keys::add_sopka_menu_for_directory "$dir" || fail
     done
 
@@ -37,7 +37,7 @@ keys::populate_sopka_menu() {
 
 keys::add_sopka_menu_for_directory() {
   local dir="$1"
-  if [ -d "$dir" ] && [ -d "$dir"/*keys* ]; then
+  if [ -d "$dir" ] && [ -d "$dir/"*keys* ]; then
     sopka_menu::add_header "Keys in ${dir}" || fail
     
     sopka_menu::add keys::maintain_checksums "${dir}" || fail
@@ -48,13 +48,13 @@ keys::add_sopka_menu_for_directory() {
 keys::maintain_checksums() {
   local media="$1"
 
-  local dir; for dir in "${media}"/*keys* ; do
+  local dir; for dir in "${media}/"*keys* ; do
     if [ -d "${dir}" ]; then
       fs::with_secure_temp_dir_if_available checksums::create_or_update "${dir}" "checksums.txt" || fail
     fi
   done
 
-  local dir; for dir in "${media}"/copies/*/* ; do
+  local dir; for dir in "${media}/copies/"*/* ; do
     if [ -d "${dir}" ]; then
       fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
@@ -63,13 +63,14 @@ keys::maintain_checksums() {
 
 keys::make_backups() {
   local media="$1"
-  
-  local dest_dir; dest_dir="${media}/copies/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
-  dir::make_if_not_exists "${media}/copies" || fail
+  local copies_dir="${media}/copies"
+  dir::make_if_not_exists "${copies_dir}" || fail
+  
+  local dest_dir; dest_dir="${copies_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
   dir::make_if_not_exists "${dest_dir}" || fail
 
-  local dir; for dir in "${media}"/*keys* ; do
+  local dir; for dir in "${media}/"*keys* ; do
     if [ -d "${dir}" ]; then
       cp -R "${dir}" "${dest_dir}" || fail
     fi
