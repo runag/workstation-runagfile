@@ -17,7 +17,7 @@
 # workstation::linux::backup::deploy is the main entrypoint to deploy backup service
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Backup" || fail
+  sopka_menu::add_header "Linux workstation: backup" || fail
 
   sopka_menu::add workstation::linux::backup::deploy || fail
   sopka_menu::add workstation::linux::backup::create || fail
@@ -33,7 +33,7 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add workstation::linux::backup::shell || fail
   sopka_menu::add workstation::linux::backup::remote_shell || fail
 
-  sopka_menu::add_subheader "Backup services" || fail
+  sopka_menu::add_subheader "Linux workstation: backup services" || fail
   
   sopka_menu::add workstation::linux::backup::start || fail
   sopka_menu::add workstation::linux::backup::stop || fail

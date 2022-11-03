@@ -19,7 +19,6 @@ if [[ "${OSTYPE}" =~ ^darwin ]] && declare -f sopka_menu::add >/dev/null; then
   
   sopka_menu::add workstation::macos::install_packages || fail
   sopka_menu::add workstation::macos::configure || fail
-  sopka_menu::add workstation::macos::deploy_credentials || fail
   sopka_menu::add workstation::macos::start_developer_servers || fail
 fi
 
@@ -141,10 +140,6 @@ workstation::macos::configure() {
   macos::hide_dir "${HOME}/Public" || fail
   macos::hide_dir "${HOME}/Virtual Machines.localized" || fail
   macos::hide_dir "${HOME}/VirtualBox VMs" || fail
-}
-
-workstation::macos::deploy_credentials() {
-  workstation::deploy::credentials || fail
 }
 
 workstation::macos::start_developer_servers() {

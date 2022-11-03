@@ -17,7 +17,7 @@
 # TODO: when running as systemd job, sometimes there are no 'Already up to date' message"
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Github repositories backup services" || fail
+  sopka_menu::add_header "Linux workstation: github repositories backup services" || fail
 
   sopka_menu::add workstation::backup_my_github_repositories || fail
   sopka_menu::add workstation::linux::github_repositories_backup::deploy || fail

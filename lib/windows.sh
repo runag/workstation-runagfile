@@ -19,7 +19,6 @@ if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
 
   sopka_menu::add workstation::windows::install_packages || fail
   sopka_menu::add workstation::windows::configure || fail
-  sopka_menu::add workstation::windows::deploy_credentials || fail
   sopka_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
 fi
 
@@ -45,10 +44,6 @@ workstation::windows::configure() {
 
   # install sublime text configuration
   workstation::sublime_text::install_config || fail
-}
-
-workstation::windows::deploy_credentials() {
-  workstation::deploy::credentials || fail
 }
 
 workstation::windows::configure_sopka_git_directories_as_safe() {
