@@ -22,9 +22,6 @@ if declare -f sopka_menu::add >/dev/null; then
 fi
 
 workstation::credentials::deploy() {
-  # install gpg keys
-  workstation::install_gpg_keys || fail
-
   # import password store
   workstation::pass::import_offline_to_local || fail
 
@@ -47,10 +44,6 @@ workstation::credentials::deploy() {
 
   # sublime merge license
   # workstation::sublime_merge::install_license || fail
-}
-
-workstation::install_gpg_keys() {
-  gpg::import_key_with_ultimate_ownertrust "${MY_GPG_KEY}" "${MY_GPG_OFFLINE_KEY_FILE}" || fail
 }
 
 workstation::install_ssh_keys() {

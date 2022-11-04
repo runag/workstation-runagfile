@@ -57,6 +57,7 @@ key_storage::add_sopka_menu_for_media() {
       local git_remote_name="${media_name}/${scope_name}" || fail
 
       key_storage::add_sopka_menu_for_password_store "${scope_path}" "${git_remote_name}" || fail
+      key_storage::add_sopka_menu_for_gpg_keys "${scope_path}" || fail
     fi
   done
 }
@@ -83,6 +84,27 @@ key_storage::add_sopka_menu_for_password_store() {
     fi
   fi
 }
+
+key_storage::add_sopka_menu_for_gpg_keys() {
+  local scope_path="$1"
+
+  local gpg_keys_path="${scope_path}/gpg"
+
+  local gpg_key_dir; for gpg_key_dir in "${gpg_keys_path}"/* ; do
+    if [ -d "${gpg_key_dir}" ]; then
+      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || fail
+      local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
+    
+      if [ -f "${gpg_key_file}" ]; then
+        sopka_menu::add key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
+      fi
+    fi
+  done
+}
+
+if declare -f sopka_menu::add >/dev/null; then
+  key_storage::populate_sopka_menu || fail
+fi
 
 ### Checksums
 
@@ -156,6 +178,10 @@ key_storage::clone_password_store_git_remote_to_local() {
   fi
 }
 
-if declare -f sopka_menu::add >/dev/null; then
-  key_storage::populate_sopka_menu || fail
-fi
+### GPG keys
+
+key_storage::import_gpg_key() {
+  local gpg_key_id="$1"
+  local gpg_key_file="$2"
+  gpg::import_key_with_ultimate_ownertrust "${gpg_key_id}" "${gpg_key_file}" || fail
+}
