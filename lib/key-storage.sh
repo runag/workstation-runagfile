@@ -37,7 +37,7 @@ key-storage::populate_sopka_menu() {
 
 key-storage::add_sopka_menu_for_directory() {
   local dir="$1"
-  if [ -d "$dir" ] && [ -d "$dir/"*keys* ]; then
+  if [ -d "$dir" ]; then
     sopka_menu::add_header "Key storage in ${dir}" || fail
     
     sopka_menu::add key-storage::maintain_checksums "${dir}" || fail
