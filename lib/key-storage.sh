@@ -19,14 +19,14 @@ key_storage::populate_sopka_menu() {
     key_storage::add_sopka_menu_for_media "/k" || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
-    local media_path; for media_path in "/Volumes/"*KEYS* ; do
+    local media_path; for media_path in "/Volumes"/*KEYS* ; do
       if [ -d "${media_path}" ]; then
         key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
-    local media_path; for media_path in "/media/${USER}/"*KEYS* ; do
+    local media_path; for media_path in "/media/${USER}"/*KEYS* ; do
       if [ -d "${media_path}" ]; then
         key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
@@ -43,38 +43,59 @@ key_storage::add_sopka_menu_for_media() {
   local media_path="$1"
 
   sopka_menu::add_header "Key storage in: ${media_path}" || fail
-  
+
+  # Checksums
   sopka_menu::add key_storage::maintain_checksums "${media_path}" || fail
   sopka_menu::add key_storage::make_copies "${media_path}" || fail
-  
-  local password_store_remote_path="keys/password-store/workstation"
-  local password_store_path="${HOME}/.password-store"
 
-  if [ -d "${password_store_path}/.git" ]; then
-    if [ -d "${media_path}/${password_store_remote_path}" ]; then
-      sopka_menu::add key_storage::add_or_update_password_store_remote "${media_path}" "${password_store_remote_path}" || fail
+  # Scopes
+  local scope_path; for scope_path in "${media_path}"/keys/* ; do
+    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/exclude-from-sopka-menu" ]; then
+
+      local media_name; media_name="$(basename "${media_path}")" || fail
+      local scope_name; scope_name="$(basename "${scope_path}")" || fail
+      local git_remote_name="${media_name}/${scope_name}" || fail
+
+      key_storage::add_sopka_menu_for_password_store "${scope_path}" "${git_remote_name}" || fail
+    fi
+  done
+}
+
+key_storage::add_sopka_menu_for_password_store() {
+  local scope_path="$1"
+  local git_remote_name="$2"
+
+  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
+  local password_store_git_remote_path="${scope_path}/password-store"
+
+  if [ -d "${password_store_dir_path}/.git" ]; then
+    if [ -d "${password_store_git_remote_path}" ]; then
+      sopka_menu::add key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
-      sopka_menu::add key_storage::create_password_store_remote_repo "${media_path}" "${password_store_remote_path}" || fail
+      sopka_menu::add key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
   fi
-  
-  if [ ! -d "${password_store_path}" ]; then
-    if [ -d "${media_path}/${password_store_remote_path}" ]; then
-      sopka_menu::add key_storage::clone_password_store_remote_repo_to_home "${media_path}" "${password_store_remote_path}" || fail
+
+  if [ ! -d "${password_store_dir_path}" ]; then
+    if [ -d "${password_store_git_remote_path}" ]; then
+      sopka_menu::add key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
   fi
 }
 
+### Checksums
+
 key_storage::maintain_checksums() {
   local media_path="$1"
 
-  local dir; for dir in "${media_path}/keys/"*; do
+  local dir; for dir in "${media_path}/keys"/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::create_or_update "${dir}" "checksums.txt" || fail
     fi
   done
 
-  local dir; for dir in "${media_path}/copies-of-keys/"* "${media_path}/copies-of-keys/"*/keys/*; do
+  local dir; for dir in "${media_path}/copies-of-keys"/* "${media_path}/copies-of-keys"/*/keys/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
@@ -98,44 +119,40 @@ key_storage::make_copies() {
   echo "Copies were made: ${dest_dir}"
 }
 
-key_storage::add_or_update_password_store_remote() {(
-  local media_path="$1"
-  local password_store_remote_path="$2"
+### Password store
 
-  local repo_path="${media_path}/${password_store_remote_path}"
-  local remote_name; remote_name="$(basename "${media_path}")" || fail
+key_storage::add_or_update_password_store_git_remote() {(
+  local git_remote_name="$1"
+  local password_store_git_remote_path="$2"
 
-  local password_store_path="${HOME}/.password-store"
+  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  cd "${password_store_path}" || fail
+  cd "${password_store_dir_path}" || fail
 
-  git::add_or_update_remote "${remote_name}" "${repo_path}" || fail
+  git::add_or_update_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
   git branch --move --force main || fail
-  git push --set-upstream "${remote_name}" main || fail
+  git push --set-upstream "${git_remote_name}" main || fail
 )}
 
-key_storage::create_password_store_remote_repo() {
-  local media_path="$1"
-  local password_store_remote_path="$2"
+key_storage::create_password_store_git_remote() {
+  local git_remote_name="$1"
+  local password_store_git_remote_path="$2"
 
-  local repo_path="${media_path}/${password_store_remote_path}"
+  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  git init --bare "${repo_path}" || fail
+  git init --bare "${password_store_git_remote_path}" || fail
 
-  key_storage::add_or_update_password_store_remote "${media_path}" "${password_store_remote_path}" || fail
+  key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
 }
 
-key_storage::clone_password_store_remote_repo_to_home() {
-  local media_path="$1"
-  local password_store_remote_path="$2"
+key_storage::clone_password_store_git_remote_to_local() {
+  local git_remote_name="$1"
+  local password_store_git_remote_path="$2"
 
-  local repo_path="${media_path}/${password_store_remote_path}"
-  local remote_name; remote_name="$(basename "${media_path}")" || fail
+  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  local password_store_path="${HOME}/.password-store"
-
-  if [ ! -d "${password_store_path}" ]; then
-    git clone --origin "${remote_name}" "${repo_path}" "${password_store_path}" || fail
+  if [ ! -d "${password_store_dir_path}" ]; then
+    git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir_path}" || fail
   fi
 }
 
