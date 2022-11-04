@@ -15,68 +15,70 @@
 #  limitations under the License.
 
 key-storage::populate_sopka_menu() {
-  local dir
-
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    key-storage::add_sopka_menu_for_directory "/k" || fail
+    key-storage::add_sopka_menu_for_media "/k" || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
-    for dir in "/Volumes/"*KEYS* ; do
-      key-storage::add_sopka_menu_for_directory "$dir" || fail
+    local media_path; for media_path in "/Volumes/"*KEYS* ; do
+      if [ -d "${media_path}" ]; then
+        key-storage::add_sopka_menu_for_media "${media_path}" || fail
+      fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
-    for dir in "/media/${USER}/"*KEYS* ; do
-      key-storage::add_sopka_menu_for_directory "$dir" || fail
+    local media_path; for media_path in "/media/${USER}/"*KEYS* ; do
+      if [ -d "${media_path}" ]; then
+        key-storage::add_sopka_menu_for_media "${media_path}" || fail
+      fi
     done
 
   fi
 
-  key-storage::add_sopka_menu_for_directory "." || fail
-}
-
-key-storage::add_sopka_menu_for_directory() {
-  local dir="$1"
-  if [ -d "$dir" ]; then
-    sopka_menu::add_header "Key storage in ${dir}" || fail
-    
-    sopka_menu::add key-storage::maintain_checksums "${dir}" || fail
-    sopka_menu::add key-storage::make_copies "${dir}" || fail
+  if [ -d "keys" ]; then
+    key-storage::add_sopka_menu_for_media "." || fail
   fi
 }
 
-key-storage::maintain_checksums() {
-  local media="$1"
+key-storage::add_sopka_menu_for_media() {
+  local media_path="$1"
 
-  local dir; for dir in "${media}/"*keys* ; do
-    if [ -d "${dir}" ]; then
+  sopka_menu::add_header "Key storage in: ${media_path}" || fail
+  
+  sopka_menu::add key-storage::maintain_checksums "${media_path}" || fail
+  sopka_menu::add key-storage::make_copies "${media_path}" || fail
+}
+
+key-storage::maintain_checksums() {
+  local media_path="$1"
+
+  local dir; for dir in "${media_path}/keys/"*; do
+    if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::create_or_update "${dir}" "checksums.txt" || fail
     fi
   done
 
-  local dir; for dir in "${media}/copies/"*/* ; do
-    if [ -d "${dir}" ]; then
+  local dir; for dir in "${media_path}/key-copies/"* "${media_path}/key-copies/"*/keys/*; do
+    if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }
 
 key-storage::make_copies() {
-  local media="$1"
+  local media_path="$1"
 
-  local copies_dir="${media}/copies"
-  dir::make_if_not_exists "${copies_dir}" || fail
-  
+  local copies_dir="${media_path}/key-copies"
   local dest_dir; dest_dir="${copies_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
+
+  dir::make_if_not_exists "${copies_dir}" || fail
   dir::make_if_not_exists "${dest_dir}" || fail
 
-  local dir; for dir in "${media}/"*keys* ; do
-    if [ -d "${dir}" ]; then
-      cp -R "${dir}" "${dest_dir}" || fail
-    fi
-  done
+  cp -R "${media_path}/keys" "${dest_dir}" || fail
+  
+  SOPKA_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
+
   sync || fail
-  echo "${dest_dir}"
+  echo "Copies were made: ${dest_dir}"
 }
 
 if declare -f sopka_menu::add >/dev/null; then
