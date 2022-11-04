@@ -14,41 +14,41 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-key-storage::populate_sopka_menu() {
+key_storage::populate_sopka_menu() {
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    key-storage::add_sopka_menu_for_media "/k" || fail
+    key_storage::add_sopka_menu_for_media "/k" || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes/"*KEYS* ; do
       if [ -d "${media_path}" ]; then
-        key-storage::add_sopka_menu_for_media "${media_path}" || fail
+        key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     local media_path; for media_path in "/media/${USER}/"*KEYS* ; do
       if [ -d "${media_path}" ]; then
-        key-storage::add_sopka_menu_for_media "${media_path}" || fail
+        key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
     done
 
   fi
 
   if [ -d "keys" ]; then
-    key-storage::add_sopka_menu_for_media "." || fail
+    key_storage::add_sopka_menu_for_media "." || fail
   fi
 }
 
-key-storage::add_sopka_menu_for_media() {
+key_storage::add_sopka_menu_for_media() {
   local media_path="$1"
 
   sopka_menu::add_header "Key storage in: ${media_path}" || fail
   
-  sopka_menu::add key-storage::maintain_checksums "${media_path}" || fail
-  sopka_menu::add key-storage::make_copies "${media_path}" || fail
+  sopka_menu::add key_storage::maintain_checksums "${media_path}" || fail
+  sopka_menu::add key_storage::make_copies "${media_path}" || fail
 }
 
-key-storage::maintain_checksums() {
+key_storage::maintain_checksums() {
   local media_path="$1"
 
   local dir; for dir in "${media_path}/keys/"*; do
@@ -64,7 +64,7 @@ key-storage::maintain_checksums() {
   done
 }
 
-key-storage::make_copies() {
+key_storage::make_copies() {
   local media_path="$1"
 
   local copies_dir="${media_path}/copies-of-keys"
@@ -82,5 +82,5 @@ key-storage::make_copies() {
 }
 
 if declare -f sopka_menu::add >/dev/null; then
-  key-storage::populate_sopka_menu || fail
+  key_storage::populate_sopka_menu || fail
 fi
