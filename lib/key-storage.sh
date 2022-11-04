@@ -57,7 +57,7 @@ key-storage::maintain_checksums() {
     fi
   done
 
-  local dir; for dir in "${media_path}/key-copies/"* "${media_path}/key-copies/"*/keys/*; do
+  local dir; for dir in "${media_path}/copies-of-keys/"* "${media_path}/copies-of-keys/"*/keys/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
@@ -67,14 +67,14 @@ key-storage::maintain_checksums() {
 key-storage::make_copies() {
   local media_path="$1"
 
-  local copies_dir="${media_path}/key-copies"
+  local copies_dir="${media_path}/copies-of-keys"
   local dest_dir; dest_dir="${copies_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
   dir::make_if_not_exists "${copies_dir}" || fail
   dir::make_if_not_exists "${dest_dir}" || fail
 
   cp -R "${media_path}/keys" "${dest_dir}" || fail
-  
+
   SOPKA_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
 
   sync || fail
