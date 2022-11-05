@@ -146,7 +146,6 @@ workstation::linux::install_packages() {
 
   # micro text editor
   sudo snap install micro --classic || fail
-  micro -plugin install bookmark || fail
   micro -plugin install filemanager || fail
 
   # inkscape
