@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-fs::source "${BASH_SOURCE[0]}" "config.sh" || fail
+# fs::source "${BASH_SOURCE[0]}" "config.sh" || fail
 fs::recursive_source "${BASH_SOURCE[0]}" "lib" || fail
 
 if declare -f sopka_menu::add >/dev/null; then

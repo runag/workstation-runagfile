@@ -15,18 +15,18 @@
 #  limitations under the License.
 
 workstation::linux::deploy_host_folder_mounts() {
+  local credentials_path="$1" # username, password
+
   # install cifs-utils
   apt::install cifs-utils || fail
 
   # get user name
-  local username; username="$(pass::use "${MY_WINDOWS_CIFS_CREDENTIALS_PATH}" --get username)" || fail
+  local username; username="$(pass::use "${credentials_path}" --get username)" || fail
 
   # write credentials to local filesystem
-  local credentials_file="${MY_KEYS_PATH}/host-filesystem-access.cifs-credentials"
+  local credentials_file="${HOME}/.host-filesystem-access.cifs-credentials"
 
-  workstation::make_keys_directory_if_not_exists || fail
-  
-  pass::use "${MY_WINDOWS_CIFS_CREDENTIALS_PATH}" cifs::credentials "${credentials_file}" "${username}" || fail
+  pass::use "${credentials_path}" cifs::credentials "${credentials_file}" "${username}" || fail
 
   # get host ip address
   local remote_host; remote_host="$(vmware::get_host_ip_address)" || fail
@@ -36,7 +36,7 @@ workstation::linux::deploy_host_folder_mounts() {
 }
 
 workstation::linux::mount_host_folders() {
-  workstation::linux::mount_host_folder "my" || fail
+  workstation::linux::mount_host_folder "my" "my-host-files" || fail
 }
 
 # shellcheck disable=2153

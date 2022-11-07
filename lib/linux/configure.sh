@@ -21,10 +21,7 @@ workstation::linux::configure() {
   workstation::configure_git || fail
 
   # configure ssh
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.ssh" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.ssh/ssh_config.d" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${HOME}/.ssh/keys" 0700 || fail
-  <<<"Include ~/.ssh/ssh_config.d/*.conf" file::update_block "${HOME}/.ssh/config" "include files from ssh_config.d" --mode 0600 || fail
+  ssh::add_ssh_config_d_include_directive || fail
 
   # set editor
   shellrc::install_editor_rc micro || fail

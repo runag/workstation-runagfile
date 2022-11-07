@@ -66,11 +66,11 @@ key_storage::add_sopka_menu_for_password_store() {
   local scope_path="$1"
   local git_remote_name="$2"
 
-  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
   local password_store_git_remote_path="${scope_path}/password-store"
 
-  if [ -d "${password_store_dir_path}/.git" ]; then
+  if [ -d "${password_store_dir}/.git" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
       sopka_menu::add key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
@@ -78,7 +78,7 @@ key_storage::add_sopka_menu_for_password_store() {
     fi
   fi
 
-  if [ ! -d "${password_store_dir_path}" ]; then
+  if [ ! -d "${password_store_dir}" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
       sopka_menu::add key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
@@ -147,9 +147,9 @@ key_storage::add_or_update_password_store_git_remote() {(
   local git_remote_name="$1"
   local password_store_git_remote_path="$2"
 
-  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  cd "${password_store_dir_path}" || fail
+  cd "${password_store_dir}" || fail
 
   git::add_or_update_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
   git branch --move --force main || fail
@@ -160,7 +160,7 @@ key_storage::create_password_store_git_remote() {
   local git_remote_name="$1"
   local password_store_git_remote_path="$2"
 
-  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
   git init --bare "${password_store_git_remote_path}" || fail
 
@@ -171,10 +171,10 @@ key_storage::clone_password_store_git_remote_to_local() {
   local git_remote_name="$1"
   local password_store_git_remote_path="$2"
 
-  local password_store_dir_path="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  if [ ! -d "${password_store_dir_path}" ]; then
-    git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir_path}" || fail
+  if [ ! -d "${password_store_dir}" ]; then
+    git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir}" || fail
   fi
 }
 

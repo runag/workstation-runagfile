@@ -17,6 +17,9 @@
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Workstation: misc" || fail
   
+  sopka_menu::add workstation::add_sopkafiles deployment-repositories/personal || fail
+  sopka_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
+  sopka_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
   sopka_menu::add workstation::merge_editor_configs || fail
   sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
 fi
@@ -48,4 +51,11 @@ workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.solargraph" || fail
   rm -rf "${HOME}/.bundle" || fail
   rm -rf "${HOME}/.node-gyp" || fail
+}
+
+workstation::add_sopkafiles() {
+  local list_path="$1" # should be in the body
+
+  pass::use "${list_path}" --body --pipe | sopkafile::add_from_list
+  test "${PIPESTATUS[*]}" = "0 0" || fail
 }

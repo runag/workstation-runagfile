@@ -96,8 +96,11 @@ workstation::linux::github_repositories_backup::log_follow() {
   journalctl --user -u "github-repositories-backup.service" --since today --follow || fail
 }
 
+# MY_GITHUB_ACCESS_TOKEN_PATH
+# MY_GITHUB_LOGIN
+
 workstation::backup_my_github_repositories() {
-  local backup_path="${HOME}/my/my-github-backup"
+  local backup_path="${HOME}/my-github-backup"
 
   local github_access_token; github_access_token="$(pass::use "${MY_GITHUB_ACCESS_TOKEN_PATH}")" || fail
 
@@ -130,7 +133,7 @@ workstation::backup_my_github_repositories() {
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${full_name}..." || fail
-      git::place_up_to_date_clone "${git_url}" "${backup_path}/${full_name}" || { touch "${fail_flag}"; "${fail_command}"; }
+      git::mirror "${git_url}" "${backup_path}/${full_name}" || { touch "${fail_flag}"; "${fail_command}"; }
     done
 
     local saved_pipe_status=("${PIPESTATUS[@]}")
@@ -154,4 +157,6 @@ workstation::backup_my_github_repositories() {
     rm "${fail_flag}" || fail
     fail
   fi
+
+  # TODO: restic to backup server
 }

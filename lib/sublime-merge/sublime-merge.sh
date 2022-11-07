@@ -22,11 +22,13 @@ workstation::sublime_merge::install_config() {
 }
 
 workstation::sublime_merge::install_license() {
+  local license_path="$1" # should be in the body
+
   local config_path; config_path="$(sublime_merge::get_config_path)" || fail
 
   dir::make_if_not_exists "${config_path}/Local" 700 || fail
 
-  pass::use "${MY_SUBLIME_MERGE_LICENSE_PATH}" --body pass::file "${config_path}/Local/License.sublime_license" --mode 0600 || fail
+  pass::use "${license_path}" --body pass::file "${config_path}/Local/License.sublime_license" --mode 0600 || fail
 }
 
 workstation::sublime_merge::merge_config() {

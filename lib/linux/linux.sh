@@ -20,9 +20,9 @@ if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
 
   sopka_menu::add workstation::linux::install_packages || fail
   sopka_menu::add workstation::linux::configure || fail
-  sopka_menu::add workstation::linux::deploy_tailscale || fail
-  if vmware::is_inside_vm; then
-    sopka_menu::add workstation::linux::deploy_host_folder_mounts || fail
-  fi
   sopka_menu::add workstation::linux::deploy_lan_server || fail
+  sopka_menu::add workstation::linux::deploy_tailscale tailscale/personal || fail
+  if vmware::is_inside_vm; then
+    sopka_menu::add workstation::linux::deploy_host_folder_mounts windows-cifs/personal || fail
+  fi
 fi

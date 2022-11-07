@@ -52,8 +52,8 @@ workstation::linux::backup::deploy() {
   fi
 
   # install restic key
-  workstation::make_keys_directory_if_not_exists || fail
-  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}/restic" 700 || fail
+  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}" 0700 || fail
+  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}/restic" 0700 || fail
   pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${BACKUP_RESTIC_PASSWORD_FILE}" --mode 0600 || fail
 
   # install ssh key
