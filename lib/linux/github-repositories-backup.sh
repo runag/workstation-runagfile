@@ -133,7 +133,7 @@ workstation::backup_my_github_repositories() {
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${full_name}..." || fail
-      git::mirror "${git_url}" "${backup_path}/${full_name}" || { touch "${fail_flag}"; "${fail_command}"; }
+      git::create_or_update_mirror "${git_url}" "${backup_path}/${full_name}" || { touch "${fail_flag}"; "${fail_command}"; }
     done
 
     local saved_pipe_status=("${PIPESTATUS[@]}")
