@@ -17,7 +17,7 @@
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Workstation: misc" || fail
   
-  sopka_menu::add workstation::add_sopkafiles deployment-repositories/personal || fail
+  sopka_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
   sopka_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
   sopka_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
   sopka_menu::add workstation::merge_editor_configs || fail

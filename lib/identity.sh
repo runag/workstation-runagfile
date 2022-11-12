@@ -17,7 +17,7 @@
 if declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Workstation: identity" || fail
   
-  sopka_menu::add workstation::use_identity identities/personal || fail
+  sopka_menu::add workstation::use_identity identity/personal || fail
 fi
 
 workstation::use_identity() {
