@@ -16,17 +16,17 @@
 
 key_storage::populate_sopka_menu() {
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    key_storage::add_sopka_menu_for_media "/k" || fail
+    key_storage::add_sopka_menu_for_media /? || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
-    local media_path; for media_path in "/Volumes"/*KEYS* ; do
+    local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
         key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
-    local media_path; for media_path in "/media/${USER}"/*KEYS* ; do
+    local media_path; for media_path in "/media/${USER}"/* ; do
       if [ -d "${media_path}" ]; then
         key_storage::add_sopka_menu_for_media "${media_path}" || fail
       fi
@@ -34,13 +34,15 @@ key_storage::populate_sopka_menu() {
 
   fi
 
-  if [ -d "keys" ]; then
-    key_storage::add_sopka_menu_for_media "." || fail
-  fi
+  key_storage::add_sopka_menu_for_media "." || fail
 }
 
 key_storage::add_sopka_menu_for_media() {
   local media_path="$1"
+
+  if [ ! -d "${media_path}/keys" ]; then
+    return 0
+  fi
 
   sopka_menu::add_header "Key storage in: ${media_path}" || fail
 
@@ -101,10 +103,6 @@ key_storage::add_sopka_menu_for_gpg_keys() {
     fi
   done
 }
-
-if declare -f sopka_menu::add >/dev/null; then
-  key_storage::populate_sopka_menu || fail
-fi
 
 ### Checksums
 
@@ -197,3 +195,24 @@ key_storage::import_gpg_key() {
 
   gpg::import_key_with_ultimate_ownertrust "${gpg_key_id}" "${gpg_key_file}" || fail
 }
+
+
+### Pass
+
+key_storage::create_or_update_password_store_checksum() {
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  checksums::create_or_update "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
+}
+
+
+### Menu
+
+if declare -f sopka_menu::add >/dev/null; then
+  sopka_menu::add_header "Key and password storage" || fail
+
+  if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
+    sopka_menu::add key_storage::create_or_update_password_store_checksum || fail
+  fi
+
+  key_storage::populate_sopka_menu || fail
+fi
