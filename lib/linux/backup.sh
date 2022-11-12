@@ -14,12 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# workstation::linux::backup::deploy is the main entrypoint to deploy backup service
-
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Linux workstation: backup" || fail
+  sopka_menu::add_header "Linux workstation backup: deploy" || fail
 
-  sopka_menu::add workstation::linux::backup::deploy || fail
+  sopka_menu::add workstation::linux::backup::deploy_credentials backup/personal || fail
+  sopka_menu::add workstation::linux::backup::deploy_services || fail
+
+  sopka_menu::add_header "Linux workstation backup: commands" || fail
+
   sopka_menu::add workstation::linux::backup::create || fail
   sopka_menu::add workstation::linux::backup::list_snapshots || fail
   sopka_menu::add workstation::linux::backup::check_and_read_data || fail
@@ -30,10 +32,10 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add workstation::linux::backup::mount || fail
   sopka_menu::add workstation::linux::backup::umount || fail
   sopka_menu::add workstation::linux::backup::restore || fail
-  sopka_menu::add workstation::linux::backup::shell || fail
+  sopka_menu::add workstation::linux::backup::local_shell || fail
   sopka_menu::add workstation::linux::backup::remote_shell || fail
 
-  sopka_menu::add_subheader "Linux workstation: backup services" || fail
+  sopka_menu::add_subheader "Linux workstation backup: services" || fail
   
   sopka_menu::add workstation::linux::backup::start || fail
   sopka_menu::add workstation::linux::backup::stop || fail
@@ -45,42 +47,158 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add workstation::linux::backup::log_follow || fail
 fi
 
-workstation::linux::backup::deploy() {
-  # required for vmware::get_machine_uuid
-  if vmware::is_inside_vm; then
-    echo "${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" | file::sudo_write /etc/sudoers.d/dmidecode 440 || fail
-  fi
+workstation::linux::backup::export_environment() {
+  local config_dir="${HOME}/.workstation-backup"
 
-  # install restic key
-  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${MY_KEYS_PATH}/restic" 0700 || fail
-  pass::use "${MY_WORKSTATION_BACKUP_RESTIC_PASSWORD_PATH}" pass::file "${BACKUP_RESTIC_PASSWORD_FILE}" --mode 0600 || fail
+  dir::make_if_not_exists_and_set_permissions "${config_dir}" 0700 || fail
+  dir::make_if_not_exists_and_set_permissions "${config_dir}/restic" 0700 || fail
 
-  # install ssh key
-  ssh::install_ssh_key_from_pass "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}" || fail
-
-  # install ssh config
-  local ssh_key_dir; ssh_key_dir="$(dirname "${MY_WORKSTATION_BACKUP_SSH_KEY_PATH}")" || fail
-  pass::use "${ssh_key_dir}/config" --body pass::file "${HOME}/.ssh/config" --mode 0600 || fail
-
-  # add remote to known hosts
-  pass::use "${ssh_key_dir}/known_hosts" --body pass::file_with_block "${HOME}/.ssh/known_hosts" "# backup-server" --mode 0600 || fail
-
-  # install systemd services
-  workstation::linux::backup::install_systemd_services || fail
+  export RESTIC_PASSWORD_FILE="${config_dir}/restic/password"
+  export RESTIC_REPOSITORY_FILE="${config_dir}/restic/repository"
 }
 
-workstation::linux::backup::with_env() {(
-  export RESTIC_PASSWORD_FILE="${BACKUP_RESTIC_PASSWORD_FILE}"
-  export RESTIC_REPOSITORY="${BACKUP_RESTIC_REPOSITORY}"
-  "$@"
+workstation::linux::backup::deploy_credentials() {(
+  local profile_path="$1"
+  local profile_name; profile_name="${2:-"$(basename "${profile_path}")"}" || fail
+
+  workstation::linux::backup::export_environment || fail
+
+  # install ssh profile  
+  ssh::install_ssh_profile_from_pass "${profile_path}/ssh" "${profile_name}" || fail
+
+  # install restic key
+  pass::use "${profile_path}/restic/password" pass::file "${RESTIC_PASSWORD_FILE}" --mode 0600 || fail
+  pass::use "${profile_path}/restic/repository" pass::file "${RESTIC_REPOSITORY_FILE}" --mode 0600 || fail
 )}
 
-workstation::linux::backup::restic() {(
-  workstation::linux::backup::with_env restic "$@"
+workstation::linux::backup::create() {(
+  workstation::linux::backup::export_environment || fail
+
+  cd "${HOME}" || fail
+
+  if ! restic cat config >/dev/null 2>&1; then
+    restic init || fail "Unable to init restic repository"
+  fi
+
+  workstation::linux::backup::create::perform || fail "Unable to create backup"
 )}
 
-workstation::linux::backup::install_systemd_services() {
+# TODO: keep an eye on the snap exclude, are there any documents that might get stored in that directory?
+workstation::linux::backup::create::perform() {
+  local machine_id; machine_id="$(os::machine_id)" || fail
+
+  restic backup \
+    --one-file-system \
+    --tag "machine-id:${machine_id}" \
+    --exclude "${HOME}/Downloads" \
+    --exclude "${HOME}/snap" \
+    --exclude "${HOME}/.cache" \
+    --exclude "${HOME}/.local/share/Trash" \
+    . || fail
+}
+
+workstation::linux::backup::list_snapshots() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic snapshots || fail
+)}
+
+workstation::linux::backup::check_and_read_data() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic check --check-unused --read-data || fail
+)}
+
+workstation::linux::backup::forget() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic forget \
+    --group-by "host,paths,tags" \
+    --keep-within 14d \
+    --keep-within-daily 30d \
+    --keep-within-weekly 3m \
+    --keep-within-monthly 2y || fail
+)}
+
+workstation::linux::backup::prune() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic prune || fail
+)}
+
+workstation::linux::backup::maintenance() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic check || fail
+  workstation::linux::backup::forget || fail
+  workstation::linux::backup::prune || fail
+)}
+
+workstation::linux::backup::unlock() {(
+  workstation::linux::backup::export_environment || fail
+
+  restic unlock || fail
+)}
+
+workstation::linux::backup::mount() {(
+  workstation::linux::backup::export_environment || fail
+
+  local mount_point="${HOME}/workstation-backup-mount"
+
+  if findmnt --mountpoint "${mount_point}" >/dev/null; then
+    fusermount -u "${mount_point}" || fail
+  fi
+
+  dir::make_if_not_exists_and_set_permissions "${mount_point}" 0700 || fail
+
+  restic mount "${mount_point}" || fail
+)}
+
+workstation::linux::backup::umount() {(
+  workstation::linux::backup::export_environment || fail
+
+  local mount_point="${HOME}/workstation-backup-mount"
+
+  fusermount -u -z "${mount_point}" || fail
+)}
+
+workstation::linux::backup::restore() {(
+  local snapshot="${1:-"latest"}"
+
+  workstation::linux::backup::export_environment || fail
+
+  local restore_path="${HOME}/workstation-backup-${snapshot}-restore"
+
+  if [ -d "${restore_path}" ]; then
+    fail "Restore directory already exists, unable to restore"
+  fi
+
+  dir::make_if_not_exists_and_set_permissions "${restore_path}" 0700 || fail
+
+  restic restore --target "${restore_path}" --verify "${snapshot}" || fail
+)}
+
+workstation::linux::backup::local_shell() {(
+  workstation::linux::backup::export_environment || fail
+  "${SHELL}"
+)}
+
+workstation::linux::backup::remote_shell() {(
+  workstation::linux::backup::export_environment || fail
+
+  local remote_proto remote_host remote_path
+
+  <"${RESTIC_REPOSITORY_FILE}" IFS=: read -r remote_proto remote_host remote_path || fail
+
+  test "${remote_proto}" = sftp || fail
+
+  ssh -t "${remote_host}" "cd $(printf "%q" "${remote_path}"); exec \"\${SHELL}\" -l"
+)}
+
+
+# Services
+
+workstation::linux::backup::deploy_services() {
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
@@ -141,95 +259,6 @@ EOF
   systemctl --user --quiet reenable "workstation-backup-maintenance.timer" || fail
   systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
-
-workstation::linux::backup::create() {
-  if ! workstation::linux::backup::restic cat config >/dev/null 2>&1; then
-    workstation::linux::backup::restic init || fail "Unable to init restic repository"
-  fi
-
-  (cd "${HOME}" && workstation::linux::backup::create::perform) || fail "Unable to create restic backup"
-}
-
-workstation::linux::backup::create::perform() {
-  local machine_id; machine_id="$(os::machine_id)" || fail
-
-  workstation::linux::backup::restic backup \
-    --one-file-system \
-    --tag "machine-id:${machine_id}" \
-    --exclude "${HOME}/Downloads" \
-    --exclude "${HOME}/snap" \
-    --exclude "${HOME}/.cache" \
-    --exclude "${HOME}/.local/share/Trash" \
-    . || fail
-}
-
-workstation::linux::backup::list_snapshots() {
-  workstation::linux::backup::restic snapshots || fail
-}
-
-workstation::linux::backup::check_and_read_data() {
-  workstation::linux::backup::restic check --check-unused --read-data || fail
-}
-
-workstation::linux::backup::forget() {
-  workstation::linux::backup::restic forget \
-    --group-by "host,paths,tags" \
-    --keep-within 14d \
-    --keep-within-daily 30d \
-    --keep-within-weekly 3m \
-    --keep-within-monthly 2y || fail
-}
-
-workstation::linux::backup::prune() {
-  workstation::linux::backup::restic prune || fail
-}
-
-workstation::linux::backup::maintenance() {
-  workstation::linux::backup::restic check || fail
-  workstation::linux::backup::forget || fail
-  workstation::linux::backup::prune || fail
-}
-
-workstation::linux::backup::unlock() {
-  workstation::linux::backup::restic unlock || fail
-}
-
-workstation::linux::backup::mount() {
-  mkdir -p "${BACKUP_MOUNT_POINT}" || fail
-
-  if findmnt --mountpoint "${BACKUP_MOUNT_POINT}" >/dev/null; then
-    fusermount -u "${BACKUP_MOUNT_POINT}" || fail
-  fi
-
-  dir::make_if_not_exists_and_set_permissions "${BACKUP_MOUNT_POINT}" 700 || fail
-
-  workstation::linux::backup::restic mount "${BACKUP_MOUNT_POINT}" || fail
-}
-
-workstation::linux::backup::umount() {
-  fusermount -u -z "${BACKUP_MOUNT_POINT}" || fail
-}
-
-workstation::linux::backup::restore() {
-  local snapshot="${1:-"latest"}"
-
-  if [ -d "${BACKUP_RESTORE_PATH}" ]; then
-    fail "Restore directory already exists, unable to restore"
-  fi
-
-  mkdir -p "${BACKUP_RESTORE_PATH}" || fail
-
-  workstation::linux::backup::restic restore --target "${BACKUP_RESTORE_PATH}" --verify "${snapshot}" || fail
-}
-
-workstation::linux::backup::shell() {
-  workstation::linux::backup::with_env "${SHELL}"
-}
-
-workstation::linux::backup::remote_shell() {
-  ssh -t "${BACKUP_REMOTE_HOST}" "cd $(printf "%q" "${BACKUP_REMOTE_PATH}"); exec \"\${SHELL}\" -l"
-}
-
 
 workstation::linux::backup::start() {
   systemctl --user --no-block start "workstation-backup.service" || fail
