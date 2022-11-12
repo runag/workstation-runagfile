@@ -62,6 +62,10 @@ workstation::linux::configure() {
     vmware::install_vm_network_loss_workaround || fail
   fi
 
+  # for backup to work
+  if vmware::is_inside_vm; then
+    vmware::configure_passwordless_sudo_for_dmidecode_in_get_machine_uuid || fail
+  fi
 
   ## Desktop ##
 
