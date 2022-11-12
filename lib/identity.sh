@@ -39,14 +39,14 @@ workstation::use_identity() {
   fi
 
   # rubygems
-  if pass::exists "${identity_path}/rubygems-credentials"; then # password field
+  if pass::exists "${identity_path}/rubygems/credentials"; then # password field
     dir::make_if_not_exists "${HOME}/.gem" 755 || fail
-    pass::use "${identity_path}/rubygems-credentials" rubygems::credentials || fail
+    pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
   fi
 
   # npm
-  if pass::exists "${identity_path}/npm-access-token"; then # password field
+  if pass::exists "${identity_path}/npm/access-token"; then # password field
     asdf::load_if_installed || fail
-    pass::use "${identity_path}/npm-access-token" npm::auth_token || fail
+    pass::use "${identity_path}/npm/access-token" npm::auth_token || fail
   fi
 }
