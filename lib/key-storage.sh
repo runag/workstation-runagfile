@@ -48,7 +48,7 @@ key_storage::add_sopka_menu_for_media() {
 
   # Checksums
   sopka_menu::add key_storage::maintain_checksums "${media_path}" || fail
-  sopka_menu::add key_storage::make_copies "${media_path}" || fail
+  sopka_menu::add key_storage::make_backups "${media_path}" || fail
 
   # Scopes
   local scope_path; for scope_path in "${media_path}"/keys/* ; do
@@ -115,20 +115,20 @@ key_storage::maintain_checksums() {
     fi
   done
 
-  local dir; for dir in "${media_path}/copies-of-keys"/* "${media_path}/copies-of-keys"/*/keys/*/*; do
+  local dir; for dir in "${media_path}/keys-backups"/* "${media_path}/keys-backups"/*/keys/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }
 
-key_storage::make_copies() {
+key_storage::make_backups() {
   local media_path="$1"
 
-  local copies_dir="${media_path}/copies-of-keys"
-  local dest_dir; dest_dir="${copies_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
+  local backups_dir="${media_path}/keys-backups"
+  local dest_dir; dest_dir="${backups_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
-  dir::make_if_not_exists "${copies_dir}" || fail
+  dir::make_if_not_exists "${backups_dir}" || fail
   dir::make_if_not_exists "${dest_dir}" || fail
 
   cp -R "${media_path}/keys" "${dest_dir}" || fail
@@ -136,7 +136,7 @@ key_storage::make_copies() {
   SOPKA_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
 
   sync || fail
-  echo "Copies were made: ${dest_dir}"
+  echo "Backups were made: ${dest_dir}"
 }
 
 ### Password store
