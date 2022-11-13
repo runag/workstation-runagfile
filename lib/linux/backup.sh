@@ -64,7 +64,7 @@ workstation::linux::backup::deploy_credentials() {(
   workstation::linux::backup::export_environment || fail
 
   # install ssh profile  
-  ssh::install_ssh_profile_from_pass "${profile_path}/ssh" "${profile_name}" || fail
+  ssh::install_ssh_profile_from_pass "${profile_path}/ssh" "backup-${profile_name}" || fail
 
   # install restic key
   pass::use "${profile_path}/restic/password" pass::file "${RESTIC_PASSWORD_FILE}" --mode 0600 || fail
