@@ -16,14 +16,23 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Linux workstation: storage" || fail
-  sopka_menu::add workstation::linux::scrub_root || fail
-  sopka_menu::add workstation::linux::fstrim_boot || fail
+  sopka_menu::add workstation::linux::storage::check_root || fail
 fi
 
-workstation::linux::scrub_root() {
-  sudo btrfs scrub start -B -d /home || fail
+workstation::linux::storage::check_root() {
+  if [ "$(findmnt --mountpoint / --noheadings --output FSTYPE,FSROOT --raw 2>/dev/null)" = "btrfs /@" ]; then
+    local root_device; root_device="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail
+
+    # "btrfs check --check-data-csum" is not accurate on live filesystem
+    sudo btrfs scrub start -B -d "${root_device}" || fail
+    sudo btrfs check --readonly --progress --force "${root_device}" || fail
+  fi
 }
 
-workstation::linux::fstrim_boot() {
-  sudo fstrim -v /boot || fail
+workstation::linux::storage::configure_udisks_mount_options() {
+  file::sudo_write /etc/udisks2/mount_options.conf <<SHELL || fail
+[defaults]
+btrfs_defaults=commit=15,flushoncommit,noatime
+btrfs_allow=compress,compress-force,datacow,nodatacow,datasum,nodatasum,autodefrag,noautodefrag,degraded,device,discard,nodiscard,subvol,subvolid,space_cache,commit,flushoncommit,noatime
+SHELL
 }

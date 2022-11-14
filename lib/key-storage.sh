@@ -208,9 +208,10 @@ key_storage::create_or_update_password_store_checksum() {
 ### Menu
 
 if declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Key and password storage" || fail
 
   if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
+    sopka_menu::add_header "Key and password storage" || fail
+
     sopka_menu::add key_storage::create_or_update_password_store_checksum || fail
   fi
 

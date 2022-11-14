@@ -15,13 +15,38 @@
 #  limitations under the License.
 
 workstation::linux::configure() {
+  ## System ##
+
+  # configure ssh
+  ssh::add_ssh_config_d_include_directive || fail
+
+  # increase inotify limits
+  linux::configure_inotify || fail
+
+  # udisks mount options
+  workstation::linux::storage::configure_udisks_mount_options || fail
+
+  # configuration related to the case when the system is running inside a virtual machine
+  if vmware::is_inside_vm; then
+    # to save myself some time on btrfs configuration
+    fstab::add_mount_option btrfs flushoncommit || fail
+    fstab::add_mount_option btrfs noatime || fail
+
+    # for network to work
+    vmware::install_vm_network_loss_workaround || fail
+
+    # for backup to work
+    vmware::configure_passwordless_sudo_for_dmidecode_in_get_machine_uuid || fail
+
+    # disable unattended-upgrades, not so sure about that
+    # apt::remove unattended-upgrades || fail
+  fi
+
+
   ## Developer ##
 
   # configure git
   workstation::configure_git || fail
-
-  # configure ssh
-  ssh::add_ssh_config_d_include_directive || fail
 
   # set editor
   shellrc::install_editor_rc micro || fail
@@ -36,36 +61,10 @@ workstation::linux::configure() {
   # install sublime text configuration
   workstation::sublime_text::install_config || fail
 
-  # increase inotify limits
-  linux::configure_inotify || fail
-
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
 
-
-  ## System ##
-
-  # disable unattended-upgrades
-  apt::remove unattended-upgrades || fail
-
-  # configure btrfs
-  if [ "${CI:-}" != "true" ]; then
-    fstab::add_mount_option btrfs commit=15 || fail
-    fstab::add_mount_option btrfs discard=async || fail
-    fstab::add_mount_option btrfs flushoncommit || fail
-    fstab::add_mount_option btrfs noatime || fail
-  fi
-
-  # install vm-network-loss-workaround
-  if vmware::is_inside_vm; then
-    vmware::install_vm_network_loss_workaround || fail
-  fi
-
-  # for backup to work
-  if vmware::is_inside_vm; then
-    vmware::configure_passwordless_sudo_for_dmidecode_in_get_machine_uuid || fail
-  fi
 
   ## Desktop ##
 
@@ -81,11 +80,9 @@ workstation::linux::configure() {
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
 
-  # configure and start imwheel
-  # NOTE: When running ubuntu guest in vmware workstation, mouse scrolling stops if you scroll and move your mouse
-  # at the same time. Imwheel somehow fixes that.
-  workstation::linux::imwheel::configure 2 || fail
-  workstation::linux::imwheel::reenable || fail
+  # configure and start imwheel. When running ubuntu guest in vmware workstation, mouse scrolling stops if you scroll
+  # and move your mouse at the same time. Imwheel somehow fixes that.
+  workstation::linux::imwheel::deploy || fail
 }
 
 workstation::linux::hide-file() {
