@@ -37,12 +37,13 @@ workstation::linux::gnome::configure() {
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
+  gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail # sometimes it doesn't show up at all
   gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
 
   if vmware::is_inside_vm; then
-    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
     gsettings set org.gnome.mutter edge-tiling false || fail # maybe I should turn it on sometime later, check if it works well in a virtual machine
   else
     gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
