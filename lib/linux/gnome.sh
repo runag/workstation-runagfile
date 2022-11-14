@@ -18,6 +18,10 @@ workstation::linux::gnome::configure() {
   #
   # use dconf-editor to find key/value pairs
   #
+  # use "dconf dump / >dump" to dump all records
+  # to find the location of some setting of your particular interest you could make a full dump, change settings in GUI,
+  # then make a second dump and compare it to the first one
+  #
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring"
   # and to "ssh::add-key-password-to-gnome-keyring"
   #
