@@ -175,6 +175,9 @@ workstation::linux::install_packages() {
     # spotify
     sudo snap install spotify || fail
 
+    # vlc
+    sudo snap install vlc || fail
+
     # OBS studio
     # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
     # apt::update || fail
