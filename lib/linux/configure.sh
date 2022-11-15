@@ -17,6 +17,9 @@
 workstation::linux::configure() {
   ## System ##
 
+  # configure bash
+  shellrc::install_append_to_bash_history_file_after_each_command_rc || fail
+
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
 
