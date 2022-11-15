@@ -38,19 +38,21 @@ workstation::linux::gnome::configure() {
   fi
 
   # Dash
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
-  gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail # sometimes it doesn't show up at all
-  gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
 
   if vmware::is_inside_vm; then
     gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
-    gsettings set org.gnome.mutter edge-tiling false || fail # maybe I should turn it on sometime later, check if it works well in a virtual machine
+    gsettings set org.gnome.mutter edge-tiling false || fail
   else
     gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show true || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
   fi
 
   # Nautilus
