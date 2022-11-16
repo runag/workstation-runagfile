@@ -64,7 +64,7 @@ workstation::linux::install_packages() {
   # install inotify tools
   apt::install inotify-tools || fail
 
-  # gparted dependencies for FAT partitions
+  # gparted dependencies for fat partitions
   apt::install dosfstools mtools || fail
 
   # install build tools
@@ -115,6 +115,9 @@ workstation::linux::install_packages() {
 
   ### desktop software
 
+  # libreoffice
+  apt::install libreoffice-writer libreoffice-calc || fail
+
   # vscode
   vscode::install::apt || fail
 
@@ -134,7 +137,7 @@ workstation::linux::install_packages() {
   # gparted
   apt::install gparted || fail
 
-  # GNU Privacy Assistant
+  # gnu privacy assistant
   apt::install gpa || fail
 
   # install dconf-editor
@@ -181,7 +184,7 @@ workstation::linux::install_packages() {
     # vlc
     sudo snap install vlc || fail
 
-    # OBS studio
+    # obs studio
     # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
     # apt::update || fail
     # apt::install obs-studio guvcview || fail
@@ -194,7 +197,7 @@ workstation::linux::install_packages() {
     # display control
     # apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
 
-    # My MSI laptop hardware control
+    # my msi laptop hardware control
     if grep -qFx "GF65 Thin 9SD" /sys/devices/virtual/dmi/id/product_name && \
        grep -qFx "Micro-Star International Co., Ltd." /sys/devices/virtual/dmi/id/board_vendor; then
 
