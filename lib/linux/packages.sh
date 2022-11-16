@@ -79,6 +79,9 @@ workstation::linux::install_packages() {
   apt::install postgresql postgresql-contrib libpq-dev || fail
   apt::install redis-server || fail
 
+  # install btrfs-compsize
+  apt::install btrfs-compsize || fail
+
   # asdf
   asdf::install_dependencies::apt || fail
   asdf::install_with_shellrc || fail
@@ -123,7 +126,7 @@ workstation::linux::install_packages() {
   apt::install meld || fail
 
   # thunar
-  apt::install thunar || fail
+  # apt::install thunar || fail
 
   # qtpass
   apt::install qtpass || fail
