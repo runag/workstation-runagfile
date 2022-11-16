@@ -55,6 +55,7 @@ workstation::linux::backup::export_environment() {
 
   export RESTIC_PASSWORD_FILE="${config_dir}/restic/password"
   export RESTIC_REPOSITORY_FILE="${config_dir}/restic/repository"
+  export RESTIC_COMPRESSION=auto
 }
 
 workstation::linux::backup::deploy_credentials() {(
