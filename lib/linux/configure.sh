@@ -71,7 +71,7 @@ workstation::linux::configure() {
 
   ## Desktop ##
 
-  # hide some folders
+  # hide some directories
   workstation::linux::hide-file "Desktop" || fail
   workstation::linux::hide-file "Documents" || fail
   workstation::linux::hide-file "Music" || fail
