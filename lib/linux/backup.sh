@@ -286,8 +286,13 @@ workstation::linux::backup::disable_timers() {
 }
 
 workstation::linux::backup::status() {
+  local exit_statuses=()
+
   systemctl --user status "workstation-backup.service"
+  exit_statuses+=($?)
+
   systemctl --user status "workstation-backup-maintenance.service"
+  exit_statuses+=($?)
 
   # printf "\n\n"
   #
@@ -297,7 +302,14 @@ workstation::linux::backup::status() {
   printf "\n\n"
 
   systemctl --user status "workstation-backup.timer"
+  exit_statuses+=($?)
+
   systemctl --user status "workstation-backup-maintenance.timer"
+  exit_statuses+=($?)
+
+  if [[ "${exit_statuses[*]}" =~ [^0[:space:]] ]]; then
+    fail
+  fi
 }
 
 workstation::linux::backup::log() {
