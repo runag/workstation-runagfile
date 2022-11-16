@@ -307,7 +307,7 @@ workstation::linux::backup::status() {
   systemctl --user status "workstation-backup-maintenance.timer"
   exit_statuses+=($?)
 
-  if [[ "${exit_statuses[*]}" =~ [^0[:space:]] ]]; then
+  if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # i'm not sure about 3 here
     fail
   fi
 }
