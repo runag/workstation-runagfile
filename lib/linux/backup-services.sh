@@ -117,24 +117,27 @@ workstation::linux::backup::disable_timers() {
 workstation::linux::backup::status() {
   local exit_statuses=()
 
-  systemctl --user status "workstation-backup.service"
+  printf "\n"
+
+  systemctl --user list-timers "workstation-backup*.timer" --all || fail
   exit_statuses+=($?)
-
-  systemctl --user status "workstation-backup-maintenance.service"
-  exit_statuses+=($?)
-
-  # printf "\n\n"
-  #
-  # systemctl --user list-timers "workstation-backup.timer" --all || fail
-  # systemctl --user list-timers "workstation-backup-maintenance.timer" --all || fail
-
-  printf "\n\n"
+  printf "\n\n\n"
 
   systemctl --user status "workstation-backup.timer"
   exit_statuses+=($?)
+  printf "\n\n\n"
 
   systemctl --user status "workstation-backup-maintenance.timer"
   exit_statuses+=($?)
+  printf "\n\n\n"
+
+  systemctl --user status "workstation-backup.service"
+  exit_statuses+=($?)
+  printf "\n\n\n"
+
+  systemctl --user status "workstation-backup-maintenance.service"
+  exit_statuses+=($?)
+  printf "\n"
 
   if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # i'm not sure about 3 here
     fail
