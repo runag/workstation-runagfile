@@ -16,7 +16,8 @@
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_subheader "Linux workstation backup: services" || fail
-  
+
+  sopka_menu::add workstation::linux::backup::deploy_services || fail
   sopka_menu::add workstation::linux::backup::start || fail
   sopka_menu::add workstation::linux::backup::stop || fail
   sopka_menu::add workstation::linux::backup::start_maintenance || fail

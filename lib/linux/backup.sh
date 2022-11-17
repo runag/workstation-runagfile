@@ -15,13 +15,9 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Linux workstation backup: deploy" || fail
+  sopka_menu::add_header "Linux workstation backup" || fail
 
   sopka_menu::add workstation::linux::backup::deploy_credentials backup/personal || fail
-  sopka_menu::add workstation::linux::backup::deploy_services || fail
-
-  sopka_menu::add_header "Linux workstation backup: commands" || fail
-
   sopka_menu::add workstation::linux::backup::create || fail
   sopka_menu::add workstation::linux::backup::list_snapshots || fail
   sopka_menu::add workstation::linux::backup::check_and_read_data || fail
@@ -36,22 +32,22 @@ if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sop
   sopka_menu::add workstation::linux::backup::remote_shell || fail
 fi
 
-workstation::linux::backup::export_environment() {
+workstation::linux::backup::env() {
   local config_dir="${HOME}/.workstation-backup"
 
   dir::make_if_not_exists_and_set_permissions "${config_dir}" 0700 || fail
   dir::make_if_not_exists_and_set_permissions "${config_dir}/restic" 0700 || fail
 
-  export RESTIC_PASSWORD_FILE="${config_dir}/restic/password"
-  export RESTIC_REPOSITORY_FILE="${config_dir}/restic/repository"
-  export RESTIC_COMPRESSION=auto
+  export RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-"${config_dir}/restic/password"}"
+  export RESTIC_REPOSITORY_FILE="${RESTIC_REPOSITORY_FILE:-"${config_dir}/restic/repository"}"
+  export RESTIC_COMPRESSION="${RESTIC_COMPRESSION:-"auto"}"
 }
 
 workstation::linux::backup::deploy_credentials() {(
+  workstation::linux::backup::env || fail
+
   local profile_path="$1"
   local profile_name; profile_name="${2:-"$(basename "${profile_path}")"}" || fail
-
-  workstation::linux::backup::export_environment || fail
 
   # install ssh profile  
   ssh::install_ssh_profile_from_pass "${profile_path}/ssh" "backup-${profile_name}" || fail
@@ -62,7 +58,7 @@ workstation::linux::backup::deploy_credentials() {(
 )}
 
 workstation::linux::backup::create() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   cd "${HOME}" || fail
 
@@ -70,11 +66,6 @@ workstation::linux::backup::create() {(
     restic init || fail "Unable to init restic repository"
   fi
 
-  workstation::linux::backup::create::perform || fail "Unable to create backup"
-)}
-
-# TODO: keep an eye on the snap exclude, are there any documents that might get stored in that directory?
-workstation::linux::backup::create::perform() {
   local machine_id; machine_id="$(os::machine_id)" || fail
 
   restic backup \
@@ -85,22 +76,24 @@ workstation::linux::backup::create::perform() {
     --exclude "${HOME}/.cache" \
     --exclude "${HOME}/.local/share/Trash" \
     . || fail
-}
+
+  # TODO: keep an eye on the snap exclude, are there any documents that might get stored in that directory?
+)}
 
 workstation::linux::backup::list_snapshots() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic snapshots || fail
 )}
 
 workstation::linux::backup::check_and_read_data() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic check --check-unused --read-data || fail
 )}
 
 workstation::linux::backup::forget() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic forget \
     --group-by "host,paths,tags" \
@@ -111,13 +104,13 @@ workstation::linux::backup::forget() {(
 )}
 
 workstation::linux::backup::prune() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic prune || fail
 )}
 
 workstation::linux::backup::maintenance() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic check || fail
   workstation::linux::backup::forget || fail
@@ -125,13 +118,13 @@ workstation::linux::backup::maintenance() {(
 )}
 
 workstation::linux::backup::unlock() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   restic unlock || fail
 )}
 
 workstation::linux::backup::mount() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   local mount_point="${HOME}/workstation-backup-mount"
 
@@ -145,7 +138,7 @@ workstation::linux::backup::mount() {(
 )}
 
 workstation::linux::backup::umount() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   local mount_point="${HOME}/workstation-backup-mount"
 
@@ -153,9 +146,9 @@ workstation::linux::backup::umount() {(
 )}
 
 workstation::linux::backup::restore() {(
-  local snapshot="${1:-"latest"}"
+  workstation::linux::backup::env || fail
 
-  workstation::linux::backup::export_environment || fail
+  local snapshot="${1:-"latest"}"
 
   local restore_path="${HOME}/workstation-backup-${snapshot}-restore"
 
@@ -169,12 +162,13 @@ workstation::linux::backup::restore() {(
 )}
 
 workstation::linux::backup::local_shell() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
+
   "${SHELL}"
 )}
 
 workstation::linux::backup::remote_shell() {(
-  workstation::linux::backup::export_environment || fail
+  workstation::linux::backup::env || fail
 
   local remote_proto remote_host remote_path
 
