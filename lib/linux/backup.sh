@@ -14,22 +14,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# shellcheck disable=2086
+workstation::linux::backup::populate_sopka_menu() {
+  sopka_menu::add ${1:-} workstation::linux::backup::create || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::list_snapshots || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::check_and_read_data || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::forget || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::prune || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::maintenance || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::unlock || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::mount || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::umount || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::restore || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::local_shell || fail
+  sopka_menu::add ${1:-} workstation::linux::backup::remote_shell || fail
+}
+
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
   sopka_menu::add_header "Linux workstation backup" || fail
 
   sopka_menu::add workstation::linux::backup::deploy_credentials backup/personal || fail
-  sopka_menu::add workstation::linux::backup::create || fail
-  sopka_menu::add workstation::linux::backup::list_snapshots || fail
-  sopka_menu::add workstation::linux::backup::check_and_read_data || fail
-  sopka_menu::add workstation::linux::backup::forget || fail
-  sopka_menu::add workstation::linux::backup::prune || fail
-  sopka_menu::add workstation::linux::backup::maintenance || fail
-  sopka_menu::add workstation::linux::backup::unlock || fail
-  sopka_menu::add workstation::linux::backup::mount || fail
-  sopka_menu::add workstation::linux::backup::umount || fail
-  sopka_menu::add workstation::linux::backup::restore || fail
-  sopka_menu::add workstation::linux::backup::local_shell || fail
-  sopka_menu::add workstation::linux::backup::remote_shell || fail
+
+  workstation::linux::backup::populate_sopka_menu || fail
 fi
 
 workstation::linux::backup::env() {
@@ -39,7 +45,11 @@ workstation::linux::backup::env() {
   dir::make_if_not_exists_and_set_permissions "${config_dir}/restic" 0700 || fail
 
   export RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-"${config_dir}/restic/password"}"
-  export RESTIC_REPOSITORY_FILE="${RESTIC_REPOSITORY_FILE:-"${config_dir}/restic/repository"}"
+
+  if [ -z "${RESTIC_REPOSITORY:-}" ]; then
+    export RESTIC_REPOSITORY_FILE="${RESTIC_REPOSITORY_FILE:-"${config_dir}/restic/repository"}"
+  fi
+
   export RESTIC_COMPRESSION="${RESTIC_COMPRESSION:-"auto"}"
 }
 
@@ -172,6 +182,7 @@ workstation::linux::backup::remote_shell() {(
 
   local remote_proto remote_host remote_path
 
+  # TODO: RESTIC_REPOSITORY support
   <"${RESTIC_REPOSITORY_FILE}" IFS=: read -r remote_proto remote_host remote_path || fail
 
   test "${remote_proto}" = sftp || fail
