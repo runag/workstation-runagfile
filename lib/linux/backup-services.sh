@@ -79,9 +79,6 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-  # enable systemd user instance without the need for the user to login
-  sudo loginctl enable-linger "${USER}" || fail
-
   # enable the service and start the timer
   systemctl --user --quiet reenable "workstation-backup.timer" || fail
   systemctl --user start "workstation-backup.timer" || fail

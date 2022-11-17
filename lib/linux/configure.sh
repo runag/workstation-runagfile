@@ -17,6 +17,9 @@
 workstation::linux::configure() {
   ## System ##
 
+  # enable systemd user instance without the need for the user to login
+  sudo loginctl enable-linger "${USER}" || fail
+
   # configure bash
   shellrc::install_append_to_bash_history_file_after_each_command_rc || fail
 

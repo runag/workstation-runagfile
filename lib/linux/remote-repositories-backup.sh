@@ -149,9 +149,6 @@ RandomizedDelaySec=600
 WantedBy=timers.target
 EOF
 
-  # enable systemd user instance without the need for the user to login
-  sudo loginctl enable-linger "${USER}" || fail
-
   # enable the service and start the timer
   systemctl --user --quiet reenable "remote-repositories-backup.timer" || fail
   systemctl --user start "remote-repositories-backup.timer" || fail
