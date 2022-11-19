@@ -20,13 +20,14 @@ workstation::linux::imwheel::deploy() {
 }
 
 workstation::linux::imwheel::configure() {
-
+  #
   # Rationale
   #
   # 1. It seems to me that in applications that use Skia, scrolling works twice as slow when compared to Firefox or to Gnome applications
   # 2. In the absence of the following tedious list of modifiers, fast scrolling (alt + scroll) in Visual Studio Code does not work
   # 3. Without that last wildcard match that seems just like a passthrough, well, it's not passing through without that
-
+  #
+  
   file::write "${HOME}/.imwheelrc" <<EOF || fail
 "^(Code)$"
 None,      Up,   Button4, 2
@@ -110,7 +111,7 @@ Comment[en_US]=Scripting for mouse wheel and buttons
 Comment=Scripting for mouse wheel and buttons
 EOF
 
-  /usr/bin/imwheel --kill
+  /usr/bin/imwheel --kill || fail
 }
 
 workstation::linux::imwheel::disable() {
@@ -120,5 +121,5 @@ workstation::linux::imwheel::disable() {
 }
 
 workstation::linux::imwheel::debug() {
-  /usr/bin/imwheel --kill --detach --debug
+  /usr/bin/imwheel --kill --detach --debug || fail
 }
