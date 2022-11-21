@@ -38,8 +38,8 @@ workstation::linux::remote_repositories_backup::deploy_credentials() {
   dir::make_if_not_exists_and_set_permissions "${config_dir}/github" 0700 || fail
   dir::make_if_not_exists_and_set_permissions "${config_dir}/github/${credentials_name}" 0700 || fail
 
-  pass::use "${credentials_path}/github/username" pass::file "${config_dir}/github/${credentials_name}/username" --mode 0600 || fail
-  pass::use "${credentials_path}/github/personal-access-token" pass::file "${config_dir}/github/${credentials_name}/personal-access-token" --mode 0600 || fail
+  pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/github/${credentials_name}/username" || fail
+  pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/github/${credentials_name}/personal-access-token" || fail
 }
 
 # shellcheck disable=2030

@@ -21,7 +21,7 @@ workstation::linux::deploy_vm_host_directory_mounts() {
   apt::install cifs-utils || fail
 
   # get user name
-  local username; username="$(pass::use "${credentials_path}" --get username)" || fail
+  local username; username="$(pass::use --get username "${credentials_path}")" || fail
 
   # write credentials to local filesystem
   local credentials_file="${HOME}/.vm-host-filesystem-access.cifs-credentials"

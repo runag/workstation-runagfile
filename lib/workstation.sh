@@ -56,6 +56,6 @@ workstation::remove_nodejs_and_ruby_installations() {
 workstation::add_sopkafiles() {
   local list_path="$1" # should be in the body
 
-  pass::use "${list_path}" --body --pipe | sopkafile::add_from_list
+  pass::use --body "${list_path}" | sopkafile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
 }
