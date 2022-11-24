@@ -28,10 +28,11 @@ workstation::backup::create() {
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
-    --exclude "${HOME}/Downloads" \
-    --exclude "${HOME}/snap" \
     --exclude "${HOME}/.cache" \
     --exclude "${HOME}/.local/share/Trash" \
+    --exclude "${HOME}/Downloads" \
+    --exclude "${HOME}/snap" \
+    --exclude "${HOME}/workstation-backup" \
     . || fail
 }
 
