@@ -18,6 +18,17 @@ workstation::backup::create() {
   cd "${HOME}" || fail
 
   if ! restic cat config >/dev/null 2>&1; then
+    # set compression=none for parent folder if repository will be on local btrfs
+    if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+:.+ ]]; then
+      local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || fail
+
+      ( umask 0077 && mkdir -p "${parent_dir}" ) || fail
+
+      if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null; then
+        btrfs property set "${parent_dir}" compression none || fail
+      fi
+    fi
+
     restic init || fail "Unable to init restic repository"
   fi
 
