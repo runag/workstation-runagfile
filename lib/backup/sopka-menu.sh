@@ -15,16 +15,21 @@
 #  limitations under the License.
 
 workstation::backup::populate_sopka_menu() {
-  sopka_menu::add_header "Workstation backup: commands" || fail
-  workstation::backup::populate_sopka_menu_with_commands || fail
-
   local config_dir="${HOME}/.workstation-backup"
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
       local repository_name; repository_name="$(basename "${repository_config_path}")" || fail
+      local repository_path; repository_path="$(<"${repository_config_path}")" || fail
 
-      if [ "${repository_name}" != default ]; then
+      if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${repository_path}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]] && [ ! -d "${BASH_REMATCH[1]}" ]; then
+        continue
+      fi
+
+      if [ "${repository_name}" = default ]; then
+        sopka_menu::add_header "Workstation backup: commands" || fail
+        workstation::backup::populate_sopka_menu_with_commands || fail
+      else
         sopka_menu::add_header "Workstation backup: ${repository_name} repository commands" || fail
         workstation::backup::populate_sopka_menu_with_commands --repository "${repository_name}" || fail
       fi
