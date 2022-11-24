@@ -15,27 +15,27 @@
 #  limitations under the License.
 
 if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_subheader "Linux workstation backup: services" || fail
+  sopka_menu::add_subheader "Workstation backup: services" || fail
 
-  sopka_menu::add workstation::linux::backup::deploy_services || fail
-  sopka_menu::add workstation::linux::backup::start || fail
-  sopka_menu::add workstation::linux::backup::stop || fail
-  sopka_menu::add workstation::linux::backup::start_maintenance || fail
-  sopka_menu::add workstation::linux::backup::stop_maintenance || fail
-  sopka_menu::add workstation::linux::backup::disable_timers || fail
-  sopka_menu::add workstation::linux::backup::status || fail
-  sopka_menu::add workstation::linux::backup::log || fail
-  sopka_menu::add workstation::linux::backup::log_follow || fail
+  sopka_menu::add workstation::backup::services::deploy || fail
+  sopka_menu::add workstation::backup::services::start || fail
+  sopka_menu::add workstation::backup::services::stop || fail
+  sopka_menu::add workstation::backup::services::start_maintenance || fail
+  sopka_menu::add workstation::backup::services::stop_maintenance || fail
+  sopka_menu::add workstation::backup::services::disable_timers || fail
+  sopka_menu::add workstation::backup::services::status || fail
+  sopka_menu::add workstation::backup::services::log || fail
+  sopka_menu::add workstation::backup::services::log_follow || fail
 fi
 
-workstation::linux::backup::deploy_services() {
+workstation::backup::services::deploy() {
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::linux::backup::create
+ExecStart=${SOPKA_BIN_PATH} workstation::backup create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -60,7 +60,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::linux::backup::maintenance
+ExecStart=${SOPKA_BIN_PATH} workstation::backup maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -87,23 +87,23 @@ EOF
   systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
 
-workstation::linux::backup::start() {
+workstation::backup::services::start() {
   systemctl --user --no-block start "workstation-backup.service" || fail
 }
 
-workstation::linux::backup::stop() {
+workstation::backup::services::stop() {
   systemctl --user stop "workstation-backup.service" || fail
 }
 
-workstation::linux::backup::start_maintenance() {
+workstation::backup::services::start_maintenance() {
   systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
 }
 
-workstation::linux::backup::stop_maintenance() {
+workstation::backup::services::stop_maintenance() {
   systemctl --user stop "workstation-backup-maintenance.service" || fail
 }
 
-workstation::linux::backup::disable_timers() {
+workstation::backup::services::disable_timers() {
   systemctl --user stop "workstation-backup.timer" || fail
   systemctl --user stop "workstation-backup-maintenance.timer" || fail
 
@@ -111,7 +111,7 @@ workstation::linux::backup::disable_timers() {
   systemctl --user --quiet disable "workstation-backup-maintenance.timer" || fail
 }
 
-workstation::linux::backup::status() {
+workstation::backup::services::status() {
   local exit_statuses=()
 
   printf "\n"
@@ -141,10 +141,10 @@ workstation::linux::backup::status() {
   fi
 }
 
-workstation::linux::backup::log() {
+workstation::backup::services::log() {
   journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
 }
 
-workstation::linux::backup::log_follow() {
+workstation::backup::services::log_follow() {
   journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today --follow || fail
 }
