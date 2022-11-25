@@ -89,7 +89,9 @@ workstation::backup() {(
 
         echo "Proceeding with repository: ${RESTIC_REPOSITORY}"
         "workstation::backup::${action_name}" "$@"
-        exit_statuses+=($?)
+        local action_status=$?
+        exit_statuses+=("${action_status}")
+        softfail_unless_good "workstation::backup::${action_name} failed (${action_status})" "${action_status}" || true
       fi
     done
 

@@ -14,22 +14,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::backup::init() {
+  # set compression=none for parent folder if repository will be on local btrfs
+  if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
+    local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || softfail || return $?
+
+    ( umask 0077 && mkdir -p "${parent_dir}" ) || softfail || return $?
+
+    if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null; then
+      btrfs property set "${parent_dir}" compression none || softfail || return $?
+    fi
+  fi
+
+  restic init || softfail "Unable to init restic repository" || return $?
+}
+
 workstation::backup::create() {
   cd "${HOME}" || softfail || return $?
 
   if ! restic cat config >/dev/null 2>&1; then
-    # set compression=none for parent folder if repository will be on local btrfs
-    if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
-      local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || softfail || return $?
-
-      ( umask 0077 && mkdir -p "${parent_dir}" ) || softfail || return $?
-
-      if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null; then
-        btrfs property set "${parent_dir}" compression none || softfail || return $?
-      fi
-    fi
-
-    restic init || softfail "Unable to init restic repository" || return $?
+    workstation::backup::init || softfail || return $?
   fi
 
   local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
@@ -39,11 +43,18 @@ workstation::backup::create() {
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
-    --exclude "${HOME}/.cache" \
-    --exclude "${HOME}/.local/share/Trash" \
-    --exclude "${HOME}/Downloads" \
-    --exclude "${HOME}/snap" \
+    \
+    --exclude "${HOME}/.cache/*" \
+    --exclude "${HOME}/.local/share/Trash/*" \
+    --exclude "${HOME}/Downloads/*" \
+    --exclude "${HOME}/snap/**/.cache/*" \
+    --exclude "${HOME}/snap/chromium" \
+    --exclude "${HOME}/snap/firefox" \
+    --exclude "${HOME}/snap/skype" \
+    --exclude "${HOME}/snap/spotify" \
+    --exclude "${HOME}/snap/vlc" \
     --exclude "${HOME}/workstation-backup" \
+    \
     . || softfail || return $?
 }
 

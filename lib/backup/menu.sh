@@ -40,6 +40,7 @@ workstation::backup::populate_sopka_menu() {
 }
 
 workstation::backup::populate_sopka_menu_with_commands() {
+  sopkafile_menu::add workstation::backup "$@" init || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" create || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" snapshots || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" check || softfail || return $?
