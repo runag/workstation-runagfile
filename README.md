@@ -70,6 +70,53 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 
 Select from menu things that you need.
 
+## Password Store
+
+```
+Password Store
+├── backup
+│   ├── profiles
+│   │   └── workstation
+│   │       ├── password
+│   │       └── repositories
+│   │           ├── default
+│   │           └── sneakernet
+│   └── remotes
+│       └── personal-backup-server
+│           ├── config
+│           ├── id_ed25519
+│           ├── id_ed25519.pub
+│           ├── known_hosts
+│           ├── server-public-key
+│           └── type
+├── checksums.txt
+├── deployment-repository
+│   └── personal
+├── identity
+│   └── personal
+│       ├── git
+│       │   ├── signing-key
+│       │   ├── user-email
+│       │   └── user-name
+│       ├── github
+│       │   ├── personal-access-token
+│       │   └── username
+│       ├── npm
+│       │   └── access-token
+│       ├── rubygems
+│       │   └── credentials
+│       └── ssh
+│           ├── id_ed25519
+│           └── id_ed25519.pub
+├── sublime-merge
+│   └── personal
+├── sublime-text
+│   └── personal
+├── tailscale
+│   └── personal
+└── windows-cifs
+    └── personal
+```
 
 ## If you fork this script
 
