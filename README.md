@@ -80,7 +80,7 @@ Password Store
 │   │       ├── password
 │   │       └── repositories
 │   │           ├── default
-│   │           └── sneakernet
+│   │           └── offline
 │   └── remotes
 │       └── personal-backup-server
 │           ├── config
