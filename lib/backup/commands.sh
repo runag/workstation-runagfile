@@ -47,11 +47,11 @@ workstation::backup::create() {
     . || softfail || return $?
 }
 
-workstation::backup::list_snapshots() {
+workstation::backup::snapshots() {
   restic snapshots || softfail || return $?
 }
 
-workstation::backup::check_and_read_data() {
+workstation::backup::check() {
   restic check --check-unused --read-data || softfail || return $?
 }
 
@@ -124,7 +124,7 @@ workstation::backup::restore() {
 
 # shell
 
-workstation::backup::local_shell() {
+workstation::backup::shell() {
   "${SHELL}"
   softfail_unless_good "shell failed ($?)" $? || return $?
 }

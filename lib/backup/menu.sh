@@ -41,8 +41,8 @@ workstation::backup::populate_sopka_menu() {
 
 workstation::backup::populate_sopka_menu_with_commands() {
   sopkafile_menu::add workstation::backup "$@" create || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" list_snapshots || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" check_and_read_data || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" snapshots || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" check || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" forget || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" prune || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" maintenance || softfail || return $?
@@ -50,7 +50,7 @@ workstation::backup::populate_sopka_menu_with_commands() {
   sopkafile_menu::add workstation::backup "$@" mount || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" umount || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" restore || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" local_shell || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" shell || softfail || return $?
   sopkafile_menu::add workstation::backup "$@" remote_shell || softfail || return $?
 }
 
