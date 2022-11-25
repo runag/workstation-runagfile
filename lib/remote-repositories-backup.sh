@@ -17,18 +17,18 @@
 if sopkafile_menu::necessary linux; then
   sopkafile_menu::add_header "Linux workstation: remote repositories backup services" || fail
 
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::deploy_credentials identity/personal || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::create || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::deploy_services || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::start || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::stop || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::disable_timers || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::status || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::log || fail
-  sopkafile_menu::add workstation::linux::remote_repositories_backup::log_follow || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::create || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::deploy_services || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::start || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::stop || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::disable_timers || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::status || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::log || fail
+  sopkafile_menu::add workstation::remote_repositories_backup::log_follow || fail
 fi
 
-workstation::linux::remote_repositories_backup::deploy_credentials() {
+workstation::remote_repositories_backup::deploy_credentials() {
   local credentials_path="$1"
   local credentials_name; credentials_name="${2:-"$(basename "${credentials_path}")"}" || fail
 
@@ -43,7 +43,7 @@ workstation::linux::remote_repositories_backup::deploy_credentials() {
 }
 
 # shellcheck disable=2030
-workstation::linux::remote_repositories_backup::create() {
+workstation::remote_repositories_backup::create() {
   local backup_path="${HOME}/remote-repositories-backup"
 
   dir::make_if_not_exists_and_set_permissions "${backup_path}" 0700 || fail
@@ -60,7 +60,7 @@ workstation::linux::remote_repositories_backup::create() {
       local GITHUB_USERNAME; GITHUB_USERNAME="$(<"${credentials_path}"/username)"
       local GITHUB_PERSONAL_ACCESS_TOKEN; GITHUB_PERSONAL_ACCESS_TOKEN="$(<"${credentials_path}"/personal-access-token)"
 
-      workstation::linux::remote_repositories_backup::backup_github_repositories "${backup_path}/github/${credentials_name}" || exit_status=1
+      workstation::remote_repositories_backup::backup_github_repositories "${backup_path}/github/${credentials_name}" || exit_status=1
     fi
   done
 
@@ -70,7 +70,7 @@ workstation::linux::remote_repositories_backup::create() {
 }
 
 # shellcheck disable=2031
-workstation::linux::remote_repositories_backup::backup_github_repositories() {
+workstation::remote_repositories_backup::backup_github_repositories() {
   local backup_path="$1"
 
   # NOTE: There is a 100 000 (1000*100) repository limit here. I put it here to not suffer an infinite loop if something is wrong
@@ -122,14 +122,14 @@ workstation::linux::remote_repositories_backup::backup_github_repositories() {
   fi
 }
 
-workstation::linux::remote_repositories_backup::deploy_services() {
+workstation::remote_repositories_backup::deploy_services() {
   systemd::write_user_unit "remote-repositories-backup.service" <<EOF || fail
 [Unit]
 Description=Remote repositories backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::linux::remote_repositories_backup::create
+ExecStart=${SOPKA_BIN_PATH} workstation::remote_repositories_backup::create
 SyslogIdentifier=remote-repositories-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -154,20 +154,20 @@ EOF
   systemctl --user start "remote-repositories-backup.timer" || fail
 }
 
-workstation::linux::remote_repositories_backup::start() {
+workstation::remote_repositories_backup::start() {
   systemctl --user --no-block start "remote-repositories-backup.service" || fail
 }
 
-workstation::linux::remote_repositories_backup::stop() {
+workstation::remote_repositories_backup::stop() {
   systemctl --user stop "remote-repositories-backup.service" || fail
 }
 
-workstation::linux::remote_repositories_backup::disable_timers() {
+workstation::remote_repositories_backup::disable_timers() {
   systemctl --user stop "remote-repositories-backup.timer" || fail
   systemctl --user --quiet disable "remote-repositories-backup.timer" || fail
 }
 
-workstation::linux::remote_repositories_backup::status() {
+workstation::remote_repositories_backup::status() {
   local exit_statuses=()
 
   printf "\n"
@@ -184,10 +184,10 @@ workstation::linux::remote_repositories_backup::status() {
   fi
 }
 
-workstation::linux::remote_repositories_backup::log() {
+workstation::remote_repositories_backup::log() {
   journalctl --user -u "remote-repositories-backup.service" --since today || fail
 }
 
-workstation::linux::remote_repositories_backup::log_follow() {
+workstation::remote_repositories_backup::log_follow() {
   journalctl --user -u "remote-repositories-backup.service" --since today --follow || fail
 }
