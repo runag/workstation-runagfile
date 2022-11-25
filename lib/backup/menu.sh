@@ -17,6 +17,8 @@
 workstation::backup::populate_sopka_menu() {
   local config_dir="${HOME}/.workstation-backup"
 
+  local repository_count=0
+
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
       local repository_name; repository_name="$(basename "${repository_config_path}")" || softfail || return $?
@@ -26,17 +28,22 @@ workstation::backup::populate_sopka_menu() {
         continue
       fi
 
+      ((repository_count+=1))
+
       if [ "${repository_name}" = default ]; then
         sopkafile_menu::add_header "Workstation backup: commands" || softfail || return $?
-
         workstation::backup::populate_sopka_menu_with_commands || softfail || return $?
       else
         sopkafile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
-        
         workstation::backup::populate_sopka_menu_with_commands --repository "${repository_name}" || softfail || return $?
       fi
     fi
   done
+
+  if [ "${repository_count}" -gt 1 ]; then
+    sopkafile_menu::add_header "Workstation backup: for each repository" || softfail || return $?
+    workstation::backup::populate_sopka_menu_with_commands --each-repository || softfail || return $?
+  fi
 }
 
 workstation::backup::populate_sopka_menu_with_commands() {
