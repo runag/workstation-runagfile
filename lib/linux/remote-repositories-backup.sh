@@ -14,18 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Linux workstation: remote repositories backup services" || fail
+if sopkafile_menu::necessary linux; then
+  sopkafile_menu::add_header "Linux workstation: remote repositories backup services" || fail
 
-  sopka_menu::add workstation::linux::remote_repositories_backup::deploy_credentials identity/personal || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::create || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::deploy_services || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::start || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::stop || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::disable_timers || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::status || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::log || fail
-  sopka_menu::add workstation::linux::remote_repositories_backup::log_follow || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::deploy_credentials identity/personal || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::create || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::deploy_services || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::start || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::stop || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::disable_timers || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::status || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::log || fail
+  sopkafile_menu::add workstation::linux::remote_repositories_backup::log_follow || fail
 fi
 
 workstation::linux::remote_repositories_backup::deploy_credentials() {

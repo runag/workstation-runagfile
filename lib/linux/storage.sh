@@ -14,9 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Linux workstation: storage" || fail
-  sopka_menu::add workstation::linux::storage::check_root || fail
+if sopkafile_menu::necessary linux; then
+  sopkafile_menu::add_header "Linux workstation: storage" || fail
+  
+  sopkafile_menu::add workstation::linux::storage::check_root || fail
 fi
 
 workstation::linux::storage::check_root() {

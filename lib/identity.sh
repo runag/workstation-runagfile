@@ -14,10 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Workstation: identity" || fail
-  
-  sopka_menu::add workstation::use_identity identity/personal || fail
+if sopkafile_menu::necessary; then
+  sopkafile_menu::add_header "Workstation: identity" || fail
+
+  sopkafile_menu::add workstation::use_identity identity/personal || fail
 fi
 
 workstation::use_identity() {

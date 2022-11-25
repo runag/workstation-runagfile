@@ -14,12 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^msys ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Windows workstation" || fail
+if sopkafile_menu::necessary msys; then
+  sopkafile_menu::add_header "Windows workstation" || fail
 
-  sopka_menu::add workstation::windows::install_packages || fail
-  sopka_menu::add workstation::windows::configure || fail
-  sopka_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
+  sopkafile_menu::add workstation::windows::install_packages || fail
+  sopkafile_menu::add workstation::windows::configure || fail
+  sopkafile_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
 fi
 
 workstation::windows::install_packages() {

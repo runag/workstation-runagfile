@@ -44,11 +44,11 @@ workstation::key_storage::add_sopka_menu_for_media() {
     return 0
   fi
 
-  sopka_menu::add_header "Key storage in: ${media_path}" || softfail || return $?
+  sopkafile_menu::add_header "Key storage in: ${media_path}" || softfail || return $?
 
   # Checksums
-  sopka_menu::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
-  sopka_menu::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
+  sopkafile_menu::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
+  sopkafile_menu::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
 
   # Scopes
   local scope_path; for scope_path in "${media_path}"/keys/* ; do
@@ -74,15 +74,15 @@ workstation::key_storage::add_sopka_menu_for_password_store() {
 
   if [ -d "${password_store_dir}/.git" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      sopka_menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      sopkafile_menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     else
-      sopka_menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      sopkafile_menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     fi
   fi
 
   if [ ! -d "${password_store_dir}" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      sopka_menu::add workstation::key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      sopkafile_menu::add workstation::key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     fi
   fi
 }
@@ -98,7 +98,7 @@ workstation::key_storage::add_sopka_menu_for_gpg_keys() {
       local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
     
       if [ -f "${gpg_key_file}" ]; then
-        sopka_menu::add workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || softfail || return $?
+        sopkafile_menu::add workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || softfail || return $?
       fi
     fi
   done
@@ -207,11 +207,11 @@ workstation::key_storage::create_or_update_password_store_checksum() {
 
 ### Menu
 
-if declare -f sopka_menu::add >/dev/null; then
+if sopkafile_menu::necessary; then
   if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
-    sopka_menu::add_header "Key and password storage" || fail
+    sopkafile_menu::add_header "Key and password storage" || fail
 
-    sopka_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
+    sopkafile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
   fi
 
   workstation::key_storage::populate_sopka_menu

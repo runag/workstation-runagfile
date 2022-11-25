@@ -14,16 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
+if sopkafile_menu::necessary linux; then
+  sopkafile_menu::add_header "Linux workstation: deploy" || fail
 
-  sopka_menu::add_header "Linux workstation: deploy" || fail
-
-  sopka_menu::add workstation::linux::install_packages || fail
-  sopka_menu::add workstation::linux::configure || fail
-  sopka_menu::add workstation::linux::deploy_lan_server || fail
-  sopka_menu::add workstation::linux::deploy_tailscale tailscale/personal || fail
+  sopkafile_menu::add workstation::linux::install_packages || fail
+  sopkafile_menu::add workstation::linux::configure || fail
+  sopkafile_menu::add workstation::linux::deploy_lan_server || fail
+  sopkafile_menu::add workstation::linux::deploy_tailscale tailscale/personal || fail
   
   if vmware::is_inside_vm; then
-    sopka_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/personal || fail
+    sopkafile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/personal || fail
   fi
 fi

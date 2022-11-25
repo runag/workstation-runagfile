@@ -14,14 +14,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Linux workstation: misc" || fail
-  sopka_menu::add workstation::linux::dangerously_set_hostname || fail
+if sopkafile_menu::necessary linux; then
+  sopkafile_menu::add_header "Linux workstation: misc" || fail
+  
+  sopkafile_menu::add workstation::linux::dangerously_set_hostname || fail
+
   if linux::display_if_restart_required::is_available; then
-    sopka_menu::add workstation::linux::display_if_restart_required || fail
+    sopkafile_menu::add workstation::linux::display_if_restart_required || fail
   fi
+
   if benchmark::is_available; then
-    sopka_menu::add workstation::linux::run_benchmark || fail
+    sopkafile_menu::add workstation::linux::run_benchmark || fail
   fi
 fi
 

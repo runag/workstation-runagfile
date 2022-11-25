@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Workstation: misc" || fail
+if sopkafile_menu::necessary; then
+  sopkafile_menu::add_header "Workstation: misc" || fail
   
-  sopka_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
-  sopka_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
-  sopka_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
-  sopka_menu::add workstation::merge_editor_configs || fail
-  sopka_menu::add workstation::remove_nodejs_and_ruby_installations || fail
+  sopkafile_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
+  sopkafile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
+  sopkafile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
+  sopkafile_menu::add workstation::merge_editor_configs || fail
+  sopkafile_menu::add workstation::remove_nodejs_and_ruby_installations || fail
 fi
 
 workstation::configure_git() {

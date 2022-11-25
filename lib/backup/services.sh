@@ -14,18 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if [[ "${OSTYPE}" =~ ^linux ]] && command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_subheader "Workstation backup: services" || fail
+if sopkafile_menu::necessary linux && command -v restic >/dev/null; then
+  sopkafile_menu::add_subheader "Workstation backup: services" || fail
 
-  sopka_menu::add workstation::backup::services::deploy || fail
-  sopka_menu::add workstation::backup::services::start || fail
-  sopka_menu::add workstation::backup::services::stop || fail
-  sopka_menu::add workstation::backup::services::start_maintenance || fail
-  sopka_menu::add workstation::backup::services::stop_maintenance || fail
-  sopka_menu::add workstation::backup::services::disable_timers || fail
-  sopka_menu::add workstation::backup::services::status || fail
-  sopka_menu::add workstation::backup::services::log || fail
-  sopka_menu::add workstation::backup::services::log_follow || fail
+  sopkafile_menu::add workstation::backup::services::deploy || fail
+  sopkafile_menu::add workstation::backup::services::start || fail
+  sopkafile_menu::add workstation::backup::services::stop || fail
+  sopkafile_menu::add workstation::backup::services::start_maintenance || fail
+  sopkafile_menu::add workstation::backup::services::stop_maintenance || fail
+  sopkafile_menu::add workstation::backup::services::disable_timers || fail
+  sopkafile_menu::add workstation::backup::services::status || fail
+  sopkafile_menu::add workstation::backup::services::log || fail
+  sopkafile_menu::add workstation::backup::services::log_follow || fail
 fi
 
 workstation::backup::services::deploy() {

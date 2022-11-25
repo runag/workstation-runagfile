@@ -27,10 +27,12 @@ workstation::backup::populate_sopka_menu() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        sopka_menu::add_header "Workstation backup: commands" || softfail || return $?
+        sopkafile_menu::add_header "Workstation backup: commands" || softfail || return $?
+
         workstation::backup::populate_sopka_menu_with_commands || softfail || return $?
       else
-        sopka_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
+        sopkafile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
+        
         workstation::backup::populate_sopka_menu_with_commands --repository "${repository_name}" || softfail || return $?
       fi
     fi
@@ -38,25 +40,25 @@ workstation::backup::populate_sopka_menu() {
 }
 
 workstation::backup::populate_sopka_menu_with_commands() {
-  sopka_menu::add workstation::backup "$@" create || softfail || return $?
-  sopka_menu::add workstation::backup "$@" list_snapshots || softfail || return $?
-  sopka_menu::add workstation::backup "$@" check_and_read_data || softfail || return $?
-  sopka_menu::add workstation::backup "$@" forget || softfail || return $?
-  sopka_menu::add workstation::backup "$@" prune || softfail || return $?
-  sopka_menu::add workstation::backup "$@" maintenance || softfail || return $?
-  sopka_menu::add workstation::backup "$@" unlock || softfail || return $?
-  sopka_menu::add workstation::backup "$@" mount || softfail || return $?
-  sopka_menu::add workstation::backup "$@" umount || softfail || return $?
-  sopka_menu::add workstation::backup "$@" restore || softfail || return $?
-  sopka_menu::add workstation::backup "$@" local_shell || softfail || return $?
-  sopka_menu::add workstation::backup "$@" remote_shell || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" create || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" list_snapshots || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" check_and_read_data || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" forget || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" prune || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" maintenance || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" unlock || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" mount || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" umount || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" restore || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" local_shell || softfail || return $?
+  sopkafile_menu::add workstation::backup "$@" remote_shell || softfail || return $?
 }
 
-if command -v restic >/dev/null && declare -f sopka_menu::add >/dev/null; then
-  sopka_menu::add_header "Workstation backup" || fail
+if sopkafile_menu::necessary && command -v restic >/dev/null; then
+  sopkafile_menu::add_header "Workstation backup" || fail
 
-  sopka_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  sopka_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
+  sopkafile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
+  sopkafile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
 
   workstation::backup::populate_sopka_menu
   softfail_unless_good "Unable to perform workstation::backup::populate_sopka_menu ($?)" $? || true
