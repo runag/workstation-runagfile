@@ -35,7 +35,7 @@ Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::backup create
+ExecStart=${SOPKA_BIN_PATH} workstation::backup --each-repository create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -60,7 +60,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::backup maintenance
+ExecStart=${SOPKA_BIN_PATH} workstation::backup --each-repository maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true

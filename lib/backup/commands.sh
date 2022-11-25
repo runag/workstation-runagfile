@@ -15,24 +15,24 @@
 #  limitations under the License.
 
 workstation::backup::create() {
-  cd "${HOME}" || fail
+  cd "${HOME}" || softfail || return $?
 
   if ! restic cat config >/dev/null 2>&1; then
     # set compression=none for parent folder if repository will be on local btrfs
-    if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+:.+ ]]; then
-      local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || fail
+    if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
+      local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || softfail || return $?
 
-      ( umask 0077 && mkdir -p "${parent_dir}" ) || fail
+      ( umask 0077 && mkdir -p "${parent_dir}" ) || softfail || return $?
 
       if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null; then
-        btrfs property set "${parent_dir}" compression none || fail
+        btrfs property set "${parent_dir}" compression none || softfail || return $?
       fi
     fi
 
-    restic init || fail "Unable to init restic repository"
+    restic init || softfail "Unable to init restic repository" || return $?
   fi
 
-  local machine_id; machine_id="$(os::machine_id)" || fail
+  local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
 
   # TODO: keep an eye on the snap exclude, are there any documents that might get stored in that directory?
 
@@ -44,15 +44,15 @@ workstation::backup::create() {
     --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     --exclude "${HOME}/workstation-backup" \
-    . || fail
+    . || softfail || return $?
 }
 
 workstation::backup::list_snapshots() {
-  restic snapshots || fail
+  restic snapshots || softfail || return $?
 }
 
 workstation::backup::check_and_read_data() {
-  restic check --check-unused --read-data || fail
+  restic check --check-unused --read-data || softfail || return $?
 }
 
 workstation::backup::forget() {
@@ -61,54 +61,54 @@ workstation::backup::forget() {
     --keep-within 14d \
     --keep-within-daily 30d \
     --keep-within-weekly 3m \
-    --keep-within-monthly 2y || fail
+    --keep-within-monthly 2y || softfail || return $?
 }
 
 workstation::backup::prune() {
-  restic prune || fail
+  restic prune || softfail || return $?
 }
 
 workstation::backup::maintenance() {
-  restic check || fail
-  workstation::backup::forget || fail
-  workstation::backup::prune || fail
+  restic check || softfail || return $?
+  workstation::backup::forget || softfail || return $?
+  workstation::backup::prune || softfail || return $?
 }
 
 workstation::backup::unlock() {
-  restic unlock || fail
+  restic unlock || softfail || return $?
 }
 
 
 # restore
 
 workstation::backup::mount() {
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || fail
+  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
 
   output_folder+="/mount"
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || fail
+  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
   if findmnt --mountpoint "${output_folder}" >/dev/null; then
-    fusermount -u "${output_folder}" || fail
+    fusermount -u "${output_folder}" || softfail || return $?
   fi
 
-  restic mount "${output_folder}" || fail
+  restic mount "${output_folder}" || softfail || return $?
 }
 
 workstation::backup::umount() {
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || fail
+  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
 
   output_folder+="/mount"
 
-  fusermount -u -z "${output_folder}" || fail
+  fusermount -u -z "${output_folder}" || softfail || return $?
 }
 
 workstation::backup::restore() {
   local snapshot_id="${1:-"latest"}"
 
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || fail
+  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
 
   output_folder+="/restore"
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || fail
+  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
   output_folder+="/${snapshot_id}"
 
@@ -116,9 +116,9 @@ workstation::backup::restore() {
     fail "Restore directory already exists, unable to restore"
   fi
 
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || fail
+  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
-  restic restore --target "${output_folder}" --verify "${snapshot_id}" || fail
+  restic restore --target "${output_folder}" --verify "${snapshot_id}" || softfail || return $?
 }
 
 
@@ -126,15 +126,17 @@ workstation::backup::restore() {
 
 workstation::backup::local_shell() {
   "${SHELL}"
+  softfail_unless_good "shell failed ($?)" $? || return $?
 }
 
 # shellcheck disable=2031
 workstation::backup::remote_shell() {
   local remote_proto remote_host remote_path
 
-  <<<"${RESTIC_REPOSITORY}" IFS=: read -r remote_proto remote_host remote_path || fail
+  <<<"${RESTIC_REPOSITORY}" IFS=: read -r remote_proto remote_host remote_path || softfail || return $?
 
-  test "${remote_proto}" = sftp || fail
+  test "${remote_proto}" = sftp || softfail || return $?
 
   ssh -t "${remote_host}" "cd $(printf "%q" "${remote_path}"); exec \"\${SHELL}\" -l"
+  softfail_unless_good "remote shell failed ($?)" $? || return $?
 }
