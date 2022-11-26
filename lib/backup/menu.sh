@@ -30,36 +30,33 @@ workstation::backup::populate_sopka_menu() {
 
       ((repository_count+=1))
 
+      local commands=(init create snapshots check forget prune maintenance unlock mount umount restore shell)
+
+      if [[ "${repository_path}" =~ ^sftp: ]]; then
+        commands+=(remote_shell)
+      fi
+
       if [ "${repository_name}" = default ]; then
         sopkafile_menu::add_header "Workstation backup: commands" || softfail || return $?
-        workstation::backup::populate_sopka_menu_with_commands || softfail || return $?
+        local command; for command in "${commands[@]}"; do
+          sopkafile_menu::add workstation::backup "${command}" || softfail || return $?
+        done
       else
         sopkafile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
-        workstation::backup::populate_sopka_menu_with_commands --repository "${repository_name}" || softfail || return $?
+        local command; for command in "${commands[@]}"; do
+          sopkafile_menu::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
+        done
       fi
     fi
   done
 
   if [ "${repository_count}" -gt 1 ]; then
     sopkafile_menu::add_header "Workstation backup: for each repository" || softfail || return $?
-    workstation::backup::populate_sopka_menu_with_commands --each-repository || softfail || return $?
+    local commands=(init create snapshots check forget prune maintenance unlock restore)
+    local command; for command in "${commands[@]}"; do
+      sopkafile_menu::add workstation::backup --each-repository "${command}" || softfail || return $?
+    done
   fi
-}
-
-workstation::backup::populate_sopka_menu_with_commands() {
-  sopkafile_menu::add workstation::backup "$@" init || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" create || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" snapshots || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" check || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" forget || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" prune || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" maintenance || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" unlock || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" mount || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" umount || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" restore || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" shell || softfail || return $?
-  sopkafile_menu::add workstation::backup "$@" remote_shell || softfail || return $?
 }
 
 if sopkafile_menu::necessary && command -v restic >/dev/null; then

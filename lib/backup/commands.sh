@@ -30,15 +30,13 @@ workstation::backup::init() {
 }
 
 workstation::backup::create() {
-  cd "${HOME}" || softfail || return $?
-
   if ! restic cat config >/dev/null 2>&1; then
     workstation::backup::init || softfail || return $?
   fi
 
-  local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
+  cd "${HOME}" || softfail || return $?
 
-  # TODO: keep an eye on the snap exclude, are there any documents that might get stored in that directory?
+  local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
 
   restic backup \
     --one-file-system \
@@ -72,7 +70,7 @@ workstation::backup::forget() {
     --keep-within 14d \
     --keep-within-daily 30d \
     --keep-within-weekly 3m \
-    --keep-within-monthly 2y || softfail || return $?
+    --keep-within-monthly 3y || softfail || return $?
 }
 
 workstation::backup::prune() {
