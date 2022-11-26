@@ -54,69 +54,83 @@ workstation::backup() {(
   local config_dir="${HOME}/.workstation-backup"
 
   export RESTIC_COMPRESSION="${RESTIC_COMPRESSION:-"auto"}"
-
   export RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/passwords/${WORKSTATION_BACKUP_PASSWORD}"}"
-
   export RESTIC_REPOSITORY
 
-  if [ "${each_repository}" = true ]; then
-    if [ -n "${RESTIC_REPOSITORY:-}" ] || [ -n "${RESTIC_REPOSITORY_FILE:-}" ]; then
-      fail "RESTIC_REPOSITORY or RESTIC_REPOSITORY_FILE should not be provided if --each-repository is specified"
-    fi
+  # case for single repository
 
-    local exit_statuses=()
-
-    local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
-      if [ -f "${repository_config_path}" ]; then
-        WORKSTATION_BACKUP_REPOSITORY="$(basename "${repository_config_path}")" || softfail || { exit_statuses+=(1); continue; }
-        RESTIC_REPOSITORY="$(<"${repository_config_path}")" || softfail || { exit_statuses+=(1); continue; }
-
-        if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
-          if [[ "${OSTYPE}" =~ ^linux ]]; then
-            if [[ "${RESTIC_REPOSITORY}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]]; then
-              local mount_point="${BASH_REMATCH[1]}"
-              if [ ! -d "${mount_point}" ]; then
-                continue
-              fi
-
-              cd "${mount_point}" || softfail || { exit_statuses+=(1); continue; }
-              ( sleep infinity ) &
-            fi
-          elif [ ! -d "${RESTIC_REPOSITORY}" ]; then
-            continue
-          fi
-        fi
-
-        echo "Proceeding with repository: ${RESTIC_REPOSITORY}"
-        "workstation::backup::${action_name}" "$@"
-        local action_status=$?
-        exit_statuses+=("${action_status}")
-        softfail_unless_good "workstation::backup::${action_name} failed (${action_status})" "${action_status}" || true
-      fi
-    done
-
-    local job_pids; job_pids="$(jobs -p)" || fail
-
-    if [ -n "${job_pids}" ]; then
-      # shellcheck disable=2086
-      kill ${job_pids} || fail
-    fi
-
-    if [[ "${exit_statuses[*]}" =~ [^0[:space:]] ]]; then
-      softfail "One or more workstation::backup::${action_name} failed (${exit_statuses[*]})"
-      return $?
-    fi
-
-  else
+  if [ "${each_repository}" = false ]; then
     if [ -z "${RESTIC_REPOSITORY:-}" ]; then
       export RESTIC_REPOSITORY_FILE="${RESTIC_REPOSITORY_FILE:-"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories/${WORKSTATION_BACKUP_REPOSITORY}"}"
-      export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${RESTIC_REPOSITORY_FILE}")" || fail
+      export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${RESTIC_REPOSITORY_FILE}")" || softfail || return $?
       unset RESTIC_REPOSITORY_FILE
     fi
 
     "workstation::backup::${action_name}" "$@"
-    softfail_unless_good "workstation::backup::${action_name} failed ($?)" $? || return $?
+    softfail_unless_good "${action_name} failed ($?)" $?
+    return $?
   fi
+
+  # case for multiple repositories (--each-repository)
+
+  if [ -n "${RESTIC_REPOSITORY:-}" ] || [ -n "${RESTIC_REPOSITORY_FILE:-}" ]; then
+    softfail "RESTIC_REPOSITORY or RESTIC_REPOSITORY_FILE should not be provided if --each-repository is specified"
+    return $?
+  fi
+
+  local exit_statuses=()
+
+  local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
+    if [ -f "${repository_config_path}" ]; then
+      workstation::backup::run_action_with_repository_config "${action_name}" "${repository_config_path}" "$@"
+      softfail_unless_good "${action_name} failed ($?)" $?
+      exit_statuses+=($?)
+    fi
+  done
+
+  if [[ "${exit_statuses[*]}" =~ [^0[:space:]] ]]; then
+    softfail "One or more ${action_name} failed (${exit_statuses[*]})"
+    return $?
+  fi
+)}
+
+# shellcheck disable=2031
+workstation::backup::run_action_with_repository_config() {(
+  local action_name="$1"; shift
+  local repository_config_path="$1"; shift
+
+  local lock_pid=""
+
+  export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${repository_config_path}")" || softfail || return $?
+  export WORKSTATION_BACKUP_REPOSITORY; WORKSTATION_BACKUP_REPOSITORY="$(basename "${repository_config_path}")" || softfail || return $?
+  
+  # case if repository is not remote
+  if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
+    # if linux
+    if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${RESTIC_REPOSITORY}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]]; then
+      local mount_point="${BASH_REMATCH[1]}"
+
+      if ! findmnt --mountpoint "${mount_point}" >/dev/null; then
+        return
+      fi
+
+      cd "${mount_point}" || softfail || return $?
+
+      ( sleep infinity ) &
+      lock_pid=$!
+    fi
+  fi
+
+  log::notice "Proceeding with repository: ${RESTIC_REPOSITORY}"
+
+  "workstation::backup::${action_name}" "$@"
+  local action_status=$?
+
+  if [ -n "${lock_pid}" ]; then
+    kill "${lock_pid}" || softfail || return $?
+  fi
+
+  return "${action_status}"
 )}
 
 # shellcheck disable=2031
