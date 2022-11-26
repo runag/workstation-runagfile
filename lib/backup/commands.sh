@@ -123,7 +123,7 @@ workstation::backup::restore() {
   output_folder+="/${snapshot_id}"
 
   if [ -d "${output_folder}" ]; then
-    fail "Restore directory already exists, unable to restore"
+    softfail "Restore directory already exists, unable to restore" || return $?
   fi
 
   dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?

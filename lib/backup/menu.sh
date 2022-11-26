@@ -63,10 +63,10 @@ workstation::backup::populate_sopka_menu_with_commands() {
 }
 
 if sopkafile_menu::necessary && command -v restic >/dev/null; then
-  sopkafile_menu::add_header "Workstation backup" || fail
+  sopkafile_menu::add_header "Workstation backup" || softfail || return $?
 
-  sopkafile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  sopkafile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
+  sopkafile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
+  sopkafile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
 
   workstation::backup::populate_sopka_menu
   softfail_unless_good "Unable to perform workstation::backup::populate_sopka_menu ($?)" $? || true
