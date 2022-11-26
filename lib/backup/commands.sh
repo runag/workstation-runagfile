@@ -61,7 +61,7 @@ workstation::backup::snapshots() {
 }
 
 workstation::backup::check() {
-  restic check --check-unused --read-data || softfail || return $?
+  restic check --read-data || softfail || return $?
 }
 
 workstation::backup::forget() {
