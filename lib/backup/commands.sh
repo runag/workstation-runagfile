@@ -34,9 +34,9 @@ workstation::backup::create() {
     workstation::backup::init || softfail || return $?
   fi
 
-  cd "${HOME}" || softfail || return $?
-
   local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
+
+  cd "${HOME}" || softfail || return $?
 
   restic backup \
     --one-file-system \
