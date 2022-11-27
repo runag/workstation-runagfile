@@ -36,10 +36,6 @@ workstation::backup::credentials::deploy_remote() {
   if [ "${remote_type}" = ssh ]; then # install ssh profile
     ssh::add_ssh_config_d_include_directive || fail
     ssh::install_ssh_profile_from_pass "${remote_pass_path}" "${remote_name}" || fail
-
-    if pass::secret_exists "${remote_pass_path}/server-public-key"; then
-      pass::use "${remote_pass_path}/server-public-key" file::write --mode 0600 "${remote_config_dir}/server-public-key" || fail
-    fi
   else
     fail "Unknown remote type"
   fi

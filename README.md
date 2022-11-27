@@ -87,7 +87,6 @@ Password Store
 │           ├── id_ed25519
 │           ├── id_ed25519.pub
 │           ├── known_hosts
-│           ├── server-public-key
 │           └── type
 ├── checksums.txt
 ├── deployment-repository
