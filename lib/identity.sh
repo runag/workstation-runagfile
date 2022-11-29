@@ -25,6 +25,7 @@ workstation::use_identity() {
   local identity_name; identity_name="${2:-"$(basename "${identity_path}")"}" || fail
   
   if pass::exists "${identity_path}/ssh"; then
+    ssh::add_ssh_config_d_include_directive || fail
     ssh::install_ssh_profile_from_pass "${identity_path}/ssh" "identity-${identity_name}" || fail
   fi
 
