@@ -15,6 +15,12 @@
 #  limitations under the License.
 
 workstation::key_storage::populate_sopka_menu() {
+  if [ -f "checksums.txt" ]; then
+    sopkafile_menu::add_header "Checksums for current directory" || softfail || return $?
+    sopkafile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || softfail || return $?
+    sopkafile_menu::add fs::with_secure_temp_dir_if_available checksums::verify "." "checksums.txt" || softfail || return $?
+  fi
+
   if [[ "${OSTYPE}" =~ ^msys ]]; then
     workstation::key_storage::add_sopka_menu_for_media /? || softfail || return $?
 
