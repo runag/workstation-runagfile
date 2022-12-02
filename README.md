@@ -20,8 +20,6 @@ A collection of scripts to deploy my workstation. I hope other people may find t
 
 I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/runag/runag), that helps this scripts to look nice and declarative.
 
-![Runag menu screenshot](docs/runag-menu-screenshot.png)
-
 
 ## Deploy workstation on Linux
 
