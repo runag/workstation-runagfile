@@ -27,8 +27,8 @@ workstation::linux::deploy_tailscale() {
     tailscale::install_issue_2541_workaround || fail
   fi
 
-  # logout if SOPKA_UPDATE_SECRETS is set
-  if [ "${SOPKA_UPDATE_SECRETS:-}" = true ] && tailscale::is_logged_in; then
+  # logout if RUNAG_UPDATE_SECRETS is set
+  if [ "${RUNAG_UPDATE_SECRETS:-}" = true ] && tailscale::is_logged_in; then
     sudo tailscale logout || fail
   fi
 

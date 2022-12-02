@@ -139,7 +139,7 @@ workstation::key_storage::make_backups() {
 
   cp -R "${media_path}/keys" "${dest_dir}" || fail
 
-  SOPKA_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
+  RUNAG_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
 
   sync || fail
   echo "Backups were made: ${dest_dir}"

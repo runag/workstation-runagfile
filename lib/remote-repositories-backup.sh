@@ -129,7 +129,7 @@ Description=Remote repositories backup
 
 [Service]
 Type=oneshot
-ExecStart=${SOPKA_BIN_PATH} workstation::remote_repositories_backup::create
+ExecStart=${RUNAG_BIN_PATH} workstation::remote_repositories_backup::create
 SyslogIdentifier=remote-repositories-backup
 ProtectSystem=full
 PrivateTmp=true
