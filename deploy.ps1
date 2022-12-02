@@ -74,7 +74,7 @@ function Git-Clone-or-Pull($url, $dest){
 }
 
 
-# If you forked this script, please change the following
+# If you forked this script, you may wish to change the following
 $runag_repo = "runag/runag"
 $runagfile_repo = "runag/workstation-runagfile"
 $runagfile_dest = "workstation-runagfile-runag-github"

@@ -14,11 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# 🛷 Runagfile to configure my workstation
+# 🛷 Runagfile to configure a workstation
 
-A collection of scripts to deploy my workstation. I hope other people may find them useful.
+A collection of scripts to deploy a workstation.
 
-I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/runag/runag), that helps this scripts to look nice and declarative.
+It could be run on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials.
+
+Scripts are idempotent, they could be run multiple times to produce up-to date configuration.
+
+There is a library, [Runag](https://github.com/runag/runag), that allows this scripts to be declarative and concise.
 
 
 ## Deploy workstation on Linux
@@ -57,7 +61,6 @@ That script will do the following:
 7. Upgrades all installed choco packages
 8. Sets ssh-agent service startup type to automatic and runs it
 9. Installs MSYS2 and MINGW development toolchain for use in ruby's gems compilation
-10. Installs my lovely file-digests gem
 11. Install pass (by pacman) and symlinks to it
 
 ### 2. Second stage deploy script (in bash)
@@ -84,6 +87,7 @@ Password Store
 │   └── remotes
 │       └── personal-backup-server
 │           ├── config
+│           ├── config.linux
 │           ├── id_ed25519
 │           ├── id_ed25519.pub
 │           ├── known_hosts
