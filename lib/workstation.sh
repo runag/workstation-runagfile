@@ -56,6 +56,6 @@ workstation::remove_nodejs_and_ruby_installations() {
 workstation::add_runagfiles() {
   local list_path="$1" # should be in the body
 
-  pass::use --body "${list_path}" | sopkafile::add_from_list
+  pass::use --body "${list_path}" | runagfile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
 }

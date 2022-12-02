@@ -76,35 +76,35 @@ function Git-Clone-or-Pull($url, $dest){
 
 # If you forked this script, please change the following
 $sopka_repo = "senotrusov/sopka"
-$sopkafile_repo = "senotrusov/workstation-runagfile"
-$sopkafile_dest = "workstation-runagfile-senotrusov-github"
+$runagfile_repo = "senotrusov/workstation-runagfile"
+$runagfile_dest = "workstation-runagfile-senotrusov-github"
 
 $sopka_path = "$env:USERPROFILE\.sopka"
-$sopkafile_path = "$sopka_path\runagfiles\$sopkafile_dest"
+$runagfile_path = "$sopka_path\runagfiles\$runagfile_dest"
 
 Git-Clone-or-Pull "https://github.com/$sopka_repo.git" "$sopka_path"
-Git-Clone-or-Pull "https://github.com/$sopkafile_repo.git" "$sopkafile_path"
+Git-Clone-or-Pull "https://github.com/$runagfile_repo.git" "$runagfile_path"
 
 
 # Install choco packages
 if ("$env:CI" -eq "true") {
   # remove gpg4win as hangs forever in CI
-  ( Get-Content "$sopkafile_path\lib\choco\bare-metal-desktop.config" |
+  ( Get-Content "$runagfile_path\lib\choco\bare-metal-desktop.config" |
     Select-String -Pattern '"gpg4win"' -NotMatch ) |
-  Set-Content "$sopkafile_path\lib\choco\bare-metal-desktop.config"
+  Set-Content "$runagfile_path\lib\choco\bare-metal-desktop.config"
 }
 
 if (-Not ((Get-WmiObject win32_computersystem).model -match "^VMware")) {
-  choco install "$sopkafile_path\lib\choco\bare-metal-desktop.config" --yes
+  choco install "$runagfile_path\lib\choco\bare-metal-desktop.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: bare-metal-desktop" }
 }
 
 if ($install_developer_tools -eq 0) {
-  choco install "$sopkafile_path\lib\choco\developer-tools.config" --yes
+  choco install "$runagfile_path\lib\choco\developer-tools.config" --yes
   if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: developer-tools" }
 }
 
-choco install "$sopkafile_path\lib\choco\basic-tools.config" --yes
+choco install "$runagfile_path\lib\choco\basic-tools.config" --yes
 if ($LASTEXITCODE -ne 0) { throw "Unable to install packages: basic-tools" }
 
 
