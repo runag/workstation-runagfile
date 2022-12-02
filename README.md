@@ -18,22 +18,22 @@ limitations under the License.
 
 A collection of scripts to deploy my workstation. I hope other people may find them useful.
 
-I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/senotrusov/sopka), that helps this scripts to look nice and declarative.
+I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/senotrusov/runag), that helps this scripts to look nice and declarative.
 
-![Runag menu screenshot](docs/sopka-menu-screenshot.png)
+![Runag menu screenshot](docs/runag-menu-screenshot.png)
 
 
 ## Deploy workstation on Linux
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-runagfile run
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/runag/main/deploy.sh) add senotrusov/workstation-runagfile run
 ```
 
 
 ## Deploy workstation on MacOS 
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-runagfile run
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/runag/main/deploy.sh) add senotrusov/workstation-runagfile run
 ```
 
 
@@ -51,7 +51,7 @@ That script will do the following:
 
 1. Installs chocolatey
 2. Installs git
-3. Clones [sopka](https://github.com/senotrusov/sopka) and [workstation-runagfile](https://github.com/senotrusov/workstation-runagfile) repositories
+3. Clones [runag](https://github.com/senotrusov/runag) and [workstation-runagfile](https://github.com/senotrusov/workstation-runagfile) repositories
 4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
@@ -67,7 +67,7 @@ That script will do the following:
 At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
 
 ```sh
-~/.sopka/bin/sopka
+~/.runag/bin/runag
 ```
 
 Select from menu things that you need.

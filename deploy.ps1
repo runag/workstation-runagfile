@@ -75,14 +75,14 @@ function Git-Clone-or-Pull($url, $dest){
 
 
 # If you forked this script, please change the following
-$sopka_repo = "senotrusov/sopka"
+$runag_repo = "senotrusov/runag"
 $runagfile_repo = "senotrusov/workstation-runagfile"
 $runagfile_dest = "workstation-runagfile-senotrusov-github"
 
-$sopka_path = "$env:USERPROFILE\.sopka"
-$runagfile_path = "$sopka_path\runagfiles\$runagfile_dest"
+$runag_path = "$env:USERPROFILE\.runag"
+$runagfile_path = "$runag_path\runagfiles\$runagfile_dest"
 
-Git-Clone-or-Pull "https://github.com/$sopka_repo.git" "$sopka_path"
+Git-Clone-or-Pull "https://github.com/$runag_repo.git" "$runag_path"
 Git-Clone-or-Pull "https://github.com/$runagfile_repo.git" "$runagfile_path"
 
 

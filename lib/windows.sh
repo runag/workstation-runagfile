@@ -19,13 +19,13 @@ if runagfile_menu::necessary msys; then
 
   runagfile_menu::add workstation::windows::install_packages || fail
   runagfile_menu::add workstation::windows::configure || fail
-  runagfile_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
+  runagfile_menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
 fi
 
 workstation::windows::install_packages() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_sopka_path_rc || fail
+  shellrc::install_runag_path_rc || fail
 }
 
 workstation::windows::configure() {
@@ -46,11 +46,11 @@ workstation::windows::configure() {
   workstation::sublime_text::install_config || fail
 }
 
-workstation::windows::configure_sopka_git_directories_as_safe() {
+workstation::windows::configure_runag_git_directories_as_safe() {
   local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
 
-  git config --global --add safe.directory "${user_profile}/.sopka/.git"
-  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-runagfile-senotrusov-github/.git"
-  git config --global --add safe.directory "${user_profile}/.sopka"
-  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-runagfile-senotrusov-github"
+  git config --global --add safe.directory "${user_profile}/.runag/.git"
+  git config --global --add safe.directory "${user_profile}/.runag/runagfiles/workstation-runagfile-senotrusov-github/.git"
+  git config --global --add safe.directory "${user_profile}/.runag"
+  git config --global --add safe.directory "${user_profile}/.runag/runagfiles/workstation-runagfile-senotrusov-github"
 }

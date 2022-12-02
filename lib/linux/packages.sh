@@ -21,11 +21,11 @@ workstation::linux::install_packages() {
   apt::dist_upgrade_unless_ci || fail
 
   # install tools to use by the rest of the script
-  linux::install_sopka_essential_dependencies::apt || fail
+  linux::install_runag_essential_dependencies::apt || fail
 
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_sopka_path_rc || fail
+  shellrc::install_runag_path_rc || fail
   shellrc::install_direnv_rc || fail
 
   # install open-vm-tools

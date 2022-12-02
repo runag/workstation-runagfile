@@ -99,7 +99,7 @@ workstation::macos::configure() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail
   shellrc::install_loader "${HOME}/.zshrc" || fail
-  shellrc::install_sopka_path_rc || fail
+  shellrc::install_runag_path_rc || fail
   shellrc::install_direnv_rc || fail
   shellrc::install_editor_rc nano || fail
 

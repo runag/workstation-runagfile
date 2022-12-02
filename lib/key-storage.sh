@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::key_storage::populate_sopka_menu() {
+workstation::key_storage::populate_runag_menu() {
   if [ -f "checksums.txt" ]; then
     runagfile_menu::add_header "Checksums for current directory" || softfail || return $?
     runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || softfail || return $?
@@ -22,28 +22,28 @@ workstation::key_storage::populate_sopka_menu() {
   fi
 
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    workstation::key_storage::add_sopka_menu_for_media /? || softfail || return $?
+    workstation::key_storage::add_runag_menu_for_media /? || softfail || return $?
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::add_sopka_menu_for_media "${media_path}" || softfail || return $?
+        workstation::key_storage::add_runag_menu_for_media "${media_path}" || softfail || return $?
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     local media_path; for media_path in "/media/${USER}"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::add_sopka_menu_for_media "${media_path}" || softfail || return $?
+        workstation::key_storage::add_runag_menu_for_media "${media_path}" || softfail || return $?
       fi
     done
 
   fi
 
-  workstation::key_storage::add_sopka_menu_for_media "." || softfail || return $?
+  workstation::key_storage::add_runag_menu_for_media "." || softfail || return $?
 }
 
-workstation::key_storage::add_sopka_menu_for_media() {
+workstation::key_storage::add_runag_menu_for_media() {
   local media_path="$1"
 
   if [ ! -d "${media_path}/keys" ]; then
@@ -58,19 +58,19 @@ workstation::key_storage::add_sopka_menu_for_media() {
 
   # Scopes
   local scope_path; for scope_path in "${media_path}"/keys/* ; do
-    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/exclude-from-sopka-menu" ]; then
+    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/exclude-from-runag-menu" ]; then
 
       local media_name; media_name="$(basename "${media_path}")" || softfail || return $?
       local scope_name; scope_name="$(basename "${scope_path}")" || softfail || return $?
       local git_remote_name="${media_name}/${scope_name}"
 
-      workstation::key_storage::add_sopka_menu_for_password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
-      workstation::key_storage::add_sopka_menu_for_gpg_keys "${scope_path}" || softfail || return $?
+      workstation::key_storage::add_runag_menu_for_password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
+      workstation::key_storage::add_runag_menu_for_gpg_keys "${scope_path}" || softfail || return $?
     fi
   done
 }
 
-workstation::key_storage::add_sopka_menu_for_password_store() {
+workstation::key_storage::add_runag_menu_for_password_store() {
   local scope_path="$1"
   local git_remote_name="$2"
 
@@ -93,7 +93,7 @@ workstation::key_storage::add_sopka_menu_for_password_store() {
   fi
 }
 
-workstation::key_storage::add_sopka_menu_for_gpg_keys() {
+workstation::key_storage::add_runag_menu_for_gpg_keys() {
   local scope_path="$1"
 
   local gpg_keys_path="${scope_path}/gpg"
@@ -209,6 +209,6 @@ if runagfile_menu::necessary; then
     runagfile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
   fi
 
-  workstation::key_storage::populate_sopka_menu
-  softfail_unless_good "Unable to perform workstation::key_storage::populate_sopka_menu ($?)" $? || true
+  workstation::key_storage::populate_runag_menu
+  softfail_unless_good "Unable to perform workstation::key_storage::populate_runag_menu ($?)" $? || true
 fi

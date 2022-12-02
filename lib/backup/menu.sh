@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::populate_sopka_menu() {
+workstation::backup::populate_runag_menu() {
   local config_dir="${HOME}/.workstation-backup"
 
   local repository_count=0
@@ -65,6 +65,6 @@ if runagfile_menu::necessary && command -v restic >/dev/null; then
   runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
   runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
 
-  workstation::backup::populate_sopka_menu
-  softfail_unless_good "Unable to perform workstation::backup::populate_sopka_menu ($?)" $? || true
+  workstation::backup::populate_runag_menu
+  softfail_unless_good "Unable to perform workstation::backup::populate_runag_menu ($?)" $? || true
 fi
