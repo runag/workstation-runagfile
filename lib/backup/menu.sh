@@ -37,33 +37,33 @@ workstation::backup::populate_sopka_menu() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        sopkafile_menu::add_header "Workstation backup: commands" || softfail || return $?
+        runagfile_menu::add_header "Workstation backup: commands" || softfail || return $?
         local command; for command in "${commands[@]}"; do
-          sopkafile_menu::add workstation::backup "${command}" || softfail || return $?
+          runagfile_menu::add workstation::backup "${command}" || softfail || return $?
         done
       else
-        sopkafile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
+        runagfile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
         local command; for command in "${commands[@]}"; do
-          sopkafile_menu::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
+          runagfile_menu::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
         done
       fi
     fi
   done
 
   if [ "${repository_count}" -gt 1 ]; then
-    sopkafile_menu::add_header "Workstation backup: for each repository" || softfail || return $?
+    runagfile_menu::add_header "Workstation backup: for each repository" || softfail || return $?
     local commands=(init create snapshots check forget prune maintenance unlock restore)
     local command; for command in "${commands[@]}"; do
-      sopkafile_menu::add workstation::backup --each-repository "${command}" || softfail || return $?
+      runagfile_menu::add workstation::backup --each-repository "${command}" || softfail || return $?
     done
   fi
 }
 
-if sopkafile_menu::necessary && command -v restic >/dev/null; then
-  sopkafile_menu::add_header "Workstation backup" || softfail || return $?
+if runagfile_menu::necessary && command -v restic >/dev/null; then
+  runagfile_menu::add_header "Workstation backup" || softfail || return $?
 
-  sopkafile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
-  sopkafile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
+  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
+  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
 
   workstation::backup::populate_sopka_menu
   softfail_unless_good "Unable to perform workstation::backup::populate_sopka_menu ($?)" $? || true

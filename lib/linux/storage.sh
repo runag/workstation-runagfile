@@ -14,10 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary linux; then
-  sopkafile_menu::add_header "Linux workstation: storage" || fail
+if runagfile_menu::necessary linux; then
+  runagfile_menu::add_header "Linux workstation: storage" || fail
   
-  sopkafile_menu::add workstation::linux::storage::check_root || fail
+  runagfile_menu::add workstation::linux::storage::check_root || fail
 fi
 
 workstation::linux::storage::check_root() {

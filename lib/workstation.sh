@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary; then
-  sopkafile_menu::add_header "Workstation: misc" || fail
+if runagfile_menu::necessary; then
+  runagfile_menu::add_header "Workstation: misc" || fail
   
-  sopkafile_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
-  sopkafile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
-  sopkafile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
-  sopkafile_menu::add workstation::merge_editor_configs || fail
-  sopkafile_menu::add workstation::remove_nodejs_and_ruby_installations || fail
+  runagfile_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
+  runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
+  runagfile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
+  runagfile_menu::add workstation::merge_editor_configs || fail
+  runagfile_menu::add workstation::remove_nodejs_and_ruby_installations || fail
 fi
 
 workstation::configure_git() {

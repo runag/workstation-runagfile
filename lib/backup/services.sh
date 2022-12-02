@@ -14,18 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary linux && command -v restic >/dev/null; then
-  sopkafile_menu::add_subheader "Workstation backup: services" || fail
+if runagfile_menu::necessary linux && command -v restic >/dev/null; then
+  runagfile_menu::add_subheader "Workstation backup: services" || fail
 
-  sopkafile_menu::add workstation::backup::services::deploy || fail
-  sopkafile_menu::add workstation::backup::services::start || fail
-  sopkafile_menu::add workstation::backup::services::stop || fail
-  sopkafile_menu::add workstation::backup::services::start_maintenance || fail
-  sopkafile_menu::add workstation::backup::services::stop_maintenance || fail
-  sopkafile_menu::add workstation::backup::services::disable_timers || fail
-  sopkafile_menu::add workstation::backup::services::status || fail
-  sopkafile_menu::add workstation::backup::services::log || fail
-  sopkafile_menu::add workstation::backup::services::log_follow || fail
+  runagfile_menu::add workstation::backup::services::deploy || fail
+  runagfile_menu::add workstation::backup::services::start || fail
+  runagfile_menu::add workstation::backup::services::stop || fail
+  runagfile_menu::add workstation::backup::services::start_maintenance || fail
+  runagfile_menu::add workstation::backup::services::stop_maintenance || fail
+  runagfile_menu::add workstation::backup::services::disable_timers || fail
+  runagfile_menu::add workstation::backup::services::status || fail
+  runagfile_menu::add workstation::backup::services::log || fail
+  runagfile_menu::add workstation::backup::services::log_follow || fail
 fi
 
 workstation::backup::services::deploy() {

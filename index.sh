@@ -18,6 +18,6 @@
 
 fs::source_recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
 
-if sopkafile_menu::necessary; then
-  sopkafile_menu::add_defaults || fail
+if runagfile_menu::necessary; then
+  runagfile_menu::add_defaults || fail
 fi

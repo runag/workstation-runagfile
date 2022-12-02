@@ -14,18 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary linux; then
-  sopkafile_menu::add_header "Linux workstation: remote repositories backup services" || fail
+if runagfile_menu::necessary linux; then
+  runagfile_menu::add_header "Linux workstation: remote repositories backup services" || fail
 
-  sopkafile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::create || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::deploy_services || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::start || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::stop || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::disable_timers || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::status || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::log || fail
-  sopkafile_menu::add workstation::remote_repositories_backup::log_follow || fail
+  runagfile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
+  runagfile_menu::add workstation::remote_repositories_backup::create || fail
+  runagfile_menu::add workstation::remote_repositories_backup::deploy_services || fail
+  runagfile_menu::add workstation::remote_repositories_backup::start || fail
+  runagfile_menu::add workstation::remote_repositories_backup::stop || fail
+  runagfile_menu::add workstation::remote_repositories_backup::disable_timers || fail
+  runagfile_menu::add workstation::remote_repositories_backup::status || fail
+  runagfile_menu::add workstation::remote_repositories_backup::log || fail
+  runagfile_menu::add workstation::remote_repositories_backup::log_follow || fail
 fi
 
 workstation::remote_repositories_backup::deploy_credentials() {

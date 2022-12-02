@@ -14,17 +14,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary linux; then
-  sopkafile_menu::add_header "Linux workstation: misc" || fail
+if runagfile_menu::necessary linux; then
+  runagfile_menu::add_header "Linux workstation: misc" || fail
   
-  sopkafile_menu::add workstation::linux::dangerously_set_hostname || fail
+  runagfile_menu::add workstation::linux::dangerously_set_hostname || fail
 
   if linux::display_if_restart_required::is_available; then
-    sopkafile_menu::add workstation::linux::display_if_restart_required || fail
+    runagfile_menu::add workstation::linux::display_if_restart_required || fail
   fi
 
   if benchmark::is_available; then
-    sopkafile_menu::add workstation::linux::run_benchmark || fail
+    runagfile_menu::add workstation::linux::run_benchmark || fail
   fi
 fi
 

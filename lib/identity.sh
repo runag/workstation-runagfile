@@ -14,10 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary; then
-  sopkafile_menu::add_header "Workstation: identity" || fail
+if runagfile_menu::necessary; then
+  runagfile_menu::add_header "Workstation: identity" || fail
 
-  sopkafile_menu::add workstation::use_identity identity/personal || fail
+  runagfile_menu::add workstation::use_identity identity/personal || fail
 fi
 
 workstation::use_identity() {

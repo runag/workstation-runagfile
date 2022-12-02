@@ -14,12 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if sopkafile_menu::necessary msys; then
-  sopkafile_menu::add_header "Windows workstation" || fail
+if runagfile_menu::necessary msys; then
+  runagfile_menu::add_header "Windows workstation" || fail
 
-  sopkafile_menu::add workstation::windows::install_packages || fail
-  sopkafile_menu::add workstation::windows::configure || fail
-  sopkafile_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
+  runagfile_menu::add workstation::windows::install_packages || fail
+  runagfile_menu::add workstation::windows::configure || fail
+  runagfile_menu::add workstation::windows::configure_sopka_git_directories_as_safe || fail
 fi
 
 workstation::windows::install_packages() {
