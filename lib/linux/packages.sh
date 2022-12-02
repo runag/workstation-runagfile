@@ -196,15 +196,5 @@ workstation::linux::install_packages() {
 
     # display control
     # apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-
-    # my msi laptop hardware control
-    if grep -qFx "GF65 Thin 9SD" /sys/devices/virtual/dmi/id/product_name && \
-       grep -qFx "Micro-Star International Co., Ltd." /sys/devices/virtual/dmi/id/board_vendor; then
-
-      apt::install linux-headers-generic || fail
-      git::place_up_to_date_clone "https://github.com/senotrusov/msi-ec" "${HOME}/.msi-ec" || fail
-
-      ( cd "${HOME}/.msi-ec" && make && sudo make install ) || fail
-    fi
   fi
 }
