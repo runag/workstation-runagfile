@@ -17,7 +17,7 @@
 if runagfile_menu::necessary; then
   runagfile_menu::add_header "Workstation: misc" || fail
   
-  runagfile_menu::add workstation::add_sopkafiles deployment-repository/personal || fail
+  runagfile_menu::add workstation::add_runagfiles deployment-repository/personal || fail
   runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
   runagfile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
   runagfile_menu::add workstation::merge_editor_configs || fail
@@ -53,7 +53,7 @@ workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.node-gyp" || fail
 }
 
-workstation::add_sopkafiles() {
+workstation::add_runagfiles() {
   local list_path="$1" # should be in the body
 
   pass::use --body "${list_path}" | sopkafile::add_from_list

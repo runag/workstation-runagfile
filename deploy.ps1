@@ -80,7 +80,7 @@ $sopkafile_repo = "senotrusov/workstation-sopkafile"
 $sopkafile_dest = "workstation-sopkafile-senotrusov-github"
 
 $sopka_path = "$env:USERPROFILE\.sopka"
-$sopkafile_path = "$sopka_path\sopkafiles\$sopkafile_dest"
+$sopkafile_path = "$sopka_path\runagfiles\$sopkafile_dest"
 
 Git-Clone-or-Pull "https://github.com/$sopka_repo.git" "$sopka_path"
 Git-Clone-or-Pull "https://github.com/$sopkafile_repo.git" "$sopkafile_path"
