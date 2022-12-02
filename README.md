@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# 🚞 Runagfile to configure my workstation
+# 🛷 Runagfile to configure my workstation
 
 A collection of scripts to deploy my workstation. I hope other people may find them useful.
 
-I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/senotrusov/runag), that helps this scripts to look nice and declarative.
+I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/runag/runag), that helps this scripts to look nice and declarative.
 
 ![Runag menu screenshot](docs/runag-menu-screenshot.png)
 
@@ -26,14 +26,14 @@ I run them on a freshly installed Linux, MacOS, or Windows to install and config
 ## Deploy workstation on Linux
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/runag/main/deploy.sh) add senotrusov/workstation-runagfile run
+bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile run
 ```
 
 
 ## Deploy workstation on MacOS 
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/runag/main/deploy.sh) add senotrusov/workstation-runagfile run
+bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile run
 ```
 
 
@@ -44,14 +44,14 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/runag/main/deploy.
 Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
-iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/workstation-runagfile/main/deploy.ps1" | iex
+iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy.ps1" | iex
 ```
 
 That script will do the following:
 
 1. Installs chocolatey
 2. Installs git
-3. Clones [runag](https://github.com/senotrusov/runag) and [workstation-runagfile](https://github.com/senotrusov/workstation-runagfile) repositories
+3. Clones [runag](https://github.com/runag/runag) and [workstation-runagfile](https://github.com/runag/workstation-runagfile) repositories
 4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
