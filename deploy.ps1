@@ -76,8 +76,8 @@ function Git-Clone-or-Pull($url, $dest){
 
 # If you forked this script, please change the following
 $sopka_repo = "senotrusov/sopka"
-$sopkafile_repo = "senotrusov/workstation-sopkafile"
-$sopkafile_dest = "workstation-sopkafile-senotrusov-github"
+$sopkafile_repo = "senotrusov/workstation-runagfile"
+$sopkafile_dest = "workstation-runagfile-senotrusov-github"
 
 $sopka_path = "$env:USERPROFILE\.sopka"
 $sopkafile_path = "$sopka_path\runagfiles\$sopkafile_dest"

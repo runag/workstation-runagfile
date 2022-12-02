@@ -50,7 +50,7 @@ workstation::windows::configure_sopka_git_directories_as_safe() {
   local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
 
   git config --global --add safe.directory "${user_profile}/.sopka/.git"
-  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-sopkafile-senotrusov-github/.git"
+  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-runagfile-senotrusov-github/.git"
   git config --global --add safe.directory "${user_profile}/.sopka"
-  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-sopkafile-senotrusov-github"
+  git config --global --add safe.directory "${user_profile}/.sopka/runagfiles/workstation-runagfile-senotrusov-github"
 }

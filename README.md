@@ -26,14 +26,14 @@ I run them on a freshly installed Linux, MacOS, or Windows to install and config
 ## Deploy workstation on Linux
 
 ```sh
-bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
+bash <(wget -qO- https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-runagfile run
 ```
 
 
 ## Deploy workstation on MacOS 
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-sopkafile run
+bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.sh) add senotrusov/workstation-runagfile run
 ```
 
 
@@ -44,14 +44,14 @@ bash <(curl -Ssf https://raw.githubusercontent.com/senotrusov/sopka/main/deploy.
 Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
-iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/workstation-sopkafile/main/deploy.ps1" | iex
+iwr -UseBasicParsing "https://raw.githubusercontent.com/senotrusov/workstation-runagfile/main/deploy.ps1" | iex
 ```
 
 That script will do the following:
 
 1. Installs chocolatey
 2. Installs git
-3. Clones [sopka](https://github.com/senotrusov/sopka) and [workstation-sopkafile](https://github.com/senotrusov/workstation-sopkafile) repositories
+3. Clones [sopka](https://github.com/senotrusov/sopka) and [workstation-runagfile](https://github.com/senotrusov/workstation-runagfile) repositories
 4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
