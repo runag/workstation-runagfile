@@ -99,9 +99,6 @@ workstation::linux::install_packages() {
   # python
   python::install_and_update::apt || fail
 
-  # file-digests
-  task::run_with_rubygems_fail_detector gem install file-digests || fail
-
   # install gnome-keyring and libsecret (for git and ssh)
   linux::install_gnome_keyring_and_libsecret::apt || fail
   git::install_libsecret_credential_helper || fail

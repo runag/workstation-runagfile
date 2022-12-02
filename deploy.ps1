@@ -129,9 +129,6 @@ if ($install_developer_tools -eq 0) {
   ridk install 2 3
   if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development toolchain" }
 
-  gem install file-digests
-  if ($LASTEXITCODE -ne 0) { throw "Unable to install file-digests" }
-
   ridk exec pacman --sync pass --noconfirm
   if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
 
