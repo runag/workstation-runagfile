@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# 🚞 Sopkafile to configure my workstation
+# 🚞 Runagfile to configure my workstation
 
-A collection of scripts to deploy my workstation. I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. I hope other people could find them useful. Scripts are idempotent, they could be run multiple times. There is also a library, [Sopka](https://github.com/senotrusov/sopka), that helps this scripts to look nice and declarative.
+A collection of scripts to deploy my workstation. I hope other people may find them useful.
 
-![Sopka menu screenshot](docs/sopka-menu-screenshot.png)
+I run them on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials. Scripts are idempotent, they could be run multiple times. There is also a library, [Runag](https://github.com/senotrusov/sopka), that helps this scripts to look nice and declarative.
+
+![Runag menu screenshot](docs/sopka-menu-screenshot.png)
 
 
 ## Deploy workstation on Linux
