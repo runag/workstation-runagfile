@@ -168,9 +168,6 @@ workstation::linux::install_packages() {
     # skype
     sudo snap install skype --classic || fail
 
-    # telegram desktop
-    # sudo snap install telegram-desktop || fail
-
     # discord
     # sudo snap install discord || fail
     # sudo snap connect discord:system-observe || fail
