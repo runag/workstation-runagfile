@@ -6,7 +6,5 @@
 	"installed_packages":
 	[
 		"Package Control",
-		"Ruby Slim",
-		"Sass",
 	],
 }
