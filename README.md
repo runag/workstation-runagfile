@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# 🛷 Runagfile to configure a workstation
+# Runagfile to configure a workstation
 
-A scripted way to deploy a workstation.
+💚 A scripted way to deploy a workstation.
 
 It could be run on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials.
 
 It is idempotent, it could be run multiple times to produce up-to date configuration.
 
-There is a library, [🛼 Runag](https://github.com/runag/runag), that allows the code here to be declarative and concise.
+There is a library, [💜 Runag](https://github.com/runag/runag), that allows the code here to be declarative and concise.
 
-The code is this repository is scripted with the [🧳 Workstation deploy script runagfile](https://github.com/runag/workstation-deploy-script-runagfile) that may contain personal identifiable information that you may wish to keep private.
+The code is this repository is scripted with the [🧡 Workstation deploy script runagfile](https://github.com/runag/workstation-deploy-script-runagfile) that may contain personal identifiable information that you may wish to keep private.
 
 ## Deploy workstation on Linux
 
