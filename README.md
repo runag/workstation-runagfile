@@ -1,5 +1,5 @@
 <!--
-Copyright 2012-2022 Runag project contributors
+Copyright 2012-2022 Rùnag project contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# Runagfile to configure a workstation
+# Rùnagfile to configure a workstation
 
 💚 A scripted way to deploy a workstation.
 
@@ -22,9 +22,9 @@ It could be run on a freshly installed Linux, MacOS, or Windows to install and c
 
 It is idempotent, it could be run multiple times to produce up-to date configuration.
 
-There is a library, [💜 Runag](https://github.com/runag/runag), that allows the code here to be declarative and concise.
+There is a library, [💜 Rùnag](https://github.com/runag/runag), that allows the code here to be declarative and concise.
 
-The code is this repository is scripted with the [🧡 Workstation deploy script runagfile](https://github.com/runag/workstation-deploy-script-runagfile) that may contain personal identifiable information that you may wish to keep private.
+The code is this repository is scripted with the [🧡 Workstation deploy script rùnagfile](https://github.com/runag/workstation-deploy-script-runagfile) that may contain personal identifiable information that you may wish to keep private.
 
 ## Deploy workstation on Linux
 
@@ -54,7 +54,7 @@ That script will do the following:
 
 1. Installs chocolatey
 2. Installs git
-3. Clones [runag](https://github.com/runag/runag) and [workstation-runagfile](https://github.com/runag/workstation-runagfile) repositories
+3. Clones [rùnag](https://github.com/runag/runag) and [workstation rùnagfile](https://github.com/runag/workstation-runagfile) repositories
 4. Installs packages from those lists:
     * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
     * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
