@@ -31,7 +31,7 @@ workstation::use_identity() {
 
   # git
   if pass::exists "${identity_path}/git"; then
-    git::install_profile_from_pass "${identity_path}/git" || fail
+    git::install_profile_from_pass "${identity_path}/git" --global || fail
   fi
 
   # github
