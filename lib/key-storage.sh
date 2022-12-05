@@ -58,11 +58,13 @@ workstation::key_storage::add_runag_menu_for_media() {
 
   # Scopes
   local scope_path; for scope_path in "${media_path}"/keys/* ; do
-    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/exclude-from-runag-menu" ]; then
+    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-menu" ]; then
 
       local media_name; media_name="$(basename "${media_path}")" || softfail || return $?
       local scope_name; scope_name="$(basename "${scope_path}")" || softfail || return $?
       local git_remote_name="${media_name}/${scope_name}"
+
+      runagfile_menu::add_header "Key storage in: ${media_path} / ${scope_name}" || softfail || return $?
 
       workstation::key_storage::add_runag_menu_for_password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
       workstation::key_storage::add_runag_menu_for_gpg_keys "${scope_path}" || softfail || return $?
