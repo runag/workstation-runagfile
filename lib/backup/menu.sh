@@ -62,8 +62,8 @@ workstation::backup::populate_runag_menu() {
 if runagfile_menu::necessary && command -v restic >/dev/null; then
   runagfile_menu::add_header "Workstation backup" || softfail || return $?
 
-  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
   runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
+  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
 
   workstation::backup::populate_runag_menu
   softfail_unless_good "Unable to perform workstation::backup::populate_runag_menu ($?)" $? || true
