@@ -52,17 +52,17 @@ iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagf
 
 That script will do the following:
 
-1. Installs chocolatey
-2. Installs git
-3. Clones [rùnag](https://github.com/runag/runag) and [workstation rùnagfile](https://github.com/runag/workstation-runagfile) repositories
-4. Installs packages from those lists:
-    * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
-    * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
-    * [basic-tools.config](lib/choco/basic-tools.config)
-7. Upgrades all installed choco packages
-8. Sets ssh-agent service startup type to automatic and runs it
-9. Installs MSYS2 and MINGW development toolchain for use in ruby's gems compilation
-11. Install pass (by pacman) and symlinks to it
+> 1. Installs chocolatey
+> 2. Installs git
+> 3. Clones [rùnag](https://github.com/runag/runag) and [workstation rùnagfile](https://github.com/runag/workstation-runagfile) repositories
+> 4. Installs packages from those lists:
+>    * [bare-metal-desktop.config](lib/choco/bare-metal-desktop.config) (if not in virtual machine)
+>    * [developer-tools.config](lib/choco/developer-tools.config) (you will be asked if it's needed)
+>    * [basic-tools.config](lib/choco/basic-tools.config)
+> 7. Upgrades all installed choco packages
+> 8. Sets ssh-agent service startup type to automatic and runs it
+> 9. Installs MSYS2 and MINGW development toolchain for use in ruby's gems compilation
+> 11. Installs pass (by pacman) and makes a symlink to it
 
 ### 2. Second stage deploy script (in bash)
 
