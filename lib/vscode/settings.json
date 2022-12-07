@@ -1,0 +1,41 @@
+{
+  "diffEditor.renderSideBySide": false,
+  "editor.autoClosingBrackets": "never",
+  "editor.autoClosingQuotes": "never",
+  "editor.cursorSurroundingLines": 2,
+  "editor.detectIndentation": false,
+  "editor.fastScrollSensitivity": 4,
+  "editor.fontSize": 15,
+  "editor.lineHeight": 20,
+  "editor.minimap.enabled": false,
+  // "editor.mouseWheelScrollSensitivity": 2,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.parameterHints.enabled": false, // this turns off suggestions
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  }, // this turns off suggestions
+  "editor.rulers": [
+    120
+  ],
+  "editor.smoothScrolling": true,
+  "editor.suggestOnTriggerCharacters": false, // this turns off suggestions
+  "editor.tabSize": 2,
+  "editor.wordBasedSuggestions": false, // this turns off suggestions
+  "explorer.autoReveal": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "files.associations": {
+    "*.plist": "xml"
+  },
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "git.autofetch": true,
+  // "terminal.integrated.mouseWheelScrollSensitivity": 2,
+  "window.titleBarStyle": "custom",
+  "window.zoomLevel": 1,
+  "workbench.list.smoothScrolling": true,
+  "workbench.startupEditor": "none",
+  "workbench.tree.indent": 25
+}

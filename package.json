@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "lint": "shellcheck $(find . -name '*.sh')"
+  },
+  "private": true
+}
