@@ -16,15 +16,15 @@ limitations under the License.
 
 # Rùnagfile to configure a workstation
 
-💚 A scripted way to deploy a workstation.
+💚 A script to deploy a workstation.
 
-It could be run on a freshly installed Linux, MacOS, or Windows to install and configure software and credentials.
+* It could be run on a freshly installed Linux, MacOS, or Windows.
+* It installs and configures software, credentials, and backups.
+* It is idempotent, it could be run multiple times to produce up-to date configuration.
 
-It is idempotent, it could be run multiple times to produce up-to date configuration.
+I have made some effort to ensure that this script does not contain personal identifiable information. All such information is stored in the [pass](https://www.passwordstore.org/) database, which is imported from external media when deploying a workstation.
 
 There is a library, [💜 Rùnag](https://github.com/runag/runag), that allows the code here to be declarative and concise.
-
-The code is this repository is scripted with the [🧡 Workstation deploy script rùnagfile](https://github.com/runag/workstation-deploy-script-runagfile) that may contain personal identifiable information that you may wish to keep private.
 
 ## Deploy workstation on Linux
 
