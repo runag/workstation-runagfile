@@ -16,7 +16,7 @@ limitations under the License.
 
 # Rùnagfile to configure a workstation
 
-💚 A script to deploy a workstation.
+🧡 A script to deploy a workstation.
 
 * It could be run on a freshly installed Linux, MacOS, or Windows.
 * It installs and configures software, credentials, and backups.
