@@ -65,6 +65,6 @@ if runagfile_menu::necessary && command -v restic >/dev/null; then
   runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
   runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
 
-  workstation::backup::populate_runag_menu
-  softfail_unless_good "Unable to perform workstation::backup::populate_runag_menu ($?)" $? || true
+  workstation::backup::populate_runag_menu || softfail "Unable to perform workstation::backup::populate_runag_menu" || true
+  # Display error but continue the script. An error in menu populate function should not stop script from running
 fi
