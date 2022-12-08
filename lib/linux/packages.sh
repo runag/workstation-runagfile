@@ -109,6 +109,10 @@ workstation::linux::install_packages() {
   # install checkrestart for use in linux::display_if_restart_required
   linux::display_if_restart_required::install::apt || fail
 
+  # micro text editor
+  apt::install micro || fail
+  micro -plugin install filemanager || fail
+
 
   ### desktop software
 
@@ -143,6 +147,9 @@ workstation::linux::install_packages() {
   # imwheel
   apt::install imwheel || fail
 
+
+  ### snap packages
+
   # chromium
   sudo snap install chromium || fail
 
@@ -151,8 +158,8 @@ workstation::linux::install_packages() {
   sudo snap connect bitwarden:password-manager-service || fail
 
   # micro text editor
-  sudo snap install micro --classic || fail
-  micro -plugin install filemanager || fail
+  # sudo snap install micro --classic || fail
+  # micro -plugin install filemanager || fail
 
   # inkscape
   sudo snap install inkscape || fail
