@@ -16,31 +16,31 @@
 
 workstation::key_storage::populate_runag_menu() {
   if [ -f "checksums.txt" ]; then
-    runagfile_menu::add_header "Checksums for current directory" || softfail || return $?
-    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || softfail || return $?
-    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::verify "." "checksums.txt" || softfail || return $?
+    runagfile_menu::add_header "Checksums for current directory" || fail
+    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || fail
+    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::verify "." "checksums.txt" || fail
   fi
 
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    workstation::key_storage::add_runag_menu_for_media /? || softfail || return $?
+    workstation::key_storage::add_runag_menu_for_media /? || fail
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::add_runag_menu_for_media "${media_path}" || softfail || return $?
+        workstation::key_storage::add_runag_menu_for_media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     local media_path; for media_path in "/media/${USER}"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::add_runag_menu_for_media "${media_path}" || softfail || return $?
+        workstation::key_storage::add_runag_menu_for_media "${media_path}" || fail
       fi
     done
 
   fi
 
-  workstation::key_storage::add_runag_menu_for_media "." || softfail || return $?
+  workstation::key_storage::add_runag_menu_for_media "." || fail
 }
 
 workstation::key_storage::add_runag_menu_for_media() {
@@ -50,24 +50,24 @@ workstation::key_storage::add_runag_menu_for_media() {
     return 0
   fi
 
-  runagfile_menu::add_header "Key storage in: ${media_path}" || softfail || return $?
+  runagfile_menu::add_header "Key storage in: ${media_path}" || fail
 
   # Checksums
-  runagfile_menu::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
-  runagfile_menu::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
+  runagfile_menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
+  runagfile_menu::add workstation::key_storage::make_backups "${media_path}" || fail
 
   # Scopes
   local scope_path; for scope_path in "${media_path}"/keys/* ; do
     if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-menu" ]; then
 
-      local media_name; media_name="$(basename "${media_path}")" || softfail || return $?
-      local scope_name; scope_name="$(basename "${scope_path}")" || softfail || return $?
+      local media_name; media_name="$(basename "${media_path}")" || fail
+      local scope_name; scope_name="$(basename "${scope_path}")" || fail
       local git_remote_name="${media_name}/${scope_name}"
 
-      runagfile_menu::add_header "Key storage in: ${media_path} / ${scope_name}" || softfail || return $?
+      runagfile_menu::add_header "Key storage in: ${media_path} / ${scope_name}" || fail
 
-      workstation::key_storage::add_runag_menu_for_password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
-      workstation::key_storage::add_runag_menu_for_gpg_keys "${scope_path}" || softfail || return $?
+      workstation::key_storage::add_runag_menu_for_password_store "${scope_path}" "${git_remote_name}" || fail
+      workstation::key_storage::add_runag_menu_for_gpg_keys "${scope_path}" || fail
     fi
   done
 }
@@ -82,15 +82,15 @@ workstation::key_storage::add_runag_menu_for_password_store() {
 
   if [ -d "${password_store_dir}/.git" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      runagfile_menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      runagfile_menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
-      runagfile_menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      runagfile_menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
   fi
 
   if [ ! -d "${password_store_dir}" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      runagfile_menu::add workstation::key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      runagfile_menu::add workstation::key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
   fi
 }
@@ -102,11 +102,11 @@ workstation::key_storage::add_runag_menu_for_gpg_keys() {
 
   local gpg_key_dir; for gpg_key_dir in "${gpg_keys_path}"/* ; do
     if [ -d "${gpg_key_dir}" ]; then
-      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || softfail || return $?
+      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || fail
       local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
     
       if [ -f "${gpg_key_file}" ]; then
-        runagfile_menu::add workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || softfail || return $?
+        runagfile_menu::add workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
       fi
     fi
   done
@@ -211,6 +211,5 @@ if runagfile_menu::necessary; then
     runagfile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
   fi
 
-  workstation::key_storage::populate_runag_menu || softfail "Unable to perform workstation::key_storage::populate_runag_menu" || true
-  # Display error but continue the script. An error in menu populate function should not stop script from running
+  workstation::key_storage::populate_runag_menu || fail
 fi

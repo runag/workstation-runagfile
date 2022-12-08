@@ -21,8 +21,8 @@ workstation::backup::populate_runag_menu() {
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
-      local repository_name; repository_name="$(basename "${repository_config_path}")" || softfail || return $?
-      local repository_path; repository_path="$(<"${repository_config_path}")" || softfail || return $?
+      local repository_name; repository_name="$(basename "${repository_config_path}")" || fail
+      local repository_path; repository_path="$(<"${repository_config_path}")" || fail
 
       if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${repository_path}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]] && [ ! -d "${BASH_REMATCH[1]}" ]; then
         continue
@@ -37,34 +37,33 @@ workstation::backup::populate_runag_menu() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        runagfile_menu::add_header "Workstation backup: commands" || softfail || return $?
+        runagfile_menu::add_header "Workstation backup: commands" || fail
         local command; for command in "${commands[@]}"; do
-          runagfile_menu::add workstation::backup "${command}" || softfail || return $?
+          runagfile_menu::add workstation::backup "${command}" || fail
         done
       else
-        runagfile_menu::add_header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
+        runagfile_menu::add_header "Workstation backup: ${repository_name} repository commands" || fail
         local command; for command in "${commands[@]}"; do
-          runagfile_menu::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
+          runagfile_menu::add workstation::backup --repository "${repository_name}" "${command}" || fail
         done
       fi
     fi
   done
 
   if [ "${repository_count}" -gt 1 ]; then
-    runagfile_menu::add_header "Workstation backup: for each repository" || softfail || return $?
+    runagfile_menu::add_header "Workstation backup: for each repository" || fail
     local commands=(init create snapshots check forget prune maintenance unlock restore)
     local command; for command in "${commands[@]}"; do
-      runagfile_menu::add workstation::backup --each-repository "${command}" || softfail || return $?
+      runagfile_menu::add workstation::backup --each-repository "${command}" || fail
     done
   fi
 }
 
 if runagfile_menu::necessary && command -v restic >/dev/null; then
-  runagfile_menu::add_header "Workstation backup" || softfail || return $?
+  runagfile_menu::add_header "Workstation backup" || fail
 
-  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || softfail || return $?
-  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $?
+  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
+  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
 
-  workstation::backup::populate_runag_menu || softfail "Unable to perform workstation::backup::populate_runag_menu" || true
-  # Display error but continue the script. An error in menu populate function should not stop script from running
+  workstation::backup::populate_runag_menu || fail
 fi
