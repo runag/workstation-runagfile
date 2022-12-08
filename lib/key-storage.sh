@@ -211,6 +211,6 @@ if runagfile_menu::necessary; then
     runagfile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
   fi
 
-  workstation::key_storage::populate_runag_menu
-  softfail_unless_good "Unable to perform workstation::key_storage::populate_runag_menu ($?)" $? || true
+  workstation::key_storage::populate_runag_menu || softfail "Unable to perform workstation::key_storage::populate_runag_menu" || true
+  # Display error but continue the script. An error in menu populate function should not stop script from running
 fi
