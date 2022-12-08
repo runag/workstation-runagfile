@@ -46,6 +46,7 @@ workstation::windows::configure() {
   workstation::sublime_text::install_config || fail
 }
 
+# shellcheck disable=SC1003
 workstation::windows::configure_runag_git_directories_as_safe() {
   local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
 
