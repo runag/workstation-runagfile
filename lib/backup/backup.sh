@@ -49,7 +49,7 @@ workstation::backup() {(
     esac
   done
 
-  local action_name="$1"; shift
+  local command_name="$1"; shift
 
   local config_dir="${HOME}/.workstation-backup"
 
@@ -66,8 +66,8 @@ workstation::backup() {(
       unset RESTIC_REPOSITORY_FILE
     fi
 
-    "workstation::backup::${action_name}" "$@"
-    softfail_unless_good "${action_name} failed ($?)" $?
+    "workstation::backup::${command_name}" "$@"
+    softfail_unless_good "${command_name} failed ($?)" $?
     return $?
   fi
 
@@ -82,21 +82,21 @@ workstation::backup() {(
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
-      workstation::backup::run_action_with_repository_config "${action_name}" "${repository_config_path}" "$@"
-      softfail_unless_good "${action_name} failed ($?)" $?
+      workstation::backup::run_action_with_repository_config "${command_name}" "${repository_config_path}" "$@"
+      softfail_unless_good "${command_name} failed ($?)" $?
       exit_statuses+=($?)
     fi
   done
 
   if [[ "${exit_statuses[*]}" =~ [^0[:space:]] ]]; then
-    softfail "One or more ${action_name} failed (${exit_statuses[*]})"
+    softfail "One or more ${command_name} failed (${exit_statuses[*]})"
     return $?
   fi
 )}
 
 # shellcheck disable=2031
 workstation::backup::run_action_with_repository_config() {(
-  local action_name="$1"; shift
+  local command_name="$1"; shift
   local repository_config_path="$1"; shift
 
   local lock_pid=""
@@ -123,7 +123,7 @@ workstation::backup::run_action_with_repository_config() {(
 
   log::notice "Proceeding with repository: ${RESTIC_REPOSITORY}"
 
-  "workstation::backup::${action_name}" "$@"
+  "workstation::backup::${command_name}" "$@"
   local action_status=$?
 
   if [ -n "${lock_pid}" ]; then
