@@ -139,18 +139,17 @@ workstation::backup::get_output_folder() {
     local output_folder="${WORKSTATION_BACKUP_OUTPUT}"
   else
     local output_folder="${HOME}/workstation-backup"
-    dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
       output_folder+="/${WORKSTATION_BACKUP_PROFILE}"
-      dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
     fi
 
     if [ "${WORKSTATION_BACKUP_REPOSITORY}" != default ]; then
       output_folder+="/${WORKSTATION_BACKUP_REPOSITORY}"
-      dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
     fi
   fi
+
+  ( umask 0077 && mkdir -p "${output_folder}" ) || softfail || return $?
 
   echo "${output_folder}"
 }
