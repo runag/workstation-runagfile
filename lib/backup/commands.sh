@@ -29,8 +29,12 @@ workstation::backup::init() {
   restic init || softfail "Unable to init restic repository" || return $?
 }
 
+workstation::backup::is_repository_exists() {
+  restic cat config >/dev/null 2>&1
+}
+
 workstation::backup::create() {(
-  if ! restic cat config >/dev/null 2>&1; then
+  if ! workstation::backup::is_repository_exists; then
     workstation::backup::init || softfail || return $?
   fi
 
