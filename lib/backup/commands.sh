@@ -94,6 +94,7 @@ workstation::backup::mount() {
   local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
 
   output_folder+="/mount"
+  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
   if findmnt --mountpoint "${output_folder}" >/dev/null; then
     fusermount -u "${output_folder}" || softfail || return $?
