@@ -29,7 +29,7 @@ workstation::backup::init() {
   restic init || softfail "Unable to init restic repository" || return $?
 }
 
-workstation::backup::create() {
+workstation::backup::create() {(
   if ! restic cat config >/dev/null 2>&1; then
     workstation::backup::init || softfail || return $?
   fi
@@ -54,7 +54,7 @@ workstation::backup::create() {
     --exclude "${HOME}/workstation-backup" \
     \
     . || softfail || return $?
-}
+)}
 
 workstation::backup::snapshots() {
   restic snapshots || softfail || return $?
