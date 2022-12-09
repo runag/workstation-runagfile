@@ -44,7 +44,7 @@ workstation::linux::deploy_workstation() {
 
   local gpg_key_path; for gpg_key_path in "${key_storage_volume}/keys/workstation/gpg"/* ; do
     if [ -d "${gpg_key_path}" ]; then
-      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || softfail || return $?
+      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
       workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
     fi
   done
