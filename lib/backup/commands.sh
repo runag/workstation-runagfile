@@ -38,6 +38,8 @@ workstation::backup::create() {(
 
   cd "${HOME}" || softfail || return $?
 
+  # TODO: benchmark --read-concurrency
+
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
@@ -61,6 +63,8 @@ workstation::backup::snapshots() {
 }
 
 workstation::backup::check() {
+  # TODO: benchmark
+  # restic check --read-data -o local.connections=1 -o stfp.connections=1 || softfail || return $?
   restic check --read-data || softfail || return $?
 }
 
