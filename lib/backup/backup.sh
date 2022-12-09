@@ -103,6 +103,7 @@ workstation::backup::run_action_with_repository_config() {(
   export WORKSTATION_BACKUP_REPOSITORY; WORKSTATION_BACKUP_REPOSITORY="$(basename "${repository_config_path}")" || softfail || return $?
   
   # case if repository is not remote
+  # TODO: I'm not sure if I really need that locking mechanism here. Perhaps, restic provides that, someone need to check that.
   if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
     # if linux
     if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${RESTIC_REPOSITORY}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]]; then
