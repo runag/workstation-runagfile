@@ -134,8 +134,8 @@ workstation::backup::run_action_with_repository_config() {(
 
 # shellcheck disable=2031
 workstation::backup::get_output_folder() {
-  if [ -n "${WORKSTATION_BACKUP_OUTPUT:-}" ]; then
-    local output_folder="${WORKSTATION_BACKUP_OUTPUT}"
+  if [ -n "${WORKSTATION_BACKUP_OUTPUT_DIR:-}" ]; then
+    local output_folder="${WORKSTATION_BACKUP_OUTPUT_DIR}"
     ( umask 0077 && mkdir -p "${output_folder}" ) || softfail || return $?
   else
     local output_folder="${HOME}/workstation-backup"
