@@ -27,16 +27,16 @@ workstation::linux::snapshots::deploy() {
 }
 
 workstation::linux::snapshots::add_top_level_subvolume_mount() {
-  local mount_source; mount_source="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || softfail || return $?
+  local mount_source; mount_source="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail
 
-  dir::sudo_make_if_not_exists "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" || softfail || return $?
+  dir::sudo_make_if_not_exists "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" || fail
 
   <<<"${mount_source}  ${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}  btrfs  defaults,discard=async,noatime,flushoncommit,commit=15,subvol=/  0  2" file::read_with_updated_block /etc/fstab BTRFS_TOP_LEVEL_SUBVOLUME | fstab::verify-and-write
-  test "${PIPESTATUS[*]}" = "0 0" || softfail || return $?
+  test "${PIPESTATUS[*]}" = "0 0" || fail
 
   sudo mount -a # other mounts might fail, so we ignore exit status here
 
-  findmnt --mountpoint "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" >/dev/null || softfail "Filesystem is not mounted" || return $?
+  findmnt --mountpoint "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" >/dev/null || fail "Filesystem is not mounted"
 }
 
 # maybe it's better to not mount top_level_subvolume but create @snapshots subvol and just mount it?
