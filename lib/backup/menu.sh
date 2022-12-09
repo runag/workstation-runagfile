@@ -24,7 +24,7 @@ workstation::backup::populate_runag_menu() {
       local repository_name; repository_name="$(basename "${repository_config_path}")" || fail
       local repository_path; repository_path="$(<"${repository_config_path}")" || fail
 
-      if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${repository_path}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]] && [ ! -d "${BASH_REMATCH[1]}" ]; then
+      if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${repository_path}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]] && ! findmnt --mountpoint "${BASH_REMATCH[1]}" >/dev/null; then
         continue
       fi
 
