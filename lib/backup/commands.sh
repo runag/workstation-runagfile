@@ -135,7 +135,8 @@ workstation::backup::restore() {
 
   dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
-  restic restore --target "${output_folder}" --verify "${snapshot_id}" || softfail || return $?
+  # TODO: optional --verify?
+  restic restore --target "${output_folder}" "${snapshot_id}" || softfail || return $?
 }
 
 
