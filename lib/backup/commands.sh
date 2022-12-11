@@ -70,6 +70,8 @@ workstation::backup::check() {
   # TODO: benchmark
   # restic check --read-data -o local.connections=1 -o stfp.connections=1 || softfail || return $?
   restic check --read-data || softfail || return $?
+  
+  log::elapsed_time || softfail || return $?
 }
 
 workstation::backup::forget() {
@@ -137,6 +139,8 @@ workstation::backup::restore() {
 
   # TODO: optional --verify?
   restic restore --target "${output_folder}" "${snapshot_id}" || softfail || return $?
+
+  log::elapsed_time || softfail || return $?
 }
 
 
