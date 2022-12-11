@@ -64,6 +64,14 @@ if runagfile_menu::necessary && command -v restic >/dev/null; then
 
   runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
   runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-
   workstation::backup::populate_runag_menu || fail
+  # runagfile_menu::add workstation::backup::menu || fail
 fi
+
+workstation::backup::menu() {(
+  runagfile_menu::clear || softfail || return $?
+  workstation::backup::populate_runag_menu || softfail || return $?
+  workstation::backup::services::populate_runag_menu || softfail || return $?
+  runagfile_menu::display
+  softfail_unless_good "Error performing runagfile_menu::display ($?)" $?
+)}
