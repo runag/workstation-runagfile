@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary linux && command -v restic >/dev/null; then
+workstation::backup::services::populate_runag_menu() {
   runagfile_menu::add_subheader "Workstation backup: services" || fail
 
   runagfile_menu::add workstation::backup::services::deploy || fail
@@ -26,6 +26,10 @@ if runagfile_menu::necessary linux && command -v restic >/dev/null; then
   runagfile_menu::add workstation::backup::services::status || fail
   runagfile_menu::add workstation::backup::services::log || fail
   runagfile_menu::add workstation::backup::services::log_follow || fail
+}
+
+if runagfile_menu::necessary linux && command -v restic >/dev/null; then
+  workstation::backup::services::populate_runag_menu || fail
 fi
 
 workstation::backup::services::deploy() {
