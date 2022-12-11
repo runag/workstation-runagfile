@@ -130,7 +130,7 @@ workstation::linux::install_packages() {
   apt::install meld || fail
 
   # thunar
-  # apt::install thunar || fail
+  apt::install thunar || fail
 
   # qtpass
   apt::install qtpass || fail
