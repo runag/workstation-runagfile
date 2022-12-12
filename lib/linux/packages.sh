@@ -99,6 +99,14 @@ workstation::linux::install_packages() {
   # python
   python::install_and_update::apt || fail
 
+  # erlang & elixir
+  apt::install libncurses5-dev || fail
+  asdf::add_plugin_install_package_and_set_global erlang || fail
+  asdf::add_plugin_install_package_and_set_global elixir || fail
+  mix local.hex --if-missing --force || fail
+  mix local.rebar --if-missing --force || fail
+  mix archive.install hex phx_new --force || fail
+
   # install gnome-keyring and libsecret (for git and ssh)
   linux::install_gnome_keyring_and_libsecret::apt || fail
   git::install_libsecret_credential_helper || fail
