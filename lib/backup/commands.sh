@@ -57,7 +57,6 @@ workstation::backup::create() {(
     --exclude "${HOME}/snap/skype" \
     --exclude "${HOME}/snap/spotify" \
     --exclude "${HOME}/snap/vlc" \
-    --exclude "${HOME}/workstation-backup" \
     \
     . || softfail || return $?
 )}
@@ -125,9 +124,6 @@ workstation::backup::restore() {
   local snapshot_id="${1:-"latest"}"
 
   local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
-
-  output_folder+="/restore"
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
   output_folder+="/${snapshot_id}"
 
