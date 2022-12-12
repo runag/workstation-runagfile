@@ -66,7 +66,9 @@ workstation::backup() {(
       unset RESTIC_REPOSITORY_FILE
     fi
 
-    "workstation::backup::${command_name}" "$@" || softfail "${command_name} failed" || return $?
+    "workstation::backup::${command_name}" "$@"
+    softfail_unless_good "${command_name} failed ($?)" $?
+    return $? # this return should be here, do not remove it
   fi
 
   # case for multiple repositories (--each-repository)
