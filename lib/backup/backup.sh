@@ -140,7 +140,7 @@ workstation::backup::get_output_folder() {
     local output_folder="${WORKSTATION_BACKUP_OUTPUT_DIR}"
     ( umask 0077 && mkdir -p "${output_folder}" ) || softfail || return $?
   else
-    local output_folder="${HOME}/workstation-backup"
+    local output_folder="${HOME}/workstation-restore"
     dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
