@@ -31,6 +31,9 @@ jobs:
         os: [macos-latest]
 
     steps:
+    - name: Display bash version
+      run: echo Bash version is $BASH_VERSION
+
     - name: Wait to give developers time to update other repositories used in this test
       run: sleep 30
 
@@ -69,6 +72,9 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
+    - name: Display bash version
+      run: echo Bash version is $BASH_VERSION
+
     - name: Wait to give developers time to update other repositories used in this test
       run: sleep 30
 
