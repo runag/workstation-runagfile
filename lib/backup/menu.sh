@@ -59,7 +59,7 @@ workstation::backup::populate_runag_menu() {
   fi
 }
 
-if runagfile_menu::necessary && command -v restic >/dev/null; then
+if runagfile_menu::necessary; then
   runagfile_menu::add_header "Workstation backup" || fail
 
   runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
