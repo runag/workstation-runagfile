@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary msys; then
+if runagfile_menu::necessary --os msys; then
   runagfile_menu::add_header "Windows workstation" || fail
 
   runagfile_menu::add workstation::windows::install_packages || fail

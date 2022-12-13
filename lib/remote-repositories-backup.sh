@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary linux; then
+if runagfile_menu::necessary --os linux; then
   runagfile_menu::add_header "Linux workstation: remote repositories backup services" || fail
 
   runagfile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail

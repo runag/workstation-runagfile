@@ -28,7 +28,7 @@ workstation::backup::services::populate_runag_menu() {
   runagfile_menu::add workstation::backup::services::log_follow || fail
 }
 
-if runagfile_menu::necessary linux && command -v restic >/dev/null; then
+if runagfile_menu::necessary --os linux; then
   workstation::backup::services::populate_runag_menu || fail
 fi
 

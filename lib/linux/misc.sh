@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary linux; then
+if runagfile_menu::necessary --os linux; then
   runagfile_menu::add_header "Linux workstation: misc" || fail
   
   runagfile_menu::add workstation::linux::dangerously_set_hostname || fail

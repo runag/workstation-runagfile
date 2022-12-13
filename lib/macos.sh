@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary darwin; then
+if runagfile_menu::necessary --os darwin; then
   runagfile_menu::add_header "macOS workstation" || fail
   
   runagfile_menu::add workstation::macos::install_packages || fail
