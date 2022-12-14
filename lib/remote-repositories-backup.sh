@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::remote_repositories_backup::menu() {
-  runagfile_menu::display_for workstation::remote_repositories_backup::runagfile_menu
-  fail_unless_good_code $?
-}
-
 workstation::remote_repositories_backup::runagfile_menu() {
   runagfile_menu::add --header "Remote repositories backup" || fail
 
