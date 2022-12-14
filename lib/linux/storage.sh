@@ -14,12 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary --os linux; then
-  runagfile_menu::add_header "Linux workstation: storage" || fail
-  
-  runagfile_menu::add workstation::linux::storage::check_root || fail
-fi
-
 workstation::linux::storage::check_root() {
   if [ "$(findmnt --mountpoint / --noheadings --output FSTYPE,FSROOT --raw 2>/dev/null)" = "btrfs /@" ]; then
     local root_device; root_device="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail

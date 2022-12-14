@@ -14,12 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary; then
-  runagfile_menu::add_header "Workstation: identity" || fail
-
-  runagfile_menu::add workstation::use_identity identity/personal || fail
-fi
-
 workstation::use_identity() {
   local identity_path="$1"
   local identity_name; identity_name="${2:-"$(basename "${identity_path}")"}" || fail

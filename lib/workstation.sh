@@ -14,16 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary; then
-  runagfile_menu::add_header "Workstation: misc" || fail
-  
-  runagfile_menu::add workstation::add_runagfiles deployment-repository/personal || fail
-  runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail
-  runagfile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail
-  runagfile_menu::add workstation::merge_editor_configs || fail
-  runagfile_menu::add workstation::remove_nodejs_and_ruby_installations || fail
-fi
-
 workstation::configure_git() {
   git config --global core.autocrlf input || fail
   git config --global init.defaultBranch main || fail

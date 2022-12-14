@@ -14,14 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary --os darwin; then
-  runagfile_menu::add_header "macOS workstation" || fail
-  
-  runagfile_menu::add workstation::macos::install_packages || fail
-  runagfile_menu::add workstation::macos::configure || fail
-  runagfile_menu::add workstation::macos::start_developer_servers || fail
-fi
-
 workstation::macos::install_packages() {
   # install homebrew
   macos::install_homebrew || fail

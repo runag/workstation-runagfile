@@ -14,19 +14,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::dangerously_set_hostname() {
-  echo "Please keep in mind that the script to change hostname is not perfect, please take time to review the script and it's results"
-  echo "Please enter new hostname:"
-  
-  local hostname; IFS="" read -r hostname || fail
-
-  linux::dangerously_set_hostname "${hostname}" || fail
+workstation::tools::menu() {
+  runagfile_menu::display_for workstation::tools::runagfile_menu
+  fail_unless_good_code $?
 }
 
-workstation::linux::display_if_restart_required() {
-  linux::display_if_restart_required || fail
-}
+workstation::tools::runagfile_menu() {
+  if runagfile_menu::necessary --os linux; then
+    if benchmark::is_available; then
+      runagfile_menu::add --header "Tools: benchmark" || fail
+      runagfile_menu::add workstation::linux::run_benchmark || fail
+    fi
 
-workstation::linux::run_benchmark() {
-  benchmark::run || fail
+    runagfile_menu::add --header "Tools: storage" || fail
+    runagfile_menu::add workstation::linux::storage::check_root || fail
+  fi
 }
