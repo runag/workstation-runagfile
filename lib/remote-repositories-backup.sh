@@ -99,7 +99,7 @@ workstation::remote_repositories_backup::backup_github_repositories() {
     jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${backup_path}/${full_name}..." || fail
-      git::create_or_update_mirror "${git_url}" "${backup_path}/${full_name}" || touch "${fail_flag}"
+      git::create_or_update_mirror "https://${GITHUB_USERNAME}@${git_url:8}" "${backup_path}/${full_name}" || touch "${fail_flag}"
     done
 
     local saved_pipe_status=("${PIPESTATUS[@]}")
