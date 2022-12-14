@@ -14,19 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::dangerously_set_hostname() {
-  echo "Please keep in mind that the script to change hostname is not perfect, please take time to review the script and it's results"
-  echo "Please enter new hostname:"
-  
-  local hostname; IFS="" read -r hostname || fail
-
-  linux::dangerously_set_hostname "${hostname}" || fail
+workstation::identity::menu() {
+  runagfile_menu::display_for workstation::identity::runagfile_menu
+  fail_unless_good_code $?
 }
 
-workstation::linux::display_if_restart_required() {
-  linux::display_if_restart_required || fail
-}
+workstation::identity::runagfile_menu() {
+  runagfile_menu::add --header "Workstation identity" || fail
 
-workstation::linux::run_benchmark() {
-  benchmark::run || fail
+  runagfile_menu::add workstation::use_identity identity/personal || fail
 }

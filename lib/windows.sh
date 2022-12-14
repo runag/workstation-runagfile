@@ -14,14 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary --os msys; then
-  runagfile_menu::add_header "Windows workstation" || fail
-
-  runagfile_menu::add workstation::windows::install_packages || fail
-  runagfile_menu::add workstation::windows::configure || fail
-  runagfile_menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
-fi
-
 workstation::windows::install_packages() {
   # shellrc
   shellrc::install_loader "${HOME}/.bashrc" || fail

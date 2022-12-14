@@ -14,23 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary --os linux; then
-  runagfile_menu::add_header "Linux workstation: complete deploy script" || fail
-
-  runagfile_menu::add workstation::linux::deploy_workstation || fail
-
-  runagfile_menu::add_header "Linux workstation: particular deployment tasks" || fail
-
-  runagfile_menu::add workstation::linux::install_packages || fail
-  runagfile_menu::add workstation::linux::configure || fail
-  runagfile_menu::add workstation::linux::deploy_lan_server || fail
-  runagfile_menu::add workstation::linux::deploy_tailscale tailscale/personal || fail
-  
-  if vmware::is_inside_vm; then
-    runagfile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/personal || fail
-  fi
-fi
-
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
   local key_storage_volume="/media/${USER}/key-storage"

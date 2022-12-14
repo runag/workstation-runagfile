@@ -14,24 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::services::populate_runag_menu() {
-  runagfile_menu::add_subheader "Workstation backup: services" || fail
-
-  runagfile_menu::add workstation::backup::services::deploy || fail
-  runagfile_menu::add workstation::backup::services::start || fail
-  runagfile_menu::add workstation::backup::services::stop || fail
-  runagfile_menu::add workstation::backup::services::start_maintenance || fail
-  runagfile_menu::add workstation::backup::services::stop_maintenance || fail
-  runagfile_menu::add workstation::backup::services::disable_timers || fail
-  runagfile_menu::add workstation::backup::services::status || fail
-  runagfile_menu::add workstation::backup::services::log || fail
-  runagfile_menu::add workstation::backup::services::log_follow || fail
-}
-
-if runagfile_menu::necessary --os linux; then
-  workstation::backup::services::populate_runag_menu || fail
-fi
-
 workstation::backup::services::deploy() {
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]

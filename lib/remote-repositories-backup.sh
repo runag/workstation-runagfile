@@ -14,19 +14,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-if runagfile_menu::necessary --os linux; then
-  runagfile_menu::add_header "Linux workstation: remote repositories backup services" || fail
+workstation::remote_repositories_backup::menu() {
+  runagfile_menu::display_for workstation::remote_repositories_backup::runagfile_menu
+  fail_unless_good_code $?
+}
+
+workstation::remote_repositories_backup::runagfile_menu() {
+  runagfile_menu::add --header "Remote repositories backup" || fail
 
   runagfile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
-  runagfile_menu::add workstation::remote_repositories_backup::create || fail
   runagfile_menu::add workstation::remote_repositories_backup::deploy_services || fail
+  runagfile_menu::add workstation::remote_repositories_backup::create || fail
+
+  runagfile_menu::add --header "Remote repositories backup: services" || fail
+
   runagfile_menu::add workstation::remote_repositories_backup::start || fail
   runagfile_menu::add workstation::remote_repositories_backup::stop || fail
   runagfile_menu::add workstation::remote_repositories_backup::disable_timers || fail
   runagfile_menu::add workstation::remote_repositories_backup::status || fail
   runagfile_menu::add workstation::remote_repositories_backup::log || fail
   runagfile_menu::add workstation::remote_repositories_backup::log_follow || fail
-fi
+}
 
 workstation::remote_repositories_backup::deploy_credentials() {
   local credentials_path="$1"

@@ -14,7 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::populate_runag_menu() {
+workstation::backup::menu() {
+  runagfile_menu::display_for workstation::backup::runagfile_menu
+  fail_unless_good_code $?
+}
+
+workstation::backup::runagfile_menu() {
+  runagfile_menu::add --header "Workstation backup deploy" || fail
+
+  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
+  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
+
+  workstation::backup::runagfile_menu::commands || fail
+  workstation::backup::runagfile_menu::services || fail
+}
+
+workstation::backup::runagfile_menu::commands() {
   local config_dir="${HOME}/.workstation-backup"
 
   local repository_count=0
@@ -37,12 +52,12 @@ workstation::backup::populate_runag_menu() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        runagfile_menu::add_header "Workstation backup: commands" || fail
+        runagfile_menu::add --header "Workstation backup: commands" || fail
         local command; for command in "${commands[@]}"; do
           runagfile_menu::add workstation::backup "${command}" || fail
         done
       else
-        runagfile_menu::add_header "Workstation backup: ${repository_name} repository commands" || fail
+        runagfile_menu::add --header "Workstation backup: ${repository_name} repository commands" || fail
         local command; for command in "${commands[@]}"; do
           runagfile_menu::add workstation::backup --repository "${repository_name}" "${command}" || fail
         done
@@ -51,7 +66,7 @@ workstation::backup::populate_runag_menu() {
   done
 
   if [ "${repository_count}" -gt 1 ]; then
-    runagfile_menu::add_header "Workstation backup: for each repository" || fail
+    runagfile_menu::add --header "Workstation backup: for each repository" || fail
     local commands=(init create snapshots check forget prune maintenance unlock restore)
     local command; for command in "${commands[@]}"; do
       runagfile_menu::add workstation::backup --each-repository "${command}" || fail
@@ -59,19 +74,16 @@ workstation::backup::populate_runag_menu() {
   fi
 }
 
-if runagfile_menu::necessary; then
-  runagfile_menu::add_header "Workstation backup" || fail
+workstation::backup::runagfile_menu::services() {
+  runagfile_menu::add --subheader "Workstation backup: services" || fail
 
-  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
-  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  workstation::backup::populate_runag_menu || fail
-  # runagfile_menu::add workstation::backup::menu || fail
-fi
-
-workstation::backup::menu() {(
-  runagfile_menu::clear || softfail || return $?
-  workstation::backup::populate_runag_menu || softfail || return $?
-  workstation::backup::services::populate_runag_menu || softfail || return $?
-  runagfile_menu::display
-  softfail_unless_good "Error performing runagfile_menu::display ($?)" $?
-)}
+  runagfile_menu::add workstation::backup::services::deploy || fail
+  runagfile_menu::add workstation::backup::services::start || fail
+  runagfile_menu::add workstation::backup::services::stop || fail
+  runagfile_menu::add workstation::backup::services::start_maintenance || fail
+  runagfile_menu::add workstation::backup::services::stop_maintenance || fail
+  runagfile_menu::add workstation::backup::services::disable_timers || fail
+  runagfile_menu::add workstation::backup::services::status || fail
+  runagfile_menu::add workstation::backup::services::log || fail
+  runagfile_menu::add workstation::backup::services::log_follow || fail
+}

@@ -18,6 +18,13 @@
 
 fs::source_recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
 
-if runagfile_menu::necessary; then
-  runagfile_menu::add_defaults || fail
-fi
+
+# menu
+runagfile_menu::add --header "Workstation" || fail
+
+runagfile_menu::add workstation::deployment::menu || fail
+runagfile_menu::add workstation::key_storage::menu || fail
+runagfile_menu::add workstation::identity::menu || fail
+runagfile_menu::add --os linux workstation::backup::menu || fail
+runagfile_menu::add --os linux workstation::remote_repositories_backup::menu || fail
+runagfile_menu::add workstation::tools::menu || fail
