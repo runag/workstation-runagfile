@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::deployment::menu() {
-  runagfile_menu::display_for workstation::deployment::runagfile_menu
-  fail_unless_good_code $?
-}
-
 workstation::deployment::runagfile_menu() {
 
   # linux workstation

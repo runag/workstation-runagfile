@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::tools::menu() {
-  runagfile_menu::display_for workstation::tools::runagfile_menu
-  fail_unless_good_code $?
-}
-
 workstation::tools::runagfile_menu() {
   if runagfile_menu::necessary --os linux; then
     if benchmark::is_available; then

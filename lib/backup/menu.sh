@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::menu() {
-  runagfile_menu::display_for workstation::backup::runagfile_menu
-  fail_unless_good_code $?
-}
-
 workstation::backup::runagfile_menu() {
   runagfile_menu::add --header "Workstation backup deploy" || fail
 

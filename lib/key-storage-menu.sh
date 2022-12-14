@@ -14,11 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::key_storage::menu() {
-  runagfile_menu::display_for workstation::key_storage::runagfile_menu
-  fail_unless_good_code $?
-}
-
 workstation::key_storage::runagfile_menu() {
 
   if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
