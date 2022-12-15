@@ -36,9 +36,6 @@ workstation::linux::deploy_workstation() {
   workstation::key_storage::clone_password_store_git_remote_to_local key-storage/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
   workstation::key_storage::create_or_update_password_store_checksum || fail
 
-  # install identity
-  workstation::use_identity identity/personal || fail
-
   # setup tailscale
   workstation::linux::deploy_tailscale tailscale/personal || fail
 
