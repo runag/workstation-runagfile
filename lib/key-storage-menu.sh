@@ -17,12 +17,12 @@
 workstation::key_storage::runagfile_menu() {
 
   if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
-    runagfile_menu::add --header "Key and password storage" || fail
+    runagfile_menu::add --header "Local key and password storage" || fail
     runagfile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
   fi
 
   if [ -f "checksums.txt" ]; then
-    runagfile_menu::add --header "Checksums for current directory" || fail
+    runagfile_menu::add --header "Checksums for current directory: ${PWD}" || fail
     runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || fail
     runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::verify "." "checksums.txt" || fail
   fi
@@ -56,7 +56,7 @@ workstation::key_storage::runagfile_menu::media() {
     return 0
   fi
 
-  runagfile_menu::add --header "Key storage in: ${media_path}" || fail
+  runagfile_menu::add --header "Backups and checksums for: ${media_path}" || fail
 
   # Checksums
   runagfile_menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
@@ -70,9 +70,11 @@ workstation::key_storage::runagfile_menu::media() {
       local scope_name; scope_name="$(basename "${scope_path}")" || fail
       local git_remote_name="${media_name}/${scope_name}"
 
-      runagfile_menu::add --header "Key storage in: ${media_path} / ${scope_name}" || fail
+      runagfile_menu::add --header "Password store in: ${media_path}/${scope_name}" || fail
 
       workstation::key_storage::runagfile_menu::password_store "${scope_path}" "${git_remote_name}" || fail
+
+      runagfile_menu::add --header "GPG keys in: ${media_path}/${scope_name}" || fail
       workstation::key_storage::runagfile_menu::gpg_keys "${scope_path}" || fail
     fi
   done
@@ -110,9 +112,15 @@ workstation::key_storage::runagfile_menu::gpg_keys() {
     if [ -d "${gpg_key_dir}" ]; then
       local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || fail
       local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
-    
+      local gpg_public_key_file="${gpg_key_dir}/public.asc"
+      local gpg_key_uid=""
+
+      if [ -f "${gpg_public_key_file}" ]; then
+        gpg_key_uid="$(gpg --import --import-options show-only "${gpg_public_key_file}" | grep '^uid ' | head -n 1 | sed -E 's/^uid[[:space:]]+(.*)/\1/'; test "${PIPESTATUS[*]}" = "0 0 0 0")"
+      fi
+
       if [ -f "${gpg_key_file}" ]; then
-        runagfile_menu::add workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
+        runagfile_menu::add ${gpg_key_uid:+"--comment" "${gpg_key_uid}"} workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
       fi
     fi
   done
