@@ -29,14 +29,26 @@ workstation::backup::init() {
   restic init || softfail "Unable to init restic repository" || return $?
 }
 
+workstation::backup::init_unless_exists() {
+  local remote_proto remote_host remote_path
+
+  <<<"${RESTIC_REPOSITORY}" IFS=: read -r remote_proto remote_host remote_path || softfail || return $?
+
+  if [ "${remote_proto}" = sftp ]; then
+    <<<pwd sftp "${remote_host}" >/dev/null 2>&1 || softfail "Unable to connect to a sftp server" || return $?
+  fi
+
+  if ! workstation::backup::is_repository_exists; then
+    workstation::backup::init || softfail || return $?
+  fi
+}
+
 workstation::backup::is_repository_exists() {
   restic cat config >/dev/null 2>&1
 }
 
 workstation::backup::create() {(
-  if ! workstation::backup::is_repository_exists; then
-    workstation::backup::init || softfail || return $?
-  fi
+  workstation::backup::init_unless_exists || softfail || return $?
 
   local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
 

@@ -83,7 +83,7 @@ workstation::backup() {(
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
       workstation::backup::run_action_with_repository_config "${command_name}" "${repository_config_path}" "$@"
-      softfail_unless_good "${command_name} failed ($?)" $?
+      softfail_unless_good "Backup command failed: ${command_name} ($?)" $?
       exit_statuses+=($?)
     fi
   done
@@ -99,25 +99,24 @@ workstation::backup::run_action_with_repository_config() {(
   local command_name="$1"; shift
   local repository_config_path="$1"; shift
 
-  local lock_pid=""
+  local lock_pid
 
   export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${repository_config_path}")" || softfail || return $?
   export WORKSTATION_BACKUP_REPOSITORY; WORKSTATION_BACKUP_REPOSITORY="$(basename "${repository_config_path}")" || softfail || return $?
   
   # case if repository is not remote
-  # TODO: I'm not sure if I really need that locking mechanism here. Perhaps, restic provides that, someone need to check that.
   if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
     # if linux
     if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${RESTIC_REPOSITORY}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]]; then
       local mount_point="${BASH_REMATCH[1]}"
 
       if ! findmnt --mountpoint "${mount_point}" >/dev/null; then
-        return
+        return 0
       fi
 
-      cd "${mount_point}" || softfail || return $?
+      # shellcheck disable=2015
+      ( cd "${mount_point}" && sleep 86400 || fail ) &
 
-      ( sleep infinity ) &
       lock_pid=$!
     fi
   fi
@@ -125,10 +124,11 @@ workstation::backup::run_action_with_repository_config() {(
   log::notice "Proceeding with repository: ${RESTIC_REPOSITORY}"
 
   "workstation::backup::${command_name}" "$@"
+  softfail_unless_good "Backup command failed: ${command_name} $* ($?)" $?
   local action_status=$?
 
-  if [ -n "${lock_pid}" ]; then
-    kill "${lock_pid}" || softfail || return $?
+  if [ -n "${lock_pid:-}" ]; then
+    kill "${lock_pid}" || softfail # without return
   fi
 
   return "${action_status}"
