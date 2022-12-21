@@ -14,8 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::use_identity() {
-  local set_global identity_name
+workstation::use_identity() {(
+  local set_global identity_name directory_path
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -25,6 +25,10 @@ workstation::use_identity() {
       ;;
     -n|--name)
       identity_name="$2"
+      shift; shift
+      ;;
+    -d|--dir)
+      directory_path="$2"
       shift; shift
       ;;
     -*)
@@ -39,6 +43,10 @@ workstation::use_identity() {
   local identity_path="$1"
 
   local identity_name="${identity_name:-"$(basename "${identity_path}")"}" || fail
+
+  if [ -n "${directory_path:-}" ]; then
+    cd "${directory_path}" || fail
+  fi
 
   # ssh
   if pass::exists "${identity_path}/ssh"; then
@@ -73,4 +81,4 @@ workstation::use_identity() {
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
     fi
   fi
-}
+)}
