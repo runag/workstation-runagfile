@@ -23,5 +23,11 @@ workstation::tools::runagfile_menu() {
 
     runagfile_menu::add --header "Tools: storage" || fail
     runagfile_menu::add workstation::linux::storage::check_root || fail
+
+    if [ -d .git ]; then
+      runagfile_menu::add --header "Tools: git" || fail
+      runagfile_menu::add git::disable_nested_repositories || fail
+      runagfile_menu::add git::enable_nested_repositories || fail
+    fi
   fi
 }
