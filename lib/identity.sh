@@ -66,19 +66,21 @@ workstation::use_identity() {(
 
   # npm
   if pass::exists "${identity_path}/npm/access-token"; then # password field
-    local npm_project_config
-    if [ "${set_global:-}" != true ]; then
-      npm_project_config=true
-    fi
     asdf::load_if_installed || fail
-    pass::use "${identity_path}/npm/access-token" npm::auth_token ${npm_project_config:+"--project"} || fail
+    if [ "${set_global:-}" = true ]; then
+      pass::use "${identity_path}/npm/access-token" npm::auth_token || fail
+    elif [ -f package.json ]; then
+      pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
+    fi
   fi
 
-  if [ "${set_global:-}" = true ]; then
-    # rubygems
-    if pass::exists "${identity_path}/rubygems/credentials"; then # password field
+  # rubygems
+  if pass::exists "${identity_path}/rubygems/credentials"; then # password field
+    if [ "${set_global:-}" = true ]; then
       dir::make_if_not_exists "${HOME}/.gem" 755 || fail
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
+    elif [ -f Gemfile ]; then
+      pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
     fi
   fi
 )}
