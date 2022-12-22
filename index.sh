@@ -14,9 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# fs::source_related_to_file "${BASH_SOURCE[0]}" "config.sh" || fail
+# source::related_to_file "${BASH_SOURCE[0]}" "config.sh" || fail
 
-fs::source_recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
+source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
 
 
 # menu
