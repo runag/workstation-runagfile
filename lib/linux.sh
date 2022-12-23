@@ -57,13 +57,13 @@ workstation::linux::deploy_workstation() {
   # setup backup
   workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
   workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  workstation::backup create || fail
+  workstation::backup create || softfail "workstation::backup create failed"
   workstation::backup::services::deploy || fail
 
   # setup repositories backup
   if linux::is_bare_metal; then
     workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
-    workstation::remote_repositories_backup::create || fail
+    workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
     workstation::remote_repositories_backup::deploy_services || fail
   fi
 }
