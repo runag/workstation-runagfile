@@ -114,23 +114,23 @@ workstation::backup::run_action_with_repository_config() {(
         return 0
       fi
 
-      # shellcheck disable=2015
-      ( cd "${mount_point}" && sleep 86400 || fail ) &
+      cd "${mount_point}" || softfail || return $?
 
+      ( sleep 86400 ) &
       lock_pid=$!
     fi
   fi
-
-  log::notice "Proceeding with repository: ${RESTIC_REPOSITORY}"
-
-  "workstation::backup::${command_name}" "$@"
-  softfail_unless_good "Backup command failed: ${command_name} $* ($?)" $?
+  (
+    log::notice "Proceeding with repository: ${RESTIC_REPOSITORY}" || softfail || return $?
+    "workstation::backup::${command_name}" "$@"
+  )
   local action_status=$?
 
   if [ -n "${lock_pid:-}" ]; then
     kill "${lock_pid}" || softfail # without return
   fi
 
+  softfail_unless_good "Backup command failed: ${command_name} ${repository_config_path} [$*] (${action_status})" "${action_status}"
   return "${action_status}"
 )}
 
