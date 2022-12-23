@@ -15,15 +15,16 @@
 #  limitations under the License.
 
 workstation::identity::runagfile_menu() {
-
-  runagfile_menu::add --header "Workstation identity" || fail
-
-  workstation::identity::runagfile_menu::list --global || fail
-
-  if [ -d .git ]; then
-    runagfile_menu::add --header "Per-project identity for ${PWD}" || fail
+  if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
+    runagfile_menu::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || fail
     workstation::identity::runagfile_menu::list || fail
   fi
+
+  runagfile_menu::add --header "Configure identity and install credentials that could be used as needed for current user: ${USER}" || fail # Workstation i
+  workstation::identity::runagfile_menu::list --as-needed || fail
+
+  runagfile_menu::add --header "Configure identity and install credentials as a default for current user: ${USER}" || fail
+  workstation::identity::runagfile_menu::list --as-default || fail
 }
 
 workstation::identity::runagfile_menu::list() {
