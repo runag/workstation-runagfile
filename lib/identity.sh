@@ -15,21 +15,25 @@
 #  limitations under the License.
 
 workstation::use_identity() {(
-  local set_global identity_name directory_path
+  local identity_name directory_path as_needed as_default
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-    -g|--global)
-      set_global=true
-      shift
-      ;;
-    -n|--name)
+    -i|--identity-name)
       identity_name="$2"
       shift; shift
       ;;
-    -d|--dir)
+    -d|--for-dir|--for-directory)
       directory_path="$2"
       shift; shift
+      ;;
+    -n|--as-needed)
+      as_needed=true
+      shift
+      ;;
+    -t|--as-default)
+      as_default=true
+      shift
       ;;
     -*)
       fail "Unknown argument: $1"
@@ -41,7 +45,6 @@ workstation::use_identity() {(
   done
 
   local identity_path="$1"
-
   local identity_name="${identity_name:-"$(basename "${identity_path}")"}" || fail
 
   if [ -n "${directory_path:-}" ]; then
@@ -54,32 +57,46 @@ workstation::use_identity() {(
     ssh::install_ssh_profile_from_pass "${identity_path}/ssh" "identity-${identity_name}" || fail
   fi
 
-  # git
-  if pass::exists "${identity_path}/git"; then
-    git::install_profile_from_pass "${identity_path}/git" ${set_global:+"--global"} || fail
-  fi
-
   # github
   if pass::exists "${identity_path}/github"; then
     github::install_profile_from_pass "${identity_path}/github" || fail
   fi
 
-  # npm
-  if pass::exists "${identity_path}/npm/access-token"; then # password field
-    asdf::load_if_installed || fail
-    if [ "${set_global:-}" = true ]; then
-      pass::use "${identity_path}/npm/access-token" npm::auth_token || fail
-    elif [ -f package.json ]; then
-      pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
-    fi
+  if [ "${as_needed:-}" = true ]; then
+    return
   fi
 
-  # rubygems
-  if pass::exists "${identity_path}/rubygems/credentials"; then # password field
-    if [ "${set_global:-}" = true ]; then
+  if [ "${as_default:-}" = true ]; then
+    # git
+    if pass::exists "${identity_path}/git"; then
+      git::install_profile_from_pass "${identity_path}/git" --global || fail
+    fi
+
+    # npm
+    if pass::exists "${identity_path}/npm/access-token"; then # password field
+      asdf::load_if_installed || fail
+      pass::use "${identity_path}/npm/access-token" npm::auth_token || fail
+    fi
+
+    # rubygems
+    if pass::exists "${identity_path}/rubygems/credentials"; then # password field
       dir::make_if_not_exists "${HOME}/.gem" 755 || fail
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
-    elif [ -f Gemfile ]; then
+    fi
+  else
+    # git
+    if [ -d .git ] && pass::exists "${identity_path}/git"; then
+      git::install_profile_from_pass "${identity_path}/git" || fail
+    fi
+
+    # npm
+    if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
+      asdf::load_if_installed || fail
+      pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
+    fi
+
+    # rubygems
+    if [ -f Gemfile ] && pass::exists "${identity_path}/rubygems/credentials"; then # password field
       pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
     fi
   fi
