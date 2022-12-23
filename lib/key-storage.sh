@@ -94,8 +94,7 @@ workstation::key_storage::clone_password_store_git_remote_to_local() {
 workstation::key_storage::import_gpg_key() {
   local gpg_key_id="$1"
   local gpg_key_file="$2"
-
-  gpg::import_key_with_ultimate_ownertrust "${gpg_key_id}" "${gpg_key_file}" || fail
+  gpg::import_key --skip-if-exists --trust-ultimately "${gpg_key_id}" "${gpg_key_file}" || fail
 }
 
 

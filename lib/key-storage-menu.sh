@@ -116,7 +116,7 @@ workstation::key_storage::runagfile_menu::gpg_keys() {
       local gpg_key_uid=""
 
       if [ -f "${gpg_public_key_file}" ]; then
-        gpg_key_uid="$(gpg --import --import-options show-only "${gpg_public_key_file}" | grep '^uid ' | head -n 1 | sed -E 's/^uid[[:space:]]+(.*)/\1/'; test "${PIPESTATUS[*]}" = "0 0 0 0")"
+        gpg_key_uid="$(gpg::get_key_uid "${gpg_public_key_file}")" || fail
       fi
 
       if [ -f "${gpg_key_file}" ]; then
