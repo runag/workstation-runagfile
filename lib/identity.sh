@@ -15,32 +15,36 @@
 #  limitations under the License.
 
 workstation::use_identity() {(
-  local identity_name directory_path as_needed as_default
+  local identity_name directory_path as_needed as_default confirm_needed
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-    -i|--identity-name)
-      identity_name="$2"
-      shift; shift
-      ;;
-    -d|--for-dir|--for-directory)
-      directory_path="$2"
-      shift; shift
-      ;;
-    -n|--as-needed)
-      as_needed=true
-      shift
-      ;;
-    -t|--as-default)
-      as_default=true
-      shift
-      ;;
-    -*)
-      fail "Unknown argument: $1"
-      ;;
-    *)
-      break
-      ;;
+      -i|--identity-name)
+        identity_name="$2"
+        shift; shift
+        ;;
+      -d|--for-dir|--for-directory)
+        directory_path="$2"
+        shift; shift
+        ;;
+      -n|--as-needed)
+        as_needed=true
+        shift
+        ;;
+      -t|--as-default)
+        as_default=true
+        shift
+        ;;
+      -c|--confirm)
+        confirm_needed=true
+        shift
+        ;;
+      -*)
+        fail "Unknown argument: $1"
+        ;;
+      *)
+        break
+        ;;
     esac
   done
 
@@ -49,6 +53,25 @@ workstation::use_identity() {(
 
   if [ -n "${directory_path:-}" ]; then
     cd "${directory_path}" || fail
+  fi
+  
+  if [ "${confirm_needed:-}" = true ]; then
+    echo "You are about to import identity \"${identity_name}\" from: ${identity_path}"
+
+    echo "Please confirm that it is your intention to do so by entering \"yes\""
+    echo "Please prepare the password if needed"
+    echo "Please enter \"no\" if you want to continue without it being imported."
+
+    local action; IFS="" read -r action || fail
+
+    if [ "${action}" == no ]; then
+      echo "Identity is ignored"
+      return
+    fi
+
+    if [ "${action}" != yes ]; then
+      fail
+    fi
   fi
 
   # ssh
