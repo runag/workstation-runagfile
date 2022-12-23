@@ -61,6 +61,26 @@ workstation::linux::install_packages() {
     zsh \
       || fail
 
+  # install restic from github
+  local restic_version; restic_version="$(restic version)" || fail
+
+  if [[ "${restic_version}" =~ ^[^[:digit:]]+([[:digit:]]+)\.([[:digit:]]+) ]] && [ "${BASH_REMATCH[1]}" = 0 ] && [ "${BASH_REMATCH[2]}" -lt 14 ]; then
+    
+    local temp_file; temp_file="$(mktemp)" || fail
+
+    curl \
+      --location \
+      --fail \
+      --silent \
+      --show-error \
+      --output "${temp_file}" \
+      "https://github.com/restic/restic/releases/download/v0.14.0/restic_0.14.0_linux_amd64.bz2" >/dev/null || fail
+
+    bzip2 --decompress --stdout "${temp_file}" >"${temp_file}.out" || fail
+    sudo install -o root -g root -m 0755 "${temp_file}.out" /usr/local/bin/restic || fail
+    rm "${temp_file}" "${temp_file}.out" || fail
+  fi
+
   # install inotify tools
   apt::install inotify-tools || fail
 
