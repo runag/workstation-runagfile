@@ -15,9 +15,10 @@
 #  limitations under the License.
 
 workstation::remote_repositories_backup::runagfile_menu() {
-  runagfile_menu::add --header "Remote repositories backup" || fail
+  workstation::remote_repositories_backup::runagfile_menu::identities || fail
 
-  runagfile_menu::add workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
+  runagfile_menu::add --header "Remote repositories backup: deploy" || fail
+
   runagfile_menu::add workstation::remote_repositories_backup::deploy_services || fail
   runagfile_menu::add workstation::remote_repositories_backup::create || fail
 
@@ -29,6 +30,23 @@ workstation::remote_repositories_backup::runagfile_menu() {
   runagfile_menu::add workstation::remote_repositories_backup::status || fail
   runagfile_menu::add workstation::remote_repositories_backup::log || fail
   runagfile_menu::add workstation::remote_repositories_backup::log_follow || fail
+}
+
+workstation::remote_repositories_backup::runagfile_menu::identities() {
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
+  runagfile_menu::add --header "Remote repositories backup: deploy credentials" || fail
+
+  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+    if [ -d "${absolute_identity_path}" ] && \
+       [ -f "${absolute_identity_path}/github/personal-access-token.gpg" ] && \
+       [ -f "${absolute_identity_path}/github/username.gpg" ]; then
+      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+      local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
+
+      runagfile_menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
+    fi
+  done
 }
 
 workstation::remote_repositories_backup::deploy_credentials() {
