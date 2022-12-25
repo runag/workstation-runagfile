@@ -120,7 +120,7 @@ workstation::linux::install_packages() {
   python::install_and_update::apt || fail
 
   # erlang & elixir
-  apt::install libncurses5-dev || fail
+  erlang::install_dependencies::apt || fail
   asdf::add_plugin_install_package_and_set_global erlang || fail
   asdf::add_plugin_install_package_and_set_global elixir || fail
   mix local.hex --if-missing --force || fail
