@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 workstation::backup::init() {
-  # set compression=none for parent folder if repository will be on local btrfs
+  # set compression=none for parent directory if repository is on a local btrfs
   if [[ ! "${RESTIC_REPOSITORY}" =~ .+:.+ ]]; then
     local parent_dir; parent_dir="$(dirname "${RESTIC_REPOSITORY}")" || softfail || return $?
 
@@ -112,41 +112,41 @@ workstation::backup::unlock() {
 # restore
 
 workstation::backup::mount() {
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
+  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
 
-  output_folder+="/mount"
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
+  output_directory+="/mount"
+  dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
 
-  if findmnt --mountpoint "${output_folder}" >/dev/null; then
-    fusermount -u "${output_folder}" || softfail || return $?
+  if findmnt --mountpoint "${output_directory}" >/dev/null; then
+    fusermount -u "${output_directory}" || softfail || return $?
   fi
 
-  restic mount "${output_folder}" || softfail || return $?
+  restic mount "${output_directory}" || softfail || return $?
 }
 
 workstation::backup::umount() {
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
+  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
 
-  output_folder+="/mount"
+  output_directory+="/mount"
 
-  fusermount -u -z "${output_folder}" || softfail || return $?
+  fusermount -u -z "${output_directory}" || softfail || return $?
 }
 
 workstation::backup::restore() {
   local snapshot_id="${1:-"latest"}"
 
-  local output_folder; output_folder="$(workstation::backup::get_output_folder)" || softfail || return $?
+  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
 
-  output_folder+="/${snapshot_id}"
+  output_directory+="/${snapshot_id}"
 
-  if [ -d "${output_folder}" ]; then
+  if [ -d "${output_directory}" ]; then
     softfail "Restore directory already exists, unable to restore" || return $?
   fi
 
-  dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
+  dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
 
   # TODO: optional --verify?
-  restic restore --target "${output_folder}" "${snapshot_id}" || softfail || return $?
+  restic restore --target "${output_directory}" "${snapshot_id}" || softfail || return $?
 
   log::elapsed_time || softfail || return $?
 }
