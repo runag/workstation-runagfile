@@ -135,24 +135,24 @@ workstation::backup::run_action_with_repository_config() {(
 )}
 
 # shellcheck disable=2031
-workstation::backup::get_output_folder() {
+workstation::backup::get_output_directory() {
   if [ -n "${WORKSTATION_BACKUP_OUTPUT_DIR:-}" ]; then
-    local output_folder="${WORKSTATION_BACKUP_OUTPUT_DIR}"
-    ( umask 0077 && mkdir -p "${output_folder}" ) || softfail || return $?
+    local output_directory="${WORKSTATION_BACKUP_OUTPUT_DIR}"
+    ( umask 0077 && mkdir -p "${output_directory}" ) || softfail || return $?
   else
-    local output_folder="${HOME}/workstation-restore"
-    dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
+    local output_directory="${HOME}/workstation-restore"
+    dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
-      output_folder+="/${WORKSTATION_BACKUP_PROFILE}"
-      dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
+      output_directory+="/${WORKSTATION_BACKUP_PROFILE}"
+      dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
     fi
 
     if [ "${WORKSTATION_BACKUP_REPOSITORY}" != default ]; then
-      output_folder+="/${WORKSTATION_BACKUP_REPOSITORY}"
-      dir::make_if_not_exists_and_set_permissions "${output_folder}" 0700 || softfail || return $?
+      output_directory+="/${WORKSTATION_BACKUP_REPOSITORY}"
+      dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
     fi
   fi
 
-  echo "${output_folder}"
+  echo "${output_directory}"
 }
