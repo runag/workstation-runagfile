@@ -14,20 +14,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::tools::runagfile_menu() {
-  if runagfile_menu::necessary --os linux; then
-    if benchmark::is_available; then
-      runagfile_menu::add --header "Tools: benchmark" || fail
-      runagfile_menu::add workstation::linux::run_benchmark || fail
-    fi
+workstation::misc::runagfile_menu() {
 
-    runagfile_menu::add --header "Tools: storage" || fail
+  runagfile_menu::add --header "Git" || fail
+
+  if [ -d .git ]; then
+    runagfile_menu::add git::disable_nested_repositories || fail
+    runagfile_menu::add git::enable_nested_repositories || fail
+  else
+    runagfile_menu::add --note "Not in a git folder"
+  fi
+
+
+  if runagfile_menu::necessary --os linux; then
+
+    runagfile_menu::add --header "Storage" || fail
+
     runagfile_menu::add workstation::linux::storage::check_root || fail
 
-    if [ -d .git ]; then
-      runagfile_menu::add --header "Tools: git" || fail
-      runagfile_menu::add git::disable_nested_repositories || fail
-      runagfile_menu::add git::enable_nested_repositories || fail
+
+    runagfile_menu::add --header "Benchmark" || fail
+
+    if benchmark::is_available; then
+      runagfile_menu::add workstation::linux::run_benchmark || fail
+    else
+      runagfile_menu::add --note "Benchmark is not available"
     fi
   fi
 }
