@@ -37,6 +37,8 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
 
   runagfile_menu::add --header "Remote repositories backup: deploy credentials" || fail
 
+  local identity_found=false
+
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}" ] && \
        [ -f "${absolute_identity_path}/github/personal-access-token.gpg" ] && \
@@ -45,8 +47,14 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
       runagfile_menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
+
+      identity_found=true
     fi
   done
+
+  if [ "${identity_found}" = false ]; then
+    runagfile_menu::add --note "Unable to find any identity"
+  fi
 }
 
 workstation::remote_repositories_backup::deploy_credentials() {
