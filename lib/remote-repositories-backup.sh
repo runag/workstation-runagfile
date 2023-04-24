@@ -53,7 +53,7 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
   done
 
   if [ "${identity_found}" = false ]; then
-    runagfile_menu::add --note "Unable to find any identity"
+    runagfile_menu::add --note "Unable to find any identity" || fail
   fi
 }
 

@@ -22,7 +22,7 @@ workstation::misc::runagfile_menu() {
     runagfile_menu::add git::disable_nested_repositories || fail
     runagfile_menu::add git::enable_nested_repositories || fail
   else
-    runagfile_menu::add --note "Not in a git folder"
+    runagfile_menu::add --note "Not in a git folder" || fail
   fi
 
 
@@ -38,7 +38,7 @@ workstation::misc::runagfile_menu() {
     if benchmark::is_available; then
       runagfile_menu::add workstation::linux::run_benchmark || fail
     else
-      runagfile_menu::add --note "Benchmark is not available"
+      runagfile_menu::add --note "Benchmark is not available" || fail
     fi
   fi
 }
