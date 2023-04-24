@@ -17,8 +17,8 @@
 workstation::backup::runagfile_menu() {
   runagfile_menu::add --header "Workstation backup deploy" || fail
 
-  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
-  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
+  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail # TODO: list options
+  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
 
   workstation::backup::runagfile_menu::commands || fail
   workstation::backup::runagfile_menu::services || fail
@@ -66,6 +66,11 @@ workstation::backup::runagfile_menu::commands() {
     local command; for command in "${commands[@]}"; do
       runagfile_menu::add workstation::backup --each-repository "${command}" || fail
     done
+  fi
+
+  if [ "${repository_count}" = 0 ]; then
+    runagfile_menu::add --header "Workstation backup: repositories" || fail
+    runagfile_menu::add --note "No backup repositories found" || fail
   fi
 }
 
