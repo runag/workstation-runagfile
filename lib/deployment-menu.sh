@@ -31,12 +31,16 @@ workstation::deployment::runagfile_menu() {
     
     if vmware::is_inside_vm; then
       runagfile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/personal || fail # TODO: list options
+    else
+      runagfile_menu::add --note "not inside vmware vm" || fail
     fi
   
     runagfile_menu::add workstation::linux::dangerously_set_hostname || fail
 
     if linux::display_if_restart_required::is_available; then
       runagfile_menu::add workstation::linux::display_if_restart_required || fail
+    else
+      runagfile_menu::add --note "display_if_restart_required is not available" || fail
     fi
   fi
 
