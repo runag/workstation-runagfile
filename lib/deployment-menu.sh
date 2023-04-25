@@ -82,4 +82,29 @@ workstation::deployment::runagfile_menu() {
   # runagfiles
   runag::runagfile_menu || fail
   runagfile_menu::add workstation::add_runagfiles deployment-repository/personal || fail # TODO: list options
+
+
+  # storage
+  if runagfile_menu::necessary --os linux; then
+    runagfile_menu::add --header "Storage devices" || fail
+    runagfile_menu::add workstation::linux::storage::check_root || fail
+  fi
+
+
+  # benchmark
+  if runagfile_menu::necessary --os linux; then
+    runagfile_menu::add --header "Benchmark" || fail
+    if benchmark::is_available; then
+      runagfile_menu::add workstation::linux::run_benchmark || fail
+    else
+      runagfile_menu::add --note "Benchmark is not available" || fail
+    fi
+  fi
+
+
+  # password generator
+  if runagfile_menu::necessary --os linux; then
+    runagfile_menu::add --header "Password generator" || fail
+    runagfile_menu::add workstation::linux::generate_password || fail
+  fi
 }
