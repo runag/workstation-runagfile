@@ -28,5 +28,3 @@ runagfile_menu::add --menu workstation::key_storage || fail
 
 runagfile_menu::add --menu --os linux workstation::backup || fail
 runagfile_menu::add --menu --os linux workstation::remote_repositories_backup || fail
-
-runagfile_menu::add --menu workstation::misc || fail
