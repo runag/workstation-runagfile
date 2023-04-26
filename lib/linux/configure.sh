@@ -34,7 +34,7 @@ workstation::linux::configure() {
 
   # configuration related to the case when the system is running inside a virtual machine
   if vmware::is_inside_vm; then
-    # to save myself some time on btrfs configuration
+    # btrfs configuration
     fstab::add_mount_option btrfs flushoncommit || fail
     fstab::add_mount_option btrfs noatime || fail
 
