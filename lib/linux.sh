@@ -16,17 +16,17 @@
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
-  local data_sync_volume="/media/${USER}/data-sync"
+  local key_storage_volume="/media/${USER}/workstation-sync"
 
   # install packages & configure
   workstation::linux::install_packages || fail
   workstation::linux::configure || fail
 
   # install gpg keys
-  workstation::key_storage::maintain_checksums "${data_sync_volume}" || fail
+  workstation::key_storage::maintain_checksums "${key_storage_volume}" || fail
 
   if [ ! -f "${HOME}/.runag-initial-gpg-keys-imported" ]; then
-    local gpg_key_path; for gpg_key_path in "${data_sync_volume}/keys/workstation/gpg"/* ; do
+    local gpg_key_path; for gpg_key_path in "${key_storage_volume}/keys/workstation/gpg"/* ; do
       if [ -d "${gpg_key_path}" ]; then
         local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
         workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
@@ -36,7 +36,7 @@ workstation::linux::deploy_workstation() {
   fi
 
   # install password store
-  workstation::key_storage::clone_password_store_git_remote_to_local keys/workstation "${data_sync_volume}/keys/workstation/password-store" || fail
+  workstation::key_storage::clone_password_store_git_remote_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
   workstation::key_storage::create_or_update_password_store_checksum || fail
 
   # install identities & credentials
