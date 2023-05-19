@@ -167,10 +167,6 @@ workstation::linux::install_packages() {
   sudo snap install bitwarden || fail
   sudo snap connect bitwarden:password-manager-service || fail
 
-  # micro text editor
-  # sudo snap install micro --classic || fail
-  # micro -plugin install filemanager || fail
-
   # inkscape
   sudo snap install inkscape || fail
 
@@ -185,15 +181,15 @@ workstation::linux::install_packages() {
     # skype
     sudo snap install skype --classic || fail
 
-    # discord
-    # sudo snap install discord || fail
-    # sudo snap connect discord:system-observe || fail
+    # vlc
+    sudo snap install vlc || fail
 
     # spotify
     sudo snap install spotify || fail
 
-    # vlc
-    sudo snap install vlc || fail
+    # discord
+    # sudo snap install discord || fail
+    # sudo snap connect discord:system-observe || fail
 
     # obs studio
     # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
