@@ -32,21 +32,21 @@ workstation::linux::configure() {
   # udisks mount options
   workstation::linux::storage::configure_udisks_mount_options || fail
 
+  # btrfs configuration
+  fstab::add_mount_option btrfs flushoncommit || fail
+  fstab::add_mount_option btrfs noatime || fail
+
   # configuration related to the case when the system is running inside a virtual machine
   if vmware::is_inside_vm; then
-    # btrfs configuration
-    fstab::add_mount_option btrfs flushoncommit || fail
-    fstab::add_mount_option btrfs noatime || fail
-
     # for network to work
     vmware::install_vm_network_loss_workaround || fail
 
     # for backup to work
     vmware::configure_passwordless_sudo_for_dmidecode_in_get_machine_uuid || fail
-
-    # disable unattended-upgrades, not so sure about that
-    # apt::remove unattended-upgrades || fail
   fi
+
+  # disable unattended-upgrades, not so sure about that
+  # apt::remove unattended-upgrades || fail
 
 
   ## Developer ##
@@ -86,8 +86,9 @@ workstation::linux::configure() {
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
 
-  # configure and start imwheel. When running ubuntu guest in vmware workstation, mouse scrolling stops if you scroll
-  # and move your mouse at the same time. Imwheel somehow fixes that.
+  # configure and start imwheel
+  # When running ubuntu guest in vmware workstation, if you scroll and move your mouse at the same time
+  # then mouse scrolling stops. Imwheel somehow fixes that.
   workstation::linux::imwheel::deploy || fail
 }
 
