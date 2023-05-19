@@ -51,7 +51,6 @@ workstation::linux::install_packages() {
     ncdu \
     p7zip-full \
     rclone \
-    restic \
     shellcheck \
     sqlite3 \
     ssh-import-id \
@@ -62,24 +61,7 @@ workstation::linux::install_packages() {
       || fail
 
   # install restic from github
-  local restic_version; restic_version="$(restic version)" || fail
-
-  if [[ "${restic_version}" =~ ^[^[:digit:]]+([[:digit:]]+)\.([[:digit:]]+) ]] && [ "${BASH_REMATCH[1]}" = 0 ] && [ "${BASH_REMATCH[2]}" -lt 14 ]; then
-    
-    local temp_file; temp_file="$(mktemp)" || fail
-
-    curl \
-      --location \
-      --fail \
-      --silent \
-      --show-error \
-      --output "${temp_file}" \
-      "https://github.com/restic/restic/releases/download/v0.14.0/restic_0.14.0_linux_amd64.bz2" >/dev/null || fail
-
-    bzip2 --decompress --stdout "${temp_file}" >"${temp_file}.out" || fail
-    sudo install -o root -g root -m 0755 "${temp_file}.out" /usr/local/bin/restic || fail
-    rm "${temp_file}" "${temp_file}.out" || fail
-  fi
+  restic::install "0.15.2" || fail
 
   # install inotify tools
   apt::install inotify-tools || fail
