@@ -180,9 +180,14 @@ workstation::linux::install_packages() {
     
     # skype
     sudo snap install skype --classic || fail
-
+    
     # vlc
     sudo snap install vlc || fail
+
+    # obs studio
+    sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
+    apt::update || fail
+    apt::install obs-studio || fail
 
     # spotify
     sudo snap install spotify || fail
@@ -190,11 +195,6 @@ workstation::linux::install_packages() {
     # discord
     # sudo snap install discord || fail
     # sudo snap connect discord:system-observe || fail
-
-    # obs studio
-    # sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-    # apt::update || fail
-    # apt::install obs-studio guvcview || fail
 
     # copyq
     # sudo add-apt-repository --yes ppa:hluk/copyq || fail
