@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 workstation::use_identity() {(
-  local identity_name directory_path as_needed as_default confirm_needed
+  local identity_name directory_path as_needed as_default should_confirm
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -36,7 +36,7 @@ workstation::use_identity() {(
         shift
         ;;
       -c|--confirm)
-        confirm_needed=true
+        should_confirm=true
         shift
         ;;
       -*)
@@ -55,7 +55,7 @@ workstation::use_identity() {(
     cd "${directory_path}" || fail
   fi
   
-  if [ "${confirm_needed:-}" = true ]; then
+  if [ "${should_confirm:-}" = true ]; then
     echo "You are about to import identity \"${identity_name}\" from: ${identity_path}"
 
     echo "Please confirm that it is your intention to do so by entering \"yes\""

@@ -58,8 +58,44 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
 }
 
 workstation::remote_repositories_backup::deploy_credentials() {
+  local should_confirm
+
+  while [[ "$#" -gt 0 ]]; do
+    case $1 in
+      -c|--confirm)
+        should_confirm=true
+        shift
+        ;;
+      -*)
+        fail "Unknown argument: $1"
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
   local credentials_path="$1"
   local credentials_name; credentials_name="${2:-"$(basename "${credentials_path}")"}" || fail
+
+  if [ "${should_confirm:-}" = true ]; then
+    echo "You are about to import credentials \"${credentials_name}\" from: ${credentials_path}"
+
+    echo "Please confirm that it is your intention to do so by entering \"yes\""
+    echo "Please prepare the password if needed"
+    echo "Please enter \"no\" if you want to continue without them being imported."
+
+    local action; IFS="" read -r action || fail
+
+    if [ "${action}" == no ]; then
+      echo "Credentials are ignored"
+      return
+    fi
+
+    if [ "${action}" != yes ]; then
+      fail
+    fi
+  fi
 
   local config_dir="${HOME}/.remote-repositories-backup"
 
