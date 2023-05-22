@@ -77,9 +77,4 @@ workstation::linux::deploy_workstation() {
     workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
     workstation::remote_repositories_backup::deploy_services || fail
   fi
-
-  # call personal deploy script, if defined
-  if declare -F "my_workstation::linux::deploy_workstation" >/dev/null; then
-    my_workstation::linux::deploy_workstation || fail
-  fi
 }
