@@ -49,3 +49,16 @@ workstation::add_runagfiles() {
   pass::use --body "${list_path}" | runagfile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
 }
+
+workstation::get_flag() {
+  local flag_name="$1"
+  local flag_directory="${HOME}/.runag-workstation"
+  test -f "${flag_directory}/${flag_name}.flag"
+}
+
+workstation::set_flag() {
+  local flag_name="$1"
+  local flag_directory="${HOME}/.runag-workstation"
+  dir::make_if_not_exists "${flag_directory}" 0700 || fail
+  touch "${flag_directory}/${flag_name}.flag" || fail
+}

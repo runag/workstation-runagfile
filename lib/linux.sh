@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
   local key_storage_volume="/media/${USER}/workstation-sync"
@@ -25,14 +26,14 @@ workstation::linux::deploy_workstation() {
   # install gpg keys
   workstation::key_storage::maintain_checksums "${key_storage_volume}" || fail
 
-  if [ ! -f "${HOME}/.runag-initial-gpg-keys-imported" ]; then
+  if ! workstation::get_flag "initial-gpg-keys-imported"; then
     local gpg_key_path; for gpg_key_path in "${key_storage_volume}/keys/workstation/gpg"/* ; do
       if [ -d "${gpg_key_path}" ]; then
         local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
         workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
       fi
     done
-    touch "${HOME}/.runag-initial-gpg-keys-imported" || fail
+    workstation::set_flag "initial-gpg-keys-imported" || fail
   fi
 
   # install password store
@@ -40,7 +41,7 @@ workstation::linux::deploy_workstation() {
   workstation::key_storage::create_or_update_password_store_checksum || fail
 
   # install identities & credentials
-  if [ ! -f "${HOME}/.runag-initial-identities-imported" ]; then
+  if ! workstation::get_flag "initial-identities-imported"; then
     local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
     local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
       if [ -d "${absolute_identity_path}" ]; then
@@ -48,7 +49,7 @@ workstation::linux::deploy_workstation() {
         workstation::use_identity --confirm --as-needed "${identity_path}" || fail
       fi
     done
-    touch "${HOME}/.runag-initial-identities-imported" || fail
+    workstation::set_flag "initial-identities-imported" || fail
   fi
 
   # setup tailscale
@@ -62,8 +63,23 @@ workstation::linux::deploy_workstation() {
 
   # setup repositories backup
   if linux::is_bare_metal; then
-    workstation::remote_repositories_backup::deploy_credentials identity/personal || fail
+    if ! workstation::get_flag "initial-remote-repository-credentials-imported"; then
+      local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+      local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+        if [ -d "${absolute_identity_path}/github" ]; then
+          local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+
+          workstation::remote_repositories_backup::deploy_credentials --confirm "${identity_path}" || fail
+        fi
+      done
+      workstation::set_flag "initial-remote-repository-credentials-imported" || fail
+    fi
     workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
     workstation::remote_repositories_backup::deploy_services || fail
+  fi
+
+  # call personal deploy script, if defined
+  if declare -F "my_workstation::linux::deploy_workstation" >/dev/null; then
+    my_workstation::linux::deploy_workstation || fail
   fi
 }

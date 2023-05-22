@@ -33,7 +33,6 @@ workstation::linux::gnome::configure() {
 
   local profile_id; if profile_id="$(gsettings get org.gnome.Terminal.ProfilesList default 2>/dev/null)"; then
     local profile_path="Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile_id:1:-1}/"
-
     gsettings set org.gnome."${profile_path}" exit-action 'hold' || fail
   fi
 
