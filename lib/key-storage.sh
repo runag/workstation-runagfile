@@ -77,7 +77,7 @@ workstation::key_storage::create_password_store_git_remote() {
   workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
 }
 
-workstation::key_storage::clone_password_store_git_remote_to_local() {
+workstation::key_storage::password_store_git_remote_clone_or_update_to_local() {
   local git_remote_name="$1"
   local password_store_git_remote_path="$2"
 
@@ -85,6 +85,8 @@ workstation::key_storage::clone_password_store_git_remote_to_local() {
 
   if [ ! -d "${password_store_dir}" ]; then
     git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir}" || fail
+  else
+    git -C "${password_store_dir}" pull "${git_remote_name}" main || fail
   fi
 }
 
