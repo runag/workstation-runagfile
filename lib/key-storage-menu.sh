@@ -19,7 +19,8 @@ workstation::key_storage::runagfile_menu() {
   runagfile_menu::add --header "Local key and password storage: ${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" || fail
 
   if [ -d "${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}" ]; then
-    runagfile_menu::add workstation::key_storage::create_or_update_password_store_checksum || fail
+    runagfile_menu::add workstation::key_storage::password_store_checksum create_or_update || fail
+    runagfile_menu::add workstation::key_storage::password_store_checksum verify || fail
   else
     runagfile_menu::add --note "Unable to find local key and password storage" || fail
   fi

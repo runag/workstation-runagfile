@@ -100,7 +100,10 @@ workstation::key_storage::import_gpg_key() {
 
 ### Pass
 
-workstation::key_storage::create_or_update_password_store_checksum() {
+# create_or_update
+# verify
+workstation::key_storage::password_store_checksum() {
+  local action="$1"
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-  checksums::create_or_update "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
+  "checksums::${action}" "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
 }

@@ -38,7 +38,7 @@ workstation::linux::deploy_workstation() {
 
   # install password store
   workstation::key_storage::clone_password_store_git_remote_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
-  workstation::key_storage::create_or_update_password_store_checksum || fail
+  workstation::key_storage::password_store_checksum verify || fail
 
   # install identities & credentials
   if ! workstation::get_flag "initial-identities-imported"; then
