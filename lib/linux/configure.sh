@@ -33,8 +33,10 @@ workstation::linux::configure() {
   workstation::linux::storage::configure_udisks_mount_options || fail
 
   # btrfs configuration
-  fstab::add_mount_option btrfs flushoncommit || fail
-  fstab::add_mount_option btrfs noatime || fail
+  if [ "${CI:-}" != "true" ]; then
+    fstab::add_mount_option btrfs flushoncommit || fail
+    fstab::add_mount_option btrfs noatime || fail
+  fi
 
   # configuration related to the case when the system is running inside a virtual machine
   if vmware::is_inside_vm; then
