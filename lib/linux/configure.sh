@@ -92,6 +92,11 @@ workstation::linux::configure() {
   # When running ubuntu guest in vmware workstation, if you scroll and move your mouse at the same time
   # then mouse scrolling stops. Imwheel somehow fixes that.
   workstation::linux::imwheel::deploy || fail
+
+  # firefox
+  if [ "${XDG_SESSION_TYPE}" = "wayland" ]; then
+    firefox::enable_wayland || fail
+  fi
 }
 
 workstation::linux::hide-file() {
