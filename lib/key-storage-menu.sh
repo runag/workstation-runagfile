@@ -125,7 +125,7 @@ workstation::key_storage::runagfile_menu::password_store() {
 
   if [ -d "${password_store_git_remote_path}" ]; then
     if [ ! -d "${password_store_dir}" ]; then
-      runagfile_menu::add workstation::key_storage::clone_password_store_git_remote_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
+      runagfile_menu::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
       runagfile_menu::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || fail
     fi
