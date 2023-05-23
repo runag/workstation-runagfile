@@ -64,7 +64,7 @@ workstation::use_identity() {(
 
     local action; IFS="" read -r action || fail
 
-    if [ "${action}" == no ]; then
+    if [ "${action}" = no ]; then
       echo "Identity is ignored"
       return
     fi

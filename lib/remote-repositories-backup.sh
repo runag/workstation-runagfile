@@ -87,7 +87,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
 
     local action; IFS="" read -r action || fail
 
-    if [ "${action}" == no ]; then
+    if [ "${action}" = no ]; then
       echo "Credentials are ignored"
       return
     fi
