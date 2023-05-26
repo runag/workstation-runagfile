@@ -28,7 +28,7 @@ workstation::linux::imwheel::configure() {
   # 3. Without that last wildcard match that seems just like a passthrough, well, it's not passing through without that
   #
   
-  file::write "${HOME}/.imwheelrc" <<EOF || fail
+  file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
 "^(Code)$"
 None,      Up,   Button4, 2
 None,      Down, Button5, 2
@@ -94,10 +94,10 @@ EOF
 }
 
 workstation::linux::imwheel::reenable() {
-  dir::make_if_not_exists "${HOME}/.config" 755 || fail
-  dir::make_if_not_exists "${HOME}/.config/autostart" 700 || fail
+  dir::should_exists --mode 0700 "${HOME}/.config" || fail
+  dir::should_exists --mode 0700 "${HOME}/.config/autostart" || fail
 
-  file::write "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
+  file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/imwheel

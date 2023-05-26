@@ -26,9 +26,9 @@ workstation::backup::credentials::deploy_remote() {
 
   local remote_config_dir="${config_dir}/remotes/${remote_name}"
 
-  dir::make_if_not_exists_and_set_permissions "${config_dir}" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${config_dir}/remotes" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${remote_config_dir}" 0700 || fail
+  dir::should_exists --mode 0700 "${config_dir}" || fail
+  dir::should_exists --mode 0700 "${config_dir}/remotes" || fail
+  dir::should_exists --mode 0700 "${remote_config_dir}" || fail
 
   local remote_type; remote_type="$(pass::use "${remote_pass_path}/type")" || fail
   <<<"${remote_type}" file::write --mode 0600 "${remote_config_dir}/type" || fail
@@ -53,13 +53,13 @@ workstation::backup::credentials::deploy_profile() {(
 
   local profile_config_path="${config_dir}/profiles/${profile_name}"
 
-  dir::make_if_not_exists_and_set_permissions "${config_dir}" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${config_dir}/profiles" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${profile_config_path}" 0700 || fail
+  dir::should_exists --mode 0700 "${config_dir}" || fail
+  dir::should_exists --mode 0700 "${config_dir}/profiles" || fail
+  dir::should_exists --mode 0700 "${profile_config_path}" || fail
 
   # install restic config
-  dir::make_if_not_exists_and_set_permissions "${profile_config_path}/passwords" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${profile_config_path}/repositories" 0700 || fail
+  dir::should_exists --mode 0700 "${profile_config_path}/passwords" || fail
+  dir::should_exists --mode 0700 "${profile_config_path}/repositories" || fail
 
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 

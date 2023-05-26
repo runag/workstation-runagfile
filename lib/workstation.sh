@@ -59,6 +59,6 @@ workstation::get_flag() {
 workstation::set_flag() {
   local flag_name="$1"
   local flag_directory="${HOME}/.runag-workstation"
-  dir::make_if_not_exists "${flag_directory}" 0700 || fail
+  dir::should_exists --mode 0700 "${flag_directory}" || fail
   touch "${flag_directory}/${flag_name}.flag" || fail
 }

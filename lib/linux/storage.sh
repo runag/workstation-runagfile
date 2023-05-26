@@ -27,7 +27,7 @@ workstation::linux::storage::check_root() {
 }
 
 workstation::linux::storage::configure_udisks_mount_options() {
-  file::sudo_write /etc/udisks2/mount_options.conf <<SHELL || fail
+  file::write --sudo --mode 0644 /etc/udisks2/mount_options.conf <<SHELL || fail
 [defaults]
 btrfs_defaults=commit=15,flushoncommit,noatime,compress=zstd
 btrfs_allow=compress,compress-force,datacow,nodatacow,datasum,nodatasum,autodefrag,noautodefrag,degraded,device,discard,nodiscard,subvol,subvolid,space_cache,commit,flushoncommit,noatime

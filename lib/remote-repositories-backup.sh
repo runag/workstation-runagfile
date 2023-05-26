@@ -99,9 +99,9 @@ workstation::remote_repositories_backup::deploy_credentials() {
 
   local config_dir="${HOME}/.remote-repositories-backup"
 
-  dir::make_if_not_exists_and_set_permissions "${config_dir}" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${config_dir}/github" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${config_dir}/github/${credentials_name}" 0700 || fail
+  dir::dir::should_exists --mode 0700 "${config_dir}" || fail
+  dir::dir::should_exists --mode 0700 "${config_dir}/github" || fail
+  dir::dir::should_exists --mode 0700 "${config_dir}/github/${credentials_name}" || fail
 
   pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/github/${credentials_name}/username" || fail
   pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/github/${credentials_name}/personal-access-token" || fail
@@ -111,8 +111,8 @@ workstation::remote_repositories_backup::deploy_credentials() {
 workstation::remote_repositories_backup::create() {
   local backup_path="${HOME}/remote-repositories-backup"
 
-  dir::make_if_not_exists_and_set_permissions "${backup_path}" 0700 || fail
-  dir::make_if_not_exists_and_set_permissions "${backup_path}/github" 0700 || fail
+  dir::dir::should_exists --mode 0700 "${backup_path}" || fail
+  dir::dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
   local config_dir="${HOME}/.remote-repositories-backup"
 
@@ -145,7 +145,7 @@ workstation::remote_repositories_backup::backup_github_repositories() {
 
   local fail_flag; fail_flag="$(mktemp -u)" || fail
 
-  dir::make_if_not_exists_and_set_permissions "${backup_path}" 0700 || fail
+  dir::should_exists --mode 0700 "${backup_path}" || fail
 
   # url to obtain a list of public repos for the specific user "https://api.github.com/users/${GITHUB_USERNAME}/repos?page=${page_number}&per_page=100"
 

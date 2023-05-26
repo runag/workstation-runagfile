@@ -18,7 +18,7 @@ workstation::linux::install_packages() {
   # perform autoremove, update and upgrade
   apt::autoremove || fail
   apt::update || fail
-  apt::dist_upgrade_unless_ci || fail
+  apt::dist_upgrade --skip-in-continuous-integration || fail
 
   # install tools to use by the rest of the script
   linux::install_runag_essential_dependencies::apt || fail
