@@ -115,7 +115,7 @@ workstation::backup::mount() {
   local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
 
   output_directory+="/mount"
-  dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
+  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
   if findmnt --mountpoint "${output_directory}" >/dev/null; then
     fusermount -u "${output_directory}" || softfail || return $?
@@ -143,7 +143,7 @@ workstation::backup::restore() {
     softfail "Restore directory already exists, unable to restore" || return $?
   fi
 
-  dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
+  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
   # TODO: optional --verify?
   restic restore --target "${output_directory}" "${snapshot_id}" || softfail || return $?

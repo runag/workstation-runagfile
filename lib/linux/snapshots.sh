@@ -29,7 +29,7 @@ workstation::linux::snapshots::deploy() {
 workstation::linux::snapshots::add_top_level_subvolume_mount() {
   local mount_source; mount_source="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail
 
-  dir::sudo_make_if_not_exists "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" || fail
+  dir::should_exists --sudo "${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}" || fail
 
   <<<"${mount_source}  ${SNAPSHOTS_TOP_LEVEL_SUBVOLUME_PATH}  btrfs  defaults,discard=async,noatime,flushoncommit,commit=15,subvol=/  0  2" file::read_with_updated_block /etc/fstab BTRFS_TOP_LEVEL_SUBVOLUME | fstab::verify_and_write
   test "${PIPESTATUS[*]}" = "0 0" || fail

@@ -21,7 +21,7 @@ workstation::linux::deploy_lan_server() {
   # perform autoremove, update and upgrade
   apt::autoremove || fail
   apt::update || fail
-  apt::dist_upgrade_unless_ci || fail
+  apt::dist_upgrade --skip-in-continuous-integration || fail
 
   # install open-vm-tools
   if vmware::is_inside_vm; then

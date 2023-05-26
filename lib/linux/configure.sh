@@ -34,8 +34,8 @@ workstation::linux::configure() {
 
   # btrfs configuration
   if [ "${CI:-}" != "true" ]; then
-    fstab::add_mount_option btrfs flushoncommit || fail
-    fstab::add_mount_option btrfs noatime || fail
+    fstab::add_mount_option --filesystem-type btrfs flushoncommit || fail
+    fstab::add_mount_option --filesystem-type btrfs noatime || fail
   fi
 
   # configuration related to the case when the system is running inside a virtual machine

@@ -141,16 +141,16 @@ workstation::backup::get_output_directory() {
     ( umask 0077 && mkdir -p "${output_directory}" ) || softfail || return $?
   else
     local output_directory="${HOME}/workstation-restore"
-    dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
+    dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
       output_directory+="/${WORKSTATION_BACKUP_PROFILE}"
-      dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
+      dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
     fi
 
     if [ "${WORKSTATION_BACKUP_REPOSITORY}" != default ]; then
       output_directory+="/${WORKSTATION_BACKUP_REPOSITORY}"
-      dir::make_if_not_exists_and_set_permissions "${output_directory}" 0700 || softfail || return $?
+      dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
     fi
   fi
 

@@ -26,7 +26,7 @@ workstation::sublime_merge::install_license() {
 
   local config_path; config_path="$(sublime_merge::get_config_path)" || fail
 
-  dir::make_if_not_exists "${config_path}/Local" 700 || fail
+  dir::should_exists --mode 0700 "${config_path}/Local" || fail
 
   pass::use --body "${license_path}" file::write --mode 0600 "${config_path}/Local/License.sublime_license" || fail
 }

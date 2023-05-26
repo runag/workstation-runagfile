@@ -23,7 +23,7 @@ workstation::vscode::install_config() {
   local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
-  dir::make_if_not_exists "${config_path}/User" 775 || fail # TODO: Maybe it's better to put mode 700 here?
+  dir::should_exists --mode 0700 "${config_path}/User" || fail
 
   config::install "${self_dir}/settings.json" "${config_path}/User/settings.json" || fail
   config::install "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
