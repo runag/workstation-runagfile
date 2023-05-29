@@ -22,7 +22,7 @@ workstation::identity::runagfile_menu() {
     runagfile_menu::add --note "No project found in current directory" || fail
   fi
 
-  runagfile_menu::add --header "Configure identity and install credentials that could be used as needed for current user: ${USER}" || fail # Workstation i
+  runagfile_menu::add --header "Configure identity and install credentials that could be used as needed for current user: ${USER}" || fail
   workstation::identity::runagfile_menu::list --as-needed || fail
 
   runagfile_menu::add --header "Configure identity and install credentials as a default for current user: ${USER}" || fail
