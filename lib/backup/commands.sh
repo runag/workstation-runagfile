@@ -156,7 +156,7 @@ workstation::backup::restore() {
 
 workstation::backup::shell() {
   "${SHELL}"
-  softfail_unless_good "shell failed ($?)" $? || return $?
+  softfail --code $? --unless-good "Abnormal termination of workstation::backup::shell ($?)"
 }
 
 # shellcheck disable=2031
@@ -168,5 +168,5 @@ workstation::backup::remote_shell() {
   test "${remote_proto}" = sftp || softfail || return $?
 
   ssh -t "${remote_host}" "cd $(printf "%q" "${remote_path}"); exec \"\${SHELL}\" -l"
-  softfail_unless_good "remote shell failed ($?)" $? || return $?
+  softfail --code $? --unless-good "Abnormal termination of workstation::backup::remote_shell ($?)"
 }
