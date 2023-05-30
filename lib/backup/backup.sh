@@ -67,7 +67,7 @@ workstation::backup() {(
     fi
 
     "workstation::backup::${command_name}" "$@"
-    softfail --code $? --unless-good "Failed to run ${command_name} ($?)"
+    softfail --exit-status $? --unless-good "Failed to run ${command_name} ($?)"
     return $? # this return should be here, do not remove it
   fi
 
@@ -83,7 +83,7 @@ workstation::backup() {(
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
       workstation::backup::run_action_with_repository_config "${command_name}" "${repository_config_path}" "$@"
-      softfail --code $? --unless-good "Backup command failed: ${command_name} ($?)"
+      softfail --exit-status $? --unless-good "Backup command failed: ${command_name} ($?)"
       exit_statuses+=($?)
     fi
   done
@@ -130,7 +130,7 @@ workstation::backup::run_action_with_repository_config() {(
     kill "${lock_pid}" || softfail # without return
   fi
 
-  softfail --code "${action_status}" --unless-good "Backup command failed: ${command_name} ${repository_config_path} [$*] (${action_status})"
+  softfail --exit-status "${action_status}" --unless-good "Backup command failed: ${command_name} ${repository_config_path} [$*] (${action_status})"
   return "${action_status}"
 )}
 
