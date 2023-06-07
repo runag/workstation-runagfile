@@ -96,7 +96,7 @@ workstation::linux::install_packages() {
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::disable_spring || fail
   ruby::install_dependencies::apt || fail
-  ruby::without-docs asdf::add_plugin_install_package_and_set_global ruby || fail
+  ruby::without_docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
   # python
   python::install_and_update::apt || fail
