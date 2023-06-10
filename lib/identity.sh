@@ -65,8 +65,8 @@ workstation::use_identity() {(
     local action; IFS="" read -r action || fail
 
     if [ "${action}" = no ]; then
-      echo "Identity is ignored"
-      return
+      log::warning "Identity is ignored" || fail
+      return 0
     fi
 
     if [ "${action}" != yes ]; then
@@ -86,7 +86,7 @@ workstation::use_identity() {(
   fi
 
   if [ "${as_needed:-}" = true ]; then
-    return
+    return 0
   fi
 
   if [ "${as_default:-}" = true ]; then
@@ -106,21 +106,23 @@ workstation::use_identity() {(
       dir::should_exists --mode 0700 "${HOME}/.gem" || fail
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
     fi
-  else
-    # git
-    if [ -d .git ] && pass::exists "${identity_path}/git"; then
-      git::install_profile_from_pass "${identity_path}/git" || fail
-    fi
 
-    # npm
-    if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
-      asdf::load_if_installed || fail
-      pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
-    fi
+    return 0
+  fi
 
-    # rubygems
-    if [ -f Gemfile ] && pass::exists "${identity_path}/rubygems/credentials"; then # password field
-      pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
-    fi
+  # git
+  if [ -d .git ] && pass::exists "${identity_path}/git"; then
+    git::install_profile_from_pass "${identity_path}/git" || fail
+  fi
+
+  # npm
+  if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
+    asdf::load_if_installed || fail
+    pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
+  fi
+
+  # rubygems
+  if [ -f Gemfile ] && pass::exists "${identity_path}/rubygems/credentials"; then # password field
+    pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
   fi
 )}
