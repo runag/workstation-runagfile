@@ -52,13 +52,13 @@ workstation::add_runagfiles() {
 
 workstation::get_flag() {
   local flag_name="$1"
-  local flag_directory="${HOME}/.runag-workstation"
+  local flag_directory="${HOME}/.workstation-runagfile-config"
   test -f "${flag_directory}/${flag_name}.flag"
 }
 
 workstation::set_flag() {
   local flag_name="$1"
-  local flag_directory="${HOME}/.runag-workstation"
+  local flag_directory="${HOME}/.workstation-runagfile-config"
   dir::should_exists --mode 0700 "${flag_directory}" || fail
   touch "${flag_directory}/${flag_name}.flag" || fail
 }
