@@ -88,8 +88,8 @@ workstation::remote_repositories_backup::deploy_credentials() {
     local action; IFS="" read -r action || fail
 
     if [ "${action}" = no ]; then
-      echo "Credentials are ignored"
-      return
+      log::warning "Credentials are ignored" || fail
+      return 0
     fi
 
     if [ "${action}" != yes ]; then
@@ -171,7 +171,7 @@ workstation::remote_repositories_backup::backup_github_repositories() {
         rm "${fail_flag}" || fail
         fail
       fi
-      return
+      return 0
     elif [ "${saved_pipe_status[*]}" != "0 0 0" ]; then
       fail "Abnormal termination: ${saved_pipe_status[*]}"
     fi
