@@ -103,6 +103,7 @@ workstation::linux::install_packages() {
 
   # erlang & elixir
   erlang::install_dependencies::apt || fail
+  erlang::install_dependencies::observer::apt || fail
   asdf::add_plugin_install_package_and_set_global erlang || fail
   asdf::add_plugin_install_package_and_set_global elixir || fail
   mix local.hex --if-missing --force || fail
