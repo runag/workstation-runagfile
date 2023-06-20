@@ -99,9 +99,9 @@ workstation::remote_repositories_backup::deploy_credentials() {
 
   local config_dir="${HOME}/.remote-repositories-backup"
 
-  dir::dir::should_exists --mode 0700 "${config_dir}" || fail
-  dir::dir::should_exists --mode 0700 "${config_dir}/github" || fail
-  dir::dir::should_exists --mode 0700 "${config_dir}/github/${credentials_name}" || fail
+  dir::should_exists --mode 0700 "${config_dir}" || fail
+  dir::should_exists --mode 0700 "${config_dir}/github" || fail
+  dir::should_exists --mode 0700 "${config_dir}/github/${credentials_name}" || fail
 
   pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/github/${credentials_name}/username" || fail
   pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/github/${credentials_name}/personal-access-token" || fail
@@ -111,8 +111,8 @@ workstation::remote_repositories_backup::deploy_credentials() {
 workstation::remote_repositories_backup::create() {
   local backup_path="${HOME}/remote-repositories-backup"
 
-  dir::dir::should_exists --mode 0700 "${backup_path}" || fail
-  dir::dir::should_exists --mode 0700 "${backup_path}/github" || fail
+  dir::should_exists --mode 0700 "${backup_path}" || fail
+  dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
   local config_dir="${HOME}/.remote-repositories-backup"
 
