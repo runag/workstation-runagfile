@@ -193,6 +193,9 @@ workstation::linux::install_packages() {
     # spotify
     sudo snap install spotify || fail
 
+    # webcam control
+    apt::install v4l-utils || fail
+
     # discord
     # sudo snap install discord || fail
     # sudo snap connect discord:system-observe || fail
