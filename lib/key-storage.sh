@@ -86,7 +86,19 @@ workstation::key_storage::password_store_git_remote_clone_or_update_to_local() {
   if [ ! -d "${password_store_dir}" ]; then
     git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir}" || fail
   else
-    git -C "${password_store_dir}" pull "${git_remote_name}" main || fail
+    (
+      cd "${password_store_dir}" || fail
+
+      # local remote case
+      if git::is_remote_local "${git_remote_name}"; then
+        if ! git::is_local_remote_connected "${git_remote_name}"; then
+          log::warning "In folder ${PWD}, git remote ${git_remote_name} is not connected as local remote"
+          return 0
+        fi
+      fi
+      
+      git pull "${git_remote_name}" main || fail
+    ) || fail
   fi
 }
 
