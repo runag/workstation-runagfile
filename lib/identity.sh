@@ -62,15 +62,9 @@ workstation::use_identity() {(
     echo "Please prepare the password if needed"
     echo "Please enter \"no\" if you want to continue without it being imported."
 
-    local action; IFS="" read -r action || fail
-
-    if [ "${action}" = no ]; then
-      log::warning "Identity is ignored" || fail
+    if ! ui::confirm; then
+      log::warning "Identity was not imported" || fail
       return 0
-    fi
-
-    if [ "${action}" != yes ]; then
-      fail
     fi
   fi
 

@@ -85,15 +85,9 @@ workstation::remote_repositories_backup::deploy_credentials() {
     echo "Please prepare the password if needed"
     echo "Please enter \"no\" if you want to continue without them being imported."
 
-    local action; IFS="" read -r action || fail
-
-    if [ "${action}" = no ]; then
-      log::warning "Credentials are ignored" || fail
+    if ! ui::confirm; then
+      log::warning "Credentials were not imported" || fail
       return 0
-    fi
-
-    if [ "${action}" != yes ]; then
-      fail
     fi
   fi
 
