@@ -127,6 +127,12 @@ workstation::linux::install_packages() {
 
   ### desktop software
 
+  # inkscape
+  apt::install inkscape || fail
+
+  # krita
+  apt::install krita || fail
+
   # libreoffice
   apt::install libreoffice-writer libreoffice-calc || fail
 
@@ -168,23 +174,17 @@ workstation::linux::install_packages() {
   sudo snap install bitwarden || fail
   sudo snap connect bitwarden:password-manager-service || fail
 
-  # inkscape
-  sudo snap install inkscape || fail
-
-  # krita
-  sudo snap install krita || fail
-
   # software for bare metal workstation
   if linux::is_bare_metal; then
     # nvme-cli
     sudo apt-get install nvme-cli || fail
-    
+
+    # vlc
+    sudo apt-get install vlc || fail
+
     # skype
     sudo snap install skype --classic || fail
     
-    # vlc
-    sudo snap install vlc || fail
-
     # obs studio
     sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
     apt::update || fail
