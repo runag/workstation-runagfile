@@ -65,10 +65,10 @@ workstation::backup::create() {(
     --exclude "${HOME}/Downloads/*" \
     --exclude "${HOME}/snap/**/.cache/*" \
     --exclude "${HOME}/snap/chromium" \
+    --exclude "${HOME}/snap/discord" \
     --exclude "${HOME}/snap/firefox" \
     --exclude "${HOME}/snap/skype" \
     --exclude "${HOME}/snap/spotify" \
-    --exclude "${HOME}/snap/vlc" \
     \
     . || softfail || return $?
 )}
