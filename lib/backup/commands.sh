@@ -59,6 +59,7 @@ workstation::backup::create() {(
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
+    --exclude-if-present .exclude-from-backup \
     \
     --exclude "${HOME}/.cache/*" \
     --exclude "${HOME}/.local/share/Trash/*" \
