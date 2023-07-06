@@ -182,6 +182,9 @@ workstation::linux::install_packages() {
     # vlc
     sudo apt-get install vlc || fail
 
+    # volume control
+    sudo apt-get install pavucontrol || fail
+
     # skype
     sudo snap install skype --classic || fail
     
