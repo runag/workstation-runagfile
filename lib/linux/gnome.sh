@@ -68,10 +68,13 @@ workstation::linux::gnome::configure() {
   gsettings set org.gnome.desktop.sound event-sounds false || fail
 
   # Mouse, 3200 dpi
-  gsettings set org.gnome.desktop.peripherals.mouse speed -0.9 || fail
+  gsettings set org.gnome.desktop.peripherals.mouse speed -1.0 || fail
 
   # Theme
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || fail
+
+  # Disable external search providers
+  gsettings set org.gnome.desktop.search-providers disable-external true || fail
 
   # Disable screen lock
   gsettings set org.gnome.desktop.session idle-delay 0 || fail
