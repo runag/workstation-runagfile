@@ -62,3 +62,12 @@ workstation::set_flag() {
   dir::should_exists --mode 0700 "${flag_directory}" || fail
   touch "${flag_directory}/${flag_name}.flag" || fail
 }
+
+workstation::write_config() {
+  local config_path="$1"
+
+  local config_directory="${HOME}/.workstation-runagfile-config"
+  dir::should_exists --mode 0700 "${config_directory}" || fail
+
+  file::write --mode 0600 "${config_directory}/${config_path}" || fail
+}

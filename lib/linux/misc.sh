@@ -30,3 +30,12 @@ workstation::linux::display_if_restart_required() {
 workstation::linux::run_benchmark() {
   benchmark::run || fail
 }
+
+workstation::linux::write_system_config() {
+  local config_path="$1"
+
+  local config_directory="/var/lib/workstation-runagfile"
+  dir::should_exists --sudo --mode 0700 "${config_directory}" || fail
+
+  file::write --sudo --mode 0600 "${config_directory}/${config_path}" || fail
+}
