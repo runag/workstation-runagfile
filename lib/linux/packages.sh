@@ -136,6 +136,9 @@ workstation::linux::install_packages() {
   # libreoffice
   apt::install libreoffice-writer libreoffice-calc || fail
 
+  # calibre
+  apt::install calibre || fail
+
   # vscode
   vscode::install::apt || fail
 
