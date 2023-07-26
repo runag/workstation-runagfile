@@ -29,7 +29,7 @@ workstation::linux::imwheel::configure() {
   #
   
   file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
-"^(Code)$"
+"^(Code|Sublime_merge|Chromium|Bitwarden)$"
 None,      Up,   Button4, 2
 None,      Down, Button5, 2
 Control_L, Up,   Control_L|Button4
@@ -38,26 +38,6 @@ Control_R, Up,   Control_R|Button4
 Control_R, Down, Control_R|Button5
 Alt_L,     Up,   Alt_L|Button4
 Alt_L,     Down, Alt_L|Button5
-Alt_R,     Up,   Alt_R|Button4
-Alt_R,     Down, Alt_R|Button5
-Shift_L,   Up,   Shift_L|Button4
-Shift_L,   Down, Shift_L|Button5
-Shift_R,   Up,   Shift_R|Button4
-Shift_R,   Down, Shift_R|Button5
-Meta_L,    Up,   Meta_L|Button4
-Meta_L,    Down, Meta_L|Button5
-Meta_R,    Up,   Meta_R|Button4
-Meta_R,    Down, Meta_R|Button5
-
-"^(Sublime_merge|Chromium|Bitwarden)$"
-None,      Up,   Button4, 2
-None,      Down, Button5, 2
-Control_L, Up,   Control_L|Button4
-Control_L, Down, Control_L|Button5
-Control_R, Up,   Control_R|Button4
-Control_R, Down, Control_R|Button5
-Alt_L,     Up,   Button4, 8
-Alt_L,     Down, Button5, 8
 Alt_R,     Up,   Alt_R|Button4
 Alt_R,     Down, Alt_R|Button5
 Shift_L,   Up,   Shift_L|Button4
@@ -88,9 +68,7 @@ Meta_L,    Up,   Meta_L|Button4
 Meta_L,    Down, Meta_L|Button5
 Meta_R,    Up,   Meta_R|Button4
 Meta_R,    Down, Meta_R|Button5
-
 EOF
-
 }
 
 workstation::linux::imwheel::reenable() {
