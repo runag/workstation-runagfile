@@ -60,6 +60,7 @@ workstation::backup::create() {(
     --one-file-system \
     --tag "machine-id:${machine_id}" \
     --exclude-if-present .exclude-from-backup \
+    --exclude-caches \
     \
     --exclude "${HOME}/.cache/*" \
     --exclude "${HOME}/.local/share/Trash/*" \
