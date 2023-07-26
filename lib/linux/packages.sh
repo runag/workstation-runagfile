@@ -162,7 +162,9 @@ workstation::linux::install_packages() {
   apt::install dconf-editor || fail
 
   # imwheel
-  apt::install imwheel || fail
+  if vmware::is_inside_vm; then
+    apt::install imwheel || fail
+  fi
 
 
   ### snap packages
