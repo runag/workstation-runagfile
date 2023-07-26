@@ -89,9 +89,11 @@ workstation::linux::configure() {
   workstation::linux::gnome::configure || fail
 
   # configure and start imwheel
-  # When running ubuntu guest in vmware workstation, if you scroll and move your mouse at the same time
-  # then mouse scrolling stops. Imwheel somehow fixes that.
-  workstation::linux::imwheel::deploy || fail
+  # When running ubuntu guest in vmware workstation, if you scroll and move your mouse at the same
+  # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
+  if vmware::is_inside_vm; then
+    workstation::linux::imwheel::deploy || fail
+  fi
 
   # firefox
   if [ "${XDG_SESSION_TYPE}" = "wayland" ]; then
