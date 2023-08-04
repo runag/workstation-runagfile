@@ -45,6 +45,7 @@ workstation::linux::install_packages() {
     graphviz \
     hexdiff \
     htop \
+    hyperfine \
     imagemagick \
     iperf3 \
     mc \
