@@ -12,5 +12,12 @@
   {
     "key": "ctrl+shift+delete",
     "command": "workbench.action.decreaseViewSize"
+  },
+  {
+    "key": "alt+3",
+    "command": "type",
+    "args": {
+        "text": "#"
+    }
   }
 ]
