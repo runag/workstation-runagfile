@@ -25,7 +25,7 @@ workstation::linux::configure() {
 
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
-  <<<"ServerAliveInterval 30" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/server-alive-interval.conf" || fail
+  <<<"ServerAliveInterval 30" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/00-server-alive-interval.conf" || fail
 
   # increase inotify limits
   linux::configure_inotify || fail
