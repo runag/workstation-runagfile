@@ -104,6 +104,5 @@ workstation::linux::configure() {
 }
 
 workstation::linux::hide-file() {
-  ( umask 0177 && touch "${HOME}/.hidden" ) || fail
-  file::append_line_unless_present "${HOME}/.hidden" "$1" || fail
+  file::append_line_unless_present --mode 0600 "${HOME}/.hidden" "$1" || fail
 }
