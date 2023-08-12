@@ -14,13 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::dangerously_set_hostname() {
+workstation::linux::set_hostname() {
   echo "Please keep in mind that the script to change hostname is not perfect, please take time to review the script and it's results"
   echo "Please enter new hostname:"
   
   local hostname; IFS="" read -r hostname || fail
 
-  linux::dangerously_set_hostname "${hostname}" || fail
+  linux::set_hostname "${hostname}" || fail
 }
 
 workstation::linux::display_if_restart_required() {
