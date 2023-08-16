@@ -89,11 +89,12 @@ workstation::macos::install_packages() {
 
 workstation::macos::configure() {
   # shellrc
-  shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_loader "${HOME}/.zshrc" || fail
-  shellrc::install_runag_path_rc || fail
-  shellrc::install_direnv_rc || fail
-  shellrc::install_editor_rc nano || fail
+  shell::install_rc_loader || fail
+  shell::install_rc_loader --file ".bashrc" || fail
+  shell::install_rc_loader --file ".profile" --dir ".profile.d" || fail
+  shell::set_runag_rc || fail
+  shell::set_direnv_rc || fail
+  shell::set_editor_rc nano || fail
 
   # git
   workstation::configure_git || fail

@@ -21,7 +21,7 @@ workstation::linux::configure() {
   sudo loginctl enable-linger "${USER}" || fail
 
   # configure bash
-  shellrc::install_append_to_bash_history_file_after_each_command_rc || fail
+  shell::set_flush_history_rc || fail
 
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
@@ -58,7 +58,7 @@ workstation::linux::configure() {
   workstation::configure_git || fail
 
   # set editor
-  shellrc::install_editor_rc micro || fail
+  shell::set_editor_rc micro || fail
 
   # install vscode configuration
   workstation::vscode::install_extensions || fail

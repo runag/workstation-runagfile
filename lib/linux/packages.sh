@@ -24,9 +24,10 @@ workstation::linux::install_packages() {
   linux::install_runag_essential_dependencies::apt || fail
 
   # shellrc
-  shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_runag_path_rc || fail
-  shellrc::install_direnv_rc || fail
+  shell::install_rc_loader || fail
+  shell::install_rc_loader --file ".profile" --dir ".profile.d" || fail
+  shell::set_runag_rc || fail
+  shell::set_direnv_rc || fail
 
   # install open-vm-tools
   if vmware::is_inside_vm; then
