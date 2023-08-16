@@ -16,8 +16,9 @@
 
 workstation::windows::install_packages() {
   # shellrc
-  shellrc::install_loader "${HOME}/.bashrc" || fail
-  shellrc::install_runag_path_rc || fail
+  shell::install_rc_loader || fail
+  shell::install_rc_loader --file ".profile" --dir ".profile.d" || fail
+  shell::set_runag_rc || fail
 }
 
 workstation::windows::configure() {
@@ -25,7 +26,7 @@ workstation::windows::configure() {
   workstation::configure_git || fail
 
   # set editor
-  shellrc::install_editor_rc nano || fail
+  shell::set_editor_rc nano || fail
 
   # install vscode configuration
   workstation::vscode::install_extensions || fail
