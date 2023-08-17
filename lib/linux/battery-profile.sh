@@ -18,18 +18,12 @@ workstation::linux::set_battery_profile() {
   local profile_function="$1"
 
   file::write --sudo --mode 755 /usr/local/bin/update-workstation-battery-profile <<SHELL || fail
-#!/usr/bin/env bash
-
-$(runag::print_license)
-
-$(fail::function_sources)
-$(log::function_sources)
-$(terminal::function_sources)
+$(runag::mini_library)
 
 $(declare -f linux::set_battery_charge_control_threshold)
 $(declare -f "${profile_function}")
 
-"${profile_function}" || fail
+$(printf "%q" "${profile_function}") || fail
 SHELL
 
   file::write --sudo /etc/systemd/system/update-workstation-battery-profile.service <<EOF || fail
