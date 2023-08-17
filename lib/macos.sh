@@ -106,7 +106,6 @@ workstation::macos::configure() {
   macos::increase_maxfiles_limit || fail
 
   # ruby
-  rbenv::install_shellrc || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
 
   # vscode
