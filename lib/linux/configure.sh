@@ -59,6 +59,7 @@ workstation::linux::configure() {
 
   # set editor
   shell::set_editor_rc micro || fail
+  workstation::write_micro_config || fail
 
   # install vscode configuration
   workstation::vscode::install_extensions || fail
