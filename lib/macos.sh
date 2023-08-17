@@ -109,10 +109,6 @@ workstation::macos::configure() {
   rbenv::install_shellrc || fail
   ruby::dangerously_append_nodocument_to_gemrc || fail
 
-  # nodejs
-  nodenv::install_shellrc || fail
-  nodenv::configure_mismatched_binaries_workaround || fail
-
   # vscode
   workstation::vscode::install_extensions || fail
   workstation::vscode::install_config || fail
