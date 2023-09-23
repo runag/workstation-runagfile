@@ -73,7 +73,7 @@ workstation::linux::configure() {
 
   # postgresql
   sudo systemctl --quiet --now enable postgresql || fail
-  postgresql::create_role_if_not_exists "${USER}" WITH SUPERUSER CREATEDB CREATEROLE LOGIN || fail
+  postgresql::create_role_if_not_exists --with "SUPERUSER CREATEDB CREATEROLE LOGIN" || fail
 
 
   ## Desktop ##
