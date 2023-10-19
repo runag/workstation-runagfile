@@ -152,7 +152,7 @@ workstation::remote_repositories_backup::backup_github_repositories() {
       --silent \
       --url "https://api.github.com/user/repos?page=${page_number}&per_page=100&visibility=all" \
       --user "${GITHUB_USERNAME}:${GITHUB_PERSONAL_ACCESS_TOKEN}" |\
-    jq '.[] | [.full_name, .html_url] | @tsv' --raw-output --exit-status |\
+    jq --raw-output --exit-status '.[] | [.full_name, .html_url] | @tsv' |\
     while IFS=$'\t' read -r full_name git_url; do
       log::notice "Backing up ${backup_path}/${full_name}..." || fail
       git::create_or_update_mirror "https://${GITHUB_USERNAME}@${git_url:8}" "${backup_path}/${full_name}" || touch "${fail_flag}"
