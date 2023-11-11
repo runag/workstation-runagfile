@@ -148,6 +148,9 @@ workstation::linux::install_packages() {
   sublime_merge::install::apt || fail
   sublime_text::install::apt || fail
 
+  # ghex
+  apt::install ghex || fail
+
   # meld
   apt::install meld || fail
 
