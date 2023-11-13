@@ -59,18 +59,41 @@ workstation::backup::create() {(
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
-    --exclude-if-present .exclude-from-backup \
     --exclude-caches \
     \
-    --exclude "${HOME}/.cache/*" \
     --exclude "${HOME}/.local/share/Trash/*" \
+    --exclude "${HOME}/.local/*-browser" \
     --exclude "${HOME}/Downloads/*" \
-    --exclude "${HOME}/snap/**/.cache/*" \
+    \
     --exclude "${HOME}/snap/chromium" \
     --exclude "${HOME}/snap/discord" \
     --exclude "${HOME}/snap/firefox" \
     --exclude "${HOME}/snap/skype" \
     --exclude "${HOME}/snap/spotify" \
+    \
+    --exclude "${HOME}/.cache/*" \
+    --exclude "${HOME}/snap/*/*/.cache/*" \
+    \
+    --exclude "${HOME}/.config/Code/CachedConfigurations/*" \
+    --exclude "${HOME}/.config/Code/CachedData/*" \
+    --exclude "${HOME}/.config/Code/CachedExtensionVSIXs/*" \
+    --exclude "${HOME}/.config/Code/CachedProfilesData/*" \
+    \
+    --exclude "${HOME}/.config/**/Cache/*" \
+    --exclude "${HOME}/.config/**/Code Cache/*" \
+    --exclude "${HOME}/.config/**/DawnCache/*" \
+    --exclude "${HOME}/.config/**/GPUCache/*" \
+    --exclude "${HOME}/.config/**/GraphiteDawnCache/*" \
+    --exclude "${HOME}/.config/**/GrShaderCache/*" \
+    --exclude "${HOME}/.config/**/ShaderCache/*" \
+    \
+    --exclude "${HOME}/snap/**/Cache/*" \
+    --exclude "${HOME}/snap/**/Code Cache/*" \
+    --exclude "${HOME}/snap/**/DawnCache/*" \
+    --exclude "${HOME}/snap/**/GPUCache/*" \
+    --exclude "${HOME}/snap/**/GraphiteDawnCache/*" \
+    --exclude "${HOME}/snap/**/GrShaderCache/*" \
+    --exclude "${HOME}/snap/**/ShaderCache/*" \
     \
     . || softfail || return $?
 )}
