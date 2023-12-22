@@ -26,7 +26,7 @@ workstation::key_storage::maintain_checksums() {
     fi
   done
 
-  local dir; for dir in "${media_path}/keys-backups"/* "${media_path}/keys-backups"/*/keys/*/*; do
+  local dir; for dir in "${media_path}/keys-backup"/* "${media_path}/keys-backup"/*/keys/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksum::verify "${dir}" "checksums.txt" || fail
     fi
@@ -36,7 +36,7 @@ workstation::key_storage::maintain_checksums() {
 workstation::key_storage::make_backups() {
   local media_path="$1"
 
-  local backups_dir="${media_path}/keys-backups"
+  local backups_dir="${media_path}/keys-backup"
   local dest_dir; dest_dir="${backups_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
   dir::should_exists --mode 0700 "${backups_dir}" || fail
