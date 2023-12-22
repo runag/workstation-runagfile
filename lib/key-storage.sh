@@ -22,13 +22,13 @@ workstation::key_storage::maintain_checksums() {
 
   local dir; for dir in "${media_path}/keys"/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
-      fs::with_secure_temp_dir_if_available checksums::create_or_update "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available checksum::create_or_update "${dir}" "checksums.txt" || fail
     fi
   done
 
   local dir; for dir in "${media_path}/keys-backups"/* "${media_path}/keys-backups"/*/keys/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
-      fs::with_secure_temp_dir_if_available checksums::verify "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available checksum::verify "${dir}" "checksums.txt" || fail
     fi
   done
 }
@@ -44,7 +44,7 @@ workstation::key_storage::make_backups() {
 
   cp -R "${media_path}/keys" "${dest_dir}" || fail
 
-  RUNAG_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksums::create_or_update "${dest_dir}" "checksums.txt" || fail
+  RUNAG_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksum::create_or_update "${dest_dir}" "checksums.txt" || fail
 
   sync || fail
   echo "Backups were made: ${dest_dir}"
@@ -119,5 +119,5 @@ workstation::key_storage::import_gpg_key() {
 workstation::key_storage::password_store_checksum() {
   local action="$1"
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-  "checksums::${action}" "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
+  "checksum::${action}" "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
 }

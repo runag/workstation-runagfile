@@ -29,8 +29,8 @@ workstation::key_storage::runagfile_menu() {
   runagfile_menu::add --header "Checksums for current directory: ${PWD}" || fail
 
   if [ -f "checksums.txt" ]; then
-    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::create_or_update "." "checksums.txt" || fail
-    runagfile_menu::add fs::with_secure_temp_dir_if_available checksums::verify "." "checksums.txt" || fail
+    runagfile_menu::add fs::with_secure_temp_dir_if_available checksum::create_or_update "." "checksums.txt" || fail
+    runagfile_menu::add fs::with_secure_temp_dir_if_available checksum::verify "." "checksums.txt" || fail
   else
     runagfile_menu::add --note "There are no checksums.txt file in current directory" || fail
   fi
