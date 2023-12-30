@@ -17,7 +17,7 @@
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
-  local key_storage_volume="/media/${USER}/workstation-sync"
+  local key_storage_volume="/media/${USER}/my-workstation-sync"
 
   # install packages & configure
   workstation::linux::install_packages || fail
