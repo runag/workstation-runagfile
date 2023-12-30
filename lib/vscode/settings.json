@@ -4,8 +4,8 @@
   "editor.cursorSurroundingLines": 2,
   "editor.detectIndentation": false,
   "editor.fastScrollSensitivity": 4,
-  "editor.fontSize": 15,
-  "editor.lineHeight": 20,
+  "editor.fontSize": 16,
+  "editor.lineHeight": 1.4,
   "editor.minimap.enabled": false,
   // "editor.mouseWheelScrollSensitivity": 2,
   "editor.multiCursorModifier": "ctrlCmd",
@@ -23,7 +23,7 @@
   "editor.smoothScrolling": true,
   "editor.suggestOnTriggerCharacters": false, // this turns off suggestions
   "editor.tabSize": 2,
-  "editor.wordBasedSuggestions": false, // this turns off suggestions
+  "editor.wordBasedSuggestions": "off", // this turns off suggestions
   "explorer.autoReveal": false,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
@@ -39,5 +39,9 @@
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 25,
   "editor.mouseWheelScrollSensitivity": 2,
-  "elixirLS.suggestSpecs": false
+  "elixirLS.suggestSpecs": false,
+  "git.confirmSync": false,
+  "workbench.colorTheme": "Default Light Modern",
+  "editor.accessibilitySupport": "off",
+  "git.openRepositoryInParentFolders": "never"
 }
