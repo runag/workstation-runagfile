@@ -93,7 +93,6 @@ Password Store
 │           ├── id_ed25519.pub
 │           ├── known_hosts
 │           └── type
-├── checksums.txt
 ├── deployment-repository
 │   └── personal
 ├── identity
