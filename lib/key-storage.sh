@@ -20,7 +20,7 @@
 workstation::key_storage::maintain_checksums() {
   local media_path="$1"
 
-  local dir; for dir in "${media_path}/keys"/*/*; do
+  local dir; for dir in "${media_path}/keys"/* "${media_path}/keys"/*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksum::create_or_update "${dir}" "checksums.txt" || fail
     fi
