@@ -110,14 +110,3 @@ workstation::key_storage::import_gpg_key() {
   local gpg_key_file="$2"
   gpg::import_key --confirm --skip-if-exists --trust-ultimately --secret-key "${gpg_key_id}" "${gpg_key_file}" || fail
 }
-
-
-### Pass
-
-# create_or_update
-# verify
-workstation::key_storage::password_store_checksum() {
-  local action="$1"
-  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-  "checksum::${action}" "${password_store_dir}" "checksums.txt" ! -path "./.git/*" || fail
-}
