@@ -24,7 +24,7 @@ workstation::linux::deploy_workstation() {
   workstation::linux::configure || fail
 
   # install gpg keys
-  workstation::key_storage::maintain_checksums "${key_storage_volume}" || fail
+  workstation::key_storage::maintain_checksums --skip-backups --verify-only "${key_storage_volume}" || fail
 
   if ! workstation::get_flag "initial-gpg-keys-imported"; then
     local gpg_key_path; for gpg_key_path in "${key_storage_volume}/keys/workstation/gpg"/* ; do
