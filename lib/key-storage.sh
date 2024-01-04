@@ -18,15 +18,41 @@
 ### Checksums
 
 workstation::key_storage::maintain_checksums() {
+  local skip_backups=false
+  local checksum_action="checksum::create_or_update"
+
+  while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    -s|--skip-backups)
+      skip_backups=true
+      shift
+      ;;
+    -v|--verify-only)
+      checksum_action="checksum::verify"
+      shift
+      ;;
+    -*)
+      softfail "Unknown argument: $1" || return $?
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+  
   local media_path="$1"
 
-  local dir; for dir in "${media_path}/keys"/* "${media_path}/keys"/*/*; do
+  local dir; for dir in "${media_path}/keys/"* "${media_path}/keys/"*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
-      fs::with_secure_temp_dir_if_available checksum::create_or_update "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available "${checksum_action}" "${dir}" "checksums.txt" || fail
     fi
   done
 
-  local dir; for dir in "${media_path}/keys-backup"/* "${media_path}/keys-backup"/*/keys/*/*; do
+  if [ "${skip_backups}" = true ]; then
+    return
+  fi
+
+  local dir; for dir in "${media_path}/keys-backup/"*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
       fs::with_secure_temp_dir_if_available checksum::verify "${dir}" "checksums.txt" || fail
     fi
@@ -35,6 +61,8 @@ workstation::key_storage::maintain_checksums() {
 
 workstation::key_storage::make_backups() {
   local media_path="$1"
+
+  workstation::key_storage::maintain_checksums --skip-backups "${media_path}" || fail
 
   local backups_dir="${media_path}/keys-backup"
   local dest_dir; dest_dir="${backups_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
@@ -47,6 +75,9 @@ workstation::key_storage::make_backups() {
   RUNAG_CREATE_CHECKSUMS_WITHOUT_CONFIRMATION=true fs::with_secure_temp_dir_if_available checksum::create_or_update "${dest_dir}" "checksums.txt" || fail
 
   sync || fail
+
+  workstation::key_storage::maintain_checksums --skip-backups --verify-only "${dest_dir}" || fail
+
   echo "Backups were made: ${dest_dir}"
 }
 
