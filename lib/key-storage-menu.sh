@@ -25,10 +25,11 @@ workstation::key_storage::runagfile_menu() {
     runagfile_menu::add --note "There are no checksums.txt file in current directory" || fail
   fi
 
-  local key_storage_found=false
+  local Key_Storage_Found=false
 
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    workstation::key_storage::runagfile_menu::media /? || fail
+    # TODO
+    true
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
@@ -48,7 +49,7 @@ workstation::key_storage::runagfile_menu() {
 
   workstation::key_storage::runagfile_menu::media "." || fail
 
-  if [ "${key_storage_found}" = false ]; then
+  if [ "${Key_Storage_Found}" = false ]; then
     runagfile_menu::add --header "Key storage" || fail
     runagfile_menu::add --note "No key storage found" || fail
   fi
@@ -61,7 +62,7 @@ workstation::key_storage::runagfile_menu::media() {
     return 0
   fi
 
-  key_storage_found=true
+  Key_Storage_Found=true
 
   runagfile_menu::add --header "Key storage: ${media_path}" || fail
   
@@ -70,9 +71,9 @@ workstation::key_storage::runagfile_menu::media() {
   runagfile_menu::add workstation::key_storage::make_backups "${media_path}" || fail
 
 
+  # Scopes
   local scope_found=false
 
-  # Scopes
   local scope_path; for scope_path in "${media_path}/keys"/* ; do
     if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-menu" ]; then
 
