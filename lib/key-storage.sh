@@ -16,6 +16,13 @@
 
 
 ### Checksums
+workstation::key_storage::checksum() {
+  local action="$1"
+  local path="${2:-"."}"
+  local checksum_file="${3:-"checksums.txt"}"
+
+  fs::with_secure_temp_dir_if_available "checksum::${action}" "${path}" "${checksum_file}" || fail
+}
 
 workstation::key_storage::maintain_checksums() {
   local skip_backups=false
