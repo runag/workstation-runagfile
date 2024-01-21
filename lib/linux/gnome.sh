@@ -42,7 +42,7 @@ workstation::linux::gnome::configure() {
 
   # Dash
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM' || fail
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
