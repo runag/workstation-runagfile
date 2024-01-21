@@ -83,10 +83,9 @@ Password Store
 │   │   └── workstation
 │   │       ├── password
 │   │       └── repositories
-│   │           ├── default
-│   │           └── offline
+│   │           └── default
 │   └── remotes
-│       └── personal-backup-server
+│       └── my-backup-server
 │           ├── config
 │           ├── config.linux
 │           ├── id_ed25519
@@ -94,9 +93,9 @@ Password Store
 │           ├── known_hosts
 │           └── type
 ├── deployment-repository
-│   └── personal
+│   └── my
 ├── identity
-│   └── personal
+│   └── my
 │       ├── git
 │       │   ├── signing-key
 │       │   ├── user-email
@@ -112,13 +111,13 @@ Password Store
 │           ├── id_ed25519
 │           └── id_ed25519.pub
 ├── sublime-merge
-│   └── personal
+│   └── my
 ├── sublime-text
-│   └── personal
+│   └── my
 ├── tailscale
-│   └── personal
+│   └── my
 └── windows-cifs
-    └── personal
+    └── my
 ```
 
 ## If you fork this

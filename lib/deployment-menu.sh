@@ -26,11 +26,11 @@ workstation::deployment::runagfile_menu() {
 
     runagfile_menu::add workstation::linux::install_packages || fail
     runagfile_menu::add workstation::linux::configure || fail
-    runagfile_menu::add workstation::linux::deploy_tailscale tailscale/personal || fail # TODO: list options
+    runagfile_menu::add workstation::linux::deploy_tailscale tailscale/my || fail # TODO: list options
     runagfile_menu::add workstation::linux::deploy_lan_server || fail
     
     if vmware::is_inside_vm; then
-      runagfile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/personal || fail # TODO: list options
+      runagfile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/my || fail # TODO: list options
     else
       runagfile_menu::add --note "not inside vmware vm" || fail
     fi
@@ -68,8 +68,8 @@ workstation::deployment::runagfile_menu() {
   # licenses
   runagfile_menu::add --header "Licenses" || fail
 
-  runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/personal || fail # TODO: list options
-  runagfile_menu::add workstation::sublime_text::install_license sublime-text/personal || fail # TODO: list options
+  runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/my || fail # TODO: list options
+  runagfile_menu::add workstation::sublime_text::install_license sublime-text/my || fail # TODO: list options
 
 
   # development
@@ -81,7 +81,7 @@ workstation::deployment::runagfile_menu() {
 
   # runagfiles
   runag::runagfile_menu || fail
-  runagfile_menu::add workstation::add_runagfiles deployment-repository/personal || fail # TODO: list options
+  runagfile_menu::add workstation::add_runagfiles deployment-repository/my || fail # TODO: list options
 
 
   # storage

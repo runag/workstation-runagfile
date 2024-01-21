@@ -17,7 +17,7 @@
 workstation::backup::runagfile_menu() {
   runagfile_menu::add --header "Workstation backup deploy" || fail
 
-  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail # TODO: list options
+  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail # TODO: list options
   runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
 
   workstation::backup::runagfile_menu::commands || fail

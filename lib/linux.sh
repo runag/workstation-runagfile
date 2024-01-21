@@ -52,10 +52,10 @@ workstation::linux::deploy_workstation() {
   fi
 
   # setup tailscale
-  workstation::linux::deploy_tailscale tailscale/personal || fail
+  workstation::linux::deploy_tailscale tailscale/my || fail
 
   # setup backup
-  workstation::backup::credentials::deploy_remote backup/remotes/personal-backup-server || fail
+  workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail
   workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
   workstation::backup --each-repository create || softfail "workstation::backup --each-repository create failed"
   workstation::backup::services::deploy || fail
