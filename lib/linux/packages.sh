@@ -174,6 +174,9 @@ workstation::linux::install_packages() {
     apt::install imwheel || fail
   fi
 
+  # gnome-screenshot
+  apt::install gnome-screenshot || fail
+
 
   ### snap packages
 
