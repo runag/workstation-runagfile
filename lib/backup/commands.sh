@@ -61,23 +61,7 @@ workstation::backup::create() {(
     --tag "machine-id:${machine_id}" \
     --exclude-caches \
     \
-    --exclude "${HOME}/.local/share/Trash/*" \
-    --exclude "${HOME}/.local/*-browser" \
-    --exclude "${HOME}/Downloads/*" \
-    \
-    --exclude "${HOME}/snap/chromium" \
-    --exclude "${HOME}/snap/discord" \
-    --exclude "${HOME}/snap/firefox" \
-    --exclude "${HOME}/snap/skype" \
-    --exclude "${HOME}/snap/spotify" \
-    \
     --exclude "${HOME}/.cache/*" \
-    --exclude "${HOME}/snap/*/*/.cache/*" \
-    \
-    --exclude "${HOME}/.config/Code/CachedConfigurations/*" \
-    --exclude "${HOME}/.config/Code/CachedData/*" \
-    --exclude "${HOME}/.config/Code/CachedExtensionVSIXs/*" \
-    --exclude "${HOME}/.config/Code/CachedProfilesData/*" \
     \
     --exclude "${HOME}/.config/**/Cache/*" \
     --exclude "${HOME}/.config/**/Code Cache/*" \
@@ -87,6 +71,19 @@ workstation::backup::create() {(
     --exclude "${HOME}/.config/**/GrShaderCache/*" \
     --exclude "${HOME}/.config/**/ShaderCache/*" \
     \
+    --exclude "${HOME}/.config/Code/CachedConfigurations/*" \
+    --exclude "${HOME}/.config/Code/CachedData/*" \
+    --exclude "${HOME}/.config/Code/CachedExtensionVSIXs/*" \
+    --exclude "${HOME}/.config/Code/CachedProfilesData/*" \
+    \
+    --exclude "${HOME}/.config/micro/backups/*" \
+    --exclude "${HOME}/.config/micro/buffers/*" \
+    \
+    --exclude "${HOME}/.local/*-browser" \
+    --exclude "${HOME}/.local/share/Trash/*" \
+    \
+    --exclude "${HOME}/Downloads/*" \
+    \
     --exclude "${HOME}/snap/**/Cache/*" \
     --exclude "${HOME}/snap/**/Code Cache/*" \
     --exclude "${HOME}/snap/**/DawnCache/*" \
@@ -94,7 +91,12 @@ workstation::backup::create() {(
     --exclude "${HOME}/snap/**/GraphiteDawnCache/*" \
     --exclude "${HOME}/snap/**/GrShaderCache/*" \
     --exclude "${HOME}/snap/**/ShaderCache/*" \
-    \
+    --exclude "${HOME}/snap/*/*/.cache/*" \
+    --exclude "${HOME}/snap/chromium" \
+    --exclude "${HOME}/snap/discord" \
+    --exclude "${HOME}/snap/firefox" \
+    --exclude "${HOME}/snap/skype" \
+    --exclude "${HOME}/snap/spotify" \
     . || softfail || return $?
 )}
 
