@@ -52,7 +52,7 @@ workstation::macos::install_packages() {
   # gui tools
   brew install --cask meld || fail
   brew install --cask sublime-merge || fail
-  brew install --cask sublime-text || fail
+  # brew install --cask sublime-text || fail
   brew install --cask visual-studio-code || fail
   brew install --cask iterm2 || fail
 
@@ -116,7 +116,7 @@ workstation::macos::configure() {
   workstation::sublime_merge::install_config || fail
 
   # sublime text config
-  workstation::sublime_text::install_config || fail
+  # workstation::sublime_text::install_config || fail
 
   # hide directories
   macos::hide_dir "${HOME}/Applications" || fail

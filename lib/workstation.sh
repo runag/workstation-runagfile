@@ -22,7 +22,7 @@ workstation::configure_git() {
 workstation::merge_editor_configs() {
   workstation::vscode::merge_config || fail
   workstation::sublime_merge::merge_config || fail
-  workstation::sublime_text::merge_config || fail
+  # workstation::sublime_text::merge_config || fail
 }
 
 workstation::remove_nodejs_and_ruby_installations() {
