@@ -37,7 +37,7 @@ workstation::identity::runagfile_menu::list() {
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}" ]; then
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-      local git_user_name=""
+      local git_user_name
 
       if pass::exists "${identity_path}/git/user-name"; then
         git_user_name="$(pass::use "${identity_path}/git/user-name")" || fail
