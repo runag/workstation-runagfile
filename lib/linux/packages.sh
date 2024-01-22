@@ -184,8 +184,8 @@ workstation::linux::install_packages() {
   sudo snap install chromium || fail
 
   # bitwarden
-  sudo snap install bitwarden || fail
-  sudo snap connect bitwarden:password-manager-service || fail
+  # sudo snap install bitwarden || fail
+  # sudo snap connect bitwarden:password-manager-service || fail
 
   # software for bare metal workstation
   if linux::is_bare_metal; then
@@ -199,7 +199,7 @@ workstation::linux::install_packages() {
     sudo apt-get install pavucontrol || fail
 
     # skype
-    sudo snap install skype --classic || fail
+    # sudo snap install skype --classic || fail
     
     # obs studio
     sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
@@ -207,7 +207,7 @@ workstation::linux::install_packages() {
     apt::install obs-studio || fail
 
     # spotify
-    sudo snap install spotify || fail
+    # sudo snap install spotify || fail
 
     # webcam control
     apt::install v4l-utils || fail
