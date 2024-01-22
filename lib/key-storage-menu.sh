@@ -137,7 +137,7 @@ workstation::key_storage::runagfile_menu::gpg_keys() {
       local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || fail
       local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
       local gpg_public_key_file="${gpg_key_dir}/public.asc"
-      local gpg_key_uid=""
+      local gpg_key_uid
 
       if [ -f "${gpg_public_key_file}" ]; then
         gpg_key_uid="$(gpg::get_key_uid "${gpg_public_key_file}")" || fail
