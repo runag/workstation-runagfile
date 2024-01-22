@@ -36,7 +36,7 @@ workstation::windows::configure() {
   workstation::sublime_merge::install_config || fail
 
   # install sublime text configuration
-  workstation::sublime_text::install_config || fail
+  # workstation::sublime_text::install_config || fail
 }
 
 # shellcheck disable=SC1003
