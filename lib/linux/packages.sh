@@ -202,21 +202,6 @@ workstation::linux::install_packages() {
     apt::update || fail
     apt::install obs-studio || fail
 
-    # skype
-    # sudo snap install skype --classic || fail
-
-    # spotify
-    # sudo snap install spotify || fail
-
-    # discord
-    # sudo snap install discord || fail
-    # sudo snap connect discord:system-observe || fail
-
-    # copyq
-    # sudo add-apt-repository --yes ppa:hluk/copyq || fail
-    # apt::update || fail
-    # apt::install copyq || fail
-
     # display control
     # apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
   fi
