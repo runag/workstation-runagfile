@@ -100,9 +100,7 @@ workstation::linux::configure() {
   fi
 
   # firefox
-  if [ "${XDG_SESSION_TYPE}" = "wayland" ]; then
-    firefox::enable_wayland || fail
-  fi
+  firefox::enable_wayland || fail
 }
 
 workstation::linux::hide-file() {
