@@ -92,32 +92,33 @@ Password Store
 │           ├── id_ed25519.pub
 │           ├── known_hosts
 │           └── type
-├── identity
-│   └── my
-│       ├── git
-│       │   ├── signing-key
-│       │   ├── user-email
-│       │   └── user-name
-│       ├── github
-│       │   ├── personal-access-token
-│       │   └── username
-│       ├── npm
-│       │   └── access-token
-|       ├── runag
-│       │   └── runagfiles
-│       ├── rubygems
-│       │   └── credentials
-│       └── ssh
-│           ├── id_ed25519
-│           └── id_ed25519.pub
-├── sublime-merge
-│   └── my
-├── sublime-text
-│   └── my
-├── tailscale
-│   └── my
-└── windows-cifs
+└── identity
     └── my
+        ├── git
+        │   ├── signing-key
+        │   ├── user-email
+        │   └── user-name
+        ├── github
+        │   ├── personal-access-token
+        │   └── username
+        ├── host-cifs
+        │   └── credentials
+        ├── npm
+        │   └── access-token
+        ├── runag
+        │   └── runagfiles
+        ├── rubygems
+        │   └── credentials
+        ├── ssh
+        │   ├── config
+        │   ├── id_ed25519
+        │   └── id_ed25519.pub
+        ├── sublime-merge
+        │   └── license
+        ├── sublime-text
+        │   └── license
+        └── tailscale
+            └── authkey
 ```
 
 ## If you fork this

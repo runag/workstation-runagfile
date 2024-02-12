@@ -17,16 +17,16 @@
 workstation::identity::runagfile_menu() {
   runagfile_menu::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || fail
   if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
-    workstation::identity::runagfile_menu::list || fail
+    workstation::identity::runagfile_menu::list --for-directory . || fail
   else
     runagfile_menu::add --note "No project found in current directory" || fail
   fi
 
-  runagfile_menu::add --header "Configure identity and install credentials that could be used as needed for current user: ${USER}" || fail
-  workstation::identity::runagfile_menu::list --as-needed || fail
+  runagfile_menu::add --header "Configure identity and install credentials" || fail
+  workstation::identity::runagfile_menu::list --with-system-credentials || fail
 
-  runagfile_menu::add --header "Configure identity and install credentials as a default for current user: ${USER}" || fail
-  workstation::identity::runagfile_menu::list --as-default || fail
+  runagfile_menu::add --header "Configure identity, install credentials, and set default credentials" || fail
+  workstation::identity::runagfile_menu::list --with-system-credentials --as-default || fail
 }
 
 workstation::identity::runagfile_menu::list() {
