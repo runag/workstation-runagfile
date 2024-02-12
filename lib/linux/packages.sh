@@ -188,25 +188,25 @@ workstation::linux::install_packages() {
     # nvme-cli
     sudo apt-get install nvme-cli || fail
 
-    # vlc
-    sudo apt-get install vlc || fail
-
     # volume control
     sudo apt-get install pavucontrol || fail
 
-    # skype
-    # sudo snap install skype --classic || fail
-    
+    # webcam control
+    apt::install v4l-utils || fail
+
+    # vlc
+    sudo apt-get install vlc || fail
+
     # obs studio
     sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
     apt::update || fail
     apt::install obs-studio || fail
 
+    # skype
+    # sudo snap install skype --classic || fail
+
     # spotify
     # sudo snap install spotify || fail
-
-    # webcam control
-    apt::install v4l-utils || fail
 
     # discord
     # sudo snap install discord || fail
