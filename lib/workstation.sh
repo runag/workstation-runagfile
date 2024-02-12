@@ -72,7 +72,7 @@ workstation::write_config() {
   file::write --mode 0600 "${config_directory}/${config_path}" || fail
 }
 
-workstation::write_micro_config() {
+workstation::install_micro_config() {
   local config_dir="${HOME}/.config/micro"
 
   dir::should_exists --mode 0700 "${config_dir}" || fail
