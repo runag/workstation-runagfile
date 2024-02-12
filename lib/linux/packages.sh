@@ -63,7 +63,7 @@ workstation::linux::install_packages() {
       || fail
 
   # install restic from github
-  restic::install "0.15.2" || fail
+  restic::install "0.16.4" || fail
 
   # install inotify tools
   apt::install inotify-tools || fail
