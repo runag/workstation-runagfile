@@ -43,5 +43,6 @@
   "git.confirmSync": false,
   "workbench.colorTheme": "Default Light Modern",
   "editor.accessibilitySupport": "off",
-  "git.openRepositoryInParentFolders": "never"
+  "git.openRepositoryInParentFolders": "never",
+  "html.autoClosingTags": false
 }
