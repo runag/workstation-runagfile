@@ -45,14 +45,11 @@ workstation::linux::deploy_workstation() {
     local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
       if [ -d "${absolute_identity_path}" ]; then
         local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-        workstation::use_identity --confirm --as-needed "${identity_path}" || fail
+        workstation::use_identity --confirm --with-system-credentials "${identity_path}" || fail
       fi
     done
     workstation::set_flag "initial-identities-imported" || fail
   fi
-
-  # setup tailscale
-  workstation::linux::deploy_tailscale tailscale/my || fail
 
   # setup backup
   workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail

@@ -26,13 +26,12 @@ workstation::deployment::runagfile_menu() {
 
     runagfile_menu::add workstation::linux::install_packages || fail
     runagfile_menu::add workstation::linux::configure || fail
-    runagfile_menu::add workstation::linux::deploy_tailscale tailscale/my || fail # TODO: list options
     runagfile_menu::add workstation::linux::deploy_lan_server || fail
     
     if vmware::is_inside_vm; then
-      runagfile_menu::add workstation::linux::deploy_vm_host_directory_mounts windows-cifs/my || fail # TODO: list options
+      runagfile_menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
     else
-      runagfile_menu::add --note "not inside vmware vm" || fail
+      runagfile_menu::add --note "not inside virtual machine" || fail
     fi
   
     runagfile_menu::add workstation::linux::set_hostname || fail
@@ -63,13 +62,6 @@ workstation::deployment::runagfile_menu() {
     runagfile_menu::add workstation::windows::configure || fail
     runagfile_menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
   fi
-
-
-  # licenses
-  runagfile_menu::add --header "Licenses" || fail
-
-  runagfile_menu::add workstation::sublime_merge::install_license sublime-merge/my || fail # TODO: list options
-  runagfile_menu::add workstation::sublime_text::install_license sublime-text/my || fail # TODO: list options
 
 
   # development

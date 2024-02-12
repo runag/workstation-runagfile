@@ -14,29 +14,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::use_identity() {(
-  local identity_name directory_path as_needed as_default should_confirm
+workstation::use_identity() {
+  local identity_name directory_path
+  local with_system_credentials=false as_default=false should_confirm=false
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -i|--identity-name)
-        identity_name="$2"
-        shift; shift
+      -c|--confirm)
+        should_confirm=true
+        shift
         ;;
       -d|--for-dir|--for-directory)
         directory_path="$2"
         shift; shift
         ;;
-      -n|--as-needed)
-        as_needed=true
+      -i|--identity-name)
+        identity_name="$2"
+        shift; shift
+        ;;
+      -s|--with-system-credentials)
+        with_system_credentials=true
         shift
         ;;
       -t|--as-default)
         as_default=true
-        shift
-        ;;
-      -c|--confirm)
-        should_confirm=true
         shift
         ;;
       -*)
@@ -51,11 +52,7 @@ workstation::use_identity() {(
   local identity_path="$1"
   local identity_name="${identity_name:-"$(basename "${identity_path}")"}" || fail
 
-  if [ -n "${directory_path:-}" ]; then
-    cd "${directory_path}" || fail
-  fi
-  
-  if [ "${should_confirm:-}" = true ]; then
+  if [ "${should_confirm}" = true ]; then
     echo "You are about to import identity \"${identity_name}\" from: ${identity_path}"
 
     echo "Please confirm that it is your intention to do so by entering \"yes\""
@@ -84,11 +81,46 @@ workstation::use_identity() {(
     workstation::add_runagfiles "${identity_path}/runag/runagfiles" || fail
   fi
 
-  if [ "${as_needed:-}" = true ]; then
-    return 0
+  if [ -n "${directory_path:-}" ]; then
+    (
+      cd "${directory_path}" || fail
+
+      # git
+      if [ -d .git ] && pass::exists "${identity_path}/git"; then
+        git::install_profile_from_pass "${identity_path}/git" || fail
+      fi
+
+      # npm
+      if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
+        asdf::load --if-installed || fail
+        pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
+      fi
+
+      # rubygems
+      if [ -f Gemfile ] && pass::exists "${identity_path}/rubygems/credentials"; then # password field
+        pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
+      fi
+    ) || fail
   fi
 
-  if [ "${as_default:-}" = true ]; then
+  if [ "${with_system_credentials}" = true ]; then
+    # setup tailscale
+    if pass::exists "${identity_path}/tailscale/authkey"; then
+      workstation::linux::deploy_tailscale "${identity_path}/tailscale/authkey" || fail
+    fi
+
+    # install sublime merge license
+    if pass::exists "${identity_path}/sublime-merge/license"; then
+      workstation::sublime_merge::install_license "${identity_path}/sublime-merge/license" || fail
+    fi
+
+    # install sublime text license
+    if pass::exists "${identity_path}/sublime-text/license"; then
+      workstation::sublime_text::install_license "${identity_path}/sublime-text/license" || fail
+    fi
+  fi
+
+  if [ "${as_default}" = true ]; then
     # git
     if pass::exists "${identity_path}/git"; then
       git::install_profile_from_pass "${identity_path}/git" --global || fail
@@ -105,23 +137,5 @@ workstation::use_identity() {(
       dir::should_exists --mode 0700 "${HOME}/.gem" || fail
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
     fi
-
-    return 0
   fi
-
-  # git
-  if [ -d .git ] && pass::exists "${identity_path}/git"; then
-    git::install_profile_from_pass "${identity_path}/git" || fail
-  fi
-
-  # npm
-  if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
-    asdf::load --if-installed || fail
-    pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
-  fi
-
-  # rubygems
-  if [ -f Gemfile ] && pass::exists "${identity_path}/rubygems/credentials"; then # password field
-    pass::use "${identity_path}/rubygems/credentials" rubygems::direnv_credentials || fail
-  fi
-)}
+}

@@ -14,8 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::deploy_vm_host_directory_mounts() {
+workstation::linux::deploy_host_cifs_mount() {
   local credentials_path="$1" # username, password
+  local remote_path="$2"
+  local local_path="${3:-"${remote_path}"}"
+
+  local credentials_file="${HOME}/.host-cifs-credentials"
 
   # install cifs-utils
   apt::install cifs-utils || fail
@@ -24,22 +28,11 @@ workstation::linux::deploy_vm_host_directory_mounts() {
   local username; username="$(pass::use --get username "${credentials_path}")" || fail
 
   # write credentials to local filesystem
-  local credentials_file="${HOME}/.vm-host-filesystem-access.cifs-credentials"
-
   pass::use "${credentials_path}" cifs::credentials "${credentials_file}" "${username}" || fail
 
   # get host ip address
   local remote_host; remote_host="$(vmware::get_host_ip_address)" || fail
 
   # mount host directory
-  REMOTE_HOST="${remote_host}" CREDENTIALS_FILE="${credentials_file}" workstation::linux::mount_every_vm_host_directory || fail
-}
-
-workstation::linux::mount_every_vm_host_directory() {
-  workstation::linux::mount_vm_host_directory "my" "my-host-files" || fail
-}
-
-# shellcheck disable=2153
-workstation::linux::mount_vm_host_directory() {
-  cifs::mount "//${REMOTE_HOST}/$1" "${HOME}/${2:-"$1"}" "${CREDENTIALS_FILE}" || fail
+  cifs::mount "//${remote_host}/${remote_path}" "${HOME}/${local_path}" "${credentials_file}" || fail
 }
