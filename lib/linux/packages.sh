@@ -183,10 +183,6 @@ workstation::linux::install_packages() {
   # chromium
   sudo snap install chromium || fail
 
-  # bitwarden
-  # sudo snap install bitwarden || fail
-  # sudo snap connect bitwarden:password-manager-service || fail
-
   # software for bare metal workstation
   if linux::is_bare_metal; then
     # nvme-cli

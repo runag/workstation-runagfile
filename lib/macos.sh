@@ -27,7 +27,6 @@ workstation::macos::install_packages() {
   brew install --cask coconutbattery || fail
 
   # productivity tools
-  brew install --cask bitwarden || fail
   brew install --cask discord || fail
   brew install --cask grandperspective || fail
   brew install --cask libreoffice || fail
