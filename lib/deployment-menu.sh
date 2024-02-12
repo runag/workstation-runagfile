@@ -79,11 +79,6 @@ workstation::deployment::runagfile_menu() {
   runagfile_menu::add workstation::merge_editor_configs || fail
 
 
-  # runagfiles
-  runag::runagfile_menu || fail
-  runagfile_menu::add workstation::add_runagfiles deployment-repository/my || fail # TODO: list options
-
-
   # storage
   if runagfile_menu::necessary --os linux; then
     runagfile_menu::add --header "Storage devices" || fail

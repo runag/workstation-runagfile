@@ -79,6 +79,11 @@ workstation::use_identity() {(
     github::install_profile_from_pass "${identity_path}/github" || fail
   fi
 
+  # runagfiles
+  if pass::exists "${identity_path}/runag/runagfiles"; then
+    workstation::add_runagfiles "${identity_path}/runag/runagfiles" || fail
+  fi
+
   if [ "${as_needed:-}" = true ]; then
     return 0
   fi

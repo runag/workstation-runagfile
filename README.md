@@ -92,8 +92,6 @@ Password Store
 │           ├── id_ed25519.pub
 │           ├── known_hosts
 │           └── type
-├── deployment-repository
-│   └── my
 ├── identity
 │   └── my
 │       ├── git
@@ -105,6 +103,8 @@ Password Store
 │       │   └── username
 │       ├── npm
 │       │   └── access-token
+|       ├── runag
+│       │   └── runagfiles
 │       ├── rubygems
 │       │   └── credentials
 │       └── ssh
