@@ -84,6 +84,9 @@ workstation::backup::create() {(
     \
     --exclude "${HOME}/Downloads/*" \
     \
+    --exclude "${HOME}/snap/*/*" \
+    --exclude "!${HOME}/snap/*/common" \
+    \
     --exclude "${HOME}/snap/**/Cache/*" \
     --exclude "${HOME}/snap/**/Code Cache/*" \
     --exclude "${HOME}/snap/**/DawnCache/*" \
@@ -92,11 +95,10 @@ workstation::backup::create() {(
     --exclude "${HOME}/snap/**/GrShaderCache/*" \
     --exclude "${HOME}/snap/**/ShaderCache/*" \
     --exclude "${HOME}/snap/*/*/.cache/*" \
+    \
     --exclude "${HOME}/snap/chromium" \
-    --exclude "${HOME}/snap/discord" \
     --exclude "${HOME}/snap/firefox" \
-    --exclude "${HOME}/snap/skype" \
-    --exclude "${HOME}/snap/spotify" \
+    \
     . || softfail || return $?
 )}
 
