@@ -87,15 +87,22 @@ workstation::linux::gnome::add_sound_control_launcher() {
   # Additional Categories https://specifications.freedesktop.org/menu-spec/latest/apas02.html
 
   local icons=(/snap/gnome-*/current/usr/share/icons/Adwaita/32x32/apps/multimedia-volume-control-symbolic.symbolic.png)
+  local icon_path="${icons[-1]}"
+
+  if [ -f "${icon_path}" ]; then
+    local icon_line="Icon=${icon_path}"
+  else
+    local icon_line=""
+  fi
 
   file::write "${HOME}/.local/share/applications/sound-control.desktop" <<SHELL || fail
 [Desktop Entry]
 Type=Application
 Terminal=false
 Name=Sound control
-Icon=${icons[-1]}
 Exec=/usr/bin/gnome-control-center sound
 Categories=AudioVideo;Audio;Settings;HardwareSettings;Music;
+${icon_line}
 SHELL
 
   sudo update-desktop-database || fail
