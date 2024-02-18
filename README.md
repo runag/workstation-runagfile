@@ -74,6 +74,16 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 
 Select from menu things that you need.
 
+
+## Deploy tidy machine on Windows 
+
+Start PowerShell as administrator, run the following and wait for it to complete:
+
+```sh
+iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy-tidy.ps1" | iex
+```
+
+
 ## Password Store
 
 ```
