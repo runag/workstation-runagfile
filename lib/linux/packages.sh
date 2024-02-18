@@ -34,7 +34,7 @@ workstation::linux::install_packages() {
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
 
-  # install terminal-based software
+  # install misc terminal tools
   apt::install \
     apache2-utils \
     awscli \
@@ -59,6 +59,7 @@ workstation::linux::install_packages() {
     tmux \
     whois \
     xclip \
+    xkcdpass \
     zsh \
       || fail
 
