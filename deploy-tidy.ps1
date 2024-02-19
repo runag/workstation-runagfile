@@ -37,8 +37,8 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
 # Define helper function
 function Choco-Install() {
-  choco install "${args[0]}"
-  if ($LASTEXITCODE -ne 0) { throw "Unable to install ${args[0]}" }
+  choco install $args[0]
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
 }
 
 # Install packages
