@@ -100,7 +100,7 @@ workstation::linux::configure() {
   fi
 
   # firefox
-  firefox::enable_wayland || fail
+  # firefox::enable_wayland || fail
 }
 
 workstation::linux::hide-file() {
