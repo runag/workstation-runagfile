@@ -35,23 +35,20 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 choco feature enable -n allowGlobalConfirmation
 if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
+# Define helper function
+function Choco-Install() {
+  choco install "${args[0]}"
+  if ($LASTEXITCODE -ne 0) { throw "Unable to install ${args[0]}" }
+}
 
 # Install packages
-choco install firefox
-if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
-
-choco install far
-if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
-
-choco install windirstat
-if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
-
-choco install discord
-if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
-
-choco install streamlabs-obs
-if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
-
+Choco-Install discord
+Choco-Install far
+Choco-Install firefox
+Choco-Install nvidia-display-driver
+Choco-Install spotify
+Choco-Install streamlabs-obs
+Choco-Install windirstat
 
 # Upgrade packages
 choco upgrade all --yes
