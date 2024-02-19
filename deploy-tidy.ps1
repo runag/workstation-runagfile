@@ -45,6 +45,7 @@ function Choco-Install() {
 Choco-Install discord
 Choco-Install far
 Choco-Install firefox
+Choco-Install librehardwaremonitor
 Choco-Install nvidia-display-driver
 Choco-Install spotify
 Choco-Install streamlabs-obs
