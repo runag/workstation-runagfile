@@ -143,7 +143,8 @@ workstation::linux::install_packages() {
   apt::install calibre || fail
 
   # vscode
-  vscode::install::apt || fail
+  # vscode::install::apt || fail
+  vscode::install::snap || fail
 
   # sublime text and sublime merge
   sublime_merge::install::apt || fail
