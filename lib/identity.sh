@@ -118,6 +118,13 @@ workstation::use_identity() {
     if pass::exists "${identity_path}/sublime-text/license"; then
       workstation::sublime_text::install_license "${identity_path}/sublime-text/license" || fail
     fi
+
+    # setup ubuntu pro subscription
+    if pass::exists "${identity_path}/ubuntu/pro"; then
+      if ! ubuntu::pro::is_attached; then
+        pass::use "${identity_path}/ubuntu/pro" sudo pro attach || fail
+      fi
+    fi
   fi
 
   if [ "${as_default}" = true ]; then
