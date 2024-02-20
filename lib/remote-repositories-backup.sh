@@ -19,6 +19,7 @@ workstation::remote_repositories_backup::runagfile_menu() {
 
   runagfile_menu::add --header "Remote repositories backup: deploy" || fail
 
+  runagfile_menu::add workstation::remote_repositories_backup::initial_deploy || fail
   runagfile_menu::add workstation::remote_repositories_backup::deploy_services || fail
   runagfile_menu::add workstation::remote_repositories_backup::create || fail
 
@@ -55,6 +56,43 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
   if [ "${identity_found}" = false ]; then
     runagfile_menu::add --note "Unable to find any identity" || fail
   fi
+}
+
+workstation::remote_repositories_backup::initial_deploy() {
+  if ! workstation::get_flag "remote-repositories-backup-was-suggested"; then
+    echo "Do you want to store remote repositories backup on this machine?"
+
+    if ui::confirm; then
+      workstation::set_flag "remote-repositories-backup-was-accepted" || fail
+    else
+      workstation::set_flag "remote-repositories-backup-was-rejected" || fail
+    fi
+    workstation::set_flag "remote-repositories-backup-was-suggested" || fail
+  fi
+
+  if workstation::get_flag "remote-repositories-backup-was-rejected"; then
+    log::warning "Remote repositories backup will not be stored on this machine" || fail
+    return 0
+  fi
+
+  if ! workstation::get_flag "remote-repositories-backup-was-accepted"; then
+    fail "Unreachable state reached"
+  fi
+
+  if ! workstation::get_flag "remote-repositories-backup-initial-credentials-imported"; then
+    local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+    local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+      if [ -d "${absolute_identity_path}/github" ]; then
+        local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+
+        workstation::remote_repositories_backup::deploy_credentials --confirm "${identity_path}" || fail
+      fi
+    done
+    workstation::set_flag "remote-repositories-backup-initial-credentials-imported" || fail
+  fi
+
+  workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
+  workstation::remote_repositories_backup::deploy_services || fail
 }
 
 workstation::remote_repositories_backup::deploy_credentials() {

@@ -57,20 +57,8 @@ workstation::linux::deploy_workstation() {
   workstation::backup --each-repository create || softfail "workstation::backup --each-repository create failed"
   workstation::backup::services::deploy || fail
 
-  # setup repositories backup
+  # setup remote repositories backup
   if linux::is_bare_metal; then
-    if ! workstation::get_flag "initial-remote-repository-credentials-imported"; then
-      local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-      local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
-        if [ -d "${absolute_identity_path}/github" ]; then
-          local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-
-          workstation::remote_repositories_backup::deploy_credentials --confirm "${identity_path}" || fail
-        fi
-      done
-      workstation::set_flag "initial-remote-repository-credentials-imported" || fail
-    fi
-    workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
-    workstation::remote_repositories_backup::deploy_services || fail
+    workstation::remote_repositories_backup::initial_deploy || fail
   fi
 }
