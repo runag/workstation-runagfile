@@ -34,12 +34,13 @@ workstation::linux::install_packages() {
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
 
-  # install misc terminal tools
+  # install misc tools
   apt::install \
     apache2-utils \
     awscli \
     certbot \
     direnv \
+    ethtool \
     ffmpeg \
     git \
     gnupg \
