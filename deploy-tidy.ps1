@@ -56,5 +56,5 @@ Choco-Install windirstat
 choco upgrade all --yes
 if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
 
-# Use UTC for system clocks
+# Use UTC for system clock
 New-ItemProperty -Path 'HKLM:SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name RealTimeIsUniversal -Value 1 -PropertyType DWORD -Force
