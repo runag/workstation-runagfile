@@ -49,8 +49,12 @@ Choco-Install librehardwaremonitor
 Choco-Install nvidia-display-driver
 Choco-Install spotify
 Choco-Install streamlabs-obs
+Choco-Install synctrayzor
 Choco-Install windirstat
 
 # Upgrade packages
 choco upgrade all --yes
 if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
+
+# Use UTC for system clocks
+New-ItemProperty -Path 'HKLM:SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name RealTimeIsUniversal -Value 1 -PropertyType DWORD -Force
