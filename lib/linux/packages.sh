@@ -180,6 +180,9 @@ workstation::linux::install_packages() {
   # gnome-screenshot
   apt::install gnome-screenshot || fail
 
+  # gnome-shell-extension-manager
+  apt::install gnome-shell-extension-manager || fail
+
 
   ### snap packages
 
