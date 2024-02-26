@@ -183,6 +183,8 @@ workstation::linux::install_packages() {
   # gnome-shell-extension-manager
   apt::install gnome-shell-extension-manager || fail
 
+  # zbar-tools
+  apt::install zbar-tools || fail
 
   ### snap packages
 
