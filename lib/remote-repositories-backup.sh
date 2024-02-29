@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 workstation::remote_repositories_backup::runagfile_menu() {
+  # shellcheck disable=2119
   workstation::remote_repositories_backup::runagfile_menu::identities || fail
 
   runagfile_menu::add --header "Remote repositories backup: deploy" || fail
@@ -33,6 +34,7 @@ workstation::remote_repositories_backup::runagfile_menu() {
   runagfile_menu::add workstation::remote_repositories_backup::log_follow || fail
 }
 
+# shellcheck disable=2120
 workstation::remote_repositories_backup::runagfile_menu::identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
@@ -47,6 +49,7 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
+      
       runagfile_menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
 
       identity_found=true
@@ -129,7 +132,10 @@ workstation::remote_repositories_backup::deploy_credentials() {
     fi
   fi
 
-  local config_dir="${HOME}/.remote-repositories-backup"
+
+  local config_dir="${HOME}/.config/remote-repositories-backup"
+
+  dir::should_exists --mode 0700 "${HOME}/.config" || fail
 
   dir::should_exists --mode 0700 "${config_dir}" || fail
   dir::should_exists --mode 0700 "${config_dir}/github" || fail
@@ -141,18 +147,20 @@ workstation::remote_repositories_backup::deploy_credentials() {
 
 # shellcheck disable=2030
 workstation::remote_repositories_backup::create() {
-  local backup_path="${HOME}/remote-repositories-backup"
+  local backup_path="${HOME}/backups/remote-repositories"
+
+  dir::should_exists --mode 0700 "${HOME}/backups" || fail
 
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
-  local config_dir="${HOME}/.remote-repositories-backup"
+  local config_dir="${HOME}/.config/remote-repositories-backup"
 
   local exit_status=0
 
   local credentials_path; for credentials_path in "${config_dir}/github"/*; do
     if [ -d "${credentials_path}" ]; then
-      local credentials_name; credentials_name="${2:-"$(basename "${credentials_path}")"}" || fail
+      local credentials_name; credentials_name="$(basename "${credentials_path}")" || fail
 
       local GITHUB_USERNAME; GITHUB_USERNAME="$(<"${credentials_path}"/username)"
       local GITHUB_PERSONAL_ACCESS_TOKEN; GITHUB_PERSONAL_ACCESS_TOKEN="$(<"${credentials_path}"/personal-access-token)"
