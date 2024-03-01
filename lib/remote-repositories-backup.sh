@@ -132,10 +132,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
     fi
   fi
 
-  local config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
-  dir::should_exists --mode 0700 "${config_home}" || fail
-
-  local config_dir="${config_home}/remote-repositories-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "remote-repositories-backup")" || fail
 
   dir::should_exists --mode 0700 "${config_dir}" || fail
   dir::should_exists --mode 0700 "${config_dir}/github" || fail
@@ -156,7 +153,7 @@ workstation::remote_repositories_backup::create() {
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
-  local config_dir="${HOME}/.config/remote-repositories-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "remote-repositories-backup")" || fail
 
   local exit_status=0
 

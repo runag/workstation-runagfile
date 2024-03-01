@@ -51,7 +51,7 @@ workstation::backup() {(
 
   local command_name="$1"; shift
 
-  local config_dir="${HOME}/.workstation-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
   export RESTIC_COMPRESSION="${RESTIC_COMPRESSION:-"auto"}"
   export RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/passwords/${WORKSTATION_BACKUP_PASSWORD}"}"
@@ -140,7 +140,10 @@ workstation::backup::get_output_directory() {
     local output_directory="${WORKSTATION_BACKUP_OUTPUT_DIR}"
     ( umask 0077 && mkdir -p "${output_directory}" ) || softfail || return $?
   else
-    local output_directory="${HOME}/workstation-restore"
+    local backups_home="${HOME}/backups"
+    dir::should_exists --mode 0700 "${backups_home}" || fail
+
+    local output_directory="${backups_home}/workstation-restore"
     dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
