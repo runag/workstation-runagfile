@@ -18,7 +18,7 @@ workstation::backup::credentials::deploy_remote() {
   local remote_pass_path="$1"
   local remote_name; remote_name="${2:-"$(basename "${remote_pass_path}")"}" || fail
 
-  local config_dir="${HOME}/.workstation-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
   if ! pass::dir_exists "${remote_pass_path}"; then
     fail "Remote not found: ${remote_pass_path}"
@@ -45,7 +45,7 @@ workstation::backup::credentials::deploy_profile() {(
   local profile_pass_path="$1"
   local profile_name; profile_name="${2:-"$(basename "${profile_pass_path}")"}" || fail
 
-  local config_dir="${HOME}/.workstation-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
   if ! pass::dir_exists "${profile_pass_path}"; then
     fail "Profile not found: ${profile_pass_path}"

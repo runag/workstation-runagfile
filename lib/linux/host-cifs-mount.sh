@@ -19,10 +19,7 @@ workstation::linux::deploy_host_cifs_mount() {
   local remote_path="$2"
   local local_path="${3:-"${remote_path}"}"
 
-  local config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
-  dir::should_exists --mode 0700 "${config_home}" || fail
-
-  local credentials_file="${config_home}/host-cifs-credentials"
+  local credentials_file; credentials_file="$(workstation::get_config_path "host-cifs-credentials")" || fail
 
   # install cifs-utils
   apt::install cifs-utils || fail

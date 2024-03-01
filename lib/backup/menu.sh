@@ -25,7 +25,7 @@ workstation::backup::runagfile_menu() {
 }
 
 workstation::backup::runagfile_menu::commands() {
-  local config_dir="${HOME}/.workstation-backup"
+  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
   local repository_count=0
 
