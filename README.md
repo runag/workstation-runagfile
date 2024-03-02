@@ -133,8 +133,10 @@ Password Store
 
 ## If you fork this
 
-1. Please go to [deploy.ps1](deploy.ps1) and find "If you forked this"
+You may wish to change some paths:
 
+1. This [README](README.md) file, runag/workstation-runagfile and maybe runag/runag if you forked it as well.
+2. In [deploy.ps1](deploy.ps1), find "If you forked this".
 
 ## License
 
