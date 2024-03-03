@@ -23,11 +23,10 @@ workstation::linux::install_packages() {
   # install tools to use by the rest of the script
   linux::install_runag_essential_dependencies::apt || fail
 
-  # shellrc
-  shell::install_rc_loader || fail
-  shell::install_rc_loader --file ".profile" --dir ".profile.d" || fail
-  shell::set_runag_rc || fail
-  shell::set_direnv_rc || fail
+  # shellfiles
+  shellfiles::install_loader::bash || fail
+  shellfiles::install_runag_path_profile || fail
+  shellfiles::install_direnv_rc || fail
 
   # install open-vm-tools
   if vmware::is_inside_vm; then

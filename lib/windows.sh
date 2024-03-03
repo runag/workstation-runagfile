@@ -15,10 +15,9 @@
 #  limitations under the License.
 
 workstation::windows::install_packages() {
-  # shellrc
-  shell::install_rc_loader || fail
-  shell::install_rc_loader --file ".profile" --dir ".profile.d" || fail
-  shell::set_runag_rc || fail
+  # shellfiles
+  shellfiles::install_loader::bash || fail
+  shellfiles::install_runag_path_profile || fail
 }
 
 workstation::windows::configure() {
@@ -26,7 +25,7 @@ workstation::windows::configure() {
   workstation::configure_git || fail
 
   # set editor
-  shell::set_editor_rc nano || fail
+  shellfiles::install_editor_rc nano || fail
 
   # install vscode configuration
   workstation::vscode::install_extensions || fail
