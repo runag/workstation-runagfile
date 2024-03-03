@@ -98,9 +98,6 @@ workstation::linux::configure() {
   if vmware::is_inside_vm; then
     workstation::linux::imwheel::deploy || fail
   fi
-
-  # firefox
-  # firefox::enable_wayland || fail
 }
 
 workstation::linux::hide-file() {
