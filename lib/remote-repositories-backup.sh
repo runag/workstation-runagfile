@@ -63,6 +63,7 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
 
 workstation::remote_repositories_backup::initial_deploy() {
   if ! workstation::get_flag "remote-repositories-backup-was-suggested"; then
+    echo ""
     echo "Do you want to store remote repositories backup on this machine?"
 
     if ui::confirm; then
@@ -120,6 +121,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
   local credentials_name; credentials_name="${2:-"$(basename "${credentials_path}")"}" || fail
 
   if [ "${should_confirm:-}" = true ]; then
+    echo ""
     echo "You are about to import credentials \"${credentials_name}\" from: ${credentials_path}"
 
     echo "Please confirm that it is your intention to do so by entering \"yes\""
