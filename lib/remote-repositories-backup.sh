@@ -100,7 +100,7 @@ workstation::remote_repositories_backup::initial_deploy() {
 }
 
 workstation::remote_repositories_backup::deploy_credentials() {
-  local should_confirm
+  local should_confirm=false
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -120,7 +120,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
   local credentials_path="$1"
   local credentials_name; credentials_name="${2:-"$(basename "${credentials_path}")"}" || fail
 
-  if [ "${should_confirm:-}" = true ]; then
+  if [ "${should_confirm}" = true ]; then
     echo ""
     echo "You are about to import credentials \"${credentials_name}\" from: ${credentials_path}"
 
