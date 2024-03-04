@@ -83,17 +83,14 @@ workstation::remote_repositories_backup::initial_deploy() {
     fail "Unreachable state reached"
   fi
 
-  if ! workstation::get_flag "remote-repositories-backup-initial-credentials-imported"; then
-    local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-    local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
-      if [ -d "${absolute_identity_path}/github" ]; then
-        local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+    if [ -d "${absolute_identity_path}/github" ]; then
+      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
 
-        workstation::remote_repositories_backup::deploy_credentials --confirm "${identity_path}" || fail
-      fi
-    done
-    workstation::set_flag "remote-repositories-backup-initial-credentials-imported" || fail
-  fi
+      workstation::remote_repositories_backup::deploy_credentials "${identity_path}" || fail
+    fi
+  done
 
   workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
   workstation::remote_repositories_backup::deploy_services || fail
