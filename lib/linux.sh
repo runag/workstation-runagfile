@@ -40,16 +40,13 @@ workstation::linux::deploy_workstation() {
   workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
 
   # install identities & credentials
-  if ! workstation::get_flag "initial-identities-imported"; then
-    local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-    local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
-      if [ -d "${absolute_identity_path}" ]; then
-        local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-        workstation::use_identity --confirm --with-system-credentials "${identity_path}" || fail
-      fi
-    done
-    workstation::set_flag "initial-identities-imported" || fail
-  fi
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+    if [ -d "${absolute_identity_path}" ]; then
+      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+      workstation::use_identity --with-system-credentials "${identity_path}" || fail
+    fi
+  done
 
   # setup backup
   workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail
