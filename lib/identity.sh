@@ -53,8 +53,9 @@ workstation::use_identity() {
   local identity_name="${identity_name:-"$(basename "${identity_path}")"}" || fail
 
   if [ "${should_confirm}" = true ]; then
+    echo ""
     echo "You are about to import identity \"${identity_name}\" from: ${identity_path}"
-
+    echo ""
     echo "Please confirm that it is your intention to do so by entering \"yes\""
     echo "Please prepare the password if needed"
     echo "Please enter \"no\" if you want to continue without it being imported."
