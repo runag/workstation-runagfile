@@ -43,15 +43,13 @@ workstation::linux::deploy_keys() {
  # install gpg keys
   workstation::key_storage::maintain_checksums --skip-backups --verify-only "${WORKSTATION_KEY_STORAGE_VOLUME}" || fail
 
-  if ! workstation::get_flag "initial-gpg-keys-imported"; then
-    local gpg_key_path; for gpg_key_path in "${WORKSTATION_KEY_STORAGE_VOLUME}/keys/workstation/gpg"/* ; do
-      if [ -d "${gpg_key_path}" ]; then
-        local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
-        workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
-      fi
-    done
-    workstation::set_flag "initial-gpg-keys-imported" || fail
-  fi
+  local gpg_key_path; for gpg_key_path in "${WORKSTATION_KEY_STORAGE_VOLUME}/keys/workstation/gpg"/* ; do
+    if [ -d "${gpg_key_path}" ]; then
+      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
+
+      workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
+    fi
+  done
 
   # install password store
   workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${WORKSTATION_KEY_STORAGE_VOLUME}/keys/workstation/password-store" || fail
