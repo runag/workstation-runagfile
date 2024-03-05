@@ -92,7 +92,7 @@ workstation::remote_repositories_backup::initial_deploy() {
     fi
   done
 
-  workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
+  # workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
   workstation::remote_repositories_backup::deploy_services || fail
 }
 
