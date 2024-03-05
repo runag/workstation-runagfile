@@ -18,6 +18,8 @@
 
 source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
 
+# paths
+export WORKSTATION_KEY_STORAGE_VOLUME="/media/${USER}/my-workstation-sync"
 
 # menu
 runagfile_menu::add --header "Workstation" || fail

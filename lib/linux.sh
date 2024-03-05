@@ -17,29 +17,14 @@
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
-  local key_storage_volume="/media/${USER}/my-workstation-sync"
-
   # install packages & configure
   workstation::linux::install_packages || fail
   workstation::linux::configure || fail
 
-  # install gpg keys
-  workstation::key_storage::maintain_checksums --skip-backups --verify-only "${key_storage_volume}" || fail
-
-  if ! workstation::get_flag "initial-gpg-keys-imported"; then
-    local gpg_key_path; for gpg_key_path in "${key_storage_volume}/keys/workstation/gpg"/* ; do
-      if [ -d "${gpg_key_path}" ]; then
-        local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
-        workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
-      fi
-    done
-    workstation::set_flag "initial-gpg-keys-imported" || fail
-  fi
-
-  # install password store
-  workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
-
-  # install identities & credentials
+  # deploy keys
+  workstation::linux::deploy_keys || fail
+ 
+  # deploy identities & credentials
   workstation::linux::deploy_identities || fail
 
   # setup backup
@@ -54,11 +39,31 @@ workstation::linux::deploy_workstation() {
   fi
 }
 
+workstation::linux::deploy_keys() {
+ # install gpg keys
+  workstation::key_storage::maintain_checksums --skip-backups --verify-only "${WORKSTATION_KEY_STORAGE_VOLUME}" || fail
+
+  if ! workstation::get_flag "initial-gpg-keys-imported"; then
+    local gpg_key_path; for gpg_key_path in "${WORKSTATION_KEY_STORAGE_VOLUME}/keys/workstation/gpg"/* ; do
+      if [ -d "${gpg_key_path}" ]; then
+        local gpg_key_id; gpg_key_id="$(basename "${gpg_key_path}")" || fail
+        workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_path}/secret-subkeys.asc" || fail
+      fi
+    done
+    workstation::set_flag "initial-gpg-keys-imported" || fail
+  fi
+
+  # install password store
+  workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${WORKSTATION_KEY_STORAGE_VOLUME}/keys/workstation/password-store" || fail
+}
+
 workstation::linux::deploy_identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}" ]; then
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+
       workstation::use_identity --with-system-credentials "${identity_path}" || fail
     fi
   done
