@@ -131,6 +131,21 @@ Password Store
             └── authkey
 ```
 
+### Generate and save SSH key to the password store
+
+```sh
+# Fill this
+ssh_keyfile="id_ed25519"
+ssh_comment=""
+ssh_passphrase=""
+pass_path="identity/my/ssh"
+
+ssh-keygen -t ed25519 -C "${ssh_comment}" -f "${ssh_keyfile}" -N "${ssh_passphrase}"
+
+{ echo "${ssh_passphrase}"; cat "${ssh_keyfile}"; } | pass insert --multiline "${pass_path}/${ssh_keyfile}"
+pass insert --multiline "${pass_path}/${ssh_keyfile}.pub" <"${ssh_keyfile}.pub"
+```
+
 ## If you fork this
 
 You may wish to change some paths:
