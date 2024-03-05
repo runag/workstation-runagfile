@@ -40,13 +40,7 @@ workstation::linux::deploy_workstation() {
   workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
 
   # install identities & credentials
-  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
-  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
-    if [ -d "${absolute_identity_path}" ]; then
-      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-      workstation::use_identity --with-system-credentials "${identity_path}" || fail
-    fi
-  done
+  workstation::linux::deploy_identities || fail
 
   # setup backup
   workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail
@@ -58,4 +52,14 @@ workstation::linux::deploy_workstation() {
   if linux::is_bare_metal; then
     workstation::remote_repositories_backup::initial_deploy || fail
   fi
+}
+
+workstation::linux::deploy_identities() {
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+    if [ -d "${absolute_identity_path}" ]; then
+      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+      workstation::use_identity --with-system-credentials "${identity_path}" || fail
+    fi
+  done
 }

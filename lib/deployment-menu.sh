@@ -24,6 +24,7 @@ workstation::deployment::runagfile_menu() {
 
     runagfile_menu::add --header "Linux workstation: particular deployment tasks" || fail
 
+    runagfile_menu::add workstation::linux::deploy_identities || fail
     runagfile_menu::add workstation::linux::install_packages || fail
     runagfile_menu::add workstation::linux::configure || fail
     runagfile_menu::add workstation::linux::deploy_lan_server || fail
