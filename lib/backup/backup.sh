@@ -22,7 +22,7 @@ workstation::backup() {(
 
   local each_repository=false
 
-  while [[ "$#" -gt 0 ]]; do
+  while [ "$#" -gt 0 ]; do
     case $1 in
     -p|--profile)
       WORKSTATION_BACKUP_PROFILE="$2"
