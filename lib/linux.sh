@@ -37,6 +37,11 @@ workstation::linux::deploy_workstation() {
   if linux::is_bare_metal; then
     workstation::remote_repositories_backup::initial_deploy || fail
   fi
+
+  # fix for nvidia gpu
+  if nvidia::is_device_present; then
+    nvidia::enable_preserve_video_memory_allocations || fail
+  fi
 }
 
 workstation::linux::deploy_keys() {
