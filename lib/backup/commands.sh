@@ -59,6 +59,7 @@ workstation::backup::create() {(
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
+    --group-by "host,paths,tags" \
     --exclude-caches \
     \
     --exclude "${HOME}/.cache/*" \
