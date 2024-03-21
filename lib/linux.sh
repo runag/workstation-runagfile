@@ -45,7 +45,7 @@ workstation::linux::deploy_workstation() {
 }
 
 workstation::linux::deploy_keys() {
-  local key_storage_volume="/media/${USER}/my-workstation-sync"
+  local key_storage_volume="/media/${USER}/workstation-sync"
 
   # install gpg keys
   workstation::key_storage::maintain_checksums --skip-backups --verify-only "${key_storage_volume}" || fail
