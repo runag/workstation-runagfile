@@ -63,6 +63,7 @@ workstation::backup::create() {(
     --exclude-caches \
     \
     --exclude "${HOME}/.cache/*" \
+    --exclude "${HOME}/.local/state/*" \
     \
     --exclude "${HOME}/.config/**/Cache/*" \
     --exclude "${HOME}/.config/**/Code Cache/*" \
