@@ -72,6 +72,9 @@ workstation::deployment::menu() {
   menu::add workstation::merge_editor_configs || fail
 
 
+  # runagfiles
+  runag::menu || fail
+
   # storage
   if menu::is_necessary --os linux; then
     menu::add --header "Storage devices" || fail
