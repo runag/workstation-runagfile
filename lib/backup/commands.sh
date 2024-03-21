@@ -21,7 +21,7 @@ workstation::backup::init() {
 
     ( umask 0077 && mkdir -p "${parent_dir}" ) || softfail || return $?
 
-    if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null; then
+    if command -v btrfs >/dev/null && btrfs property get "${parent_dir}" compression >/dev/null 2>&1; then
       btrfs property set "${parent_dir}" compression none || softfail || return $?
     fi
   fi
