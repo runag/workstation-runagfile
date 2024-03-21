@@ -146,11 +146,12 @@ workstation::backup::mount() {
   local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
 
   output_directory+="/mount"
-  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
   if findmnt --mountpoint "${output_directory}" >/dev/null; then
-    fusermount -u "${output_directory}" || softfail || return $?
+    fusermount -u -z "${output_directory}" || softfail || return $?
   fi
+
+  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
   restic mount "${output_directory}" || softfail || return $?
 }
