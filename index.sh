@@ -19,11 +19,11 @@
 source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
 
 # menu
-runagfile_menu::add --header "Workstation" || fail
+menu::add --header "Workstation" || fail
 
-runagfile_menu::add --menu workstation::deployment::runagfile_menu || fail
-runagfile_menu::add --menu workstation::identity::runagfile_menu || fail
-runagfile_menu::add --menu workstation::key_storage::runagfile_menu || fail
+menu::add --menu workstation::deployment::menu || fail
+menu::add --menu workstation::identity::menu || fail
+menu::add --menu workstation::key_storage::menu || fail
 
-runagfile_menu::add --menu --os linux workstation::backup::runagfile_menu || fail
-runagfile_menu::add --menu --os linux workstation::remote_repositories_backup::runagfile_menu || fail
+menu::add --menu --os linux workstation::backup::menu || fail
+menu::add --menu --os linux workstation::remote_repositories_backup::menu || fail

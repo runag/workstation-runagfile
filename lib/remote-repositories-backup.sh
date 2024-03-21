@@ -14,31 +14,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::remote_repositories_backup::runagfile_menu() {
+workstation::remote_repositories_backup::menu() {
   # shellcheck disable=2119
-  workstation::remote_repositories_backup::runagfile_menu::identities || fail
+  workstation::remote_repositories_backup::menu::identities || fail
 
-  runagfile_menu::add --header "Remote repositories backup: deploy" || fail
+  menu::add --header "Remote repositories backup: deploy" || fail
 
-  runagfile_menu::add workstation::remote_repositories_backup::initial_deploy || fail
-  runagfile_menu::add workstation::remote_repositories_backup::deploy_services || fail
-  runagfile_menu::add workstation::remote_repositories_backup::create || fail
+  menu::add workstation::remote_repositories_backup::initial_deploy || fail
+  menu::add workstation::remote_repositories_backup::deploy_services || fail
+  menu::add workstation::remote_repositories_backup::create || fail
 
-  runagfile_menu::add --header "Remote repositories backup: services" || fail
+  menu::add --header "Remote repositories backup: services" || fail
 
-  runagfile_menu::add workstation::remote_repositories_backup::start || fail
-  runagfile_menu::add workstation::remote_repositories_backup::stop || fail
-  runagfile_menu::add workstation::remote_repositories_backup::disable_timers || fail
-  runagfile_menu::add workstation::remote_repositories_backup::status || fail
-  runagfile_menu::add workstation::remote_repositories_backup::log || fail
-  runagfile_menu::add workstation::remote_repositories_backup::log_follow || fail
+  menu::add workstation::remote_repositories_backup::start || fail
+  menu::add workstation::remote_repositories_backup::stop || fail
+  menu::add workstation::remote_repositories_backup::disable_timers || fail
+  menu::add workstation::remote_repositories_backup::status || fail
+  menu::add workstation::remote_repositories_backup::log || fail
+  menu::add workstation::remote_repositories_backup::log_follow || fail
 }
 
 # shellcheck disable=2120
-workstation::remote_repositories_backup::runagfile_menu::identities() {
+workstation::remote_repositories_backup::menu::identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  runagfile_menu::add --header "Remote repositories backup: deploy credentials" || fail
+  menu::add --header "Remote repositories backup: deploy credentials" || fail
 
   local identity_found=false
 
@@ -50,14 +50,14 @@ workstation::remote_repositories_backup::runagfile_menu::identities() {
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
       
-      runagfile_menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
+      menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
 
       identity_found=true
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    runagfile_menu::add --note "Unable to find any identity" || fail
+    menu::add --note "Unable to find any identity" || fail
   fi
 }
 

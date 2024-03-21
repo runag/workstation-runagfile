@@ -14,17 +14,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::runagfile_menu() {
-  runagfile_menu::add --header "Workstation backup deploy" || fail
+workstation::backup::menu() {
+  menu::add --header "Workstation backup deploy" || fail
 
-  runagfile_menu::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail # TODO: list options
-  runagfile_menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
+  menu::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail # TODO: list options
+  menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
 
-  workstation::backup::runagfile_menu::commands || fail
-  workstation::backup::runagfile_menu::services || fail
+  workstation::backup::menu::commands || fail
+  workstation::backup::menu::services || fail
 }
 
-workstation::backup::runagfile_menu::commands() {
+workstation::backup::menu::commands() {
   local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
   local repository_count=0
@@ -47,43 +47,43 @@ workstation::backup::runagfile_menu::commands() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        runagfile_menu::add --header "Workstation backup: commands" || fail
+        menu::add --header "Workstation backup: commands" || fail
         local command; for command in "${commands[@]}"; do
-          runagfile_menu::add workstation::backup "${command}" || fail
+          menu::add workstation::backup "${command}" || fail
         done
       else
-        runagfile_menu::add --header "Workstation backup: ${repository_name} repository commands" || fail
+        menu::add --header "Workstation backup: ${repository_name} repository commands" || fail
         local command; for command in "${commands[@]}"; do
-          runagfile_menu::add workstation::backup --repository "${repository_name}" "${command}" || fail
+          menu::add workstation::backup --repository "${repository_name}" "${command}" || fail
         done
       fi
     fi
   done
 
   if [ "${repository_count}" -gt 1 ]; then
-    runagfile_menu::add --header "Workstation backup: for each repository" || fail
+    menu::add --header "Workstation backup: for each repository" || fail
     local commands=(init create snapshots check forget prune maintenance unlock restore)
     local command; for command in "${commands[@]}"; do
-      runagfile_menu::add workstation::backup --each-repository "${command}" || fail
+      menu::add workstation::backup --each-repository "${command}" || fail
     done
   fi
 
   if [ "${repository_count}" = 0 ]; then
-    runagfile_menu::add --header "Workstation backup: repositories" || fail
-    runagfile_menu::add --note "No backup repositories found" || fail
+    menu::add --header "Workstation backup: repositories" || fail
+    menu::add --note "No backup repositories found" || fail
   fi
 }
 
-workstation::backup::runagfile_menu::services() {
-  runagfile_menu::add --subheader "Workstation backup: services" || fail
+workstation::backup::menu::services() {
+  menu::add --subheader "Workstation backup: services" || fail
 
-  runagfile_menu::add workstation::backup::services::deploy || fail
-  runagfile_menu::add workstation::backup::services::start || fail
-  runagfile_menu::add workstation::backup::services::stop || fail
-  runagfile_menu::add workstation::backup::services::start_maintenance || fail
-  runagfile_menu::add workstation::backup::services::stop_maintenance || fail
-  runagfile_menu::add workstation::backup::services::disable_timers || fail
-  runagfile_menu::add workstation::backup::services::status || fail
-  runagfile_menu::add workstation::backup::services::log || fail
-  runagfile_menu::add workstation::backup::services::log_follow || fail
+  menu::add workstation::backup::services::deploy || fail
+  menu::add workstation::backup::services::start || fail
+  menu::add workstation::backup::services::stop || fail
+  menu::add workstation::backup::services::start_maintenance || fail
+  menu::add workstation::backup::services::stop_maintenance || fail
+  menu::add workstation::backup::services::disable_timers || fail
+  menu::add workstation::backup::services::status || fail
+  menu::add workstation::backup::services::log || fail
+  menu::add workstation::backup::services::log_follow || fail
 }

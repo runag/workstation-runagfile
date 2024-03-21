@@ -14,15 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::key_storage::runagfile_menu() {
-  runagfile_menu::add --header "Checksums for current directory: ${PWD}" || fail
+workstation::key_storage::menu() {
+  menu::add --header "Checksums for current directory: ${PWD}" || fail
 
   if [ -f "checksums.txt" ]; then
-    runagfile_menu::add workstation::key_storage::checksum create_or_update || fail
-    runagfile_menu::add workstation::key_storage::checksum verify || fail
+    menu::add workstation::key_storage::checksum create_or_update || fail
+    menu::add workstation::key_storage::checksum verify || fail
   else
-    runagfile_menu::add workstation::key_storage::checksum create_or_update || fail
-    runagfile_menu::add --note "There are no checksums.txt file in current directory" || fail
+    menu::add workstation::key_storage::checksum create_or_update || fail
+    menu::add --note "There are no checksums.txt file in current directory" || fail
   fi
 
   local Key_Storage_Found=false
@@ -34,28 +34,28 @@ workstation::key_storage::runagfile_menu() {
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::runagfile_menu::media "${media_path}" || fail
+        workstation::key_storage::menu::media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     local media_path; for media_path in "/media/${USER}"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::runagfile_menu::media "${media_path}" || fail
+        workstation::key_storage::menu::media "${media_path}" || fail
       fi
     done
 
   fi
 
-  workstation::key_storage::runagfile_menu::media "." || fail
+  workstation::key_storage::menu::media "." || fail
 
   if [ "${Key_Storage_Found}" = false ]; then
-    runagfile_menu::add --header "Key storage" || fail
-    runagfile_menu::add --note "No key storage found" || fail
+    menu::add --header "Key storage" || fail
+    menu::add --note "No key storage found" || fail
   fi
 }
 
-workstation::key_storage::runagfile_menu::media() {
+workstation::key_storage::menu::media() {
   local media_path="$1"
 
   if [ ! -d "${media_path}/keys" ]; then
@@ -64,11 +64,11 @@ workstation::key_storage::runagfile_menu::media() {
 
   Key_Storage_Found=true
 
-  runagfile_menu::add --header "Key storage: ${media_path}" || fail
+  menu::add --header "Key storage: ${media_path}" || fail
   
   # Checksums
-  runagfile_menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
-  runagfile_menu::add workstation::key_storage::make_backups "${media_path}" || fail
+  menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
+  menu::add workstation::key_storage::make_backups "${media_path}" || fail
 
 
   # Scopes
@@ -83,20 +83,20 @@ workstation::key_storage::runagfile_menu::media() {
 
       scope_found=true
 
-      runagfile_menu::add --subheader "Password store in: ${media_path}/${scope_name}" || fail
-      workstation::key_storage::runagfile_menu::password_store "${scope_path}" "${git_remote_name}" || fail
+      menu::add --subheader "Password store in: ${media_path}/${scope_name}" || fail
+      workstation::key_storage::menu::password_store "${scope_path}" "${git_remote_name}" || fail
 
-      runagfile_menu::add --subheader "GPG keys in: ${media_path}/${scope_name}" || fail
-      workstation::key_storage::runagfile_menu::gpg_keys "${scope_path}" || fail
+      menu::add --subheader "GPG keys in: ${media_path}/${scope_name}" || fail
+      workstation::key_storage::menu::gpg_keys "${scope_path}" || fail
     fi
   done
 
   if [ "${scope_found}" = false ]; then
-    runagfile_menu::add --note "No key storage scopes found" || fail
+    menu::add --note "No key storage scopes found" || fail
   fi
 }
 
-workstation::key_storage::runagfile_menu::password_store() {
+workstation::key_storage::menu::password_store() {
   local scope_path="$1"
   local git_remote_name="$2"
 
@@ -106,26 +106,26 @@ workstation::key_storage::runagfile_menu::password_store() {
 
   if [ -d "${password_store_dir}/.git" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      runagfile_menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
+      menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
-      runagfile_menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
+      menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || fail
     fi
   else
-    runagfile_menu::add --note "No local password store with git versioning found: ${password_store_dir}/.git" || fail
+    menu::add --note "No local password store with git versioning found: ${password_store_dir}/.git" || fail
   fi
 
   if [ -d "${password_store_git_remote_path}" ]; then
     if [ ! -d "${password_store_dir}" ]; then
-      runagfile_menu::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
+      menu::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || fail
     else
-      runagfile_menu::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || fail
+      menu::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || fail
     fi
   else
-    runagfile_menu::add --note "Password store git remote not exists: ${password_store_git_remote_path}" || fail
+    menu::add --note "Password store git remote not exists: ${password_store_git_remote_path}" || fail
   fi
 }
 
-workstation::key_storage::runagfile_menu::gpg_keys() {
+workstation::key_storage::menu::gpg_keys() {
   local scope_path="$1"
 
   local gpg_keys_path="${scope_path}/gpg"
@@ -145,12 +145,12 @@ workstation::key_storage::runagfile_menu::gpg_keys() {
 
       if [ -f "${gpg_key_file}" ]; then
         gpg_keys_found=true
-        runagfile_menu::add ${gpg_key_uid:+"--comment" "${gpg_key_uid}"} workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
+        menu::add ${gpg_key_uid:+"--comment" "${gpg_key_uid}"} workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || fail
       fi
     fi
   done
 
   if [ "${gpg_keys_found}" = false ]; then
-    runagfile_menu::add --note "No GPG keys found" || fail
+    menu::add --note "No GPG keys found" || fail
   fi
 }
