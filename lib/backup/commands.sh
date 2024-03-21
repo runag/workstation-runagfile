@@ -78,6 +78,11 @@ workstation::backup::create() {(
     --exclude "${HOME}/.config/Code/CachedExtensionVSIXs/*" \
     --exclude "${HOME}/.config/Code/CachedProfilesData/*" \
     \
+    --exclude "${HOME}/.config/Code/Backups/*" \
+    --exclude "${HOME}/.config/Code/Crashpad/*/*" \
+    --exclude "${HOME}/.config/Code/logs/*" \
+    --exclude "${HOME}/.config/Code/User/History/*" \
+    \
     --exclude "${HOME}/.config/micro/backups/*" \
     --exclude "${HOME}/.config/micro/buffers/*" \
     \
