@@ -14,22 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::identity::runagfile_menu() {
-  runagfile_menu::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || fail
+workstation::identity::menu() {
+  menu::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || fail
   if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
-    workstation::identity::runagfile_menu::list --for-directory . || fail
+    workstation::identity::menu::list --for-directory . || fail
   else
-    runagfile_menu::add --note "No project found in current directory" || fail
+    menu::add --note "No project found in current directory" || fail
   fi
 
-  runagfile_menu::add --header "Configure identity and install credentials" || fail
-  workstation::identity::runagfile_menu::list --with-system-credentials || fail
+  menu::add --header "Configure identity and install credentials" || fail
+  workstation::identity::menu::list --with-system-credentials || fail
 
-  runagfile_menu::add --header "Configure identity, install credentials, and set default credentials" || fail
-  workstation::identity::runagfile_menu::list --with-system-credentials --as-default || fail
+  menu::add --header "Configure identity, install credentials, and set default credentials" || fail
+  workstation::identity::menu::list --with-system-credentials --as-default || fail
 }
 
-workstation::identity::runagfile_menu::list() {
+workstation::identity::menu::list() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
   local identity_found=false
@@ -45,11 +45,11 @@ workstation::identity::runagfile_menu::list() {
 
       identity_found=true
 
-      runagfile_menu::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::use_identity "$@" "${identity_path}" || fail
+      menu::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::use_identity "$@" "${identity_path}" || fail
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    runagfile_menu::add --note "No identities found in password store" || fail
+    menu::add --note "No identities found in password store" || fail
   fi
 }

@@ -14,85 +14,85 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::deployment::runagfile_menu() {
+workstation::deployment::menu() {
 
   # linux workstation
-  if runagfile_menu::necessary --os linux; then
-    runagfile_menu::add --header "Linux workstation: complete deploy script" || fail
+  if menu::is_necessary --os linux; then
+    menu::add --header "Linux workstation: complete deploy script" || fail
 
-    runagfile_menu::add workstation::linux::deploy_workstation || fail
+    menu::add workstation::linux::deploy_workstation || fail
 
-    runagfile_menu::add --header "Linux workstation: particular deployment tasks" || fail
+    menu::add --header "Linux workstation: particular deployment tasks" || fail
 
-    runagfile_menu::add workstation::linux::deploy_identities || fail
-    runagfile_menu::add workstation::linux::install_packages || fail
-    runagfile_menu::add workstation::linux::configure || fail
-    runagfile_menu::add workstation::linux::deploy_lan_server || fail
+    menu::add workstation::linux::deploy_identities || fail
+    menu::add workstation::linux::install_packages || fail
+    menu::add workstation::linux::configure || fail
+    menu::add workstation::linux::deploy_lan_server || fail
     
     if vmware::is_inside_vm; then
-      runagfile_menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
+      menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
     else
-      runagfile_menu::add --note "not inside virtual machine" || fail
+      menu::add --note "not inside virtual machine" || fail
     fi
   
-    runagfile_menu::add workstation::linux::set_hostname || fail
+    menu::add workstation::linux::set_hostname || fail
 
     if linux::display_if_restart_required::is_available; then
-      runagfile_menu::add workstation::linux::display_if_restart_required || fail
+      menu::add workstation::linux::display_if_restart_required || fail
     else
-      runagfile_menu::add --note "display_if_restart_required is not available" || fail
+      menu::add --note "display_if_restart_required is not available" || fail
     fi
   fi
 
 
   # macos workstation
-  if runagfile_menu::necessary --os darwin; then
-    runagfile_menu::add --header "macOS workstation" || fail
+  if menu::is_necessary --os darwin; then
+    menu::add --header "macOS workstation" || fail
     
-    runagfile_menu::add workstation::macos::install_packages || fail
-    runagfile_menu::add workstation::macos::configure || fail
-    runagfile_menu::add workstation::macos::start_developer_servers || fail
+    menu::add workstation::macos::install_packages || fail
+    menu::add workstation::macos::configure || fail
+    menu::add workstation::macos::start_developer_servers || fail
   fi
 
 
   # windows workstation
-  if runagfile_menu::necessary --os msys; then
-    runagfile_menu::add --header "Windows workstation" || fail
+  if menu::is_necessary --os msys; then
+    menu::add --header "Windows workstation" || fail
 
-    runagfile_menu::add workstation::windows::install_packages || fail
-    runagfile_menu::add workstation::windows::configure || fail
-    runagfile_menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
+    menu::add workstation::windows::install_packages || fail
+    menu::add workstation::windows::configure || fail
+    menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
   fi
 
 
   # development
-  runagfile_menu::add --header "Development" || fail
+  menu::add --header "Development" || fail
 
-  runagfile_menu::add workstation::remove_nodejs_and_ruby_installations || fail
-  runagfile_menu::add workstation::merge_editor_configs || fail
+  menu::add workstation::remove_nodejs_and_ruby_installations || fail
+  menu::add workstation::merge_editor_configs || fail
 
 
   # storage
-  if runagfile_menu::necessary --os linux; then
-    runagfile_menu::add --header "Storage devices" || fail
-    runagfile_menu::add workstation::linux::storage::check_root || fail
+  if menu::is_necessary --os linux; then
+    menu::add --header "Storage devices" || fail
+    menu::add workstation::linux::storage::check_root || fail
   fi
 
 
   # benchmark
-  if runagfile_menu::necessary --os linux; then
-    runagfile_menu::add --header "Benchmark" || fail
+  if menu::is_necessary --os linux; then
+    menu::add --header "Benchmark" || fail
     if benchmark::is_available; then
-      runagfile_menu::add workstation::linux::run_benchmark || fail
+      menu::add workstation::linux::run_benchmark || fail
     else
-      runagfile_menu::add --note "Benchmark is not available" || fail
+      menu::add --note "Benchmark is not available" || fail
     fi
   fi
 
 
   # password generator
-  if runagfile_menu::necessary --os linux; then
-    runagfile_menu::add --header "Password generator" || fail
-    runagfile_menu::add workstation::linux::generate_password || fail
+  if menu::is_necessary --os linux; then
+    menu::add --header "Password generator" || fail
+    menu::add workstation::linux::generate_password || fail
   fi
 }
