@@ -179,42 +179,43 @@ workstation::backup::unlock() {
 # restore
 
 workstation::backup::mount() {
-  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
+  local mount_directory; mount_directory="$(workstation::backup::get_output_directory)/mount" || softfail || return $?
 
-  output_directory+="/mount"
-
-  if findmnt --mountpoint "${output_directory}" >/dev/null; then
-    fusermount -u -z "${output_directory}" || softfail || return $?
+  if findmnt --mountpoint "${mount_directory}" >/dev/null; then
+    fusermount -u -z "${mount_directory}" || softfail || return $?
   fi
 
-  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
+  dir::should_exists --mode 0700 "${mount_directory}" || softfail || return $?
 
-  restic mount "${output_directory}" || softfail || return $?
+  restic::open_mount_when_available "${mount_directory}" || softfail || return $?
+
+  local open_mount_pid=$!
+
+  if ! restic mount "${mount_directory}"; then
+    kill "${open_mount_pid}"
+    softfail || return $?
+  fi
 }
 
 workstation::backup::umount() {
-  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
+  local mount_directory; mount_directory="$(workstation::backup::get_output_directory)/mount" || softfail || return $?
 
-  output_directory+="/mount"
-
-  fusermount -u -z "${output_directory}" || softfail || return $?
+  fusermount -u -z "${mount_directory}" || softfail || return $?
 }
 
 workstation::backup::restore() {
   local snapshot_id="${1:-"latest"}"
 
-  local output_directory; output_directory="$(workstation::backup::get_output_directory)" || softfail || return $?
+  local restore_directory; restore_directory="$(workstation::backup::get_output_directory)/${snapshot_id}" || softfail || return $?
 
-  output_directory+="/${snapshot_id}"
-
-  if [ -d "${output_directory}" ]; then
+  if [ -d "${restore_directory}" ]; then
     softfail "Restore directory already exists, unable to restore" || return $?
   fi
 
-  dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
+  dir::should_exists --mode 0700 "${restore_directory}" || softfail || return $?
 
   # TODO: optional --verify?
-  restic restore --target "${output_directory}" "${snapshot_id}" || softfail || return $?
+  restic restore --target "${restore_directory}" "${snapshot_id}" || softfail || return $?
 
   log::elapsed_time || softfail || return $?
 }
