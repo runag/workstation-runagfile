@@ -191,7 +191,7 @@ workstation::backup::mount() {
 
   local open_mount_pid=$!
 
-  if ! restic mount "${mount_directory}"; then
+  if ! restic mount --owner-root "${mount_directory}"; then
     kill "${open_mount_pid}"
     softfail || return $?
   fi
