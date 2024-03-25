@@ -62,6 +62,7 @@ workstation::backup::create() {(
       --tag "machine-id:${machine_id}" \
       --group-by "host,paths,tags" \
       --exclude-caches \
+      --exclude-if-present .exclude-from-workstation-sync-backup \
       \
       --exclude "${HOME}/.*" \
       --exclude "!${HOME}/.gnupg" \
