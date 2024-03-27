@@ -38,13 +38,9 @@ workstation::backup::init_unless_exists() {
     <<<pwd sftp "${remote_host}" >/dev/null 2>&1 || softfail "Unable to connect to a sftp server" || return $?
   fi
 
-  if ! workstation::backup::is_repository_exists; then
+  if restic::is_repository_not_exists; then
     workstation::backup::init || softfail || return $?
   fi
-}
-
-workstation::backup::is_repository_exists() {
-  restic cat config >/dev/null 2>&1
 }
 
 workstation::backup::create() {(
