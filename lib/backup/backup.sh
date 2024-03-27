@@ -53,18 +53,16 @@ workstation::backup() {(
 
   local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
-  export RESTIC_COMPRESSION="${RESTIC_COMPRESSION:-"auto"}"
-  export RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/passwords/${WORKSTATION_BACKUP_PASSWORD}"}"
-  export RESTIC_REPOSITORY
+  export RESTIC_COMPRESSION="auto"
+  export RESTIC_PASSWORD_FILE="${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/passwords/${WORKSTATION_BACKUP_PASSWORD}"
+
+  unset RESTIC_REPOSITORY
+  unset RESTIC_REPOSITORY_FILE
 
   # case for single repository
 
   if [ "${each_repository}" = false ]; then
-    if [ -z "${RESTIC_REPOSITORY:-}" ]; then
-      export RESTIC_REPOSITORY_FILE="${RESTIC_REPOSITORY_FILE:-"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories/${WORKSTATION_BACKUP_REPOSITORY}"}"
-      export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${RESTIC_REPOSITORY_FILE}")" || softfail || return $?
-      unset RESTIC_REPOSITORY_FILE
-    fi
+    export RESTIC_REPOSITORY; RESTIC_REPOSITORY="$(<"${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories/${WORKSTATION_BACKUP_REPOSITORY}")" || softfail || return $?
 
     "workstation::backup::${command_name}" "$@"
     softfail --unless-good --exit-status $? "Failed to run ${command_name} ($?)"
@@ -72,11 +70,6 @@ workstation::backup() {(
   fi
 
   # case for multiple repositories (--each-repository)
-
-  if [ -n "${RESTIC_REPOSITORY:-}" ] || [ -n "${RESTIC_REPOSITORY_FILE:-}" ]; then
-    softfail "RESTIC_REPOSITORY or RESTIC_REPOSITORY_FILE should not be provided if --each-repository is specified"
-    return $?
-  fi
 
   local exit_statuses=()
 
