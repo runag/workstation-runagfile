@@ -21,7 +21,7 @@ workstation::linux::generate_password() {
   # those are non-word characters on US ANSI keyboard:
   # `~!@#$%^&*()-_=+[{]}\|;:'",<.>/?
   #
-  # a-zA-Z0-0 is 62 characters
+  # a-zA-Z0-9 is 62 characters
   #
   # calculate in ruby:
   # 
@@ -29,11 +29,16 @@ workstation::linux::generate_password() {
   # Math.log2((62 + 23) ** 20) = 128 bits of entropy
 
   echo "42 symbols, 256 bits of entropy:"
-  echo "$(LC_ALL=C tr -dc 'a-zA-Z0-9!@#$\-=?' </dev/urandom | head -c 42)" # 256
-  echo ""
-  echo "21 symbols, 128 bits of entropy:"
-  echo "$(LC_ALL=C tr -dc 'a-zA-Z0-9!@#$\-=?' </dev/urandom | head -c 21)" # 128
-  echo ""
-  echo "20 symbols, 128 bits of entropy (with more variety of non-word characters):"
-  echo "$(LC_ALL=C tr -dc 'a-zA-Z0-9!@#$%^&*()\-=[{]}\\:<.>/?' </dev/urandom | head -c 20)" # 128
+  LC_ALL=C tr -dc 'a-zA-Z0-9!@#$\-=?' </dev/urandom | head -c 42 # 256
+
+  printf "\n\n21 symbols, 128 bits of entropy:\n"
+  LC_ALL=C tr -dc 'a-zA-Z0-9!@#$\-=?' </dev/urandom | head -c 21 # 128
+
+  printf "\n\n22 symbols, 128 bits of entropy, no special characters:\n"
+  LC_ALL=C tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 22 # 128
+
+  printf "\n\n20 symbols, 128 bits of entropy (with more variety of non-word characters):\n"
+  LC_ALL=C tr -dc 'a-zA-Z0-9!@#$%^&*()\-=[{]}\\:<.>/?' </dev/urandom | head -c 20 # 128
+
+  printf "\n"
 }
