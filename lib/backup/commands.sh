@@ -66,11 +66,11 @@ workstation::backup::create() {(
       --exclude "!${HOME}/.runag" \
       --exclude "!${HOME}/.ssh" \
       \
-      --exclude "runagfile/data-backup" \
-      \
+      --exclude "${HOME}/devices" \
       --exclude "${HOME}/Downloads/*" \
-      \
       --exclude "${HOME}/snap" \
+      \
+      --exclude "runagfile/data-backup" \
       \
       . || softfail || return $?
   else
