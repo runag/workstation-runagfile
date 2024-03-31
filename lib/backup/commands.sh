@@ -59,7 +59,7 @@ workstation::backup::create() {(
       --group-by "host,paths,tags" \
       --exclude-caches \
       \
-      --exclude "${HOME}/.*" \
+      --exclude "${HOME}/.*/*" \
       --exclude "!${HOME}/.gnupg" \
       --exclude "!${HOME}/.password-store" \
       --exclude "!${HOME}/.runag" \
@@ -70,6 +70,7 @@ workstation::backup::create() {(
       --exclude "${HOME}/snap" \
       \
       --exclude "runagfile/data-backup" \
+      --exclude "erl_crash.dump" \
       \
       . || softfail || return $?
   else
@@ -122,6 +123,8 @@ workstation::backup::create() {(
       \
       --exclude "${HOME}/snap/chromium" \
       --exclude "${HOME}/snap/firefox" \
+      \
+      --exclude "erl_crash.dump" \
       \
       . || softfail || return $?
   fi
