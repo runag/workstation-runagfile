@@ -27,7 +27,6 @@ workstation::deployment::menu() {
     menu::add workstation::linux::deploy_identities || fail
     menu::add workstation::linux::install_packages || fail
     menu::add workstation::linux::configure || fail
-    menu::add workstation::linux::deploy_lan_server || fail
     
     if vmware::is_inside_vm; then
       menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
