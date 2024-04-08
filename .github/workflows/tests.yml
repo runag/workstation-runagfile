@@ -50,20 +50,6 @@ jobs:
   #     run: $HOME/.runag/bin/runag workstation::macos::start_developer_servers 2>&1
 
 
-  ubuntu-lan-server:
-    name: workstation::linux::deploy_lan_server
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
-    steps:
-    - name: Wait to give developers time to update other repositories used in this test
-      run: sleep 30
-
-    - name: Add runag/workstation-runagfile and run workstation::linux::deploy_lan_server
-      run: bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile run workstation::linux::deploy_lan_server 2>&1
-
   ubuntu-workstation:
     name: workstation::linux
     runs-on: ${{ matrix.os }}
