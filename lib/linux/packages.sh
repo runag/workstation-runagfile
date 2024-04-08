@@ -55,7 +55,6 @@ workstation::linux::install_packages() {
     rclone \
     shellcheck \
     sqlite3 \
-    ssh-import-id \
     tmux \
     whois \
     xclip \
