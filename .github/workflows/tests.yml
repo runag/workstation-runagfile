@@ -20,7 +20,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron:  '45 10 * * *'
+    - cron:  '00 06 * * *'
 
 jobs:
   # macos-workstation:
