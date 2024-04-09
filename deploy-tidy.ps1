@@ -37,7 +37,7 @@ if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
 # Define helper function
 function Choco-Install() {
-  choco install $args[0]
+  choco install $args
   if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
 }
 
@@ -51,7 +51,7 @@ if ("$env:CI" -ne "true") {
   Choco-Install nvidia-display-driver
 }
 
-Choco-Install spotify
+Choco-Install spotify --ignore-checksums
 Choco-Install streamlabs-obs
 Choco-Install synctrayzor
 Choco-Install windirstat
