@@ -14,18 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::windows::install_packages() {
+# shellcheck disable=SC1003
+workstation::windows::configure() {
   # shellfiles
   shellfiles::install_loader::bash || fail
   shellfiles::install_runag_path_profile || fail
-}
+  shellfiles::install_editor_rc nano || fail
 
-workstation::windows::configure() {
   # configure git
   workstation::configure_git || fail
-
-  # set editor
-  shellfiles::install_editor_rc nano || fail
 
   # install vscode configuration
   workstation::vscode::install_extensions || fail
@@ -36,14 +33,12 @@ workstation::windows::configure() {
 
   # install sublime text configuration
   # workstation::sublime_text::install_config || fail
-}
 
-# shellcheck disable=SC1003
-workstation::windows::configure_runag_git_directories_as_safe() {
-  local user_profile; user_profile="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
+  # mark runag git directories as safe
+  local profile_dir; profile_dir="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail
 
-  git config --global --add safe.directory "${user_profile}/.runag/.git"
-  git config --global --add safe.directory "${user_profile}/.runag/runagfiles/workstation-runagfile-runag-github/.git"
-  git config --global --add safe.directory "${user_profile}/.runag"
-  git config --global --add safe.directory "${user_profile}/.runag/runagfiles/workstation-runagfile-runag-github"
+  git config --global --add safe.directory "${profile_dir}/.runag/.git"
+  git config --global --add safe.directory "${profile_dir}/.runag/runagfiles/workstation-runagfile-runag-github/.git"
+  git config --global --add safe.directory "${profile_dir}/.runag"
+  git config --global --add safe.directory "${profile_dir}/.runag/runagfiles/workstation-runagfile-runag-github"
 }
