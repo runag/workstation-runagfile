@@ -100,7 +100,7 @@ jobs:
         refreshenv
         & "C:\Program Files\Git\bin\sh.exe" -c "~/.runag/bin/runag workstation::windows::configure"
 
-tidy-windows-machine:
+  tidy-windows-machine:
     name: tidy-windows-machine
     runs-on: ${{ matrix.os }}
     strategy:
