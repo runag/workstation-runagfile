@@ -46,7 +46,11 @@ Choco-Install discord
 Choco-Install far
 Choco-Install firefox
 Choco-Install librehardwaremonitor
-Choco-Install nvidia-display-driver
+
+if ("$env:CI" -ne "true") {
+  Choco-Install nvidia-display-driver
+}
+
 Choco-Install spotify
 Choco-Install streamlabs-obs
 Choco-Install synctrayzor
