@@ -95,6 +95,10 @@ workstation::linux::gnome::add_sound_control_launcher() {
     local icon_line=""
   fi
 
+  dir::should_exists --mode 0700 "${HOME}/.local" || fail
+  dir::should_exists --mode 0700 "${HOME}/.local/share" || fail
+  dir::should_exists --mode 0700 "${HOME}/.local/share/applications" || fail
+
   file::write "${HOME}/.local/share/applications/sound-control.desktop" <<SHELL || fail
 [Desktop Entry]
 Type=Application
