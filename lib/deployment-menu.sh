@@ -57,10 +57,7 @@ workstation::deployment::menu() {
   # windows workstation
   if menu::is_necessary --os msys; then
     menu::add --header "Windows workstation" || fail
-
-    menu::add workstation::windows::install_packages || fail
     menu::add workstation::windows::configure || fail
-    menu::add workstation::windows::configure_runag_git_directories_as_safe || fail
   fi
 
 
