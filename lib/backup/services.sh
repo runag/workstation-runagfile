@@ -59,7 +59,6 @@ Description=Backup service timer for workstation backup maintenance
 
 [Timer]
 OnCalendar=weekly
-RandomizedDelaySec=300
 
 [Install]
 WantedBy=timers.target
