@@ -66,6 +66,7 @@ workstation::deployment::menu() {
 
   menu::add workstation::remove_nodejs_and_ruby_installations || fail
   menu::add workstation::merge_editor_configs || fail
+  menu::add git::add_signed_off_by_trailer_in_commit_msg_hook || fail
 
 
   # runagfiles
