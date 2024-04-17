@@ -68,7 +68,7 @@ workstation::linux::deploy_identities() {
     if [ -d "${absolute_identity_path}" ]; then
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
 
-      workstation::use_identity --with-system-credentials "${identity_path}" || fail
+      workstation::identity::use --with-system-credentials "${identity_path}" || fail
     fi
   done
 }

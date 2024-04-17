@@ -45,7 +45,7 @@ workstation::identity::menu::list() {
 
       identity_found=true
 
-      menu::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::use_identity "$@" "${identity_path}" || fail
+      menu::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::identity::use "$@" "${identity_path}" || fail
     fi
   done
 

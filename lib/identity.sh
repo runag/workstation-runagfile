@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::use_identity() {
+workstation::identity::use() {
   local identity_name directory_path
   local with_system_credentials=false as_default=false should_confirm=false
 
