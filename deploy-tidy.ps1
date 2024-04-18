@@ -76,5 +76,5 @@ Choco-Install discord # proprietary
 Choco-Install firefox
 
 # Media
-Choco-Install spotify --ignore-checksums
+Choco-Install spotify
 Choco-Install streamlabs-obs
