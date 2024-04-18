@@ -108,7 +108,7 @@ Choco-Install vscode # proprietary
 Choco-Install avidemux
 Choco-Install inkscape
 Choco-Install krita
-Choco-Install spotify --ignore-checksums
+Choco-Install spotify
 Choco-Install streamlabs-obs
 Choco-Install vlc
 
