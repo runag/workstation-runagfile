@@ -38,10 +38,12 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
 }
 
+# Check if choco is installed
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
   throw "Unable to find choco"
 }
 
+# Do not prompt for confirmation
 choco feature enable -n allowGlobalConfirmation
 if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
