@@ -12,13 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 $ErrorActionPreference = "Stop"
+
+# Use UTC for system clock
+New-ItemProperty -Path 'HKLM:SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name RealTimeIsUniversal -Value 1 -PropertyType DWORD -Force
 
 # Allow untrusted script execution
 Write-Output "Setting execution policy..." 
 Set-ExecutionPolicy Bypass -Scope Process -Force
-
 
 # Install and configure chocolatey
 if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
@@ -37,26 +38,17 @@ if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 choco feature enable -n allowGlobalConfirmation
 if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
 
+# Do not show download progress
+if ("$env:CI" -eq "true") {
+  choco feature disable -n showDownloadProgress
+  if ($LASTEXITCODE -ne 0) { throw "Unable to set chocolatey feature" }
+}
+
 # Define helper function
 function Choco-Install() {
   choco install $args
   if ($LASTEXITCODE -ne 0) { throw "Unable to install package" }
 }
-
-# Install packages
-Choco-Install discord
-Choco-Install far
-Choco-Install firefox
-Choco-Install librehardwaremonitor
-
-if ("$env:CI" -ne "true") {
-  Choco-Install nvidia-display-driver
-}
-
-Choco-Install spotify --ignore-checksums
-Choco-Install streamlabs-obs
-Choco-Install synctrayzor
-Choco-Install windirstat
 
 # Upgrade packages
 if ("$env:CI" -ne "true") { # I don't need to update them in CI
@@ -64,5 +56,25 @@ if ("$env:CI" -ne "true") { # I don't need to update them in CI
   if ($LASTEXITCODE -ne 0) { throw "Unable to upgrade installed choco packages" }
 }
 
-# Use UTC for system clock
-New-ItemProperty -Path 'HKLM:SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name RealTimeIsUniversal -Value 1 -PropertyType DWORD -Force
+# == Install packages ==
+
+# Not in CI env
+if ("$env:CI" -ne "true") {
+  Choco-Install nvidia-display-driver
+}
+
+# Misc tools
+Choco-Install far
+Choco-Install librehardwaremonitor
+Choco-Install synctrayzor
+Choco-Install windirstat
+
+# Messengers
+Choco-Install discord # proprietary
+
+# Browsers
+Choco-Install firefox
+
+# Media
+Choco-Install spotify --ignore-checksums
+Choco-Install streamlabs-obs
