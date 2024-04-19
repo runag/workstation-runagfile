@@ -90,7 +90,7 @@ Choco-Install discord # proprietary
 
 # Browsers
 Choco-Install firefox
-Choco-Install googlechrome # proprietary
+Choco-Install googlechrome --ignore-checksums # proprietary
 Choco-Install chromium
 
 # Programming languages
@@ -108,7 +108,7 @@ Choco-Install vscode # proprietary
 Choco-Install avidemux
 Choco-Install inkscape
 Choco-Install krita
-Choco-Install spotify
+Choco-Install spotify --ignore-checksums # proprietary
 Choco-Install streamlabs-obs
 Choco-Install vlc
 
