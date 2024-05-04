@@ -52,26 +52,48 @@ workstation::backup::create() {(
 
   # TODO: benchmark --read-concurrency
 
-  restic backup \
-    --one-file-system \
-    --tag "machine-id:${machine_id}" \
-    --group-by "host,paths,tags" \
-    --exclude-caches \
-    \
-    --exclude "${HOME}/.*/*" \
-    --exclude "!${HOME}/.gnupg" \
-    --exclude "!${HOME}/.password-store" \
-    --exclude "!${HOME}/.runag" \
-    --exclude "!${HOME}/.ssh" \
-    \
-    --exclude "${HOME}/devices" \
-    --exclude "${HOME}/Downloads/*" \
-    --exclude "${HOME}/snap" \
-    \
-    --exclude "runagfile/data-backup" \
-    --exclude "erl_crash.dump" \
-    \
-    . || softfail || return $?
+  if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
+    restic backup \
+      --one-file-system \
+      --tag "machine-id:${machine_id}" \
+      --group-by "host,paths,tags" \
+      --exclude-caches \
+      \
+      --exclude "${HOME}/.*/*" \
+      --exclude "!${HOME}/.gnupg" \
+      --exclude "!${HOME}/.password-store" \
+      --exclude "!${HOME}/.runag" \
+      --exclude "!${HOME}/.ssh" \
+      \
+      --exclude "${HOME}/devices" \
+      --exclude "${HOME}/Downloads/*" \
+      --exclude "${HOME}/snap" \
+      \
+      --exclude "runagfile/data-backup" \
+      --exclude "erl_crash.dump" \
+      \
+      . || softfail || return $?
+  else
+    restic backup \
+      --one-file-system \
+      --tag "machine-id:${machine_id}" \
+      --group-by "host,paths,tags" \
+      --exclude-caches \
+      \
+      --exclude "${HOME}/.*/*" \
+      --exclude "!${HOME}/.gnupg" \
+      --exclude "!${HOME}/.password-store" \
+      --exclude "!${HOME}/.runag" \
+      --exclude "!${HOME}/.ssh" \
+      \
+      --exclude "${HOME}/Downloads/*" \
+      --exclude "${HOME}/snap" \
+      \
+      --exclude "runagfile/data-backup" \
+      --exclude "erl_crash.dump" \
+      \
+      . || softfail || return $?
+  fi
 )}
 
 workstation::backup::snapshots() {
