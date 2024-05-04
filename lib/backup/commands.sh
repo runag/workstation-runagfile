@@ -52,84 +52,26 @@ workstation::backup::create() {(
 
   # TODO: benchmark --read-concurrency
 
-  if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
-    restic backup \
-      --one-file-system \
-      --tag "machine-id:${machine_id}" \
-      --group-by "host,paths,tags" \
-      --exclude-caches \
-      \
-      --exclude "${HOME}/.*/*" \
-      --exclude "!${HOME}/.gnupg" \
-      --exclude "!${HOME}/.password-store" \
-      --exclude "!${HOME}/.runag" \
-      --exclude "!${HOME}/.ssh" \
-      \
-      --exclude "${HOME}/devices" \
-      --exclude "${HOME}/Downloads/*" \
-      --exclude "${HOME}/snap" \
-      \
-      --exclude "runagfile/data-backup" \
-      --exclude "erl_crash.dump" \
-      \
-      . || softfail || return $?
-  else
-    restic backup \
-      --one-file-system \
-      --tag "machine-id:${machine_id}" \
-      --group-by "host,paths,tags" \
-      --exclude-caches \
-      \
-      --exclude "${HOME}/.cache/*" \
-      --exclude "${HOME}/.config/dconf/*" \
-      --exclude "${HOME}/.local/state/*" \
-      \
-      --exclude "${HOME}/.config/**/Cache/*" \
-      --exclude "${HOME}/.config/**/Code Cache/*" \
-      --exclude "${HOME}/.config/**/DawnCache/*" \
-      --exclude "${HOME}/.config/**/GPUCache/*" \
-      --exclude "${HOME}/.config/**/GraphiteDawnCache/*" \
-      --exclude "${HOME}/.config/**/GrShaderCache/*" \
-      --exclude "${HOME}/.config/**/ShaderCache/*" \
-      \
-      --exclude "${HOME}/.config/Code/CachedConfigurations/*" \
-      --exclude "${HOME}/.config/Code/CachedData/*" \
-      --exclude "${HOME}/.config/Code/CachedExtensionVSIXs/*" \
-      --exclude "${HOME}/.config/Code/CachedProfilesData/*" \
-      \
-      --exclude "${HOME}/.config/Code/Backups/*" \
-      --exclude "${HOME}/.config/Code/Crashpad/*/*" \
-      --exclude "${HOME}/.config/Code/logs/*" \
-      --exclude "${HOME}/.config/Code/User/History/*" \
-      \
-      --exclude "${HOME}/.config/micro/backups/*" \
-      --exclude "${HOME}/.config/micro/buffers/*" \
-      \
-      --exclude "${HOME}/.local/*-browser" \
-      --exclude "${HOME}/.local/share/Trash/*" \
-      \
-      --exclude "${HOME}/Downloads/*" \
-      \
-      --exclude "${HOME}/snap/*/*" \
-      --exclude "!${HOME}/snap/*/common" \
-      \
-      --exclude "${HOME}/snap/**/Cache/*" \
-      --exclude "${HOME}/snap/**/Code Cache/*" \
-      --exclude "${HOME}/snap/**/DawnCache/*" \
-      --exclude "${HOME}/snap/**/GPUCache/*" \
-      --exclude "${HOME}/snap/**/GraphiteDawnCache/*" \
-      --exclude "${HOME}/snap/**/GrShaderCache/*" \
-      --exclude "${HOME}/snap/**/ShaderCache/*" \
-      --exclude "${HOME}/snap/*/*/.cache/*" \
-      \
-      --exclude "${HOME}/snap/chromium" \
-      --exclude "${HOME}/snap/firefox" \
-      \
-      --exclude "runagfile/data-backup" \
-      --exclude "erl_crash.dump" \
-      \
-      . || softfail || return $?
-  fi
+  restic backup \
+    --one-file-system \
+    --tag "machine-id:${machine_id}" \
+    --group-by "host,paths,tags" \
+    --exclude-caches \
+    \
+    --exclude "${HOME}/.*/*" \
+    --exclude "!${HOME}/.gnupg" \
+    --exclude "!${HOME}/.password-store" \
+    --exclude "!${HOME}/.runag" \
+    --exclude "!${HOME}/.ssh" \
+    \
+    --exclude "${HOME}/devices" \
+    --exclude "${HOME}/Downloads/*" \
+    --exclude "${HOME}/snap" \
+    \
+    --exclude "runagfile/data-backup" \
+    --exclude "erl_crash.dump" \
+    \
+    . || softfail || return $?
 )}
 
 workstation::backup::snapshots() {
