@@ -64,13 +64,13 @@ workstation::backup::create() {(
     --group-by "host,paths,tags" \
     --exclude-caches \
     \
-    --exclude "${HOME}/.*/*" \
+    --exclude "${HOME}/.*" \
     --exclude "!${HOME}/.gnupg" \
     --exclude "!${HOME}/.password-store" \
     --exclude "!${HOME}/.runag" \
     --exclude "!${HOME}/.ssh" \
     \
-    --exclude "${HOME}/Downloads/*" \
+    --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     \
     --exclude "runagfile/data-backup" \
