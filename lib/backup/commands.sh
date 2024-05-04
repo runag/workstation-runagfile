@@ -125,6 +125,7 @@ workstation::backup::create() {(
       --exclude "${HOME}/snap/chromium" \
       --exclude "${HOME}/snap/firefox" \
       \
+      --exclude "runagfile/data-backup" \
       --exclude "erl_crash.dump" \
       \
       . || softfail || return $?
