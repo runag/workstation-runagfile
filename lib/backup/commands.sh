@@ -52,48 +52,32 @@ workstation::backup::create() {(
 
   # TODO: benchmark --read-concurrency
 
+  local workstation_sync_args=()
+
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
-    restic backup \
-      --one-file-system \
-      --tag "machine-id:${machine_id}" \
-      --group-by "host,paths,tags" \
-      --exclude-caches \
-      \
-      --exclude "${HOME}/.*/*" \
-      --exclude "!${HOME}/.gnupg" \
-      --exclude "!${HOME}/.password-store" \
-      --exclude "!${HOME}/.runag" \
-      --exclude "!${HOME}/.ssh" \
-      \
-      --exclude "${HOME}/devices" \
-      --exclude "${HOME}/Downloads/*" \
-      --exclude "${HOME}/snap" \
-      \
-      --exclude "runagfile/data-backup" \
-      --exclude "erl_crash.dump" \
-      \
-      . || softfail || return $?
-  else
-    restic backup \
-      --one-file-system \
-      --tag "machine-id:${machine_id}" \
-      --group-by "host,paths,tags" \
-      --exclude-caches \
-      \
-      --exclude "${HOME}/.*/*" \
-      --exclude "!${HOME}/.gnupg" \
-      --exclude "!${HOME}/.password-store" \
-      --exclude "!${HOME}/.runag" \
-      --exclude "!${HOME}/.ssh" \
-      \
-      --exclude "${HOME}/Downloads/*" \
-      --exclude "${HOME}/snap" \
-      \
-      --exclude "runagfile/data-backup" \
-      --exclude "erl_crash.dump" \
-      \
-      . || softfail || return $?
+    workstation_sync_args+=(--exclude "${HOME}/devices")
   fi
+
+  restic backup \
+    --one-file-system \
+    --tag "machine-id:${machine_id}" \
+    --group-by "host,paths,tags" \
+    --exclude-caches \
+    \
+    --exclude "${HOME}/.*/*" \
+    --exclude "!${HOME}/.gnupg" \
+    --exclude "!${HOME}/.password-store" \
+    --exclude "!${HOME}/.runag" \
+    --exclude "!${HOME}/.ssh" \
+    \
+    --exclude "${HOME}/Downloads/*" \
+    --exclude "${HOME}/snap" \
+    \
+    --exclude "runagfile/data-backup" \
+    --exclude "erl_crash.dump" \
+    "${workstation_sync_args[@]}" \
+    \
+    . || softfail || return $?
 )}
 
 workstation::backup::snapshots() {
