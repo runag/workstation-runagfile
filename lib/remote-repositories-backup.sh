@@ -288,9 +288,9 @@ workstation::remote_repositories_backup::status() {
 }
 
 workstation::remote_repositories_backup::log() {
-  journalctl --user -u "remote-repositories-backup.service" --since today || fail
+  journalctl --user -u "remote-repositories-backup.service" --lines 2048 || fail
 }
 
 workstation::remote_repositories_backup::log_follow() {
-  journalctl --user -u "remote-repositories-backup.service" --since today --follow || fail
+  journalctl --user -u "remote-repositories-backup.service" --lines 2048 --follow || fail
 }

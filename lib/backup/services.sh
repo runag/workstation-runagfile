@@ -127,9 +127,9 @@ workstation::backup::services::status() {
 }
 
 workstation::backup::services::log() {
-  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today || fail
+  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --lines 2048 || fail
 }
 
 workstation::backup::services::log_follow() {
-  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --since today --follow || fail
+  journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --lines 2048 --follow || fail
 }
