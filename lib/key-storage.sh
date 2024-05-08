@@ -30,20 +30,20 @@ workstation::key_storage::maintain_checksums() {
 
   while [ "$#" -gt 0 ]; do
     case $1 in
-    -s|--skip-backups)
-      skip_backups=true
-      shift
-      ;;
-    -v|--verify-only)
-      checksum_action="checksum::verify"
-      shift
-      ;;
-    -*)
-      softfail "Unknown argument: $1" || return $?
-      ;;
-    *)
-      break
-      ;;
+      -s|--skip-backups)
+        skip_backups=true
+        shift
+        ;;
+      -v|--verify-only)
+        checksum_action="checksum::verify"
+        shift
+        ;;
+      -*)
+        softfail "Unknown argument: $1" || return $?
+        ;;
+      *)
+        break
+        ;;
     esac
   done
   
