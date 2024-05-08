@@ -24,28 +24,28 @@ workstation::backup() {(
 
   while [ "$#" -gt 0 ]; do
     case $1 in
-    -p|--profile)
-      WORKSTATION_BACKUP_PROFILE="$2"
-      shift; shift
-      ;;
-    -w|--password)
-      WORKSTATION_BACKUP_PASSWORD="$2"
-      shift; shift
-      ;;
-    -r|--repository)
-      WORKSTATION_BACKUP_REPOSITORY="$2"
-      shift; shift
-      ;;
-    -e|--each-repository)
-      each_repository=true
-      shift
-      ;;
-    -*)
-      softfail "Unknown argument: $1" || return $?
-      ;;
-    *)
-      break
-      ;;
+      -p|--profile)
+        WORKSTATION_BACKUP_PROFILE="$2"
+        shift; shift
+        ;;
+      -w|--password)
+        WORKSTATION_BACKUP_PASSWORD="$2"
+        shift; shift
+        ;;
+      -r|--repository)
+        WORKSTATION_BACKUP_REPOSITORY="$2"
+        shift; shift
+        ;;
+      -e|--each-repository)
+        each_repository=true
+        shift
+        ;;
+      -*)
+        softfail "Unknown argument: $1" || return $?
+        ;;
+      *)
+        break
+        ;;
     esac
   done
 
