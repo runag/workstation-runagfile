@@ -69,7 +69,7 @@ workstation::identity::use() {
   # ssh
   if pass::exists "${identity_path}/ssh"; then
     ssh::add_ssh_config_d_include_directive || fail
-    ssh::install_ssh_profile_from_pass "${identity_path}/ssh" "identity-${identity_name}" || fail
+    ssh::install_ssh_profile_from_pass --profile-name "identity-${identity_name}" "${identity_path}/ssh" || fail
   fi
 
   # github

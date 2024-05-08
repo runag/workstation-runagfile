@@ -35,7 +35,7 @@ workstation::backup::credentials::deploy_remote() {
 
   if [ "${remote_type}" = ssh ]; then # install ssh profile
     ssh::add_ssh_config_d_include_directive || fail
-    ssh::install_ssh_profile_from_pass "${remote_pass_path}" "workstation-backup-${remote_name}" || fail
+    ssh::install_ssh_profile_from_pass --profile-name "workstation-backup-${remote_name}" "${remote_pass_path}" || fail
   else
     fail "Unknown remote type"
   fi
