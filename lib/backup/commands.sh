@@ -55,6 +55,7 @@ workstation::backup::create() {(
   local workstation_sync_args=()
 
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
+    workstation_sync_args+=(--exclude "${HOME}/devices")
     workstation_sync_args+=(--exclude-if-present ".backup-restore-dir-flag:38pmZzJ687QwThYHkOSGzt")
   fi
 
@@ -73,8 +74,6 @@ workstation::backup::create() {(
     --exclude "${HOME}/Downloads" \
     --exclude "${HOME}/snap" \
     \
-    --exclude "runagfile/data-backup" \
-    --exclude "erl_crash.dump" \
     "${workstation_sync_args[@]}" \
     \
     . || softfail || return $?
