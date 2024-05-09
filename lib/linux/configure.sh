@@ -21,7 +21,7 @@ workstation::linux::configure() {
   sudo loginctl enable-linger "${USER}" || fail
 
   # configure bash
-  shellfiles::install_flush_history_rc || fail
+  shellfile::install_flush_history_rc || fail
 
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
@@ -59,7 +59,7 @@ workstation::linux::configure() {
   workstation::configure_git || fail
 
   # set editor
-  shellfiles::install_editor_rc micro || fail
+  shellfile::install_editor_rc micro || fail
   workstation::install_micro_config || fail
 
   # install vscode configuration
