@@ -87,11 +87,11 @@ workstation::macos::install_packages() {
 
 workstation::macos::configure() {
   # shellfiles
-  shellfiles::install_loader::bash || fail
-  shellfiles::install_loader::zsh || fail
-  shellfiles::install_runag_path_profile || fail
-  shellfiles::install_direnv_rc || fail
-  shellfiles::install_editor_rc nano || fail
+  shellfile::install_loader::bash || fail
+  shellfile::install_loader::zsh || fail
+  shellfile::install_runag_path_profile || fail
+  shellfile::install_direnv_rc || fail
+  shellfile::install_editor_rc nano || fail
 
   # git
   workstation::configure_git || fail

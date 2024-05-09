@@ -17,9 +17,9 @@
 # shellcheck disable=SC1003
 workstation::windows::configure() {
   # shellfiles
-  shellfiles::install_loader::bash || fail
-  shellfiles::install_runag_path_profile || fail
-  shellfiles::install_editor_rc nano || fail
+  shellfile::install_loader::bash || fail
+  shellfile::install_runag_path_profile || fail
+  shellfile::install_editor_rc nano || fail
 
   # configure git
   workstation::configure_git || fail
