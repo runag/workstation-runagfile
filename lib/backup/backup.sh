@@ -139,6 +139,8 @@ workstation::backup::get_output_directory() {
     local output_directory="${backups_home}/workstation-restore"
     dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
+    file::write --mode 0600 "${output_directory}/.backup-restore-dir-flag" "38pmZzJ687QwThYHkOSGzt" || fail
+
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
       output_directory+="/${WORKSTATION_BACKUP_PROFILE}"
       dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
