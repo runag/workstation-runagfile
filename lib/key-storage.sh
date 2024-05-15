@@ -130,7 +130,7 @@ workstation::key_storage::password_store_git_remote_clone_or_update_to_local() {
       # local remote case
       if git::is_remote_local "${git_remote_name}"; then
         if ! git::is_local_remote_connected "${git_remote_name}"; then
-          log::warning "In folder ${PWD}, git remote ${git_remote_name} is not connected as local remote"
+          log::warning "${git_remote_name} git remote in ${PWD} is not available by local protocol path" || fail
           return 0
         fi
       fi
