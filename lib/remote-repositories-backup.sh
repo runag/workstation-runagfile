@@ -63,10 +63,7 @@ workstation::remote_repositories_backup::menu::identities() {
 
 workstation::remote_repositories_backup::initial_deploy() {
   if ! workstation::get_flag "remote-repositories-backup-was-suggested"; then
-    echo ""
-    echo "Do you want to store remote repositories backup on this machine?"
-
-    if ui::confirm; then
+    if ui::confirm "Do you want to store remote repositories backup on this machine?"; then
       workstation::set_flag "remote-repositories-backup-was-accepted" || fail
     else
       workstation::set_flag "remote-repositories-backup-was-rejected" || fail
@@ -120,7 +117,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
   if [ "${should_confirm}" = true ]; then
     echo ""
     echo "You are about to import credentials \"${credentials_name}\" from: ${credentials_path}"
-
+    echo ""
     echo "Please confirm that it is your intention to do so by entering \"yes\""
     echo "Please prepare the password if needed"
     echo "Please enter \"no\" if you want to continue without them being imported."
