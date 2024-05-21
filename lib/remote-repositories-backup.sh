@@ -228,7 +228,7 @@ workstation::remote_repositories_backup::deploy_services() {
 Description=Remote repositories backup
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=${RUNAG_BIN_PATH} workstation::remote_repositories_backup::create
 SyslogIdentifier=remote-repositories-backup
 ProtectSystem=full
@@ -255,7 +255,7 @@ EOF
 }
 
 workstation::remote_repositories_backup::start() {
-  systemctl --user start "remote-repositories-backup.service" || fail
+  systemctl --user --no-block start "remote-repositories-backup.service" || fail
 }
 
 workstation::remote_repositories_backup::stop() {
