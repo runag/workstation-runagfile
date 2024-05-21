@@ -38,7 +38,7 @@
   "workbench.list.smoothScrolling": true,
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 25,
-  "editor.mouseWheelScrollSensitivity": 2,
+  "editor.mouseWheelScrollSensitivity": 3,
   "elixirLS.suggestSpecs": false,
   "git.confirmSync": false,
   "workbench.colorTheme": "Default Light Modern",
