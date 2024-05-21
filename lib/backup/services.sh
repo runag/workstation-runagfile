@@ -20,7 +20,7 @@ workstation::backup::services::deploy() {
 Description=Workstation backup
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=${RUNAG_BIN_PATH} workstation::backup --each-repository create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
@@ -45,7 +45,7 @@ EOF
 Description=Workstation backup maintenance
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=${RUNAG_BIN_PATH} workstation::backup --each-repository maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
@@ -73,7 +73,7 @@ EOF
 }
 
 workstation::backup::services::start() {
-  systemctl --user start "workstation-backup.service" || fail
+  systemctl --user --no-block start "workstation-backup.service" || fail
 }
 
 workstation::backup::services::stop() {
@@ -81,7 +81,7 @@ workstation::backup::services::stop() {
 }
 
 workstation::backup::services::start_maintenance() {
-  systemctl --user start "workstation-backup-maintenance.service" || fail
+  systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
 }
 
 workstation::backup::services::stop_maintenance() {

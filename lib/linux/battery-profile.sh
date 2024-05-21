@@ -31,7 +31,7 @@ SHELL
 Description=Update battery profile
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/usr/local/bin/update-workstation-battery-profile
 
 [Install]
