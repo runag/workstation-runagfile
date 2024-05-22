@@ -29,7 +29,7 @@ workstation::key_storage::maintain_checksums() {
   local checksum_action="checksum::create_or_update"
 
   while [ "$#" -gt 0 ]; do
-    case $1 in
+    case "$1" in
       -s|--skip-backups)
         skip_backups=true
         shift
