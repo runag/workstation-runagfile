@@ -97,7 +97,7 @@ workstation::remote_repositories_backup::deploy_credentials() {
   local should_confirm=false
 
   while [ "$#" -gt 0 ]; do
-    case $1 in
+    case "$1" in
       -c|--confirm)
         should_confirm=true
         shift

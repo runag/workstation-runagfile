@@ -19,7 +19,7 @@ workstation::identity::use() {
   local with_system_credentials=false as_default=false should_confirm=false
 
   while [ "$#" -gt 0 ]; do
-    case $1 in
+    case "$1" in
       -c|--confirm)
         should_confirm=true
         shift
