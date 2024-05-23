@@ -22,7 +22,7 @@ $(runag::mini_library)
 
 $(declare -f linux::set_battery_charge_control_threshold)
 $(declare -f "${profile_function}")
-
+set -o nounset
 $(printf "%q" "${profile_function}") || fail
 SHELL
 
