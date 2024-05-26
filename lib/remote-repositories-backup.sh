@@ -49,10 +49,8 @@ workstation::remote_repositories_backup::menu::identities() {
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
-      
-      menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
-
       identity_found=true
+      menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || fail
     fi
   done
 

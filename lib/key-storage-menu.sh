@@ -21,8 +21,8 @@ workstation::key_storage::menu() {
     menu::add workstation::key_storage::checksum create_or_update || fail
     menu::add workstation::key_storage::checksum verify || fail
   else
-    menu::add workstation::key_storage::checksum create_or_update || fail
     menu::add --note "There are no checksums.txt file in current directory" || fail
+    menu::add workstation::key_storage::checksum create_or_update || fail
   fi
 
   local Key_Storage_Found=false
