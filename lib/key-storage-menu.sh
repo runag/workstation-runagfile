@@ -66,11 +66,6 @@ workstation::key_storage::menu::media() {
 
   menu::add --header "Key storage: ${media_path}" || fail
   
-  # Checksums
-  menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
-  menu::add workstation::key_storage::make_backups "${media_path}" || fail
-
-
   # Scopes
   local scope_found=false
 
@@ -94,6 +89,10 @@ workstation::key_storage::menu::media() {
   if [ "${scope_found}" = false ]; then
     menu::add --note "No key storage scopes found" || fail
   fi
+
+  # Checksums
+  menu::add workstation::key_storage::maintain_checksums "${media_path}" || fail
+  menu::add workstation::key_storage::make_backups "${media_path}" || fail
 }
 
 workstation::key_storage::menu::password_store() {
