@@ -75,7 +75,7 @@ workstation::backup::menu::commands() {
 }
 
 workstation::backup::menu::services() {
-  menu::add --subheader "Workstation backup: services" || fail
+  menu::add --header "Workstation backup: services" || fail
 
   menu::add workstation::backup::services::deploy || fail
   menu::add workstation::backup::services::start || fail
