@@ -83,10 +83,10 @@ workstation::key_storage::menu::media() {
 
       scope_found=true
 
-      menu::add --subheader "Password store in: ${media_path}/${scope_name}" || fail
+      menu::add --header "Password store in: ${media_path}/${scope_name}" || fail
       workstation::key_storage::menu::password_store "${scope_path}" "${git_remote_name}" || fail
 
-      menu::add --subheader "GPG keys in: ${media_path}/${scope_name}" || fail
+      menu::add --header "GPG keys in: ${media_path}/${scope_name}" || fail
       workstation::key_storage::menu::gpg_keys "${scope_path}" || fail
     fi
   done
