@@ -64,17 +64,24 @@ if ("$env:CI" -ne "true") {
 }
 
 # Misc tools
+Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
+Choco-Install curl
 Choco-Install far
 Choco-Install librehardwaremonitor
 Choco-Install synctrayzor
 Choco-Install windirstat
+Choco-Install winscp
 
 # Messengers
 Choco-Install discord # proprietary
 
 # Browsers
 Choco-Install firefox
+Choco-Install chromium
 
 # Media
+Choco-Install avidemux
+Choco-Install krita
 Choco-Install spotify --ignore-checksums # proprietary
 Choco-Install streamlabs-obs
+Choco-Install vlc
