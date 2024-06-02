@@ -121,11 +121,11 @@ workstation::identity::use() {
     fi
 
     # setup ubuntu pro subscription
-    if pass::exists "${identity_path}/ubuntu/pro"; then
-      if ! ubuntu::pro::is_attached; then
-        pass::use "${identity_path}/ubuntu/pro" sudo pro attach || fail
-      fi
-    fi
+    # if pass::exists "${identity_path}/ubuntu/pro"; then
+    #   if ! ubuntu::pro::is_attached; then
+    #     pass::use "${identity_path}/ubuntu/pro" sudo pro attach || fail
+    #   fi
+    # fi
   fi
 
   if [ "${as_default}" = true ]; then
