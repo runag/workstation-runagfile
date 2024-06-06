@@ -44,7 +44,6 @@ workstation::linux::install_packages() {
     git \
     gnupg \
     graphviz \
-    hexdiff \
     htop \
     hyperfine \
     imagemagick \
