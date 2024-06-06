@@ -90,10 +90,10 @@ workstation::linux::configure() {
 
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
-  workstation::linux::gnome::add_sound_control_launcher || fail
+  # workstation::linux::gnome::add_sound_control_launcher || fail
 
   # configure and start imwheel
-  # When running ubuntu guest in vmware workstation, if you scroll and move your mouse at the same
+  # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
   # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
   if vmware::is_inside_vm; then
     workstation::linux::imwheel::deploy || fail
