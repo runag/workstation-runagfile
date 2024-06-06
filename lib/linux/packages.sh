@@ -185,7 +185,8 @@ workstation::linux::install_packages() {
   ### snap packages
 
   # chromium
-  sudo snap install chromium || fail
+  # TODO: install via flatpack
+  # sudo snap install chromium || fail
 
   # software for bare metal workstation
   if linux::is_bare_metal; then
