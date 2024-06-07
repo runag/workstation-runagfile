@@ -46,7 +46,7 @@ workstation::backup::init_unless_exists() {
 workstation::backup::create() {(
   workstation::backup::init_unless_exists || softfail || return $?
 
-  local machine_id; machine_id="$(os::machine_id)" || softfail || return $?
+  local machine_id; machine_id="$(workstation::backup::machine_id)" || softfail || return $?
 
   cd "${HOME}" || softfail || return $?
 

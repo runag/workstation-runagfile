@@ -31,7 +31,7 @@ workstation::linux::deploy_host_cifs_mount() {
   pass::use "${credentials_path}" cifs::credentials "${credentials_file}" "${username}" || fail
 
   # get host ip address
-  local remote_host; remote_host="$(vmware::get_host_ip_address)" || fail
+  local remote_host; remote_host="$(workstation::vmware::get_host_ip_address)" || fail
 
   # mount host directory
   cifs::mount "//${remote_host}/${remote_path}" "${HOME}/${local_path}" "${credentials_file}" || fail

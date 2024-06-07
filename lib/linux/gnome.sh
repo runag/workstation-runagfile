@@ -47,7 +47,7 @@ workstation::linux::gnome::configure() {
   gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
   gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
 
-  if vmware::is_inside_vm; then
+  if workstation::vmware::is_inside_vm; then
     gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
     gsettings set org.gnome.mutter edge-tiling false || fail
   else
