@@ -44,9 +44,11 @@ workstation::linux::configure() {
   if vmware::is_inside_vm; then
     # for network to work
     vmware::install_vm_network_loss_workaround || fail
+  fi
 
-    # for backup to work
-    vmware::configure_passwordless_sudo_for_dmidecode_in_get_machine_uuid || fail
+  # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid
+  if systemd-detect-virt --quiet; then
+    linux::configure_passwordless_sudo_for_dmidecode || fail
   fi
 
   # disable unattended-upgrades, not so sure about that
