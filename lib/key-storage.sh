@@ -122,7 +122,7 @@ workstation::key_storage::password_store_git_remote_clone_or_update_to_local() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
   if [ ! -d "${password_store_dir}" ]; then
-    git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir}" || fail
+    ( umask 077 && git clone --origin "${git_remote_name}" "${password_store_git_remote_path}" "${password_store_dir}" ) || fail
   else
     (
       cd "${password_store_dir}" || fail
