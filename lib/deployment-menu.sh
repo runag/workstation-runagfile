@@ -24,7 +24,7 @@ workstation::deployment::menu() {
 
     menu::add --header "Linux workstation: particular deployment tasks" || fail
 
-    if ! vmware::is_inside_vm; then
+    if ! workstation::vmware::is_inside_vm; then
       menu::add --note "VMware tasks are not displayed" || fail
     fi
 
@@ -37,7 +37,7 @@ workstation::deployment::menu() {
     menu::add workstation::linux::configure || fail
     menu::add workstation::linux::set_hostname || fail
     
-    if vmware::is_inside_vm; then
+    if workstation::vmware::is_inside_vm; then
       menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
     fi
 

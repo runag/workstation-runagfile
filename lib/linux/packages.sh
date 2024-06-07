@@ -29,7 +29,7 @@ workstation::linux::install_packages() {
   shellfile::install_direnv_rc || fail
 
   # install open-vm-tools
-  if vmware::is_inside_vm; then
+  if workstation::vmware::is_inside_vm; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
 
@@ -169,7 +169,7 @@ workstation::linux::install_packages() {
   apt::install dconf-editor || fail
 
   # imwheel
-  if vmware::is_inside_vm; then
+  if workstation::vmware::is_inside_vm; then
     apt::install imwheel || fail
   fi
 

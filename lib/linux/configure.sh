@@ -41,14 +41,14 @@ workstation::linux::configure() {
   fi
 
   # configuration related to the case when the system is running inside a virtual machine
-  if vmware::is_inside_vm; then
+  if workstation::vmware::is_inside_vm; then
     # for network to work
-    vmware::install_vm_network_loss_workaround || fail
+    workstation::vmware::install_vm_network_loss_workaround || fail
   fi
 
   # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid
   if systemd-detect-virt --quiet; then
-    linux::configure_passwordless_sudo_for_dmidecode || fail
+    workstation::backup::configure_passwordless_sudo_for_dmidecode || fail
   fi
 
   # disable unattended-upgrades, not so sure about that
@@ -97,7 +97,7 @@ workstation::linux::configure() {
   # configure and start imwheel
   # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
   # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
-  if vmware::is_inside_vm; then
+  if workstation::vmware::is_inside_vm; then
     workstation::linux::imwheel::deploy || fail
   fi
 }
