@@ -17,41 +17,6 @@
 workstation::vmware::is_inside_vm() {
   local detect_virt_result; detect_virt_result="$(systemd-detect-virt)" || fail
   test "${detect_virt_result}" = "vmware"
-  if [ "${detect_virt_result}" = "vmware" ]; then
-
-
-  if [[ "${OSTYPE}" =~ ^linux ]]; then
-    hostnamectl status | grep -q "Virtualization:.*vmware"
-
-    local saved_pipe_status="${PIPESTATUS[*]}"
-
-    if [ "${saved_pipe_status}" = "0 0" ]; then
-      return 0
-    elif [ "${saved_pipe_status}" = "0 1" ]; then
-      return 1
-    else
-      fail "Error calling hostnamectl status"
-    fi
-
-    # another method:
-    # if sudo dmidecode -t system | grep -q "Product Name: VMware Virtual Platform"; then
-  
-  elif [[ "${OSTYPE}" =~ ^msys ]]; then
-    powershell -Command "Get-WmiObject Win32_computerSystem" | grep -qF "VMware"
-
-    local saved_pipe_status="${PIPESTATUS[*]}"
-
-    if [ "${saved_pipe_status}" = "0 0" ]; then
-      return 0
-    elif [ "${saved_pipe_status}" = "0 1" ]; then
-      return 1
-    else
-      fail "Error calling Get-WmiObject"
-    fi
-
-  else
-    fail "OSTYPE not supported: ${OSTYPE}"
-  fi
 }
 
 workstation::vmware::use_hgfs_mounts() {
