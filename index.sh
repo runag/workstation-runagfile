@@ -14,9 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# source::related_to_file "${BASH_SOURCE[0]}" "config.sh" || fail
+# load `config.sh` file first
+# source::related_to_file "${BASH_SOURCE[0]}" "config.sh" || softfail || return $?
 
-source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || fail
+# load all shell files
+source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || softfail || return $?
 
 # menu
 menu::add --header "Workstation" || fail
