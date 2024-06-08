@@ -100,7 +100,7 @@ workstation::linux::install_packages() {
   ruby::without_docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
   # python
-  python::install_and_update::apt || fail
+  python::install::apt || fail
 
   # erlang & elixir
   erlang::install_dependencies::apt || fail
