@@ -41,21 +41,23 @@ workstation::linux::gnome::configure() {
   fi
 
   # Dash
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
-  gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
-  gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
-  gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
+  if gsettings list-keys org.gnome.shell.extensions.dash-to-dock >/dev/null 2>&1; then
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
 
-  if workstation::vmware::is_inside_vm; then
-    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
-    gsettings set org.gnome.mutter edge-tiling false || fail
-  else
-    gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show true || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
+    if workstation::vmware::is_inside_vm; then
+      gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
+      gsettings set org.gnome.mutter edge-tiling false || fail
+    else
+      gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
+      gsettings set org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
+      gsettings set org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
+      gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show true || fail
+      gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
+    fi
   fi
 
   # Nautilus
