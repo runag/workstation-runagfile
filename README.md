@@ -33,6 +33,39 @@ bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) a
 ```
 
 
+## Deploy workstation on Linux in KVM (useful for testing)
+
+**On host machine**
+
+This step will copy your `~/.password-store` and `~/.gnupg` keys to `~/.runag/.virt-deploy-keys` directory, and after consecutive steps your keys will be accessible from the guest machine. Please make sure you understand implications of that.
+
+```
+mkdir ~/.runag/.virt-deploy-keys
+runag workstation::linux::deploy_virt_keys
+```
+
+**In virt-manager**
+
+1. Enable shared memory
+
+2. Create Filesystem
+
+```
+Driver: virtiofs
+Source path: ~/.runag # replace ~ with absolute path!
+Target path: runag
+```
+
+**On guest machine**
+
+```sh
+cd ~
+mkdir .runag
+sudo mount -t virtiofs runag .runag
+.runag/bin/runag
+```
+
+
 ## Deploy workstation on MacOS 
 
 ```sh
