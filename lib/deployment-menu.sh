@@ -32,6 +32,10 @@ workstation::deployment::menu() {
       menu::add --note "display_if_restart_required is not available" || fail
     fi
 
+    if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
+      menu::add workstation::linux::deploy_virt_keys || fail
+    fi
+
     menu::add workstation::linux::deploy_identities || fail
     menu::add workstation::linux::install_packages || fail
     menu::add workstation::linux::configure || fail

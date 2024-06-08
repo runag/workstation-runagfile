@@ -22,7 +22,11 @@ workstation::linux::deploy_workstation() {
   workstation::linux::configure || fail
 
   # deploy keys
-  workstation::linux::deploy_keys || fail
+  if local key_path="/media/${USER}/workstation-sync" && [ -d "${key_path}" ]; then
+    workstation::linux::deploy_keys "${key_path}" || fail
+  elif [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
+    workstation::linux::deploy_virt_keys || fail
+  fi
  
   # deploy identities & credentials
   workstation::linux::deploy_identities || fail
@@ -60,6 +64,39 @@ workstation::linux::deploy_keys() {
   # install password store
   workstation::key_storage::password_store_git_remote_clone_or_update_to_local keys/workstation "${key_storage_volume}/keys/workstation/password-store" || fail
 }
+
+workstation::linux::deploy_virt_keys() (
+  pack() {
+    if [ -d "${HOME}/.$1" ]; then
+      tar -czf ".virt-deploy-keys/$1.tgz" -C "${HOME}" ".$1"
+    fi
+  }
+
+  unpack() {
+    if [ -f ".virt-deploy-keys/$1.tgz" ]; then
+      if [ -d "${HOME}/.$1" ]; then
+        local temp_dir; temp_dir="$(mktemp -d "${HOME}/.$1-preceding-XXXXXXXXXX")" || fail
+        mv "${HOME}/.$1" "${temp_dir}" || fail
+      fi
+      tar -xzf ".virt-deploy-keys/$1.tgz" -C "${HOME}" || fail
+    fi
+  }
+
+  cd "${HOME}/.runag" || fail
+
+  umask 077 || fail
+
+  if ! systemd-detect-virt --quiet; then
+    chmod 700 ".virt-deploy-keys" || fail
+
+    pack password-store || fail
+    pack gnupg || fail
+  
+  elif systemd-detect-virt --quiet; then
+    unpack password-store || fail
+    unpack gnupg || fail
+  fi
+)
 
 workstation::linux::deploy_identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
