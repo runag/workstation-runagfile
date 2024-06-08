@@ -65,6 +65,14 @@ sudo mount -t virtiofs runag .runag
 .runag/bin/runag
 ```
 
+**Modify `/etc/fstab` if you want to keep `.runag` mount after reboot**
+
+```sh
+# /etc/fstab
+
+# replace ~ with absolute path!
+runag  ~/.runag  virtiofs  defaults  0  0
+```
 
 ## Deploy workstation on MacOS 
 
