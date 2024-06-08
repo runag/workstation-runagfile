@@ -95,7 +95,7 @@ workstation::backup::forget() {
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
     restic forget \
       --group-by "host,paths,tags" \
-      --keep-within 7d \
+      --keep-within 14d \
       --keep-within-daily 30d \
       --keep-within-weekly 3m \
       --keep-within-monthly 1y || softfail || return $?
