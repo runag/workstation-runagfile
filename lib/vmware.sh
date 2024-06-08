@@ -15,8 +15,7 @@
 #  limitations under the License.
 
 workstation::vmware::is_inside_vm() {
-  local detect_virt_result; detect_virt_result="$(systemd-detect-virt)" || fail
-  test "${detect_virt_result}" = "vmware"
+  test "$(systemd-detect-virt)" = "vmware"
 }
 
 workstation::vmware::use_hgfs_mounts() {
