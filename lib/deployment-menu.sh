@@ -24,7 +24,7 @@ workstation::deployment::menu() {
 
     menu::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
 
-    if ! workstation::vmware::is_inside_vm; then
+    if [ "$(systemd-detect-virt)" != "vmware" ]; then
       menu::add --note "VMware tasks are not displayed" || softfail || return $?
     fi
 
@@ -41,7 +41,7 @@ workstation::deployment::menu() {
     menu::add workstation::linux::configure || softfail || return $?
     menu::add workstation::linux::set_hostname || softfail || return $?
     
-    if workstation::vmware::is_inside_vm; then
+    if [ "$(systemd-detect-virt)" = "vmware" ]; then
       menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
     fi
 

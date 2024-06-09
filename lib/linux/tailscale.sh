@@ -22,7 +22,7 @@ workstation::linux::deploy_tailscale() {
     tailscale::install || fail
   fi
 
-  if workstation::vmware::is_inside_vm; then
+  if [ "$(systemd-detect-virt)" = "vmware" ]; then
     # https://github.com/tailscale/tailscale/issues/2541
     tailscale::install_issue_2541_workaround || fail
   fi
