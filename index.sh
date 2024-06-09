@@ -21,11 +21,11 @@
 source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || softfail || return $?
 
 # menu
-menu::add --header "Workstation" || fail
+menu::add --header "Workstation" || softfail || return $?
 
-menu::add --menu workstation::deployment::menu || fail
-menu::add --menu workstation::identity::menu || fail
-menu::add --menu workstation::key_storage::menu || fail
+menu::add --menu workstation::deployment::menu || softfail || return $?
+menu::add --menu workstation::identity::menu || softfail || return $?
+menu::add --menu workstation::key_storage::menu || softfail || return $?
 
-menu::add --menu --os linux workstation::backup::menu || fail
-menu::add --menu --os linux workstation::remote_repositories_backup::menu || fail
+menu::add --menu --os linux workstation::backup::menu || softfail || return $?
+menu::add --menu --os linux workstation::remote_repositories_backup::menu || softfail || return $?
