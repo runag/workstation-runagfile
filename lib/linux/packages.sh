@@ -28,7 +28,12 @@ workstation::linux::install_packages() {
   shellfile::install_runag_path_profile || fail
   shellfile::install_direnv_rc || fail
 
-  # install open-vm-tools
+  # install spice-vdagent if needed
+  if [ "$(systemd-detect-virt)" = "kvm" ]; then
+    apt::install spice-vdagent || fail
+  fi
+
+  # install open-vm-tools if needed
   if [ "$(systemd-detect-virt)" = "vmware" ]; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
   fi
