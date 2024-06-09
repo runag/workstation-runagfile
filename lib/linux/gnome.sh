@@ -79,9 +79,6 @@ workstation::linux::gnome::configure() {
 
   # Disable external search providers
   gsettings set org.gnome.desktop.search-providers disable-external true || fail
-
-  # Disable screen lock
-  gsettings set org.gnome.desktop.session idle-delay 0 || fail
 }
 
 workstation::linux::gnome::add_sound_control_launcher() {
