@@ -36,6 +36,7 @@ workstation::linux::install_packages() {
   # install open-vm-tools if needed
   if [ "$(systemd-detect-virt)" = "vmware" ]; then
     apt::install open-vm-tools open-vm-tools-desktop || fail
+    apt::install imwheel || fail
   fi
 
   # install misc tools
@@ -172,11 +173,6 @@ workstation::linux::install_packages() {
 
   # install dconf-editor
   apt::install dconf-editor || fail
-
-  # imwheel
-  if [ "$(systemd-detect-virt)" = "vmware" ]; then
-    apt::install imwheel || fail
-  fi
 
   # gnome-screenshot
   apt::install gnome-screenshot || fail
