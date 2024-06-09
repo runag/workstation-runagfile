@@ -194,7 +194,7 @@ workstation::linux::install_packages() {
   # sudo snap install chromium || fail
 
   # software for bare metal workstation
-  if linux::is_bare_metal; then
+  if ! systemd-detect-virt --quiet; then
     # nvme-cli
     apt::install nvme-cli || fail
 

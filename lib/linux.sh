@@ -38,7 +38,7 @@ workstation::linux::deploy_workstation() {
   workstation::backup::services::deploy || fail
 
   # setup remote repositories backup
-  if linux::is_bare_metal; then
+  if ! systemd-detect-virt --quiet; then
     workstation::remote_repositories_backup::initial_deploy || fail
   fi
 
