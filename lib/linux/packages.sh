@@ -83,9 +83,9 @@ workstation::linux::install_packages() {
       || fail
 
   # install servers
-  apt::install memcached || fail
+  # apt::install memcached || fail
   apt::install postgresql postgresql-contrib libpq-dev || fail
-  apt::install redis-server || fail
+  # apt::install redis-server || fail
 
   # install btrfs-compsize
   apt::install btrfs-compsize || fail
