@@ -41,7 +41,7 @@ workstation::linux::configure() {
   fi
 
   # configuration related to the case when the system is running inside a virtual machine
-  if workstation::vmware::is_inside_vm; then
+  if [ "$(systemd-detect-virt)" = "vmware" ]; then
     # for network to work
     workstation::vmware::install_vm_network_loss_workaround || fail
   fi
@@ -97,7 +97,7 @@ workstation::linux::configure() {
   # configure and start imwheel
   # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
   # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
-  if workstation::vmware::is_inside_vm; then
+  if [ "$(systemd-detect-virt)" = "vmware" ]; then
     workstation::linux::imwheel::deploy || fail
   fi
 }

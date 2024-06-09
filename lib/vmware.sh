@@ -14,10 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::vmware::is_inside_vm() {
-  test "$(systemd-detect-virt)" = "vmware"
-}
-
 workstation::vmware::use_hgfs_mounts() {
   workstation::vmware::add_hgfs_automount || softfail || return $?
   workstation::vmware::symlink_hgfs_mounts || softfail || return $?
