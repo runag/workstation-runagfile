@@ -123,8 +123,8 @@ workstation::linux::install_packages() {
   # install benchmark
   benchmark::install::apt || fail
 
-  # install checkrestart for use in linux::display_if_restart_required
-  linux::display_if_restart_required::install::apt || fail
+  # install checkrestart
+  apt::install debian-goodies || fail
 
   # micro text editor
   apt::install micro || fail

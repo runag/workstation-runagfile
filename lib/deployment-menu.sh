@@ -28,10 +28,6 @@ workstation::deployment::menu() {
       menu::add --note "VMware tasks are not displayed" || softfail || return $?
     fi
 
-    if ! linux::display_if_restart_required::is_available; then
-      menu::add --note "display_if_restart_required is not available" || softfail || return $?
-    fi
-
     if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
       menu::add workstation::linux::deploy_virt_keys || softfail || return $?
     fi
@@ -43,10 +39,6 @@ workstation::deployment::menu() {
     
     if [ "$(systemd-detect-virt)" = "vmware" ]; then
       menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
-    fi
-
-    if linux::display_if_restart_required::is_available; then
-      menu::add workstation::linux::display_if_restart_required || softfail || return $?
     fi
   fi
 
