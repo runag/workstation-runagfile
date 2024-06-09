@@ -87,7 +87,9 @@ workstation::remote_repositories_backup::initial_deploy() {
     fi
   done
 
+  # Disabled: It's nice to check it right away but it took so much time on every redeploy
   # workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
+
   workstation::remote_repositories_backup::deploy_services || fail
 }
 

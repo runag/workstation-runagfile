@@ -24,6 +24,7 @@ workstation::linux::deploy_workstation() {
   # deploy keys
   if local key_path="/media/${USER}/workstation-sync" && [ -d "${key_path}" ]; then
     workstation::linux::deploy_keys "${key_path}" || fail
+    
   elif [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
     workstation::linux::deploy_virt_keys || fail
   fi
