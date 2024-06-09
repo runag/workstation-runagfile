@@ -23,10 +23,6 @@ workstation::linux::set_hostname() {
   linux::set_hostname "${hostname}" || fail
 }
 
-workstation::linux::display_if_restart_required() {
-  linux::display_if_restart_required || fail
-}
-
 workstation::linux::run_benchmark() {
   benchmark::run || fail
 }
