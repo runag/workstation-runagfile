@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 workstation::backup::menu() {
-  menu::add --header "Workstation backup deploy" || fail
+  menu::add --header "Workstation backup deploy" || softfail || return $?
 
   menu::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail # TODO: list options
   menu::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
@@ -47,43 +47,43 @@ workstation::backup::menu::commands() {
       fi
 
       if [ "${repository_name}" = default ]; then
-        menu::add --header "Workstation backup: commands" || fail
+        menu::add --header "Workstation backup: commands" || softfail || return $?
         local command; for command in "${commands[@]}"; do
-          menu::add workstation::backup "${command}" || fail
+          menu::add workstation::backup "${command}" || softfail || return $?
         done
       else
-        menu::add --header "Workstation backup: ${repository_name} repository commands" || fail
+        menu::add --header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
         local command; for command in "${commands[@]}"; do
-          menu::add workstation::backup --repository "${repository_name}" "${command}" || fail
+          menu::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
         done
       fi
     fi
   done
 
   if [ "${repository_count}" -gt 1 ]; then
-    menu::add --header "Workstation backup: for each repository" || fail
+    menu::add --header "Workstation backup: for each repository" || softfail || return $?
     local commands=(init create snapshots check forget prune maintenance unlock restore)
     local command; for command in "${commands[@]}"; do
-      menu::add workstation::backup --each-repository "${command}" || fail
+      menu::add workstation::backup --each-repository "${command}" || softfail || return $?
     done
   fi
 
   if [ "${repository_count}" = 0 ]; then
-    menu::add --header "Workstation backup: repositories" || fail
-    menu::add --note "No backup repositories found" || fail
+    menu::add --header "Workstation backup: repositories" || softfail || return $?
+    menu::add --note "No backup repositories found" || softfail || return $?
   fi
 }
 
 workstation::backup::menu::services() {
-  menu::add --header "Workstation backup: services" || fail
+  menu::add --header "Workstation backup: services" || softfail || return $?
 
-  menu::add workstation::backup::services::deploy || fail
-  menu::add workstation::backup::services::start || fail
-  menu::add workstation::backup::services::stop || fail
-  menu::add workstation::backup::services::start_maintenance || fail
-  menu::add workstation::backup::services::stop_maintenance || fail
-  menu::add workstation::backup::services::disable_timers || fail
-  menu::add workstation::backup::services::status || fail
-  menu::add workstation::backup::services::log || fail
-  menu::add workstation::backup::services::log_follow || fail
+  menu::add workstation::backup::services::deploy || softfail || return $?
+  menu::add workstation::backup::services::start || softfail || return $?
+  menu::add workstation::backup::services::stop || softfail || return $?
+  menu::add workstation::backup::services::start_maintenance || softfail || return $?
+  menu::add workstation::backup::services::stop_maintenance || softfail || return $?
+  menu::add workstation::backup::services::disable_timers || softfail || return $?
+  menu::add workstation::backup::services::status || softfail || return $?
+  menu::add workstation::backup::services::log || softfail || return $?
+  menu::add workstation::backup::services::log_follow || softfail || return $?
 }

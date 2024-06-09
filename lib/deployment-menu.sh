@@ -18,62 +18,62 @@ workstation::deployment::menu() {
 
   # linux workstation
   if menu::is_necessary --os linux; then
-    menu::add --header "Linux workstation: complete deploy script" || fail
+    menu::add --header "Linux workstation: complete deploy script" || softfail || return $?
 
-    menu::add workstation::linux::deploy_workstation || fail
+    menu::add workstation::linux::deploy_workstation || softfail || return $?
 
-    menu::add --header "Linux workstation: particular deployment tasks" || fail
+    menu::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
 
     if ! workstation::vmware::is_inside_vm; then
-      menu::add --note "VMware tasks are not displayed" || fail
+      menu::add --note "VMware tasks are not displayed" || softfail || return $?
     fi
 
     if ! linux::display_if_restart_required::is_available; then
-      menu::add --note "display_if_restart_required is not available" || fail
+      menu::add --note "display_if_restart_required is not available" || softfail || return $?
     fi
 
     if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
-      menu::add workstation::linux::deploy_virt_keys || fail
+      menu::add workstation::linux::deploy_virt_keys || softfail || return $?
     fi
 
-    menu::add workstation::linux::deploy_identities || fail
-    menu::add workstation::linux::install_packages || fail
-    menu::add workstation::linux::configure || fail
-    menu::add workstation::linux::set_hostname || fail
+    menu::add workstation::linux::deploy_identities || softfail || return $?
+    menu::add workstation::linux::install_packages || softfail || return $?
+    menu::add workstation::linux::configure || softfail || return $?
+    menu::add workstation::linux::set_hostname || softfail || return $?
     
     if workstation::vmware::is_inside_vm; then
-      menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || fail
+      menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
     fi
 
     if linux::display_if_restart_required::is_available; then
-      menu::add workstation::linux::display_if_restart_required || fail
+      menu::add workstation::linux::display_if_restart_required || softfail || return $?
     fi
   fi
 
 
   # macos workstation
   if menu::is_necessary --os darwin; then
-    menu::add --header "macOS workstation" || fail
+    menu::add --header "macOS workstation" || softfail || return $?
     
-    menu::add workstation::macos::install_packages || fail
-    menu::add workstation::macos::configure || fail
-    menu::add workstation::macos::start_developer_servers || fail
+    menu::add workstation::macos::install_packages || softfail || return $?
+    menu::add workstation::macos::configure || softfail || return $?
+    menu::add workstation::macos::start_developer_servers || softfail || return $?
   fi
 
 
   # windows workstation
   if menu::is_necessary --os msys; then
-    menu::add --header "Windows workstation" || fail
-    menu::add workstation::windows::configure || fail
+    menu::add --header "Windows workstation" || softfail || return $?
+    menu::add workstation::windows::configure || softfail || return $?
   fi
 
 
   # development
-  menu::add --header "Development" || fail
+  menu::add --header "Development" || softfail || return $?
 
-  menu::add workstation::remove_nodejs_and_ruby_installations || fail
-  menu::add workstation::merge_editor_configs || fail
-  menu::add git::add_signed_off_by_trailer_in_commit_msg_hook || fail
+  menu::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
+  menu::add workstation::merge_editor_configs || softfail || return $?
+  menu::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
 
   # runagfiles
@@ -81,25 +81,25 @@ workstation::deployment::menu() {
 
   # storage
   if menu::is_necessary --os linux; then
-    menu::add --header "Storage devices" || fail
-    menu::add workstation::linux::storage::check_root || fail
+    menu::add --header "Storage devices" || softfail || return $?
+    menu::add workstation::linux::storage::check_root || softfail || return $?
   fi
 
 
   # benchmark
   if menu::is_necessary --os linux; then
-    menu::add --header "Benchmark" || fail
+    menu::add --header "Benchmark" || softfail || return $?
     if benchmark::is_available; then
-      menu::add workstation::linux::run_benchmark || fail
+      menu::add workstation::linux::run_benchmark || softfail || return $?
     else
-      menu::add --note "Benchmark is not available" || fail
+      menu::add --note "Benchmark is not available" || softfail || return $?
     fi
   fi
 
 
   # password generator
   if menu::is_necessary --os linux; then
-    menu::add --header "Password generator" || fail
-    menu::add workstation::linux::generate_password || fail
+    menu::add --header "Password generator" || softfail || return $?
+    menu::add workstation::linux::generate_password || softfail || return $?
   fi
 }
