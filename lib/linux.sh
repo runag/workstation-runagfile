@@ -17,6 +17,9 @@
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
+  # remember screen lock value
+  local idle_delay; idle_delay="$(gsettings get org.gnome.desktop.session idle-delay)" || fail
+
   # install packages & configure
   workstation::linux::install_packages || fail
   workstation::linux::configure || fail
@@ -46,6 +49,9 @@ workstation::linux::deploy_workstation() {
   if nvidia::is_device_present; then
     nvidia::enable_preserve_video_memory_allocations || fail
   fi
+
+  # restore idle-delay value
+  gsettings set org.gnome.desktop.session idle-delay "${idle_delay}" || fail
 }
 
 workstation::linux::deploy_keys() {
