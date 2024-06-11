@@ -91,6 +91,7 @@ workstation::key_storage::menu::media() {
   fi
 
   # Checksums
+  menu::add --header "Checksums for: ${media_path}" || softfail || return $?
   menu::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
   menu::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
 }
