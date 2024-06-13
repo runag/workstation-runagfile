@@ -15,12 +15,12 @@
 #  limitations under the License.
 
 workstation::vscode::install_extensions() (
-  shell::cd_file_source || fail
+  shell::related_cd || fail
   vscode::install_extensions "extensions.txt" || fail
 )
 
 workstation::vscode::install_config() (
-  shell::cd_file_source || fail
+  shell::related_cd || fail
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
   dir::should_exists --mode 0700 "${config_path}/User" || fail
@@ -30,7 +30,7 @@ workstation::vscode::install_config() (
 )
 
 workstation::vscode::merge_config() (
-  shell::cd_file_source || fail
+  shell::related_cd || fail
 
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
