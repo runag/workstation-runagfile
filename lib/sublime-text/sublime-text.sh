@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::sublime_text::install_config() {
+workstation::sublime_text::install_config() (
   sublime_text::install_package_control || fail
 
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+  shell::cd_file_source || fail
 
-  sublime_text::install_config_file "${self_dir}/Preferences.sublime-settings" || fail
-  sublime_text::install_config_file "${self_dir}/Package Control.sublime-settings" || fail
-}
+  sublime_text::install_config_file "Preferences.sublime-settings" || fail
+  sublime_text::install_config_file "Package Control.sublime-settings" || fail
+)
 
 workstation::sublime_text::install_license() {
   local license_path="$1" # should be in the body
@@ -33,9 +33,9 @@ workstation::sublime_text::install_license() {
   pass::use --absorb-in-callback --body "${license_path}" file::write --mode 0600 "${config_path}/Local/License.sublime_license" || fail
 }
 
-workstation::sublime_text::merge_config() {
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+workstation::sublime_text::merge_config() (
+  shell::cd_file_source || fail
 
-  sublime_text::merge_config_file "${self_dir}/Preferences.sublime-settings" || fail
-  sublime_text::merge_config_file "${self_dir}/Package Control.sublime-settings" || fail
-}
+  sublime_text::merge_config_file "Preferences.sublime-settings" || fail
+  sublime_text::merge_config_file "Package Control.sublime-settings" || fail
+)

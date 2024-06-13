@@ -14,29 +14,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::vscode::install_extensions() {
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
-  vscode::install_extensions "${self_dir}/extensions.txt" || fail
-}
+workstation::vscode::install_extensions() (
+  shell::cd_file_source || fail
+  vscode::install_extensions "extensions.txt" || fail
+)
 
-workstation::vscode::install_config() {
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+workstation::vscode::install_config() (
+  shell::cd_file_source || fail
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
   dir::should_exists --mode 0700 "${config_path}/User" || fail
 
-  config::install "${self_dir}/settings.json" "${config_path}/User/settings.json" || fail
-  config::install "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
-}
+  config::install "settings.json" "${config_path}/User/settings.json" || fail
+  config::install "keybindings.json" "${config_path}/User/keybindings.json" || fail
+)
 
-workstation::vscode::merge_config() {
-  local self_dir; self_dir="$(dirname "${BASH_SOURCE[0]}")" || fail
+workstation::vscode::merge_config() (
+  shell::cd_file_source || fail
+
   local config_path; config_path="$(vscode::get_config_path)" || fail
 
-  config::merge "${self_dir}/settings.json" "${config_path}/User/settings.json" || fail
-  config::merge "${self_dir}/keybindings.json" "${config_path}/User/keybindings.json" || fail
+  config::merge "settings.json" "${config_path}/User/settings.json" || fail
+  config::merge "keybindings.json" "${config_path}/User/keybindings.json" || fail
 
   local extensions_list; extensions_list="$(vscode::list_extensions_to_temp_file)" || fail "Unable get extensions list"
-  config::merge "${self_dir}/extensions.txt" "${extensions_list}" || fail
+  config::merge "extensions.txt" "${extensions_list}" || fail
   rm "${extensions_list}" || fail
-}
+)
