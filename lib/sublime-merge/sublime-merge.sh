@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 workstation::sublime_merge::install_config() (
-  shell::cd_file_source || fail
+  shell::related_cd || fail
 
   sublime_merge::install_config_file "Diff.sublime-settings" || fail
   sublime_merge::install_config_file "Preferences.sublime-settings" || fail
@@ -32,7 +32,7 @@ workstation::sublime_merge::install_license() {
 }
 
 workstation::sublime_merge::merge_config() (
-  shell::cd_file_source || fail
+  shell::related_cd || fail
 
   sublime_merge::merge_config_file "Diff.sublime-settings" || fail
   sublime_merge::merge_config_file "Preferences.sublime-settings" || fail
