@@ -15,10 +15,10 @@
 #  limitations under the License.
 
 # load `config.sh` file first
-# source::related_to_file "${BASH_SOURCE[0]}" "config.sh" || softfail || return $?
+# shell::related_source config.sh || softfail || return $?
 
 # load all shell files
-source::recursive_related_to_file "${BASH_SOURCE[0]}" "lib" || softfail || return $?
+shell::related_source --recursive lib || softfail || return $?
 
 # menu
 menu::add --header "Workstation" || softfail || return $?
