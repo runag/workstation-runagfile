@@ -223,13 +223,15 @@ workstation::remote_repositories_backup::backup_github_repositories() {
 }
 
 workstation::remote_repositories_backup::deploy_services() {
+  local runag_path; runag_path="$(command -v runag)" || fail
+
   systemd::write_user_unit "remote-repositories-backup.service" <<EOF || fail
 [Unit]
 Description=Remote repositories backup
 
 [Service]
 Type=oneshot
-ExecStart=${RUNAG_BIN_PATH} workstation::remote_repositories_backup::create
+ExecStart=${runag_path} workstation::remote_repositories_backup::create
 SyslogIdentifier=remote-repositories-backup
 ProtectSystem=full
 PrivateTmp=true
