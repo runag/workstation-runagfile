@@ -15,13 +15,15 @@
 #  limitations under the License.
 
 workstation::backup::services::deploy() {
+  local runag_path; runag_path="$(command -v runag)" || fail
+
   systemd::write_user_unit "workstation-backup.service" <<EOF || fail
 [Unit]
 Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${RUNAG_BIN_PATH} workstation::backup --each-repository create
+ExecStart=${runag_path} workstation::backup --each-repository create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
@@ -46,7 +48,7 @@ Description=Workstation backup maintenance
 
 [Service]
 Type=oneshot
-ExecStart=${RUNAG_BIN_PATH} workstation::backup --each-repository maintenance
+ExecStart=${runag_path} workstation::backup --each-repository maintenance
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true
