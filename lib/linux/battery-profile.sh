@@ -17,14 +17,19 @@
 workstation::linux::set_battery_profile() {
   local profile_function="$1"
 
-  file::write --sudo --mode 755 /usr/local/bin/update-workstation-battery-profile <<SHELL || fail
-$(runag::mini_library)
+  temp_file="$(mktemp)" || fail
+  {
+    runag::mini_library || fail
 
-$(declare -f linux::set_battery_charge_control_threshold)
-$(declare -f "${profile_function}")
-set -o nounset
-$(printf "%q" "${profile_function}") || fail
-SHELL
+    declare -f linux::set_battery_charge_control_threshold || fail
+    declare -f "${profile_function}" || fail
+
+    echo 'set -o nounset'
+    printf '%q || fail' "${profile_function}" || fail
+
+  } >"${temp_file}" || fail
+
+  file::write --absorb "${temp_file}" --sudo --mode 755 /usr/local/bin/update-workstation-battery-profile || fail
 
   file::write --sudo /etc/systemd/system/update-workstation-battery-profile.service <<EOF || fail
 [Unit]

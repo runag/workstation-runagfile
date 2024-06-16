@@ -84,12 +84,18 @@ workstation::vmware::vm_network_loss_workaround() {
 }
 
 workstation::vmware::install_vm_network_loss_workaround() {
-  file::write --sudo --mode 0755 /usr/local/bin/vmware-vm-network-loss-workaround <<SHELL || softfail || return $?
-$(runag::mini_library)
-$(declare -f workstation::vmware::vm_network_loss_workaround)
-set -o nounset
-workstation::vmware::vm_network_loss_workaround || fail "Unable to perform workstation::vmware::vm_network_loss_workaround"
-SHELL
+  temp_file="$(mktemp)" || fail
+  {
+    runag::mini_library || fail
+
+    declare -f workstation::vmware::vm_network_loss_workaround || fail
+
+    echo 'set -o nounset'
+    echo 'workstation::vmware::vm_network_loss_workaround || fail'
+
+  } >"${temp_file}" || fail
+
+  file::write --absorb "${temp_file}" --sudo --mode 0755 /usr/local/bin/vmware-vm-network-loss-workaround || softfail || return $?
 
   file::write --sudo --mode 0644 /etc/systemd/system/vmware-vm-network-loss-workaround.service <<EOF || softfail || return $?
 [Unit]
