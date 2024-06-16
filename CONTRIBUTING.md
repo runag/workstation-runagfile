@@ -2,7 +2,9 @@
 
 ## Style guide
 
-Please use [ShellCheck](https://www.shellcheck.net/). If it is not integrated into your editor, you could run `./lint.sh`.
+Please use [ShellCheck](https://www.shellcheck.net/).
+
+There is `./lint.sh` script that runs shellcheck on all files.
 
 We mostly follow [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html).
 
