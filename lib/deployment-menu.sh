@@ -14,84 +14,84 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::deployment::menu() {
+workstation::deployment::tasks() {
 
   # linux workstation
-  if menu::is_necessary --os linux; then
-    menu::add --header "Linux workstation: complete deploy script" || softfail || return $?
+  if task::suits --os linux; then
+    task::add --header "Linux workstation: complete deploy script" || softfail || return $?
 
-    menu::add workstation::linux::deploy_workstation || softfail || return $?
+    task::add workstation::linux::deploy_workstation || softfail || return $?
 
-    menu::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
+    task::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
 
     if [ "$(systemd-detect-virt)" != "vmware" ]; then
-      menu::add --note "VMware tasks are not displayed" || softfail || return $?
+      task::add --note "VMware tasks are not displayed" || softfail || return $?
     fi
 
     if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
-      menu::add workstation::linux::deploy_virt_keys || softfail || return $?
+      task::add workstation::linux::deploy_virt_keys || softfail || return $?
     fi
 
-    menu::add workstation::linux::deploy_identities || softfail || return $?
-    menu::add workstation::linux::install_packages || softfail || return $?
-    menu::add workstation::linux::configure || softfail || return $?
-    menu::add workstation::linux::set_hostname || softfail || return $?
+    task::add workstation::linux::deploy_identities || softfail || return $?
+    task::add workstation::linux::install_packages || softfail || return $?
+    task::add workstation::linux::configure || softfail || return $?
+    task::add workstation::linux::set_hostname || softfail || return $?
     
     if [ "$(systemd-detect-virt)" = "vmware" ]; then
-      menu::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
+      task::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
     fi
   fi
 
 
   # macos workstation
-  if menu::is_necessary --os darwin; then
-    menu::add --header "macOS workstation" || softfail || return $?
+  if task::suits --os darwin; then
+    task::add --header "macOS workstation" || softfail || return $?
     
-    menu::add workstation::macos::install_packages || softfail || return $?
-    menu::add workstation::macos::configure || softfail || return $?
-    menu::add workstation::macos::start_developer_servers || softfail || return $?
+    task::add workstation::macos::install_packages || softfail || return $?
+    task::add workstation::macos::configure || softfail || return $?
+    task::add workstation::macos::start_developer_servers || softfail || return $?
   fi
 
 
   # windows workstation
-  if menu::is_necessary --os msys; then
-    menu::add --header "Windows workstation" || softfail || return $?
-    menu::add workstation::windows::configure || softfail || return $?
+  if task::suits --os msys; then
+    task::add --header "Windows workstation" || softfail || return $?
+    task::add workstation::windows::configure || softfail || return $?
   fi
 
 
   # development
-  menu::add --header "Development" || softfail || return $?
+  task::add --header "Development" || softfail || return $?
 
-  menu::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
-  menu::add workstation::merge_editor_configs || softfail || return $?
-  menu::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
+  task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
+  task::add workstation::merge_editor_configs || softfail || return $?
+  task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
 
   # runagfiles
-  runag::menu || fail
+  runag::tasks || fail
 
   # storage
-  if menu::is_necessary --os linux; then
-    menu::add --header "Storage devices" || softfail || return $?
-    menu::add workstation::linux::storage::check_root || softfail || return $?
+  if task::suits --os linux; then
+    task::add --header "Storage devices" || softfail || return $?
+    task::add workstation::linux::storage::check_root || softfail || return $?
   fi
 
 
   # benchmark
-  if menu::is_necessary --os linux; then
-    menu::add --header "Benchmark" || softfail || return $?
+  if task::suits --os linux; then
+    task::add --header "Benchmark" || softfail || return $?
     if benchmark::is_available; then
-      menu::add workstation::linux::run_benchmark || softfail || return $?
+      task::add workstation::linux::run_benchmark || softfail || return $?
     else
-      menu::add --note "Benchmark is not available" || softfail || return $?
+      task::add --note "Benchmark is not available" || softfail || return $?
     fi
   fi
 
 
   # password generator
-  if menu::is_necessary --os linux; then
-    menu::add --header "Password generator" || softfail || return $?
-    menu::add workstation::linux::generate_password || softfail || return $?
+  if task::suits --os linux; then
+    task::add --header "Password generator" || softfail || return $?
+    task::add workstation::linux::generate_password || softfail || return $?
   fi
 }

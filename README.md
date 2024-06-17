@@ -99,7 +99,7 @@ At this point, Git Bash should be installed by the first script. Start Git Bash 
 ~/.runag/bin/runag
 ```
 
-Select from menu things that you need.
+Select things that you need from the task list.
 
 
 ## Deploy tidy machine on Windows 

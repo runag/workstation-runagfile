@@ -14,22 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::identity::menu() {
-  menu::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || softfail || return $?
+workstation::identity::tasks() {
+  task::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || softfail || return $?
   if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
-    workstation::identity::menu::list --for-directory . || fail
+    workstation::identity::tasks::list --for-directory . || fail
   else
-    menu::add --note "No project found in current directory" || softfail || return $?
+    task::add --note "No project found in current directory" || softfail || return $?
   fi
 
-  menu::add --header "Configure identity and install credentials" || softfail || return $?
-  workstation::identity::menu::list --with-system-credentials || fail
+  task::add --header "Configure identity and install credentials" || softfail || return $?
+  workstation::identity::tasks::list --with-system-credentials || fail
 
-  menu::add --header "Configure identity, install credentials, and set default credentials" || softfail || return $?
-  workstation::identity::menu::list --with-system-credentials --as-default || fail
+  task::add --header "Configure identity, install credentials, and set default credentials" || softfail || return $?
+  workstation::identity::tasks::list --with-system-credentials --as-default || fail
 }
 
-workstation::identity::menu::list() {
+workstation::identity::tasks::list() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
   local identity_found=false
@@ -45,11 +45,11 @@ workstation::identity::menu::list() {
 
       identity_found=true
 
-      menu::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::identity::use "$@" "${identity_path}" || softfail || return $?
+      task::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::identity::use "$@" "${identity_path}" || softfail || return $?
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    menu::add --note "No identities found in password store" || softfail || return $?
+    task::add --note "No identities found in password store" || softfail || return $?
   fi
 }

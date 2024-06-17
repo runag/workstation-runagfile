@@ -14,31 +14,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::remote_repositories_backup::menu() {
+workstation::remote_repositories_backup::tasks() {
   # shellcheck disable=2119
-  workstation::remote_repositories_backup::menu::identities || fail
+  workstation::remote_repositories_backup::tasks::identities || fail
 
-  menu::add --header "Remote repositories backup: deploy" || softfail || return $?
+  task::add --header "Remote repositories backup: deploy" || softfail || return $?
 
-  menu::add workstation::remote_repositories_backup::initial_deploy || softfail || return $?
-  menu::add workstation::remote_repositories_backup::deploy_services || softfail || return $?
-  menu::add workstation::remote_repositories_backup::create || softfail || return $?
+  task::add workstation::remote_repositories_backup::initial_deploy || softfail || return $?
+  task::add workstation::remote_repositories_backup::deploy_services || softfail || return $?
+  task::add workstation::remote_repositories_backup::create || softfail || return $?
 
-  menu::add --header "Remote repositories backup: services" || softfail || return $?
+  task::add --header "Remote repositories backup: services" || softfail || return $?
 
-  menu::add workstation::remote_repositories_backup::start || softfail || return $?
-  menu::add workstation::remote_repositories_backup::stop || softfail || return $?
-  menu::add workstation::remote_repositories_backup::disable_timers || softfail || return $?
-  menu::add workstation::remote_repositories_backup::status || softfail || return $?
-  menu::add workstation::remote_repositories_backup::log || softfail || return $?
-  menu::add workstation::remote_repositories_backup::log_follow || softfail || return $?
+  task::add workstation::remote_repositories_backup::start || softfail || return $?
+  task::add workstation::remote_repositories_backup::stop || softfail || return $?
+  task::add workstation::remote_repositories_backup::disable_timers || softfail || return $?
+  task::add workstation::remote_repositories_backup::status || softfail || return $?
+  task::add workstation::remote_repositories_backup::log || softfail || return $?
+  task::add workstation::remote_repositories_backup::log_follow || softfail || return $?
 }
 
 # shellcheck disable=2120
-workstation::remote_repositories_backup::menu::identities() {
+workstation::remote_repositories_backup::tasks::identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  menu::add --header "Remote repositories backup: deploy credentials" || softfail || return $?
+  task::add --header "Remote repositories backup: deploy credentials" || softfail || return $?
 
   local identity_found=false
 
@@ -50,12 +50,12 @@ workstation::remote_repositories_backup::menu::identities() {
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
       identity_found=true
-      menu::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || softfail || return $?
+      task::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || softfail || return $?
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    menu::add --note "Unable to find any identity" || softfail || return $?
+    task::add --note "Unable to find any identity" || softfail || return $?
   fi
 }
 
