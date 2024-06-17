@@ -20,12 +20,12 @@
 # load all shell files
 shell::related_source --recursive lib || softfail || return $?
 
-# menu
-menu::add --header "Workstation" || softfail || return $?
+# tasks
+task::add --header "Workstation" || softfail || return $?
 
-menu::add --menu workstation::deployment::menu || softfail || return $?
-menu::add --menu workstation::identity::menu || softfail || return $?
-menu::add --menu workstation::key_storage::menu || softfail || return $?
+task::add --group workstation::deployment::tasks || softfail || return $?
+task::add --group workstation::identity::tasks || softfail || return $?
+task::add --group workstation::key_storage::tasks || softfail || return $?
 
-menu::add --menu --os linux workstation::backup::menu || softfail || return $?
-menu::add --menu --os linux workstation::remote_repositories_backup::menu || softfail || return $?
+task::add --group --os linux workstation::backup::tasks || softfail || return $?
+task::add --group --os linux workstation::remote_repositories_backup::tasks || softfail || return $?

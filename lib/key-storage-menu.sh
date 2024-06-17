@@ -14,15 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::key_storage::menu() {
-  menu::add --header "Checksums for current directory: ${PWD}" || softfail || return $?
+workstation::key_storage::tasks() {
+  task::add --header "Checksums for current directory: ${PWD}" || softfail || return $?
 
   if [ -f "checksums.txt" ]; then
-    menu::add workstation::key_storage::checksum create_or_update || softfail || return $?
-    menu::add workstation::key_storage::checksum verify || softfail || return $?
+    task::add workstation::key_storage::checksum create_or_update || softfail || return $?
+    task::add workstation::key_storage::checksum verify || softfail || return $?
   else
-    menu::add --note "There are no checksums.txt file in current directory" || softfail || return $?
-    menu::add workstation::key_storage::checksum create_or_update || softfail || return $?
+    task::add --note "There are no checksums.txt file in current directory" || softfail || return $?
+    task::add workstation::key_storage::checksum create_or_update || softfail || return $?
   fi
 
   local Key_Storage_Found=false
@@ -34,28 +34,28 @@ workstation::key_storage::menu() {
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::menu::media "${media_path}" || fail
+        workstation::key_storage::tasks::media "${media_path}" || fail
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
     local media_path; for media_path in "/media/${USER}"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::menu::media "${media_path}" || fail
+        workstation::key_storage::tasks::media "${media_path}" || fail
       fi
     done
 
   fi
 
-  workstation::key_storage::menu::media "." || fail
+  workstation::key_storage::tasks::media "." || fail
 
   if [ "${Key_Storage_Found}" = false ]; then
-    menu::add --header "Key storage" || softfail || return $?
-    menu::add --note "No key storage found" || softfail || return $?
+    task::add --header "Key storage" || softfail || return $?
+    task::add --note "No key storage found" || softfail || return $?
   fi
 }
 
-workstation::key_storage::menu::media() {
+workstation::key_storage::tasks::media() {
   local media_path="$1"
 
   if [ ! -d "${media_path}/keys" ]; then
@@ -64,13 +64,13 @@ workstation::key_storage::menu::media() {
 
   Key_Storage_Found=true
 
-  menu::add --header "Key storage: ${media_path}" || softfail || return $?
+  task::add --header "Key storage: ${media_path}" || softfail || return $?
   
   # Scopes
   local scope_found=false
 
   local scope_path; for scope_path in "${media_path}/keys"/* ; do
-    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-menu" ]; then
+    if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-tasks" ]; then
 
       local media_name; media_name="$(basename "${media_path}")" || fail
       local scope_name; scope_name="$(basename "${scope_path}")" || fail
@@ -78,25 +78,25 @@ workstation::key_storage::menu::media() {
 
       scope_found=true
 
-      menu::add --header "Password store in: ${media_path}/${scope_name}" || softfail || return $?
-      workstation::key_storage::menu::password_store "${scope_path}" "${git_remote_name}" || fail
+      task::add --header "Password store in: ${media_path}/${scope_name}" || softfail || return $?
+      workstation::key_storage::tasks::password_store "${scope_path}" "${git_remote_name}" || fail
 
-      menu::add --header "GPG keys in: ${media_path}/${scope_name}" || softfail || return $?
-      workstation::key_storage::menu::gpg_keys "${scope_path}" || fail
+      task::add --header "GPG keys in: ${media_path}/${scope_name}" || softfail || return $?
+      workstation::key_storage::tasks::gpg_keys "${scope_path}" || fail
     fi
   done
 
   if [ "${scope_found}" = false ]; then
-    menu::add --note "No key storage scopes found" || softfail || return $?
+    task::add --note "No key storage scopes found" || softfail || return $?
   fi
 
   # Checksums
-  menu::add --header "Checksums for: ${media_path}" || softfail || return $?
-  menu::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
-  menu::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
+  task::add --header "Checksums for: ${media_path}" || softfail || return $?
+  task::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
+  task::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
 }
 
-workstation::key_storage::menu::password_store() {
+workstation::key_storage::tasks::password_store() {
   local scope_path="$1"
   local git_remote_name="$2"
 
@@ -106,26 +106,26 @@ workstation::key_storage::menu::password_store() {
 
   if [ -d "${password_store_dir}/.git" ]; then
     if [ -d "${password_store_git_remote_path}" ]; then
-      menu::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      task::add workstation::key_storage::add_or_update_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     else
-      menu::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      task::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     fi
   else
-    menu::add --note "No local password store with git versioning found: ${password_store_dir}/.git" || softfail || return $?
+    task::add --note "No local password store with git versioning found: ${password_store_dir}/.git" || softfail || return $?
   fi
 
   if [ -d "${password_store_git_remote_path}" ]; then
     if [ ! -d "${password_store_dir}" ]; then
-      menu::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
+      task::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     else
-      menu::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || softfail || return $?
+      task::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || softfail || return $?
     fi
   else
-    menu::add --note "Password store git remote not exists: ${password_store_git_remote_path}" || softfail || return $?
+    task::add --note "Password store git remote not exists: ${password_store_git_remote_path}" || softfail || return $?
   fi
 }
 
-workstation::key_storage::menu::gpg_keys() {
+workstation::key_storage::tasks::gpg_keys() {
   local scope_path="$1"
 
   local gpg_keys_path="${scope_path}/gpg"
@@ -145,12 +145,12 @@ workstation::key_storage::menu::gpg_keys() {
 
       if [ -f "${gpg_key_file}" ]; then
         gpg_keys_found=true
-        menu::add ${gpg_key_uid:+"--comment" "${gpg_key_uid}"} workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || softfail || return $?
+        task::add ${gpg_key_uid:+"--comment" "${gpg_key_uid}"} workstation::key_storage::import_gpg_key "${gpg_key_id}" "${gpg_key_file}" || softfail || return $?
       fi
     fi
   done
 
   if [ "${gpg_keys_found}" = false ]; then
-    menu::add --note "No GPG keys found" || softfail || return $?
+    task::add --note "No GPG keys found" || softfail || return $?
   fi
 }
