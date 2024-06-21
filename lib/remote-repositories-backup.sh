@@ -140,11 +140,10 @@ workstation::remote_repositories_backup::deploy_credentials() {
 
 # shellcheck disable=2030
 workstation::remote_repositories_backup::create() {
-  local backups_home="${HOME}/backups"
+  local data_home="${XDG_DATA_HOME:-"${HOME}/.local/share"}"
+  ( umask 0077 && mkdir -p "${data_home}" ) || fail
 
-  dir::should_exists --mode 0700 "${backups_home}" || fail
-
-  local backup_path="${backups_home}/remote-repositories"
+  local backup_path="${data_home}/remote-repositories-backup"
 
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail

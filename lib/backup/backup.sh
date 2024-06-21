@@ -70,7 +70,7 @@ workstation::backup() {(
   fi
 
   # case for multiple repositories (--each-repository)
-
+  # NOTE: all functions called down from here shoud only use softfail
   local exit_statuses=()
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/${WORKSTATION_BACKUP_PROFILE}/repositories"/*; do
@@ -129,17 +129,18 @@ workstation::backup::run_action_with_repository_config() {(
 
 # shellcheck disable=2031
 workstation::backup::get_output_directory() {
+  local output_directory
   if [ -n "${WORKSTATION_BACKUP_OUTPUT_DIR:-}" ]; then
-    local output_directory="${WORKSTATION_BACKUP_OUTPUT_DIR}"
+    output_directory="${WORKSTATION_BACKUP_OUTPUT_DIR}"
     ( umask 0077 && mkdir -p "${output_directory}" ) || softfail || return $?
   else
-    local backups_home="${HOME}/backups"
-    dir::should_exists --mode 0700 "${backups_home}" || fail
+    local data_home="${XDG_DATA_HOME:-"${HOME}/.local/share"}"
+    ( umask 0077 && mkdir -p "${data_home}" ) || softfail || return $?
 
-    local output_directory="${backups_home}/workstation-restore"
+    output_directory="${data_home}/workstation-backup"
     dir::should_exists --mode 0700 "${output_directory}" || softfail || return $?
 
-    file::write --mode 0600 "${output_directory}/.backup-restore-dir-flag" "38pmZzJ687QwThYHkOSGzt" || fail
+    file::write --mode 0600 "${output_directory}/.backup-restore-dir-flag" "38pmZzJ687QwThYHkOSGzt" || softfail || return $?
 
     if [ "${WORKSTATION_BACKUP_PROFILE}" != workstation ]; then
       output_directory+="/${WORKSTATION_BACKUP_PROFILE}"
