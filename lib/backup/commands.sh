@@ -59,20 +59,29 @@ workstation::backup::create() {(
     workstation_sync_args+=(--exclude-if-present ".backup-restore-dir-flag:38pmZzJ687QwThYHkOSGzt")
   fi
 
+  # https://restic.readthedocs.io/en/stable/040_backup.html#excluding-files
+
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
     --group-by "host,paths,tags" \
     --exclude-caches \
     \
-    --exclude "${HOME}/.*" \
+    --exclude  "${HOME}/.*" \
+    \
     --exclude "!${HOME}/.gnupg" \
     --exclude "!${HOME}/.password-store" \
     --exclude "!${HOME}/.runag" \
     --exclude "!${HOME}/.ssh" \
     \
-    --exclude "${HOME}/Downloads" \
-    --exclude "${HOME}/snap" \
+    --exclude "!${HOME}/.local" \
+    --exclude  "${HOME}/.local/*" \
+    --exclude "!${HOME}/.local/share" \
+    --exclude  "${HOME}/.local/share/*" \
+    --exclude "!${HOME}/.local/share/remote-repositories-backup" \
+    \
+    --exclude  "${HOME}/Downloads" \
+    --exclude  "${HOME}/snap" \
     \
     "${workstation_sync_args[@]}" \
     \
