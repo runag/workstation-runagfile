@@ -121,11 +121,14 @@ workstation::identity::use() {
     fi
 
     # setup ubuntu pro subscription
-    # if pass::exists "${identity_path}/ubuntu/pro"; then
-    #   if ! ubuntu::pro::is_attached; then
-    #     pass::use "${identity_path}/ubuntu/pro" sudo pro attach || fail
-    #   fi
-    # fi
+    if ubuntu::pro::available && pass::exists "${identity_path}/ubuntu-pro/token" && ! ubuntu::pro::is_attached; then
+      pass::use "${identity_path}/ubuntu-pro/token" sudo pro attach || fail
+    fi
+
+    # connect to wifi
+    if pass::exists "${identity_path}/wifi" && wifi::is_available && ! wifi::is_connected; then
+      wifi::connect --pass-path "${identity_path}/wifi" || fail
+    fi
   fi
 
   if [ "${as_default}" = true ]; then
