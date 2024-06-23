@@ -25,7 +25,7 @@ workstation::linux::install_packages() {
 
   # shellfiles
   shellfile::install_loader::bash || fail
-  shellfile::install_runag_path_profile || fail
+  shellfile::install_runag_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
   # install spice-vdagent if needed
