@@ -85,6 +85,7 @@ workstation::linux::configure() {
   workstation::linux::hide-file "Desktop" || fail
   workstation::linux::hide-file "Documents" || fail
   workstation::linux::hide-file "Music" || fail
+  workstation::linux::hide-file "Pictures" || fail
   workstation::linux::hide-file "Public" || fail
   workstation::linux::hide-file "Templates" || fail
   workstation::linux::hide-file "Videos" || fail
