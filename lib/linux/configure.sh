@@ -101,6 +101,10 @@ workstation::linux::configure() {
   if [ "$(systemd-detect-virt)" = "vmware" ]; then
     workstation::linux::imwheel::deploy || fail
   fi
+
+  # firefox
+  # TODO: remove as debian's firefox reaches version 121
+  firefox::enable_wayland || fail
 }
 
 workstation::linux::hide-file() {
