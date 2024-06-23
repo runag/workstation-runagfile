@@ -174,12 +174,6 @@ workstation::linux::install_packages() {
   # install dconf-editor
   apt::install dconf-editor || fail
 
-  # gnome-screenshot
-  apt::install gnome-screenshot || fail
-
-  # gnome-shell-extension-manager
-  apt::install gnome-shell-extension-manager || fail
-
   # zbar-tools
   apt::install zbar-tools || fail
 
