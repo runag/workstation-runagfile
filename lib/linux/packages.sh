@@ -204,8 +204,6 @@ workstation::linux::install_packages() {
     apt::install vlc || fail
 
     # obs studio
-    sudo add-apt-repository --yes ppa:obsproject/obs-studio || fail
-    apt::update || fail
     apt::install obs-studio || fail
 
     # display control
