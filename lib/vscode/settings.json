@@ -1,49 +1,39 @@
 {
+  "editor.accessibilitySupport": "off",
   "editor.autoClosingBrackets": "never",
   "editor.autoClosingQuotes": "never",
   "editor.cursorSurroundingLines": 2,
   "editor.detectIndentation": false,
   "editor.fastScrollSensitivity": 4,
   "editor.fontSize": 16,
-  "editor.lineHeight": 1.4,
+  "editor.lineHeight": 1.5,
   "editor.minimap.enabled": false,
-  // "editor.mouseWheelScrollSensitivity": 2,
+  "editor.mouseWheelScrollSensitivity": 3,
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.parameterHints.enabled": false, // this turns off suggestions
-  "editor.quickSuggestions": {
-    "comments": "off",
-    "strings": "off",
-    "other": "off"
-  }, // this turns off suggestions
-  "editor.rulers": [
-    80,
-    100,
-    120
-  ],
+  "editor.quickSuggestions": { "comments": "off", "strings": "off", "other": "off" }, // this turns off suggestions
+  "editor.rulers": [ 80, 100, 120 ],
   "editor.smoothScrolling": true,
   "editor.suggestOnTriggerCharacters": false, // this turns off suggestions
   "editor.tabSize": 2,
   "editor.wordBasedSuggestions": "off", // this turns off suggestions
+  "elixirLS.suggestSpecs": false,
   "explorer.autoReveal": false,
-  "explorer.confirmDelete": false,
-  "explorer.confirmDragAndDrop": false,
-  "files.associations": {
-    "*.plist": "xml"
-  },
+  "explorer.confirmUndo": "verbose",
+  "files.associations": { "*.plist": "xml" },
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "git.autofetch": true,
-  // "terminal.integrated.mouseWheelScrollSensitivity": 2,
+  "git.confirmSync": false,
+  "git.openRepositoryInParentFolders": "never",
+  "html.autoClosingTags": false,
+  "markdown.preview.fontSize": 16,
+  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.lineHeight": 1.2,
   "window.titleBarStyle": "custom",
+  "workbench.colorTheme": "Default Light Modern",
+  "workbench.list.mouseWheelScrollSensitivity": 2,
   "workbench.list.smoothScrolling": true,
   "workbench.startupEditor": "none",
   "workbench.tree.indent": 25,
-  "editor.mouseWheelScrollSensitivity": 3,
-  "elixirLS.suggestSpecs": false,
-  "git.confirmSync": false,
-  "workbench.colorTheme": "Default Light Modern",
-  "editor.accessibilitySupport": "off",
-  "git.openRepositoryInParentFolders": "never",
-  "html.autoClosingTags": false,
-  "workbench.list.mouseWheelScrollSensitivity": 2
 }
