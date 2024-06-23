@@ -40,25 +40,59 @@ workstation::linux::gnome::configure() {
     # sadly I can't select the color palette here as they are hardcoded in terminal app
   fi
 
-  # Dash
-  if gsettings list-keys org.gnome.shell.extensions.dash-to-dock >/dev/null 2>&1; then
-    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
-    gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
-
-    if [ "$(systemd-detect-virt)" = "vmware" ]; then
-      gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
-      gsettings set org.gnome.mutter edge-tiling false || fail
-    else
-      gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
-      gsettings set org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
-      gsettings set org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
-      gsettings set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show true || fail
-      gsettings set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
+  # dash to dock
+  local dash_to_dock_schema_args_maybe=()
+  if ! gsettings list-keys org.gnome.shell.extensions.dash-to-dock >/dev/null 2>&1; then
+    local dash_to_dock_schema_path="${HOME}/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/"
+    if [ -d "${dash_to_dock_schema_path}" ]; then
+      dash_to_dock_schema_args_maybe+=(--schemadir "${dash_to_dock_schema_path}")
     fi
   fi
+
+  # list keys
+  # gsettings --schemadir "${HOME}/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/" list-recursively org.gnome.shell.extensions.dash-to-dock
+
+  # Dash
+  # those are standalone extension defaults but not in ubuntu-packaged
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
+
+  # those are both for standalone extension and for ubuntu-packaged
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
+
+  # At least in gnome 43 this setting is user-configurable from multitasking pane of control panel (org.gnome.shell.app-switcher current-workspace-only)
+  # gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true || fail
+
+  # those are for standalone extension, I need to check if that is applicable to ubuntu-packaged
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock multi-monitor true || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-dominant-color true || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || fail
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock scroll-switch-workspace true || fail
+
+  # VM window usually have no edges
+  if systemd-detect-virt --quiet; then
+    gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
+  fi
+
+  # not sure if that's a good idea anymore
+  # gsettings set "${dash_to_dock_schema_args_maybe[@]}" org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
+  # gsettings set "${dash_to_dock_schema_args_maybe[@]}" org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
+  # gsettings set "${dash_to_dock_schema_args_maybe[@]}" org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
+
+
+  # VM window usually have no edges
+  if systemd-detect-virt --quiet; then
+    gsettings set org.gnome.mutter edge-tiling false || fail
+  else
+    gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
+  fi
+
+  # Workspaces
+  gsettings set org.gnome.mutter workspaces-only-on-primary false || fail
+  gsettings set org.gnome.shell.app-switcher current-workspace-only true || fail
 
   # Nautilus
   gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
