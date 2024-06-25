@@ -82,6 +82,7 @@ workstation::backup::create() {(
     \
     --exclude  "${HOME}/Downloads" \
     --exclude  "${HOME}/snap" \
+    --exclude  "${HOME}/sync/downloads" \
     \
     "${workstation_sync_args[@]}" \
     \
