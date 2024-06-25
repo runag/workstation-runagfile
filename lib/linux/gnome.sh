@@ -66,7 +66,13 @@ workstation::linux::gnome::configure() {
   # gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true || fail
 
   # those are for standalone extension, I need to check if that is applicable to ubuntu-packaged
-  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
+
+  if gsettings range org.gnome.shell.extensions.dash-to-dock click-action | grep -qFx "'focus-or-appspread'"; then
+    gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
+  else
+    gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-previews' || fail
+  fi
+
   gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock multi-monitor true || fail
   gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-dominant-color true || fail
   gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || fail
