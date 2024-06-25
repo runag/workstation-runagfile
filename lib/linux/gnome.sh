@@ -113,6 +113,9 @@ workstation::linux::gnome::configure() {
 
   # Disable external search providers
   gsettings set org.gnome.desktop.search-providers disable-external true || fail
+
+  # Window title
+  gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close' || fail
 }
 
 workstation::linux::gnome::add_sound_control_launcher() {
