@@ -56,6 +56,7 @@ workstation::backup::create() {(
 
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
     workstation_sync_args+=(--exclude "${HOME}/devices")
+    workstation_sync_args+=(--exclude "${HOME}/sync")
     workstation_sync_args+=(--exclude-if-present ".backup-restore-dir-flag:38pmZzJ687QwThYHkOSGzt")
   fi
 
