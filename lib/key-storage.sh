@@ -26,7 +26,7 @@ workstation::key_storage::checksum() {
 
 workstation::key_storage::maintain_checksums() {
   local skip_backups=false
-  local checksum_action="checksum::create_or_update"
+  local checksum_action="create_or_update"
 
   while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -35,7 +35,7 @@ workstation::key_storage::maintain_checksums() {
         shift
         ;;
       -v|--verify-only)
-        checksum_action="checksum::verify"
+        checksum_action="verify"
         shift
         ;;
       -*)
@@ -51,7 +51,7 @@ workstation::key_storage::maintain_checksums() {
 
   local dir; for dir in "${media_path}/keys/"* "${media_path}/keys/"*/*; do
     if [ -d "${dir}" ] && [ -f "${dir}/checksums.txt" ]; then
-      fs::with_secure_temp_dir_if_available "${checksum_action}" "${dir}" "checksums.txt" || fail
+      fs::with_secure_temp_dir_if_available "checksum::${checksum_action}" "${dir}" "checksums.txt" || fail
     fi
   done
 
