@@ -20,7 +20,7 @@ workstation::linux::install_packages() {
   apt::update || fail
   apt::dist_upgrade --skip-in-continuous-integration || fail
 
-  # install tools to use by the rest of the script
+  # tools to use by the rest of the script
   linux::install_runag_essential_dependencies::apt || fail
 
   # shellfiles
@@ -28,68 +28,106 @@ workstation::linux::install_packages() {
   shellfile::install_runag_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
-  # install spice-vdagent if needed
+  local package_list=()
+
+  # spice-vdagent for kvm
   if [ "$(systemd-detect-virt)" = "kvm" ]; then
-    apt::install spice-vdagent || fail
+    package_list+=(
+      spice-vdagent
+    )
   fi
 
-  # install open-vm-tools if needed
+  # open-vm-tools for vmware
   if [ "$(systemd-detect-virt)" = "vmware" ]; then
-    apt::install open-vm-tools open-vm-tools-desktop || fail
-    apt::install imwheel || fail
+    package_list+=(
+      open-vm-tools
+      open-vm-tools-desktop
+      imwheel
+    )
+  fi
+  
+  package_list+=(
+    # general tools
+    apache2-utils
+    awscli
+    btrfs-compsize
+    certbot
+    direnv
+    ethtool
+    ffmpeg
+    git
+    gnupg
+    graphviz
+    htop
+    hyperfine
+    imagemagick
+    inotify-tools
+    iperf3
+    mc
+    ncdu
+    p7zip-full
+    rclone
+    shellcheck
+    sqlite3
+    tmux
+    sysbench
+    whois
+    xclip
+    xkcdpass
+    zsh
+    debian-goodies # checkrestart
+    micro
+
+    # build tools
+    build-essential
+    libsqlite3-dev
+    libssl-dev
+
+    # servers
+    libpq-dev
+    # memcached
+    postgresql
+    postgresql-contrib
+    # redis-server
+
+    # desktop software
+    calibre
+    dconf-editor
+    dosfstools # gparted dependencies for fat partitions
+    ghex
+    gpa # gnu privacy assistant
+    gparted
+    inkscape
+    krita
+    libreoffice-calc
+    libreoffice-writer
+    meld
+    mtools # gparted dependencies for fat partitions
+    qtpass
+    thunar
+    zbar-tools
+  )
+
+  if ! systemd-detect-virt --quiet; then
+    # software for bare metal workstation
+    package_list+=(
+      nvme-cli
+      obs-studio
+      pavucontrol # volume control
+      v4l-utils # webcam control
+      vlc
+
+      # ddccontrol # display control
+      # gddccontrol # display control
+      # ddccontrol-db # display control
+      # i2c-tools # display control
+    )
   fi
 
-  # install misc tools
-  apt::install \
-    apache2-utils \
-    awscli \
-    certbot \
-    direnv \
-    ethtool \
-    ffmpeg \
-    git \
-    gnupg \
-    graphviz \
-    htop \
-    hyperfine \
-    imagemagick \
-    iperf3 \
-    mc \
-    ncdu \
-    p7zip-full \
-    rclone \
-    shellcheck \
-    sqlite3 \
-    tmux \
-    whois \
-    xclip \
-    xkcdpass \
-    zsh \
-      || fail
+  apt::install "${package_list[@]}" || softfail || return $?
 
-  # install restic from github
+  # restic from github
   restic::install "0.16.4" || fail
-
-  # install inotify tools
-  apt::install inotify-tools || fail
-
-  # gparted dependencies for fat partitions
-  apt::install dosfstools mtools || fail
-
-  # install build tools
-  apt::install \
-    build-essential \
-    libsqlite3-dev \
-    libssl-dev \
-      || fail
-
-  # install servers
-  # apt::install memcached || fail
-  apt::install postgresql postgresql-contrib libpq-dev || fail
-  # apt::install redis-server || fail
-
-  # install btrfs-compsize
-  apt::install btrfs-compsize || fail
 
   # asdf
   asdf::install_dependencies::apt || fail
@@ -117,34 +155,12 @@ workstation::linux::install_packages() {
   mix local.rebar --if-missing --force || fail
   mix archive.install hex phx_new --force || fail
 
-  # install gnome-keyring and libsecret (for git and ssh)
+  # gnome-keyring and libsecret (for git and ssh)
   linux::install_gnome_keyring_and_libsecret::apt || fail
   git::install_libsecret_credential_helper || fail
 
-  # install benchmark
-  benchmark::install::apt || fail
-
-  # install checkrestart
-  apt::install debian-goodies || fail
-
-  # micro text editor
-  apt::install micro || fail
+  # micro text editor plugins
   micro -plugin install filemanager || fail
-
-
-  ### desktop software
-
-  # inkscape
-  apt::install inkscape || fail
-
-  # krita
-  apt::install krita || fail
-
-  # libreoffice
-  apt::install libreoffice-writer libreoffice-calc || fail
-
-  # calibre
-  apt::install calibre || fail
 
   # vscode
   vscode::install::apt || fail
@@ -153,54 +169,6 @@ workstation::linux::install_packages() {
   sublime_merge::install::apt || fail
   # sublime_text::install::apt || fail
 
-  # ghex
-  apt::install ghex || fail
-
-  # meld
-  apt::install meld || fail
-
-  # thunar
-  apt::install thunar || fail
-
-  # qtpass
-  apt::install qtpass || fail
-
-  # gparted
-  apt::install gparted || fail
-
-  # gnu privacy assistant
-  apt::install gpa || fail
-
-  # install dconf-editor
-  apt::install dconf-editor || fail
-
-  # zbar-tools
-  apt::install zbar-tools || fail
-
-  ### snap packages
-
-  # chromium
-  # TODO: install via flatpack
-  # sudo snap install chromium || fail
-
-  # software for bare metal workstation
-  if ! systemd-detect-virt --quiet; then
-    # nvme-cli
-    apt::install nvme-cli || fail
-
-    # volume control
-    apt::install pavucontrol || fail
-
-    # webcam control
-    apt::install v4l-utils || fail
-
-    # vlc
-    apt::install vlc || fail
-
-    # obs studio
-    apt::install obs-studio || fail
-
-    # display control
-    # apt::install ddccontrol gddccontrol ddccontrol-db i2c-tools || fail
-  fi
+  # syncthing
+  syncthing::install::apt || fail
 }
