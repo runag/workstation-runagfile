@@ -28,9 +28,7 @@ workstation::linux::install_packages() {
   shellfile::install_runag_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
-  local package_list=()
-
-  package_list+=(
+  local package_list=(
     # general tools
     apache2-utils
     awscli
