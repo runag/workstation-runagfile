@@ -30,22 +30,6 @@ workstation::linux::install_packages() {
 
   local package_list=()
 
-  # spice-vdagent for kvm
-  if [ "$(systemd-detect-virt)" = "kvm" ]; then
-    package_list+=(
-      spice-vdagent
-    )
-  fi
-
-  # open-vm-tools for vmware
-  if [ "$(systemd-detect-virt)" = "vmware" ]; then
-    package_list+=(
-      open-vm-tools
-      open-vm-tools-desktop
-      imwheel
-    )
-  fi
-  
   package_list+=(
     # general tools
     apache2-utils
@@ -85,9 +69,9 @@ workstation::linux::install_packages() {
 
     # servers
     libpq-dev
-    # memcached
     postgresql
     postgresql-contrib
+    # memcached
     # redis-server
 
     # desktop software
@@ -111,16 +95,23 @@ workstation::linux::install_packages() {
   if ! systemd-detect-virt --quiet; then
     # software for bare metal workstation
     package_list+=(
+      ddcutil # display control
       nvme-cli
       obs-studio
       pavucontrol # volume control
       v4l-utils # webcam control
       vlc
-
-      # ddccontrol # display control
-      # gddccontrol # display control
-      # ddccontrol-db # display control
-      # i2c-tools # display control
+    )
+  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
+    # spice-vdagent for kvm
+    package_list+=(spice-vdagent)
+  
+  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
+    # open-vm-tools for vmware
+    package_list+=(
+      imwheel
+      open-vm-tools
+      open-vm-tools-desktop
     )
   fi
 
