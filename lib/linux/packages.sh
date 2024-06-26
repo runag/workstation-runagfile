@@ -52,6 +52,7 @@ workstation::linux::install_packages() {
     awscli
     btrfs-compsize
     certbot
+    debian-goodies # checkrestart
     direnv
     ethtool
     ffmpeg
@@ -64,19 +65,18 @@ workstation::linux::install_packages() {
     inotify-tools
     iperf3
     mc
+    micro
     ncdu
     p7zip-full
     rclone
     shellcheck
     sqlite3
-    tmux
     sysbench
+    tmux
     whois
     xclip
     xkcdpass
     zsh
-    debian-goodies # checkrestart
-    micro
 
     # build tools
     build-essential
