@@ -43,52 +43,48 @@ workstation::backup::init_unless_exists() {
   fi
 }
 
-workstation::backup::create() {(
+workstation::backup::create() (
   workstation::backup::init_unless_exists || softfail || return $?
 
   local machine_id; machine_id="$(workstation::backup::machine_id)" || softfail || return $?
 
   cd "${HOME}" || softfail || return $?
 
-  # TODO: benchmark --read-concurrency
-
-  local workstation_sync_args=()
+  # https://restic.readthedocs.io/en/stable/040_backup.html#excluding-files
+  local exclude_args=(
+    --exclude  "${HOME}/.*"
+   
+    --exclude "!${HOME}/.gnupg"
+    --exclude "!${HOME}/.password-store"
+    --exclude "!${HOME}/.runag"
+    --exclude "!${HOME}/.ssh"
+   
+    --exclude "!${HOME}/.local"
+    --exclude  "${HOME}/.local/*"
+    --exclude "!${HOME}/.local/share"
+    --exclude  "${HOME}/.local/share/*"
+    --exclude "!${HOME}/.local/share/remote-repositories-backup"
+   
+    --exclude  "${HOME}/Downloads"
+    --exclude  "${HOME}/snap"
+    --exclude  "${HOME}/sync/downloads"
+    )
 
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
-    workstation_sync_args+=(--exclude "${HOME}/devices")
-    workstation_sync_args+=(--exclude "${HOME}/sync")
-    workstation_sync_args+=(--exclude-if-present ".backup-restore-dir-flag:38pmZzJ687QwThYHkOSGzt")
+    exclude_args+=(
+      --exclude "${HOME}/sync"
+      --exclude-if-present ".backup-restore-dir-flag:38pmZzJ687QwThYHkOSGzt"
+      )
   fi
-
-  # https://restic.readthedocs.io/en/stable/040_backup.html#excluding-files
 
   restic backup \
     --one-file-system \
     --tag "machine-id:${machine_id}" \
     --group-by "host,paths,tags" \
     --exclude-caches \
-    \
-    --exclude  "${HOME}/.*" \
-    \
-    --exclude "!${HOME}/.gnupg" \
-    --exclude "!${HOME}/.password-store" \
-    --exclude "!${HOME}/.runag" \
-    --exclude "!${HOME}/.ssh" \
-    \
-    --exclude "!${HOME}/.local" \
-    --exclude  "${HOME}/.local/*" \
-    --exclude "!${HOME}/.local/share" \
-    --exclude  "${HOME}/.local/share/*" \
-    --exclude "!${HOME}/.local/share/remote-repositories-backup" \
-    \
-    --exclude  "${HOME}/Downloads" \
-    --exclude  "${HOME}/snap" \
-    --exclude  "${HOME}/sync/downloads" \
-    \
-    "${workstation_sync_args[@]}" \
-    \
+    "${exclude_args[@]}" \
     . || softfail || return $?
-)}
+)
 
 workstation::backup::snapshots() {
   restic snapshots || softfail || return $?
