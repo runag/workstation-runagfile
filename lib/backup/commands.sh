@@ -66,6 +66,7 @@ workstation::backup::create() (
     --exclude "!${HOME}/.local/share/remote-repositories-backup"
    
     --exclude  "${HOME}/Downloads"
+    --exclude  "${HOME}/downloads"
     --exclude  "${HOME}/snap"
     --exclude  "${HOME}/sync/downloads"
     )
