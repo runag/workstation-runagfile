@@ -280,7 +280,7 @@ workstation::remote_repositories_backup::status() {
   exit_statuses+=($?)
   printf "\n"
 
-  if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # i'm not sure about 3 here
+  if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # I'm not sure about 3 here
     fail
   fi
 }
