@@ -14,7 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::gnome::configure() {
+workstation::linux::gnome::configure() (
+  . /etc/os-release || softfail || return $?
   #
   # use dconf-editor to find key/value pairs
   #
@@ -128,7 +129,16 @@ workstation::linux::gnome::configure() {
 
   # Attach modal dialogs
   gsettings set org.gnome.mutter attach-modal-dialogs true || fail
-}
+
+  # Use Alt+Tab to switch windows on debian
+  if [ "${ID:-}" = debian ]; then
+    gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
+
+    gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
+  fi
+)
 
 workstation::linux::gnome::add_sound_control_launcher() {
   # Registered Categories https://specifications.freedesktop.org/menu-spec/latest/apa.html
