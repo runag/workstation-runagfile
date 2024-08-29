@@ -67,7 +67,7 @@ workstation::linux::gnome::configure() {
 
   # those are for standalone extension, I need to check if that is applicable to ubuntu-packaged
 
-  if gsettings range org.gnome.shell.extensions.dash-to-dock click-action | grep -qFx "'focus-or-appspread'"; then
+  if gsettings "${dash_to_dock_schema_args_maybe[@]}" range org.gnome.shell.extensions.dash-to-dock click-action | grep -qFx "'focus-or-appspread'"; then
     gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
   else
     gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-previews' || fail
