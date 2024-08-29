@@ -78,6 +78,9 @@ workstation::linux::gnome::configure() {
   gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || fail
   gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock scroll-switch-workspace true || fail
 
+  # Hide mode
+  gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS' || fail
+
   # VM window usually have no edges
   if systemd-detect-virt --quiet; then
     gsettings "${dash_to_dock_schema_args_maybe[@]}" set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
