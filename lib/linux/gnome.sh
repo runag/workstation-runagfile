@@ -125,6 +125,9 @@ workstation::linux::gnome::configure() {
 
   # Window title
   gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close' || fail
+
+  # Attach modal dialogs
+  gsettings set org.gnome.mutter attach-modal-dialogs true || fail
 }
 
 workstation::linux::gnome::add_sound_control_launcher() {
