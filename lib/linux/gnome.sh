@@ -27,6 +27,25 @@ workstation::linux::gnome::configure() (
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring"
   # and to "ssh::add-key-password-to-gnome-keyring"
 
+  # Install extensions
+  # 
+  # To get full extension names use:
+  #   gnome-extensions-cli list
+  #
+  if [ "${ID:-}" = debian ]; then
+    export PATH="${HOME}/.local/bin:${PATH}"
+
+    # Install and upgrade gnome-extensions-cli
+    pipx install --force gnome-extensions-cli || fail
+    pipx upgrade gnome-extensions-cli || fail
+
+    # Install Dash to Dock
+    gnome-extensions-cli install dash-to-dock@micxgx.gmail.com || fail
+
+    # Update extensions 
+    gnome-extensions-cli update || fail
+  fi
+
   # Terminal
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
