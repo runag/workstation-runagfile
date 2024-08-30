@@ -15,8 +15,9 @@
 #  limitations under the License.
 
 workstation::linux::gnome::configure() (
+  # Load operating system identification data
   . /etc/os-release || softfail || return $?
-  #
+ 
   # use dconf-editor to find key/value pairs
   #
   # use "dconf dump / >dump" to dump all records
@@ -25,7 +26,6 @@ workstation::linux::gnome::configure() (
   #
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring"
   # and to "ssh::add-key-password-to-gnome-keyring"
-  #
 
   # Terminal
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
@@ -138,6 +138,21 @@ workstation::linux::gnome::configure() (
     gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
     gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
   fi
+
+  # Shortcuts
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>Pause' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'systemctl suspend' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Suspend' || fail
+
+  # TODO: dash_to_dock_schema_args_maybe maybe?
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Super>F12' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command 'gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed true' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'show dock' || fail
+
+  # TODO: dash_to_dock_schema_args_maybe maybe?
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Super>F11' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false' || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'hide dock' || fail
 )
 
 workstation::linux::gnome::add_sound_control_launcher() {
