@@ -47,7 +47,7 @@ workstation::linux::install_packages() (
     hyperfine
     imagemagick
     inotify-tools
-    iperf3
+    # iperf3
     mc
     micro
     ncdu
