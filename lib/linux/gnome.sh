@@ -154,33 +154,3 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false' || fail
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'hide dock' || fail
 )
-
-workstation::linux::gnome::add_sound_control_launcher() {
-  # Registered Categories https://specifications.freedesktop.org/menu-spec/latest/apa.html
-  # Additional Categories https://specifications.freedesktop.org/menu-spec/latest/apas02.html
-
-  local icons=(/snap/gnome-*/current/usr/share/icons/Adwaita/32x32/apps/multimedia-volume-control-symbolic.symbolic.png)
-  local icon_path="${icons[-1]}"
-
-  if [ -f "${icon_path}" ]; then
-    local icon_line="Icon=${icon_path}"
-  else
-    local icon_line=""
-  fi
-
-  dir::should_exists --mode 0700 "${HOME}/.local" || fail
-  dir::should_exists --mode 0700 "${HOME}/.local/share" || fail
-  dir::should_exists --mode 0700 "${HOME}/.local/share/applications" || fail
-
-  file::write "${HOME}/.local/share/applications/sound-control.desktop" <<SHELL || fail
-[Desktop Entry]
-Type=Application
-Terminal=false
-Name=Sound control
-Exec=/usr/bin/gnome-control-center sound
-Categories=AudioVideo;Audio;Settings;HardwareSettings;Music;
-${icon_line}
-SHELL
-
-  sudo update-desktop-database || fail
-}
