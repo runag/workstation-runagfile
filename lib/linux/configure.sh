@@ -93,7 +93,6 @@ workstation::linux::configure() {
 
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
-  # workstation::linux::gnome::add_sound_control_launcher || fail
 
   # configure and start imwheel
   # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
