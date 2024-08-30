@@ -14,7 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::install_packages() {
+workstation::linux::install_packages() (
+  # Load operating system identification data
+  . /etc/os-release || softfail || return $?
+
   # perform autoremove, update and upgrade
   apt::autoremove || fail
   apt::update || fail
@@ -31,7 +34,6 @@ workstation::linux::install_packages() {
   local package_list=(
     # general tools
     apache2-utils
-    awscli
     btrfs-compsize
     certbot
     debian-goodies # checkrestart
@@ -89,6 +91,14 @@ workstation::linux::install_packages() {
     thunar
     zbar-tools
   )
+
+  if [ "${ID:-}" = debian ]; then
+    package_list+=(
+      awscli
+    )
+  elif [ "${ID:-}" = ubuntu ]; then
+    sudo snap install aws-cli --classic || fail
+  fi
 
   if ! systemd-detect-virt --quiet; then
     # software for bare metal workstation
@@ -160,4 +170,4 @@ workstation::linux::install_packages() {
 
   # syncthing
   syncthing::install::apt || fail
-}
+)
