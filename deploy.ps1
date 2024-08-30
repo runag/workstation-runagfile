@@ -70,7 +70,7 @@ Choco-Install crystaldiskmark
 Choco-Install curl
 Choco-Install far
 Choco-Install git
-Choco-Install iperf3
+# Choco-Install iperf3
 Choco-Install jq
 Choco-Install librehardwaremonitor
 Choco-Install rclone
