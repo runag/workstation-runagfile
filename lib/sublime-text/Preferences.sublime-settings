@@ -5,7 +5,7 @@
 	"auto_complete": false,
 	"auto_match_enabled": false,
 	"close_windows_when_empty": false,
-	"color_scheme": "Packages/Color Scheme - Default/Monokai.sublime-color-scheme",
+	"color_scheme": "auto",
 	"default_line_ending": "unix",
 	"drag_text": false,
 	"ensure_newline_at_eof_on_save": true,
