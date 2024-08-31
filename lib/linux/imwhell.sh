@@ -88,7 +88,9 @@ Comment[en_US]=Scripting for mouse wheel and buttons
 Comment=Scripting for mouse wheel and buttons
 EOF
 
-  /usr/bin/imwheel --kill || fail
+  if [ "${XDG_SESSION_TYPE:-}" = "x11" ] || [ "$(systemd-detect-virt)" = "vmware" ]; then
+    /usr/bin/imwheel --kill || fail
+  fi
 }
 
 workstation::linux::imwheel::disable() {
