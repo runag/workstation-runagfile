@@ -47,7 +47,6 @@ workstation::linux::install_packages() (
     hyperfine
     imagemagick
     inotify-tools
-    # iperf3
     mc
     micro
     ncdu
@@ -61,6 +60,7 @@ workstation::linux::install_packages() (
     xclip
     xkcdpass
     zsh
+    # iperf3
 
     # build tools
     build-essential
