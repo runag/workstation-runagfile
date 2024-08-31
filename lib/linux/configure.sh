@@ -95,11 +95,13 @@ workstation::linux::configure() {
   workstation::linux::gnome::configure || fail
 
   # configure and start imwheel
+  #
   # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
   # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
-  if [ "$(systemd-detect-virt)" = "vmware" ]; then
-    workstation::linux::imwheel::deploy || fail
-  fi
+  #
+  # Also some software need faster scrolling on X11
+  #
+  workstation::linux::imwheel::deploy || fail
 
   # firefox
   # TODO: remove as debian's firefox reaches version 121
