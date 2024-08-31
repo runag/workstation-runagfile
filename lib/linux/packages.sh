@@ -81,6 +81,7 @@ workstation::linux::install_packages() (
     ghex
     gpa # gnu privacy assistant
     gparted
+    imwheel
     inkscape
     krita
     libreoffice-calc
@@ -117,7 +118,6 @@ workstation::linux::install_packages() (
   elif [ "$(systemd-detect-virt)" = "vmware" ]; then
     # open-vm-tools for vmware
     package_list+=(
-      imwheel
       open-vm-tools
       open-vm-tools-desktop
     )

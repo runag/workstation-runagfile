@@ -20,8 +20,34 @@ workstation::linux::imwheel::deploy() {
 }
 
 workstation::linux::imwheel::configure() {
-  # passthrough config
   file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
+
+# In the absence of the following tedious list of modifiers,
+# (alt/ctrl/shift/meta + scroll) does not work
+
+"^(Sublime_merge|Sublime_text)$"
+None,      Up,   Button4, 2
+None,      Down, Button5, 2
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Control_R, Up,   Control_R|Button4
+Control_R, Down, Control_R|Button5
+Alt_L,     Up,   Button4, 4
+Alt_L,     Down, Button5, 4
+Alt_R,     Up,   Button4, 4
+Alt_R,     Down, Button5, 4
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+Shift_R,   Up,   Shift_R|Button4
+Shift_R,   Down, Shift_R|Button5
+Meta_L,    Up,   Meta_L|Button4
+Meta_L,    Down, Meta_L|Button5
+Meta_R,    Up,   Meta_R|Button4
+Meta_R,    Down, Meta_R|Button5
+
+# Without that wildcard match that seems just like a passthrough,
+# well, it's not passing through without that
+
 ".*"
 None,      Up,   Button4
 None,      Down, Button5
@@ -51,7 +77,7 @@ workstation::linux::imwheel::reenable() {
   file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
 Type=Application
-Exec=/usr/bin/imwheel
+Exec=/usr/bin/bash -c 'if [ "\${XDG_SESSION_TYPE:-}" = "x11" ] || [ "\$(systemd-detect-virt)" = "vmware" ]; then /usr/bin/imwheel; fi'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
