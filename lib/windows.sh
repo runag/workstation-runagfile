@@ -32,7 +32,7 @@ workstation::windows::configure() {
   workstation::sublime_merge::install_config || fail
 
   # install sublime text configuration
-  # workstation::sublime_text::install_config || fail
+  workstation::sublime_text::install_config || fail
 
   # mark runag git directories as safe
   local profile_dir; profile_dir="$(<<<"${USERPROFILE}" tr '\\' '/')" || fail

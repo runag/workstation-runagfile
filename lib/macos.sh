@@ -113,7 +113,7 @@ workstation::macos::configure() {
   workstation::sublime_merge::install_config || fail
 
   # sublime text config
-  # workstation::sublime_text::install_config || fail
+  workstation::sublime_text::install_config || fail
 
   # hide directories
   macos::hide_dir "${HOME}/Applications" || fail

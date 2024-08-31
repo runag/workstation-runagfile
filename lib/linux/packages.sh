@@ -166,7 +166,7 @@ workstation::linux::install_packages() (
 
   # sublime text and sublime merge
   sublime_merge::install::apt || fail
-  # sublime_text::install::apt || fail
+  sublime_text::install::apt || fail
 
   # syncthing
   syncthing::install::apt || fail
