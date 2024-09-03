@@ -59,10 +59,8 @@ Target path: runag
 **On guest machine**
 
 ```sh
-cd ~
-mkdir .runag
-sudo mount -t virtiofs runag .runag
-.runag/bin/runag
+sudo mount -m -t virtiofs runag ~/.runag
+~/.runag/bin/runag
 ```
 
 **Modify `/etc/fstab` if you want to keep `.runag` mount after reboot**
