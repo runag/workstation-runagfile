@@ -188,9 +188,4 @@ workstation::linux::gnome::configure() (
   # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>F6']" || fail
   # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-7 "['<Super>F7']" || fail
   # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-8 "['<Super>F8']" || fail
-
-  # Static workspaces
-  # gsettings set org.gnome.mutter dynamic-workspaces false || fail
-  # gsettings set org.gnome.desktop.wm.preferences num-workspaces 3 || fail
-  # gsettings set org.gnome.desktop.wm.preferences workspace-names "['A (F1)', 'B (F2)', 'C (F3)', 'D (F4)']" || fail
 )
