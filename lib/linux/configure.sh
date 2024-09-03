@@ -78,18 +78,7 @@ workstation::linux::configure() {
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists --with "SUPERUSER CREATEDB CREATEROLE LOGIN" || fail
 
-
   ## Desktop ##
-
-  # hide some directories
-  workstation::linux::hide-file "Desktop" || fail
-  workstation::linux::hide-file "Documents" || fail
-  workstation::linux::hide-file "Music" || fail
-  workstation::linux::hide-file "Pictures" || fail
-  workstation::linux::hide-file "Public" || fail
-  workstation::linux::hide-file "Templates" || fail
-  workstation::linux::hide-file "Videos" || fail
-  workstation::linux::hide-file "snap" || fail
 
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
@@ -106,8 +95,4 @@ workstation::linux::configure() {
   # firefox
   # TODO: remove as debian's firefox reaches version 121
   firefox::enable_wayland || fail
-}
-
-workstation::linux::hide-file() {
-  file::append_line_unless_present --mode 0600 "${HOME}/.hidden" "$1" || fail
 }
