@@ -22,6 +22,7 @@ workstation::linux::configure() {
 
   # configure bash
   shellfile::install_flush_history_rc || fail
+  shellfile::install_short_prompt_rc || fail
 
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
