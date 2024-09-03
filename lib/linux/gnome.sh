@@ -191,6 +191,6 @@ workstation::linux::gnome::configure() (
 
   # Static workspaces
   # gsettings set org.gnome.mutter dynamic-workspaces false || fail
-  # gsettings set org.gnome.desktop.wm.preferences num-workspaces 4 || fail
-  # gsettings set org.gnome.desktop.wm.preferences workspace-names "['Misc (F1)', 'Work (F2)', 'Pet (F3)', 'Aux (F4)']" || fail
+  # gsettings set org.gnome.desktop.wm.preferences num-workspaces 3 || fail
+  # gsettings set org.gnome.desktop.wm.preferences workspace-names "['A (F1)', 'B (F2)', 'C (F3)', 'D (F4)']" || fail
 )
