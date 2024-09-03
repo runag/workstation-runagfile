@@ -170,4 +170,7 @@ workstation::linux::install_packages() (
 
   # syncthing
   syncthing::install::apt || fail
+
+  # insall blankfast
+  blankfast::install || fail
 )
