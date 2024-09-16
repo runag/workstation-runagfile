@@ -3,6 +3,7 @@
   "editor.accessibilitySupport": "off",
   "editor.autoClosingBrackets": "never",
   "editor.autoClosingQuotes": "never",
+  "editor.comments.ignoreEmptyLines": false,
   "editor.cursorSurroundingLines": 2,
   "editor.detectIndentation": false,
   "editor.fastScrollSensitivity": 4,
