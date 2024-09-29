@@ -28,7 +28,7 @@ workstation::key_storage::tasks() {
   local Key_Storage_Found=false
 
   if [[ "${OSTYPE}" =~ ^msys ]]; then
-    # TODO
+    # TODO: Windows menu?
     true
 
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
