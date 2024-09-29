@@ -24,7 +24,7 @@ workstation::linux::install_packages() (
   apt::dist_upgrade --skip-in-continuous-integration || fail
 
   # tools to use by the rest of the script
-  linux::install_runag_essential_dependencies::apt || fail
+  linux::install_runag_essential_dependencies || fail
 
   # shellfiles
   shellfile::install_loader::bash || fail
@@ -129,25 +129,25 @@ workstation::linux::install_packages() (
   restic::install "0.16.4" || fail
 
   # asdf
-  asdf::install_dependencies::apt || fail
+  asdf::install_dependencies || fail
   asdf::install_with_shellrc || fail
 
   # nodejs
-  nodejs::install_dependencies::apt || fail
+  nodejs::install_dependencies || fail
   asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::install_disable_spring_shellfile || fail
-  ruby::install_dependencies::apt || fail
+  ruby::install_dependencies || fail
   ruby::without_docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
   # python
-  python::install::apt || fail
+  python::install || fail
 
   # erlang & elixir
-  erlang::install_dependencies::apt || fail
-  erlang::install_dependencies::observer::apt || fail
+  erlang::install_dependencies || fail
+  erlang::install_dependencies::observer || fail
   asdf::add_plugin_install_package_and_set_global erlang || fail
   asdf::add_plugin_install_package_and_set_global elixir || fail
   mix local.hex --if-missing --force || fail
@@ -155,21 +155,21 @@ workstation::linux::install_packages() (
   mix archive.install hex phx_new --force || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  linux::install_gnome_keyring_and_libsecret::apt || fail
+  linux::install_gnome_keyring_and_libsecret || fail
   git::install_libsecret_credential_helper || fail
 
   # micro text editor plugins
   micro -plugin install filemanager || fail
 
   # vscode
-  vscode::install::apt || fail
+  vscode::install || fail
 
   # sublime text and sublime merge
-  sublime_merge::install::apt || fail
-  sublime_text::install::apt || fail
+  sublime_merge::install || fail
+  sublime_text::install || fail
 
   # syncthing
-  syncthing::install::apt || fail
+  syncthing::install || fail
 
   # insall blankfast
   blankfast::install || fail
