@@ -34,7 +34,7 @@ workstation::linux::gnome::configure() (
   #
   local dash_to_dock_schemadir
 
-  if [ "${ID:-}" = debian ]; then
+  if [ "${ID:-}" = debian ] || [ "${ID:-}" = arch ]; then
     export PATH="${HOME}/.local/bin:${PATH}"
 
     # Install and upgrade gnome-extensions-cli
@@ -143,7 +143,7 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.mutter attach-modal-dialogs true || fail
 
   # Use Alt+Tab to switch windows on debian
-  if [ "${ID:-}" = debian ]; then
+  if [ "${ID:-}" = debian ] || [ "${ID:-}" = arch ]; then
     gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
     gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
 

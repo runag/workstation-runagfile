@@ -19,9 +19,11 @@ workstation::linux::install_packages() (
   . /etc/os-release || softfail || return $?
 
   # perform autoremove, update and upgrade
-  apt::autoremove || fail
-  apt::update || fail
-  apt::dist_upgrade --skip-in-continuous-integration || fail
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    apt::autoremove || fail
+    apt::update || fail
+    apt::dist_upgrade --skip-in-continuous-integration || fail
+  fi
 
   # tools to use by the rest of the script
   linux::install_runag_essential_dependencies || fail
@@ -31,99 +33,184 @@ workstation::linux::install_packages() (
   shellfile::install_runag_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
-  local package_list=(
-    # general tools
-    apache2-utils
-    btrfs-compsize
-    certbot
-    debian-goodies # checkrestart
-    direnv
-    ethtool
-    ffmpeg
-    git
-    gnupg
-    graphviz
-    htop
-    hyperfine
-    imagemagick
-    inotify-tools
-    mc
-    micro
-    ncdu
-    p7zip-full
-    rclone
-    shellcheck
-    sqlite3
-    sysbench
-    tmux
-    whois
-    xclip
-    xkcdpass
-    zsh
-    # iperf3
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    local package_list=(
+      # general tools
+      apache2-utils
+      btrfs-compsize
+      certbot
+      debian-goodies # checkrestart
+      direnv
+      ethtool
+      ffmpeg
+      git
+      gnupg
+      graphviz
+      htop
+      hyperfine
+      imagemagick
+      inotify-tools
+      mc
+      micro
+      ncdu
+      p7zip-full
+      rclone
+      shellcheck
+      sqlite3
+      sysbench
+      tmux
+      whois
+      xclip
+      xkcdpass
+      zsh
+      # iperf3
 
-    # build tools
-    build-essential
-    libsqlite3-dev
-    libssl-dev
+      # build tools
+      build-essential
+      libsqlite3-dev
+      libssl-dev
 
-    # servers
-    libpq-dev
-    postgresql
-    postgresql-contrib
-    # memcached
-    # redis-server
+      # servers
+      libpq-dev
+      postgresql
+      postgresql-contrib
+      # memcached
+      # redis-server
 
-    # desktop software
-    calibre
-    dconf-editor
-    dosfstools # gparted dependencies for fat partitions
-    ghex
-    gpa # gnu privacy assistant
-    gparted
-    imwheel
-    inkscape
-    krita
-    libreoffice-calc
-    libreoffice-writer
-    meld
-    mtools # gparted dependencies for fat partitions
-    qtpass
-    thunar
-    zbar-tools
-  )
-
-  if [ "${ID:-}" = debian ]; then
-    package_list+=(
-      awscli
+      # desktop software
+      calibre
+      dconf-editor
+      dosfstools # gparted dependencies for fat partitions
+      ghex
+      gpa # gnu privacy assistant
+      gparted
+      imwheel
+      inkscape
+      krita
+      libreoffice-calc
+      libreoffice-writer
+      meld
+      mtools # gparted dependencies for fat partitions
+      qtpass
+      thunar
+      zbar-tools
     )
-  elif [ "${ID:-}" = ubuntu ]; then
-    sudo snap install aws-cli --classic || fail
-  fi
 
-  if ! systemd-detect-virt --quiet; then
-    # software for bare metal workstation
-    package_list+=(
-      ddcutil # display control
-      nvme-cli
-      obs-studio
-      pavucontrol # volume control
-      v4l-utils # webcam control
-      vlc
-    )
-  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
-    # spice-vdagent for kvm
-    package_list+=(spice-vdagent)
+    if [ "${ID:-}" = debian ]; then
+      package_list+=(
+        awscli
+      )
+    elif [ "${ID:-}" = ubuntu ]; then
+      sudo snap install aws-cli --classic || fail
+    fi
+
+    if ! systemd-detect-virt --quiet; then
+      # software for bare metal workstation
+      package_list+=(
+        ddcutil # display control
+        nvme-cli
+        obs-studio
+        pavucontrol # volume control
+        v4l-utils # webcam control
+        vlc # video player
+      )
+    elif [ "$(systemd-detect-virt)" = "kvm" ]; then
+      # spice-vdagent for kvm
+      package_list+=(spice-vdagent)
+    
+    elif [ "$(systemd-detect-virt)" = "vmware" ]; then
+      # open-vm-tools for vmware
+      package_list+=(
+        open-vm-tools
+        open-vm-tools-desktop
+      )
+    fi
+
+    apt::install "${package_list[@]}" || softfail || return $?
   
-  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
-    # open-vm-tools for vmware
-    package_list+=(
-      open-vm-tools
-      open-vm-tools-desktop
-    )
-  fi
+  elif [ "${ID:-}" = arch ]; then
+    local package_list=(
+      # general tools
+      apache
+      compsize
+      certbot
+      direnv
+      ethtool
+      ffmpeg
+      git
+      gnupg
+      graphviz
+      htop
+      hyperfine
+      imagemagick
+      inotify-tools
+      mc
+      micro
+      ncdu
+      p7zip
+      rclone
+      shellcheck
+      sqlite
+      sysbench
+      tmux
+      whois
+      xclip
+      xkcdpass
+      zsh
+      # iperf3
 
-  apt::install "${package_list[@]}" || softfail || return $?
+      # build tools
+      base-devel
+      openssl
+
+      # servers
+      postgresql
+      # memcached
+      # redis-server
+
+      # cloud
+      aws-cli
+
+      # desktop software
+      calibre
+      dconf-editor
+      dosfstools # gparted dependencies for fat partitions
+      ghex
+      gparted
+      imwheel
+      inkscape
+      krita
+      libreoffice-fresh
+      meld
+      mtools # gparted dependencies for fat partitions
+      qtpass
+      thunar
+      zbar
+    )
+
+    if ! systemd-detect-virt --quiet; then
+      # software for bare metal workstation
+      package_list+=(
+        ddcutil # display control
+        nvme-cli
+        obs-studio
+        pavucontrol # volume control
+        v4l-utils # webcam control
+        vlc # video player
+      )
+    elif [ "$(systemd-detect-virt)" = "kvm" ]; then
+      # spice-vdagent for kvm
+      package_list+=(spice-vdagent)
+    
+    elif [ "$(systemd-detect-virt)" = "vmware" ]; then
+      # open-vm-tools for vmware
+      package_list+=(
+        open-vm-tools
+      )
+    fi
+
+    pacman --sync --needed --noconfirm "${package_list[@]}" || softfail || return $?
+  fi
 
   # restic from github
   restic::install "0.16.4" || fail
