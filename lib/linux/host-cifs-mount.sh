@@ -29,7 +29,7 @@ workstation::linux::deploy_host_cifs_mount() (
     apt::install cifs-utils || fail
 
   elif [ "${ID:-}" = arch ]; then
-    pacman --sync --needed --noconfirm cifs-utils || fail
+    sudo pacman --sync --needed --noconfirm cifs-utils || fail
   fi
 
   # get user name
