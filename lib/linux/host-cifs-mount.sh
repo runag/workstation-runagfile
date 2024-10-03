@@ -14,15 +14,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::deploy_host_cifs_mount() {
+workstation::linux::deploy_host_cifs_mount() (
   local credentials_path="$1" # username, password
   local remote_path="$2"
   local local_path="${3:-"${remote_path}"}"
 
   local credentials_file; credentials_file="$(workstation::get_config_path "host-cifs-credentials")" || fail
 
+  # Load operating system identification data
+  . /etc/os-release || fail
+
   # install cifs-utils
-  apt::install cifs-utils || fail
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    apt::install cifs-utils || fail
+
+  elif [ "${ID:-}" = arch ]; then
+    pacman --sync --needed --noconfirm cifs-utils || fail
+  fi
 
   # get user name
   local username; username="$(pass::use --get username "${credentials_path}")" || fail
@@ -35,4 +43,4 @@ workstation::linux::deploy_host_cifs_mount() {
 
   # mount host directory
   cifs::mount "//${remote_host}/${remote_path}" "${HOME}/${local_path}" "${credentials_file}" || fail
-}
+)
