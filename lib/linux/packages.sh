@@ -16,13 +16,16 @@
 
 workstation::linux::install_packages() (
   # Load operating system identification data
-  . /etc/os-release || softfail || return $?
+  . /etc/os-release || fail
 
   # perform autoremove, update and upgrade
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
     apt::autoremove || fail
     apt::update || fail
     apt::dist_upgrade --skip-in-continuous-integration || fail
+
+  elif [ "${ID:-}" = arch ]; then
+    sudo pacman --sync --refresh --sysupgrade --noconfirm || fail
   fi
 
   # tools to use by the rest of the script
@@ -126,7 +129,7 @@ workstation::linux::install_packages() (
       )
     fi
 
-    apt::install "${package_list[@]}" || softfail || return $?
+    apt::install "${package_list[@]}" || fail
   
   elif [ "${ID:-}" = arch ]; then
     local package_list=(
@@ -209,7 +212,7 @@ workstation::linux::install_packages() (
       )
     fi
 
-    sudo pacman --sync --needed --noconfirm "${package_list[@]}" || softfail || return $?
+    sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail
   fi
 
   # restic from github
