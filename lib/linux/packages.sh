@@ -209,7 +209,7 @@ workstation::linux::install_packages() (
       )
     fi
 
-    pacman --sync --needed --noconfirm "${package_list[@]}" || softfail || return $?
+    sudo pacman --sync --needed --noconfirm "${package_list[@]}" || softfail || return $?
   fi
 
   # restic from github
