@@ -64,7 +64,7 @@ workstation::linux::install_packages() (
       tmux
       whois
       xclip
-      # xkcdpass
+      xkcdpass
       zsh
       # iperf3
 
@@ -158,7 +158,7 @@ workstation::linux::install_packages() (
       tmux
       whois
       xclip
-      xkcdpass
+      # xkcdpass
       zsh
       # iperf3
 
