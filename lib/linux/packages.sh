@@ -245,8 +245,16 @@ workstation::linux::install_packages() (
   mix archive.install hex phx_new --force || fail
 
   # gnome-keyring and libsecret (for git and ssh)
+  # do I need libsecret on arch?
   linux::install_gnome_keyring_and_libsecret || fail
-  git::install_libsecret_credential_helper || fail
+
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    git::install_libsecret_credential_helper || fail
+  elif [ "${ID:-}" = arch ]; then
+    true
+  else
+    softfail "Unsupported operating system" || return $?
+  fi
 
   # micro text editor plugins
   micro -plugin install filemanager || fail
