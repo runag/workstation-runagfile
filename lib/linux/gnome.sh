@@ -16,7 +16,7 @@
 
 workstation::linux::gnome::configure() (
   # Load operating system identification data
-  . /etc/os-release || softfail || return $?
+  . /etc/os-release || fail
  
   # use dconf-editor to find key/value pairs
   #
@@ -27,12 +27,14 @@ workstation::linux::gnome::configure() (
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring"
   # and to "ssh::add-key-password-to-gnome-keyring"
 
+
   # Install extensions
   # 
   # To get full extension names use:
   #   gnome-extensions-cli list
   #
-  local dash_to_dock_schemadir
+
+  local dash_to_dock_schema=()
 
   if [ "${ID:-}" = debian ] || [ "${ID:-}" = arch ]; then
     export PATH="${HOME}/.local/bin:${PATH}"
@@ -43,13 +45,12 @@ workstation::linux::gnome::configure() (
 
     # Install Dash to Dock
     gnome-extensions-cli install dash-to-dock@micxgx.gmail.com || fail
-    dash_to_dock_schemadir="${HOME}/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/"
-    # list keys
-    # gsettings --schemadir "${dash_to_dock_schemadir}" list-recursively org.gnome.shell.extensions.dash-to-dock
+    dash_to_dock_schema+=(--schemadir "${HOME}/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/")
 
     # Update extensions 
     gnome-extensions-cli update || fail
   fi
+
 
   # Terminal
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
@@ -65,82 +66,86 @@ workstation::linux::gnome::configure() (
     # sadly I can't select the color palette here as they are hardcoded in terminal app
   fi
 
-  # Dash
-  # those are standalone extension defaults but not in ubuntu-packaged
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
 
-  # those are both for standalone extension and for ubuntu-packaged
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
+  # Dash-to-dock
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS' || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock multi-monitor true || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-dominant-color true || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock show-mounts false || fail
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock show-trash false || fail
 
-  # At least in gnome 43 this setting is user-configurable from multitasking pane of control panel (org.gnome.shell.app-switcher current-workspace-only)
-  # gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true || fail
-
-  # those are for standalone extension, I need to check if that is applicable to ubuntu-packaged
-
-  if gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} range org.gnome.shell.extensions.dash-to-dock click-action | grep -qFx "'focus-or-appspread'"; then
-    gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
+  if gsettings "${dash_to_dock_schema[@]}" range org.gnome.shell.extensions.dash-to-dock click-action | grep -qFx "'focus-or-appspread'"; then
+    gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-appspread' || fail
   else
-    gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-previews' || fail
+    gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock click-action 'focus-or-previews' || fail
   fi
 
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock multi-monitor true || fail
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock running-indicator-dominant-color true || fail
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || fail
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock scroll-switch-workspace true || fail
+  if gsettings "${dash_to_dock_schema[@]}" range org.gnome.shell.extensions.dash-to-dock scroll-action | grep -qFx "'switch-workspace'"; then
+    gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock scroll-action 'switch-workspace' || fail
+  else
+    gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock scroll-switch-workspace true || fail
+  fi
 
-  # Hide mode
-  gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS' || fail
-
-  # VM window usually have no edges
   if systemd-detect-virt --quiet; then
-    gsettings ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
+    # No pressure in VM
+    gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
   fi
 
-  # show/hide
-  gsettings set ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} org.gnome.shell.extensions.dash-to-dock show-delay 0.01 || fail
-  gsettings set ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} org.gnome.shell.extensions.dash-to-dock hide-delay 0.01 || fail
-  gsettings set ${dash_to_dock_schemadir:+--schemadir "${dash_to_dock_schemadir}"} org.gnome.shell.extensions.dash-to-dock pressure-threshold 15.0 || fail
 
 
-  # VM window usually have no edges
+  # No hot corners in VM
   if systemd-detect-virt --quiet; then
     gsettings set org.gnome.mutter edge-tiling false || fail
   else
     gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
   fi
 
+
   # Workspaces
   gsettings set org.gnome.mutter workspaces-only-on-primary false || fail
   gsettings set org.gnome.shell.app-switcher current-workspace-only true || fail
+
 
   # Nautilus
   gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
   gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail
 
+
   # Automatic timezone
   gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
+
 
   # Disable sound alerts
   gsettings set org.gnome.desktop.sound event-sounds false || fail
 
+
   # Mouse, 3200 dpi
   gsettings set org.gnome.desktop.peripherals.mouse speed -1.0 || fail
+
 
   # Theme
   # gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || fail
 
+
   # Disable external search providers
   gsettings set org.gnome.desktop.search-providers disable-external true || fail
+
 
   # Window title
   gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close' || fail
 
+
   # Attach modal dialogs
   gsettings set org.gnome.mutter attach-modal-dialogs true || fail
+
 
   # Use Alt+Tab to switch windows on debian
   if [ "${ID:-}" = debian ] || [ "${ID:-}" = arch ]; then
@@ -150,6 +155,7 @@ workstation::linux::gnome::configure() (
     gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
     gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
   fi
+
 
   # Keybindings
   gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "\
@@ -161,13 +167,18 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'systemctl suspend' || fail
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Suspend' || fail
 
+  local dash_to_dock_schema_string
+  printf -v dash_to_dock_schema_string " %q" "${dash_to_dock_schema[@]}" || fail
+  dash_to_dock_schema_string="${dash_to_dock_schema_string:1}"
+
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Super>F12' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "gsettings ${dash_to_dock_schemadir:+--schemadir $(printf "%q" "${dash_to_dock_schemadir}")} set org.gnome.shell.extensions.dash-to-dock dock-fixed true" || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "gsettings ${dash_to_dock_schema_string:-} set org.gnome.shell.extensions.dash-to-dock dock-fixed true" || fail
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'show dock' || fail
 
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Super>F11' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command "gsettings ${dash_to_dock_schemadir:+--schemadir $(printf "%q" "${dash_to_dock_schemadir}")} set org.gnome.shell.extensions.dash-to-dock dock-fixed false" || fail
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command "gsettings ${dash_to_dock_schema_string:-} set org.gnome.shell.extensions.dash-to-dock dock-fixed false" || fail
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'hide dock' || fail
+
 
   # Move to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Super>F1']" || fail
@@ -178,6 +189,7 @@ workstation::linux::gnome::configure() (
   # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Super>F6']" || fail
   # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-7 "['<Shift><Super>F7']" || fail
   # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-8 "['<Shift><Super>F8']" || fail
+
 
   # Switch to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>F1']" || fail
