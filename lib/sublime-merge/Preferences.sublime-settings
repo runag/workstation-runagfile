@@ -6,4 +6,5 @@
 	"side_bar_layout": "tabs",
 	"hardware_acceleration": "none",
 	"trim_trailing_white_space_on_save": true,
+	"font_face": "Liberation Mono",
 }
