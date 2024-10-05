@@ -34,20 +34,22 @@ workstation::key_storage::tasks() {
   elif [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::tasks::media "${media_path}" || fail
+        workstation::key_storage::tasks::media "${media_path}" || softfail || return $?
       fi
     done
 
   elif [[ "${OSTYPE}" =~ ^linux ]]; then
-    local media_path; for media_path in "/media/${USER}"/* ; do
+    local mounts_path; mounts_path="$(linux::user_media_path)" || softfail || return $?
+
+    local media_path; for media_path in "${mounts_path}"/* ; do
       if [ -d "${media_path}" ]; then
-        workstation::key_storage::tasks::media "${media_path}" || fail
+        workstation::key_storage::tasks::media "${media_path}" || softfail || return $?
       fi
     done
 
   fi
 
-  workstation::key_storage::tasks::media "." || fail
+  workstation::key_storage::tasks::media "." || softfail || return $?
 
   if [ "${Key_Storage_Found}" = false ]; then
     task::add --header "Key storage" || softfail || return $?
@@ -72,17 +74,17 @@ workstation::key_storage::tasks::media() {
   local scope_path; for scope_path in "${media_path}/keys"/* ; do
     if [ -d "${scope_path}" ] && [ ! -f "${scope_path}/.exclude-from-tasks" ]; then
 
-      local media_name; media_name="$(basename "${media_path}")" || fail
-      local scope_name; scope_name="$(basename "${scope_path}")" || fail
+      local media_name; media_name="$(basename "${media_path}")" || softfail || return $?
+      local scope_name; scope_name="$(basename "${scope_path}")" || softfail || return $?
       local git_remote_name="${media_name}/${scope_name}"
 
       scope_found=true
 
       task::add --header "Password store in: ${media_path}/${scope_name}" || softfail || return $?
-      workstation::key_storage::tasks::password_store "${scope_path}" "${git_remote_name}" || fail
+      workstation::key_storage::tasks::password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
 
       task::add --header "GPG keys in: ${media_path}/${scope_name}" || softfail || return $?
-      workstation::key_storage::tasks::gpg_keys "${scope_path}" || fail
+      workstation::key_storage::tasks::gpg_keys "${scope_path}" || softfail || return $?
     fi
   done
 
@@ -134,13 +136,13 @@ workstation::key_storage::tasks::gpg_keys() {
 
   local gpg_key_dir; for gpg_key_dir in "${gpg_keys_path}"/* ; do
     if [ -d "${gpg_key_dir}" ]; then
-      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || fail
+      local gpg_key_id; gpg_key_id="$(basename "${gpg_key_dir}")" || softfail || return $?
       local gpg_key_file="${gpg_key_dir}/secret-subkeys.asc"
       local gpg_public_key_file="${gpg_key_dir}/public.asc"
       local gpg_key_uid
 
       if [ -f "${gpg_public_key_file}" ]; then
-        gpg_key_uid="$(gpg::get_key_uid "${gpg_public_key_file}")" || fail
+        gpg_key_uid="$(gpg::get_key_uid "${gpg_public_key_file}")" || softfail || return $?
       fi
 
       if [ -f "${gpg_key_file}" ]; then
