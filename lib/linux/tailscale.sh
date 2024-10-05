@@ -18,9 +18,7 @@ workstation::linux::deploy_tailscale() {
   local key_path="$1" # sould be in the password
 
   # install tailscale
-  if ! command -v tailscale >/dev/null; then
-    tailscale::install || fail
-  fi
+  tailscale::install || fail
 
   if [ "$(systemd-detect-virt)" = "vmware" ]; then
     # https://github.com/tailscale/tailscale/issues/2541
