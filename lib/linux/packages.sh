@@ -31,9 +31,14 @@ workstation::linux::install_packages() (
   # tools to use by the rest of the script
   linux::install_runag_essential_dependencies || fail
 
-  # shellfiles
+  # ensure ~/.local/bin exists
+  dir::should_exists --mode 0700 "${HOME}/.local" || fail
+  dir::should_exists --mode 0700 "${HOME}/.local/bin" || fail
+
+  # install shellfiles
   shellfile::install_loader::bash || fail
   shellfile::install_runag_path_profile --source-now || fail
+  shellfile::install_local_bin_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
