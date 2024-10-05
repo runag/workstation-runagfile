@@ -135,8 +135,8 @@ workstation::linux::install_packages() (
     local package_list=(
       # general tools
       apache
-      compsize
       certbot
+      compsize
       direnv
       ethtool
       ffmpeg
@@ -158,9 +158,9 @@ workstation::linux::install_packages() (
       tmux
       whois
       xclip
-      # xkcdpass
       zsh
       # iperf3
+      # xkcdpass
 
       # build tools
       base-devel
@@ -178,7 +178,9 @@ workstation::linux::install_packages() (
       calibre
       dconf-editor
       dosfstools # gparted dependencies for fat partitions
+      firefox
       ghex
+      gnome-terminal
       gparted
       imwheel
       inkscape
