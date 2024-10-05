@@ -22,11 +22,18 @@ workstation::linux::deploy_workstation() {
   workstation::linux::configure || fail
 
   # deploy keys
-  if local key_path="/media/${USER}/workstation-sync" && [ -d "${key_path}" ]; then
+  local mounts_path; mounts_path="$(linux::user_media_path)" || fail
+  local key_path="${mounts_path}/workstation-sync"
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
+  if [ -d "${key_path}" ]; then
     workstation::linux::deploy_keys "${key_path}" || fail
 
   elif [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
     workstation::linux::deploy_virt_keys || fail
+  
+  elif [ ! -d "${password_store_dir}" ]; then
+    fail "Unable to deploy keys: source location not found"
   fi
  
   # deploy identities & credentials
@@ -49,7 +56,8 @@ workstation::linux::deploy_workstation() {
 }
 
 workstation::linux::deploy_keys() {
-  local key_storage_volume="/media/${USER}/workstation-sync"
+  local mounts_path; mounts_path="$(linux::user_media_path)" || fail
+  local key_storage_volume="${mounts_path}/workstation-sync"
 
   # install gpg keys
   workstation::key_storage::maintain_checksums --skip-backups --verify-only "${key_storage_volume}" || fail
