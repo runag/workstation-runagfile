@@ -172,8 +172,8 @@ workstation::remote_repositories_backup::create() {
 workstation::remote_repositories_backup::backup_github_repositories() {
   local backup_path="$1"
 
-  # NOTE: There is a 100 000 (1000*100) repository limit here. I put it here to not suffer an infinite loop if something is wrong
-  local page_number_limit=1000
+  # NOTE: There is a 10 000 (100*100) repository limit here. I put it here to not suffer an infinite loop if something is wrong
+  local page_number_limit=100
 
   local full_name git_url
 
