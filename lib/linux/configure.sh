@@ -14,7 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::configure() {
+workstation::linux::configure() (
+  # Load operating system identification data
+  . /etc/os-release || fail
+
+
   ## System ##
 
   # enable systemd user instance without the need for the user to login
@@ -76,6 +80,10 @@ workstation::linux::configure() {
   workstation::sublime_text::install_config || fail
 
   # postgresql
+  # run initdb if needed
+  if [ "${ID:-}" = arch ] && sudo test ! -d /var/lib/postgres/data; then
+    postgresql::as_postgres_user initdb -D /var/lib/postgres/data || fail
+  fi
   sudo systemctl --quiet --now enable postgresql || fail
   postgresql::create_role_if_not_exists --with "SUPERUSER CREATEDB CREATEROLE LOGIN" || fail
 
@@ -96,4 +104,4 @@ workstation::linux::configure() {
   # firefox
   # TODO: remove as debian's firefox reaches version 121
   firefox::enable_wayland || fail
-}
+)
