@@ -50,7 +50,8 @@ workstation::linux::deploy_workstation() {
   fi
 
   # fix for nvidia gpu
-  if nvidia::is_device_present; then
+  # only if device is present and driver is installed (maybe there is a better method to check that other than "nvidia-smi" presence)
+  if nvidia::is_device_present && command -v nvidia-smi >/dev/null; then
     nvidia::enable_preserve_video_memory_allocations || fail
   fi
 }
