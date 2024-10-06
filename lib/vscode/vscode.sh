@@ -14,6 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::vscode::user_config_path() {
+  local config_home; config_home="$(cross_platform::config_home)" || fail
+
+  local short_name="Code"
+
+  dir::should_exists --mode 0700 "${config_home}" || fail
+  dir::should_exists --mode 0700 "${config_home}/${short_name}" || fail
+  dir::should_exists --mode 0700 "${config_home}/${short_name}/User" || fail
+
+   echo "${config_home}/${short_name}/User"
+}
+
 workstation::vscode::install_extensions() (
   shell::related_cd || fail
   vscode::install_extensions "extensions.txt" || fail
@@ -21,21 +33,20 @@ workstation::vscode::install_extensions() (
 
 workstation::vscode::install_config() (
   shell::related_cd || fail
-  local config_path; config_path="$(vscode::get_config_path)" || fail
 
-  dir::should_exists --mode 0700 "${config_path}/User" || fail
+  local user_config_path; user_config_path="$(workstation::vscode::user_config_path)" || fail
 
-  config::install "settings.json" "${config_path}/User/settings.json" || fail
-  config::install "keybindings.json" "${config_path}/User/keybindings.json" || fail
+  config::install "settings.json" "${user_config_path}/settings.json" || fail
+  config::install "keybindings.json" "${user_config_path}/keybindings.json" || fail
 )
 
 workstation::vscode::merge_config() (
   shell::related_cd || fail
 
-  local config_path; config_path="$(vscode::get_config_path)" || fail
+  local user_config_path; user_config_path="$(workstation::vscode::user_config_path)" || fail
 
-  config::merge "settings.json" "${config_path}/User/settings.json" || fail
-  config::merge "keybindings.json" "${config_path}/User/keybindings.json" || fail
+  config::merge "settings.json" "${user_config_path}/settings.json" || fail
+  config::merge "keybindings.json" "${user_config_path}/keybindings.json" || fail
 
   local extensions_list; extensions_list="$(vscode::list_extensions_to_temp_file)" || fail "Unable get extensions list"
   config::merge "extensions.txt" "${extensions_list}" || fail
