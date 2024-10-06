@@ -195,6 +195,7 @@ workstation::linux::install_packages() (
       mtools # gparted dependencies for fat partitions
       qtpass
       thunar
+      ttf-dejavu
       zbar
     )
 
