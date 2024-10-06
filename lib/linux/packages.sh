@@ -260,14 +260,21 @@ workstation::linux::install_packages() (
   elif [ "${ID:-}" = arch ]; then
     true
   else
-    softfail "Unsupported operating system" || return $?
+    fail "Unsupported operating system"
   fi
 
   # micro text editor plugins
   micro -plugin install filemanager || fail
 
   # vscode
-  vscode::install || fail
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    vscode::install::apt || fail
+    # sudo snap install code --classic || fail
+
+  elif [ "${ID:-}" = arch ]; then
+    # sudo pacman --sync --needed --noconfirm code || fail
+    true # TODO: install vscode
+  fi
 
   # sublime text and sublime merge
   sublime_merge::install || fail
