@@ -18,15 +18,8 @@ workstation::linux::install_packages() (
   # Load operating system identification data
   . /etc/os-release || fail
 
-  # perform autoremove, update and upgrade
-  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
-    apt::autoremove || fail
-    apt::update || fail
-    apt::dist_upgrade --skip-in-continuous-integration || fail
-
-  elif [ "${ID:-}" = arch ]; then
-    sudo pacman --sync --refresh --sysupgrade --noconfirm || fail
-  fi
+  # perform system upgrade
+  linux::upgrade_system || fail
 
   # tools to use by the rest of the script
   linux::install_runag_essential_dependencies || fail
