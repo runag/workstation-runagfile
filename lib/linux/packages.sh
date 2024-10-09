@@ -21,7 +21,7 @@ workstation::linux::install_packages() (
   # perform system upgrade
   linux::upgrade_system || fail
 
-  # tools to use by the rest of the script
+  # install tools to use by the rest of the script
   linux::install_runag_essential_dependencies || fail
 
   # ensure ~/.local/bin exists
@@ -34,190 +34,22 @@ workstation::linux::install_packages() (
   shellfile::install_local_bin_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
+  # install packages
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
-    local package_list=(
-      # general tools
-      apache2-utils
-      btrfs-compsize
-      certbot
-      debian-goodies # checkrestart
-      direnv
-      ethtool
-      ffmpeg
-      git
-      gnupg
-      graphviz
-      htop
-      hyperfine
-      imagemagick
-      inotify-tools
-      mc
-      micro
-      ncdu
-      p7zip-full
-      rclone
-      shellcheck
-      sqlite3
-      sysbench
-      tmux
-      whois
-      xclip
-      xkcdpass
-      zsh
-      # iperf3
-
-      # build tools
-      build-essential
-      libsqlite3-dev
-      libssl-dev
-
-      # servers
-      libpq-dev
-      postgresql
-      postgresql-contrib
-      # memcached
-      # redis-server
-
-      # desktop software
-      calibre
-      dconf-editor
-      dosfstools # gparted dependencies for fat partitions
-      ghex
-      gpa # gnu privacy assistant
-      gparted
-      imwheel
-      inkscape
-      krita
-      libreoffice-calc
-      libreoffice-writer
-      meld
-      mtools # gparted dependencies for fat partitions
-      qtpass
-      thunar
-      zbar-tools
-    )
-
-    if [ "${ID:-}" = debian ]; then
-      package_list+=(
-        awscli
-      )
-    elif [ "${ID:-}" = ubuntu ]; then
-      sudo snap install aws-cli --classic || fail
-    fi
-
-    if ! systemd-detect-virt --quiet; then
-      # software for bare metal workstation
-      package_list+=(
-        ddcutil # display control
-        nvme-cli
-        obs-studio
-        pavucontrol # volume control
-        v4l-utils # webcam control
-        vlc # video player
-      )
-    elif [ "$(systemd-detect-virt)" = "kvm" ]; then
-      # spice-vdagent for kvm
-      package_list+=(spice-vdagent)
-    
-    elif [ "$(systemd-detect-virt)" = "vmware" ]; then
-      # open-vm-tools for vmware
-      package_list+=(
-        open-vm-tools
-        open-vm-tools-desktop
-      )
-    fi
-
-    apt::install "${package_list[@]}" || fail
-  
+    workstation::linux::install_packages::debian || fail
   elif [ "${ID:-}" = arch ]; then
-    local package_list=(
-      # general tools
-      apache
-      certbot
-      compsize
-      direnv
-      ethtool
-      ffmpeg
-      git
-      gnupg
-      graphviz
-      htop
-      hyperfine
-      imagemagick
-      inotify-tools
-      mc
-      micro
-      ncdu
-      p7zip
-      rclone
-      shellcheck
-      sqlite
-      sysbench
-      tmux
-      whois
-      xclip
-      zsh
-      # iperf3
-      # xkcdpass
-
-      # build tools
-      base-devel
-      openssl
-
-      # servers
-      postgresql
-      # memcached
-      # redis-server
-
-      # cloud
-      aws-cli
-
-      # desktop software
-      calibre
-      dconf-editor
-      dosfstools # gparted dependencies for fat partitions
-      firefox
-      ghex
-      gnome-terminal
-      gparted
-      imwheel
-      inkscape
-      krita
-      libreoffice-fresh
-      meld
-      mtools # gparted dependencies for fat partitions
-      qtpass
-      thunar
-      ttf-dejavu
-      zbar
-    )
-
-    if ! systemd-detect-virt --quiet; then
-      # software for bare metal workstation
-      package_list+=(
-        ddcutil # display control
-        nvme-cli
-        obs-studio
-        pavucontrol # volume control
-        v4l-utils # webcam control
-        vlc # video player
-      )
-    elif [ "$(systemd-detect-virt)" = "kvm" ]; then
-      # spice-vdagent for kvm
-      package_list+=(spice-vdagent)
-    
-    elif [ "$(systemd-detect-virt)" = "vmware" ]; then
-      # open-vm-tools for vmware
-      package_list+=(
-        open-vm-tools
-      )
-    fi
-
-    sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail
+    workstation::linux::install_packages::arch || fail
   fi
 
-  # restic from github
-  restic::install "0.16.4" || fail
+  # install aws-cli from snap
+  if [ "${ID:-}" = ubuntu ]; then
+    sudo snap install aws-cli --classic || fail
+  fi
+
+  # install restic from github
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    restic::install "0.17.1" || fail
+  fi
 
   # asdf
   asdf::install_dependencies || fail
@@ -246,37 +78,214 @@ workstation::linux::install_packages() (
   mix archive.install hex phx_new --force || fail
 
   # gnome-keyring and libsecret (for git and ssh)
-  # do I need libsecret on arch?
   linux::install_gnome_keyring_and_libsecret || fail
 
+  # install libsecret credential helper for git
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
     git::install_libsecret_credential_helper || fail
-  elif [ "${ID:-}" = arch ]; then
-    true
-  else
-    fail "Unsupported operating system"
   fi
 
-  # micro text editor plugins
-  micro -plugin install filemanager || fail
+  # install micro text editor plugins
+  # micro -plugin install filemanager || fail
 
-  # vscode
+  # install vscode
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
     vscode::install::apt || fail
     # sudo snap install code --classic || fail
-
   elif [ "${ID:-}" = arch ]; then
-    # sudo pacman --sync --needed --noconfirm code || fail
     true # TODO: install vscode
+    # sudo pacman --sync --needed --noconfirm code || fail
   fi
 
-  # sublime text and sublime merge
+  # install sublime text and sublime merge
   sublime_merge::install || fail
   sublime_text::install || fail
 
-  # syncthing
+  # install syncthing
   syncthing::install || fail
 
   # insall blankfast
   blankfast::install || fail
 )
+
+workstation::linux::install_packages::debian() (
+  # Load operating system identification data
+  . /etc/os-release || fail
+
+  local package_list=(
+    # general tools
+    apache2-utils
+    btrfs-compsize
+    certbot
+    debian-goodies # checkrestart
+    direnv
+    ethtool
+    ffmpeg
+    git
+    gnupg
+    graphviz
+    htop
+    hyperfine
+    imagemagick
+    inotify-tools
+    mc
+    micro
+    ncdu
+    p7zip-full
+    rclone
+    shellcheck
+    sqlite3
+    sysbench
+    tmux
+    whois
+    xclip
+    xkcdpass
+    zsh
+    # iperf3
+
+    # build tools
+    build-essential
+    libsqlite3-dev
+    libssl-dev
+
+    # servers
+    libpq-dev
+    postgresql
+    postgresql-contrib
+    # memcached
+    # redis-server
+
+    # desktop software
+    calibre
+    dconf-editor
+    dosfstools # gparted dependencies for fat partitions
+    ghex
+    gpa # gnu privacy assistant
+    gparted
+    imwheel
+    inkscape
+    krita
+    libreoffice-calc
+    libreoffice-writer
+    meld
+    mtools # gparted dependencies for fat partitions
+    qtpass
+    thunar
+    zbar-tools
+  )
+
+  if [ "${ID:-}" = debian ]; then
+    package_list+=(awscli)
+  fi
+
+  if ! systemd-detect-virt --quiet; then
+    # software for bare metal workstation
+    package_list+=(
+      ddcutil # display control
+      nvme-cli
+      obs-studio
+      pavucontrol # volume control
+      v4l-utils # webcam control
+      vlc # video player
+    )
+  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
+    # spice-vdagent for kvm
+    package_list+=(spice-vdagent)
+  
+  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
+    # open-vm-tools for vmware
+    package_list+=(
+      open-vm-tools
+      open-vm-tools-desktop
+    )
+  fi
+
+  apt::install "${package_list[@]}" || fail
+)
+
+workstation::linux::install_packages::arch() {
+  local package_list=(
+    # general tools
+    apache
+    certbot
+    compsize
+    direnv
+    ethtool
+    ffmpeg
+    git
+    gnupg
+    graphviz
+    htop
+    hyperfine
+    imagemagick
+    inotify-tools
+    mc
+    micro
+    ncdu
+    p7zip
+    rclone
+    restic
+    shellcheck
+    sqlite
+    sysbench
+    tmux
+    whois
+    xclip
+    zsh
+    # iperf3
+    # xkcdpass
+
+    # build tools
+    base-devel
+    openssl
+
+    # servers
+    postgresql
+    # memcached
+    # redis-server
+
+    # cloud
+    aws-cli
+
+    # desktop software
+    calibre
+    chromium
+    dconf-editor
+    dosfstools # gparted dependencies for fat partitions
+    firefox
+    ghex
+    gnome-terminal
+    gparted
+    imwheel
+    inkscape
+    krita
+    libreoffice-fresh
+    meld
+    mtools # gparted dependencies for fat partitions
+    qtpass
+    thunar
+    ttf-dejavu
+    zbar
+  )
+
+  if ! systemd-detect-virt --quiet; then
+    # software for bare metal workstation
+    package_list+=(
+      ddcutil # display control
+      nvme-cli
+      obs-studio
+      pavucontrol # volume control
+      v4l-utils # webcam control
+      vlc # video player
+    )
+  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
+    # spice-vdagent for kvm
+    package_list+=(spice-vdagent)
+  
+  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
+    # open-vm-tools for vmware
+    package_list+=(open-vm-tools)
+  fi
+
+  sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail
+}
