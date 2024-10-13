@@ -138,7 +138,7 @@ workstation::backup::mount() {
   local mount_directory; mount_directory="$(workstation::backup::get_output_directory)/mount" || softfail || return $?
 
   if findmnt --mountpoint "${mount_directory}" >/dev/null; then
-    fusermount -u -z "${mount_directory}" || softfail || return $?
+    fusermount3 -u -z "${mount_directory}" || softfail || return $?
   fi
 
   dir::should_exists --mode 0700 "${mount_directory}" || softfail || return $?
@@ -156,7 +156,7 @@ workstation::backup::mount() {
 workstation::backup::umount() {
   local mount_directory; mount_directory="$(workstation::backup::get_output_directory)/mount" || softfail || return $?
 
-  fusermount -u -z "${mount_directory}" || softfail || return $?
+  fusermount3 -u -z "${mount_directory}" || softfail || return $?
 }
 
 workstation::backup::restore() {
