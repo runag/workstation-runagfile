@@ -288,4 +288,9 @@ workstation::linux::install_packages::arch() {
   fi
 
   sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail
+
+  # for restic
+  if ! command -v fusermount >/dev/null; then
+    ln -s /bin/fusermount3 ~/.local/bin/fusermount || fail
+  fi
 }
