@@ -42,7 +42,7 @@ workstation::linux::deploy_workstation() {
   # setup backup
   workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail
   workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  workstation::backup::services::deploy || fail
+  workstation::backup::deploy_services || fail
 
   # setup remote repositories backup
   if ! systemd-detect-virt --quiet; then
