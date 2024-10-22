@@ -85,9 +85,10 @@ workstation::backup::credentials::deploy_profile() {(
       local secret_name; secret_name="$(basename "${secret_item}" .gpg)" || fail
 
       local repository_string; repository_string="$(pass::use "${profile_pass_path}/repositories/${secret_name}")" || fail
+      local user_media_path; user_media_path="$(linux::user_media_path)" || fail
     
       # shellcheck disable=2016
-      repository_string="${repository_string//'${USER}'/"${USER}"}" || fail
+      repository_string="${repository_string//'${USER_MEDIA}'/"${user_media_path}"}" || fail
 
       <<<"${repository_string}" file::write --mode 0600 "${profile_config_path}/repositories/${secret_name}" || fail
     fi
