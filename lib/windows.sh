@@ -14,6 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::windows::tasks() {
+  task::add --header "Windows workstation" || softfail || return $?
+  task::add workstation::windows::configure || softfail || return $?
+}
+
 # shellcheck disable=SC1003
 workstation::windows::configure() {
   # shellfiles

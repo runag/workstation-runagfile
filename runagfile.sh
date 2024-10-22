@@ -23,7 +23,18 @@ shell::related_source --recursive lib || softfail || return $?
 # tasks
 task::add --header "Workstation" || softfail || return $?
 
-task::add --group workstation::deployment::tasks || softfail || return $?
+case "${OSTYPE}" in
+  linux*)
+    task::add --group workstation::linux::tasks || softfail || return $?
+    ;;
+  darwin*)
+    task::add --group workstation::macos::tasks || softfail || return $?
+    ;; 
+  msys*)
+    task::add --group workstation::windows::tasks || softfail || return $?
+    ;;
+esac
+
 task::add --group workstation::identity::tasks || softfail || return $?
 task::add --group workstation::key_storage::tasks || softfail || return $?
 
