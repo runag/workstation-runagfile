@@ -23,10 +23,6 @@ workstation::backup::tasks() {
 
   task::add --group systemd::service_tasks --user --with-timer --service-name "workstation-backup" || softfail || return $?
 
-  workstation::backup::tasks::commands || softfail || return $?
-}
-
-workstation::backup::tasks::commands() {
   local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || softfail || return $?
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
