@@ -14,6 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::macos::tasks() {
+  task::add --header "macOS workstation" || softfail || return $?
+  
+  task::add workstation::macos::install_packages || softfail || return $?
+  task::add workstation::macos::configure || softfail || return $?
+  task::add workstation::macos::start_developer_servers || softfail || return $?
+}
+
 workstation::macos::install_packages() {
   # install homebrew
   macos::install_homebrew || fail
