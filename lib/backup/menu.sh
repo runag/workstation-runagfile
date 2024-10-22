@@ -17,8 +17,11 @@
 workstation::backup::tasks() {
   task::add --header "Workstation backup deploy" || softfail || return $?
 
+  task::add workstation::backup::services::deploy || softfail || return $?
   task::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || softfail || return $? # TODO: list options
   task::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $? # TODO: list options
+
+  task::add --group systemd::service_tasks --user --with-timer --service-name "workstation-backup" || softfail || return $?
 
   workstation::backup::tasks::commands || softfail || return $?
   workstation::backup::tasks::services || softfail || return $?
@@ -45,16 +48,4 @@ workstation::backup::tasks::commands() {
       done
     fi
   done
-}
-
-workstation::backup::tasks::services() {
-  task::add --header "Workstation backup: services" || softfail || return $?
-
-  task::add workstation::backup::services::deploy || softfail || return $?
-  task::add workstation::backup::services::start || softfail || return $?
-  task::add workstation::backup::services::stop || softfail || return $?
-  task::add workstation::backup::services::disable_timers || softfail || return $?
-  task::add workstation::backup::services::status || softfail || return $?
-  task::add workstation::backup::services::log || softfail || return $?
-  task::add workstation::backup::services::log_follow || softfail || return $?
 }
