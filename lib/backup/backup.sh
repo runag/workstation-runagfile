@@ -104,3 +104,36 @@ workstation::backup::machine_id() {
 
   cat /etc/machine-id || softfail || return $?
 }
+
+workstation::backup::deploy_services() {
+  local runag_path; runag_path="$(command -v runag)" || fail
+
+  systemd::write_user_unit "workstation-backup.service" <<EOF || fail
+[Unit]
+Description=Workstation backup
+
+[Service]
+Type=oneshot
+ExecStart=${runag_path} workstation::backup create
+SyslogIdentifier=workstation-backup
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=false
+EOF
+
+  systemd::write_user_unit "workstation-backup.timer" <<EOF || fail
+[Unit]
+Description=Backup service timer for workstation backup
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
+EOF
+
+  # enable the service and start the timer
+  systemctl --user --quiet reenable "workstation-backup.timer" || fail
+  systemctl --user start "workstation-backup.timer" || fail
+}
