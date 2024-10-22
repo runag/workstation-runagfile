@@ -101,20 +101,17 @@ workstation::backup::check() {
 
 workstation::backup::forget() {
   if [ "${WORKSTATION_BACKUP_REPOSITORY}" = "workstation-sync" ]; then
-    restic forget \
-      --group-by "host,paths,tags" \
-      --keep-within 14d \
-      --keep-within-daily 30d \
-      --keep-within-weekly 3m \
-      --keep-within-monthly 1y || softfail || return $?
+    local keep_within_monthly=1y
   else
-    restic forget \
-      --group-by "host,paths,tags" \
-      --keep-within 14d \
-      --keep-within-daily 30d \
-      --keep-within-weekly 3m \
-      --keep-within-monthly 3y || softfail || return $?
+    local keep_within_monthly=3y
   fi
+
+  restic forget \
+    --group-by "host,paths,tags" \
+    --keep-within 14d \
+    --keep-within-daily 30d \
+    --keep-within-weekly 3m \
+    --keep-within-monthly "${keep_within_monthly}" || softfail || return $?
 }
 
 workstation::backup::prune() {
