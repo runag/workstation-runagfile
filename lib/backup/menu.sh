@@ -17,20 +17,20 @@
 workstation::backup::tasks() {
   task::add --header "Workstation backup deploy" || softfail || return $?
 
-  task::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail # TODO: list options
-  task::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail # TODO: list options
+  task::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || softfail || return $? # TODO: list options
+  task::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $? # TODO: list options
 
-  workstation::backup::tasks::commands || fail
-  workstation::backup::tasks::services || fail
+  workstation::backup::tasks::commands || softfail || return $?
+  workstation::backup::tasks::services || softfail || return $?
 }
 
 workstation::backup::tasks::commands() {
-  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
+  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || softfail || return $?
 
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
-      local repository_name; repository_name="$(basename "${repository_config_path}")" || fail
-      local repository_path; repository_path="$(<"${repository_config_path}")" || fail
+      local repository_name; repository_name="$(basename "${repository_config_path}")" || softfail || return $?
+      local repository_path; repository_path="$(<"${repository_config_path}")" || softfail || return $?
 
       local commands=(init create snapshots check forget prune maintenance unlock mount umount restore shell)
 
