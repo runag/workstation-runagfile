@@ -17,9 +17,9 @@
 workstation::backup::tasks() {
   task::add --header "Workstation backup deploy" || softfail || return $?
 
-  task::add workstation::backup::deploy_services || softfail || return $?
-  task::add workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || softfail || return $? # TODO: list options
+  task::add workstation::backup::deploy_remotes || softfail || return $?
   task::add workstation::backup::credentials::deploy_profile backup/profiles/workstation || softfail || return $? # TODO: list options
+  task::add workstation::backup::deploy_services || softfail || return $?
 
   task::add --group systemd::service_tasks --user --with-timer --service-name "workstation-backup" || softfail || return $?
 

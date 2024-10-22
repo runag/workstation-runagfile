@@ -14,6 +14,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::backup::deploy_remotes() {
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
+  local absolute_path; for absolute_path in "${password_store_dir}/backup/remotes/sftp"/* ; do
+    if [ -d "${absolute_path}" ]; then
+      local relative_path="${absolute_path:$((${#password_store_dir}+1))}"
+      local base_name; base_name="${2:-"$(basename "${relative_path}")"}" || fail
+
+      ssh::add_ssh_config_d_include_directive || fail
+      ssh::install_ssh_profile_from_pass --profile-name "workstation-backup-${base_name}" "${relative_path}" || fail
+    fi
+  done
+}
+
 # shellcheck disable=2030
 workstation::backup() (
   export WORKSTATION_BACKUP_PROFILE="workstation"

@@ -120,13 +120,13 @@ Password Store
 │   │       └── repositories
 │   │           └── default
 │   └── remotes
-│       └── my-backup-server
-│           ├── config
-│           ├── config.linux
-│           ├── id_ed25519
-│           ├── id_ed25519.pub
-│           ├── known_hosts
-│           └── type
+|       └── sftp
+│           └── my-backup-server
+│               ├── config
+│               ├── config.linux
+│               ├── id_ed25519
+│               ├── id_ed25519.pub
+│               └── known_hosts
 └── identity
     └── my
         ├── git
