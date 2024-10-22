@@ -68,6 +68,7 @@ workstation::linux::gnome::configure() (
 
 
   # Dash-to-dock
+  gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock animation-time 0.1 || fail
   gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock dock-fixed false || fail # "fixed" means it always visible
   gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT' || fail
   gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock extend-height false || fail
@@ -157,38 +158,11 @@ workstation::linux::gnome::configure() (
   fi
 
 
-  # Keybindings
-  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "\
-    ['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', \
-     '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', \
-     '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']" || fail
-
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>Pause' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'systemctl suspend' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Suspend' || fail
-
-  local dash_to_dock_schema_string
-  printf -v dash_to_dock_schema_string " %q" "${dash_to_dock_schema[@]}" || fail
-  dash_to_dock_schema_string="${dash_to_dock_schema_string:1}"
-
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Super>F12' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "gsettings ${dash_to_dock_schema_string:-} set org.gnome.shell.extensions.dash-to-dock dock-fixed true" || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'show dock' || fail
-
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Super>F11' || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command "gsettings ${dash_to_dock_schema_string:-} set org.gnome.shell.extensions.dash-to-dock dock-fixed false" || fail
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'hide dock' || fail
-
-
   # Move to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Super>F1']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>F2']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>F4']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Shift><Super>F5']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Super>F6']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-7 "['<Shift><Super>F7']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-8 "['<Shift><Super>F8']" || fail
 
 
   # Switch to workspace keybindings
@@ -196,8 +170,4 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>F2']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>F4']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Super>F5']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>F6']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-7 "['<Super>F7']" || fail
-  # gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-8 "['<Super>F8']" || fail
 )
