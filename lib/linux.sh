@@ -40,7 +40,7 @@ workstation::linux::deploy_workstation() {
   workstation::linux::deploy_identities || fail
 
   # setup backup
-  workstation::backup::credentials::deploy_remote backup/remotes/my-backup-server || fail
+  workstation::backup::deploy_remotes || fail
   workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
   workstation::backup::deploy_services || fail
 

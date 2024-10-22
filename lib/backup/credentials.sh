@@ -14,33 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::credentials::deploy_remote() {
-  local remote_pass_path="$1"
-  local remote_name; remote_name="${2:-"$(basename "${remote_pass_path}")"}" || fail
-
-  local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
-
-  if ! pass::dir_exists "${remote_pass_path}"; then
-    fail "Remote not found: ${remote_pass_path}"
-  fi
-
-  local remote_config_dir="${config_dir}/remotes/${remote_name}"
-
-  dir::should_exists --mode 0700 "${config_dir}" || fail
-  dir::should_exists --mode 0700 "${config_dir}/remotes" || fail
-  dir::should_exists --mode 0700 "${remote_config_dir}" || fail
-
-  local remote_type; remote_type="$(pass::use "${remote_pass_path}/type")" || fail
-  <<<"${remote_type}" file::write --mode 0600 "${remote_config_dir}/type" || fail
-
-  if [ "${remote_type}" = ssh ]; then # install ssh profile
-    ssh::add_ssh_config_d_include_directive || fail
-    ssh::install_ssh_profile_from_pass --profile-name "workstation-backup-${remote_name}" "${remote_pass_path}" || fail
-  else
-    fail "Unknown remote type"
-  fi
-}
-
 workstation::backup::credentials::deploy_profile() {(
   local profile_pass_path="$1"
   local profile_name; profile_name="${2:-"$(basename "${profile_pass_path}")"}" || fail
