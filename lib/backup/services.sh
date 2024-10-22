@@ -23,7 +23,7 @@ Description=Workstation backup
 
 [Service]
 Type=oneshot
-ExecStart=${runag_path} workstation::backup --each-repository create
+ExecStart=${runag_path} workstation::backup create
 SyslogIdentifier=workstation-backup
 ProtectSystem=full
 PrivateTmp=true

@@ -27,18 +27,10 @@ workstation::backup::tasks() {
 workstation::backup::tasks::commands() {
   local config_dir; config_dir="$(workstation::get_config_path "workstation-backup")" || fail
 
-  local repository_count=0
-
   local repository_config_path; for repository_config_path in "${config_dir}/profiles/workstation/repositories"/*; do
     if [ -f "${repository_config_path}" ]; then
       local repository_name; repository_name="$(basename "${repository_config_path}")" || fail
       local repository_path; repository_path="$(<"${repository_config_path}")" || fail
-
-      if [[ "${OSTYPE}" =~ ^linux ]] && [[ "${repository_path}" =~ ^(/(media/${USER}|mnt)/[^/]+)/ ]] && ! findmnt --mountpoint "${BASH_REMATCH[1]}" >/dev/null; then
-        continue
-      fi
-
-      ((repository_count+=1))
 
       local commands=(init create snapshots check forget prune maintenance unlock mount umount restore shell)
 
@@ -46,32 +38,13 @@ workstation::backup::tasks::commands() {
         commands+=(remote_shell)
       fi
 
-      if [ "${repository_name}" = default ]; then
-        task::add --header "Workstation backup: commands" || softfail || return $?
-        local command; for command in "${commands[@]}"; do
-          task::add workstation::backup "${command}" || softfail || return $?
-        done
-      else
-        task::add --header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
-        local command; for command in "${commands[@]}"; do
-          task::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
-        done
-      fi
+      task::add --header "Workstation backup: ${repository_name} repository commands" || softfail || return $?
+
+      local command; for command in "${commands[@]}"; do
+        task::add workstation::backup --repository "${repository_name}" "${command}" || softfail || return $?
+      done
     fi
   done
-
-  if [ "${repository_count}" -gt 1 ]; then
-    task::add --header "Workstation backup: for each repository" || softfail || return $?
-    local commands=(init create snapshots check forget prune maintenance unlock restore)
-    local command; for command in "${commands[@]}"; do
-      task::add workstation::backup --each-repository "${command}" || softfail || return $?
-    done
-  fi
-
-  if [ "${repository_count}" = 0 ]; then
-    task::add --header "Workstation backup: repositories" || softfail || return $?
-    task::add --note "No backup repositories found" || softfail || return $?
-  fi
 }
 
 workstation::backup::tasks::services() {
