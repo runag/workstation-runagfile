@@ -42,36 +42,9 @@ RandomizedDelaySec=300
 WantedBy=timers.target
 EOF
 
-#   systemd::write_user_unit "workstation-backup-maintenance.service" <<EOF || fail
-# [Unit]
-# Description=Workstation backup maintenance
-#
-# [Service]
-# Type=oneshot
-# ExecStart=${runag_path} workstation::backup --each-repository maintenance
-# SyslogIdentifier=workstation-backup
-# ProtectSystem=full
-# PrivateTmp=true
-# NoNewPrivileges=false
-# EOF
-
-#   systemd::write_user_unit "workstation-backup-maintenance.timer" <<EOF || fail
-# [Unit]
-# Description=Backup service timer for workstation backup maintenance
-#
-# [Timer]
-# OnCalendar=weekly
-#
-# [Install]
-# WantedBy=timers.target
-# EOF
-
   # enable the service and start the timer
   systemctl --user --quiet reenable "workstation-backup.timer" || fail
   systemctl --user start "workstation-backup.timer" || fail
-
-  # systemctl --user --quiet reenable "workstation-backup-maintenance.timer" || fail
-  # systemctl --user start "workstation-backup-maintenance.timer" || fail
 }
 
 workstation::backup::services::start() {
@@ -82,20 +55,9 @@ workstation::backup::services::stop() {
   systemctl --user stop "workstation-backup.service" || fail
 }
 
-# workstation::backup::services::start_maintenance() {
-#   systemctl --user --no-block start "workstation-backup-maintenance.service" || fail
-# }
-
-# workstation::backup::services::stop_maintenance() {
-#   systemctl --user stop "workstation-backup-maintenance.service" || fail
-# }
-
 workstation::backup::services::disable_timers() {
   systemctl --user stop "workstation-backup.timer" || fail
-  # systemctl --user stop "workstation-backup-maintenance.timer" || fail
-
   systemctl --user --quiet disable "workstation-backup.timer" || fail
-  # systemctl --user --quiet disable "workstation-backup-maintenance.timer" || fail
 }
 
 workstation::backup::services::status() {
@@ -111,17 +73,9 @@ workstation::backup::services::status() {
   exit_statuses+=($?)
   printf "\n\n\n"
 
-  # systemctl --user status "workstation-backup-maintenance.timer"
-  # exit_statuses+=($?)
-  # printf "\n\n\n"
-
   systemctl --user status "workstation-backup.service"
   exit_statuses+=($?)
   printf "\n\n\n"
-
-  # systemctl --user status "workstation-backup-maintenance.service"
-  # exit_statuses+=($?)
-  # printf "\n"
 
   if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # I'm not sure about number 3 here
     fail
@@ -129,11 +83,9 @@ workstation::backup::services::status() {
 }
 
 workstation::backup::services::log() {
-  # journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --lines 2048 || fail
   journalctl --user -u "workstation-backup.service" --lines 2048 || fail
 }
 
 workstation::backup::services::log_follow() {
-  # journalctl --user -u "workstation-backup.service" -u "workstation-backup-maintenance.service" --lines 2048 --follow || fail
   journalctl --user -u "workstation-backup.service" --lines 2048 --follow || fail
 }
