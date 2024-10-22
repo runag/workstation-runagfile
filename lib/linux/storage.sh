@@ -15,15 +15,15 @@
 #  limitations under the License.
 
 workstation::linux::storage::check_root() {
-  if [ "$(findmnt --mountpoint / --noheadings --output FSTYPE,FSROOT --raw 2>/dev/null)" = "btrfs /@" ]; then
-    local root_device; root_device="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail
-
-    # "btrfs check --check-data-csum" is not accurate on live filesystem
-    sudo btrfs scrub start -B -d "${root_device}" || fail
-    sudo btrfs check --readonly --progress --force "${root_device}" || fail
-  else
+  if [ "$(findmnt --mountpoint / --noheadings --output FSTYPE --raw 2>/dev/null)" != "btrfs" ]; then
     fail "Check on non-btrfs partition is not implemented"
   fi
+
+  local root_device; root_device="$(findmnt --mountpoint / --noheadings --output SOURCE --raw | sed 's/\[\/\@\]$//'; test "${PIPESTATUS[*]}" = "0 0")" || fail
+
+  # "btrfs check --check-data-csum" is not accurate on live filesystem
+  sudo btrfs scrub start -B -d "${root_device}" || fail
+  sudo btrfs check --readonly --progress --force "${root_device}" || fail
 }
 
 workstation::linux::storage::configure_udisks_mount_options() {
