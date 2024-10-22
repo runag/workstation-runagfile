@@ -23,7 +23,7 @@ workstation::linux::storage::check_root() {
 
   # "btrfs check --check-data-csum" is not accurate on live filesystem
   sudo btrfs scrub start -B -d "${root_device}" || fail
-  sudo btrfs check --readonly --progress --force "${root_device}" || fail
+  sudo btrfs check --readonly --force "${root_device}" || fail
 }
 
 workstation::linux::storage::configure_udisks_mount_options() {
