@@ -24,7 +24,6 @@ workstation::backup::tasks() {
   task::add --group systemd::service_tasks --user --with-timer --service-name "workstation-backup" || softfail || return $?
 
   workstation::backup::tasks::commands || softfail || return $?
-  workstation::backup::tasks::services || softfail || return $?
 }
 
 workstation::backup::tasks::commands() {
