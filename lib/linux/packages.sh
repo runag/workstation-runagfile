@@ -191,13 +191,6 @@ workstation::linux::install_packages::debian() (
   elif [ "$(systemd-detect-virt)" = "kvm" ]; then
     # spice-vdagent for kvm
     package_list+=(spice-vdagent)
-  
-  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
-    # open-vm-tools for vmware
-    package_list+=(
-      open-vm-tools
-      open-vm-tools-desktop
-    )
   fi
 
   apt::install "${package_list[@]}" || fail
@@ -281,10 +274,6 @@ workstation::linux::install_packages::arch() {
   elif [ "$(systemd-detect-virt)" = "kvm" ]; then
     # spice-vdagent for kvm
     package_list+=(spice-vdagent)
-  
-  elif [ "$(systemd-detect-virt)" = "vmware" ]; then
-    # open-vm-tools for vmware
-    package_list+=(open-vm-tools)
   fi
 
   sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail

@@ -93,12 +93,6 @@ workstation::backup::configure_passwordless_sudo_for_dmidecode() {
 
 workstation::backup::machine_id() {
   if systemd-detect-virt --quiet && [ -f /etc/sudoers.d/passwordless-dmidecode ]; then
-  
-    if [ "$(systemd-detect-virt)" = "vmware" ]; then
-      sudo dmidecode -t system | grep "^[[:blank:]]*Serial Number: VMware-" | sed "s/^[[:blank:]]*Serial Number: VMware-//" | sed "s/ //g"
-      test "${PIPESTATUS[*]}" = "0 0 0 0" && return
-    fi
-
     sudo dmidecode --string system-uuid && return
   fi
 

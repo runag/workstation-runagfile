@@ -45,12 +45,6 @@ workstation::linux::configure() (
     fstab::add_mount_option --filesystem-type btrfs noatime || fail
   fi
 
-  # configuration related to the case when the system is running inside a virtual machine
-  if [ "$(systemd-detect-virt)" = "vmware" ]; then
-    # for network to work
-    workstation::vmware::install_vm_network_loss_workaround || fail
-  fi
-
   # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid
   if systemd-detect-virt --quiet; then
     workstation::backup::configure_passwordless_sudo_for_dmidecode || fail
@@ -92,13 +86,7 @@ workstation::linux::configure() (
   # configure gnome desktop
   workstation::linux::gnome::configure || fail
 
-  # configure and start imwheel
-  #
-  # When running linux guest in vmware workstation, if you scroll and move your mouse at the same
-  # time, then mouse scrolling stops. The use of imwheel fixes that somehow.
-  #
-  # Also some software need faster scrolling on X11
-  #
+  # configure and start imwheel, some software need faster scrolling on X11
   workstation::linux::imwheel::deploy || fail
 
   # firefox
