@@ -80,8 +80,6 @@ workstation::backup::tasks::services() {
   task::add workstation::backup::services::deploy || softfail || return $?
   task::add workstation::backup::services::start || softfail || return $?
   task::add workstation::backup::services::stop || softfail || return $?
-  # task::add workstation::backup::services::start_maintenance || softfail || return $?
-  # task::add workstation::backup::services::stop_maintenance || softfail || return $?
   task::add workstation::backup::services::disable_timers || softfail || return $?
   task::add workstation::backup::services::status || softfail || return $?
   task::add workstation::backup::services::log || softfail || return $?
