@@ -24,10 +24,6 @@ workstation::deployment::tasks() {
 
     task::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
 
-    if [ "$(systemd-detect-virt)" != "vmware" ]; then
-      task::add --note "VMware tasks are not displayed" || softfail || return $?
-    fi
-
     task::add workstation::linux::deploy_identities || softfail || return $?
     task::add workstation::linux::install_packages || softfail || return $?
     task::add workstation::linux::configure || softfail || return $?
@@ -35,10 +31,6 @@ workstation::deployment::tasks() {
 
     if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
       task::add workstation::linux::deploy_virt_keys || softfail || return $?
-    fi
-
-    if [ "$(systemd-detect-virt)" = "vmware" ]; then
-      task::add workstation::linux::deploy_host_cifs_mount identity/my/host-cifs/credentials shared-files host-shared-files || softfail || return $?
     fi
   fi
 

@@ -77,7 +77,7 @@ workstation::linux::imwheel::reenable() {
   file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
 Type=Application
-Exec=/usr/bin/bash -c 'if [ "\${XDG_SESSION_TYPE:-}" = "x11" ] || [ "\$(systemd-detect-virt)" = "vmware" ]; then /usr/bin/imwheel; fi'
+Exec=/usr/bin/bash -c 'if [ "\${XDG_SESSION_TYPE:-}" = "x11" ]; then /usr/bin/imwheel; fi'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
@@ -88,7 +88,7 @@ Comment[en_US]=Scripting for mouse wheel and buttons
 Comment=Scripting for mouse wheel and buttons
 EOF
 
-  if [ "${XDG_SESSION_TYPE:-}" = "x11" ] || [ "$(systemd-detect-virt)" = "vmware" ]; then
+  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
     /usr/bin/imwheel --kill || fail
   fi
 }

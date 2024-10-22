@@ -136,8 +136,6 @@ Password Store
         ├── github
         │   ├── personal-access-token
         │   └── username
-        ├── host-cifs
-        │   └── credentials
         ├── npm
         │   └── access-token
         ├── runag
