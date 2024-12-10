@@ -26,8 +26,11 @@ workstation::add_runagfiles() {
 
 # Git
 workstation::configure_git() {
+  local user_media_path; user_media_path="$(linux::user_media_path)" || fail
+
   git config --global core.autocrlf input || fail
   git config --global init.defaultBranch main || fail
+  git config --global url."${user_media_path}/workstation-sync/".insteadOf "/workstation-sync/" || fail
 }
 
 
