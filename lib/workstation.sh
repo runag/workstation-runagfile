@@ -67,16 +67,7 @@ workstation::get_config_path() {
   echo "${config_home}/$1"
 }
 
-workstation::get_flag() {
-  local flag_path; flag_path="$(workstation::get_config_path "flags" "$1")" || fail
-  test -f "${flag_path}"
 }
-
-workstation::set_flag() {
-  local flag_path; flag_path="$(workstation::get_config_path "flags" "$1")" || fail
-  touch "${flag_path}" || fail
-}
-
 
 # Micro editor
 workstation::install_micro_config() {
