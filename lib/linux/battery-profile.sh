@@ -19,12 +19,11 @@ workstation::linux::set_battery_profile() {
 
   temp_file="$(mktemp)" || fail
   {
-    runag::mini_library || fail
+    runag::mini_library --nounset || fail
 
     declare -f linux::set_battery_charge_control_threshold || fail
     declare -f "${profile_function}" || fail
 
-    echo 'set -o nounset'
     printf '%q || fail' "${profile_function}" || fail
 
   } >"${temp_file}" || fail
