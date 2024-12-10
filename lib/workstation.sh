@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 # Runagfiles
 workstation::add_runagfiles() {
   local list_path="$1" # should be in the body
@@ -22,7 +21,6 @@ workstation::add_runagfiles() {
   pass::use --body "${list_path}" | runagfile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
 }
-
 
 # Git
 workstation::configure_git() {
@@ -32,7 +30,6 @@ workstation::configure_git() {
   git config --global init.defaultBranch main || fail
   git config --global url."${user_media_path}/workstation-sync/".insteadOf "/workstation-sync/" || fail
 }
-
 
 # Cleanup
 workstation::remove_nodejs_and_ruby_installations() {
@@ -52,7 +49,6 @@ workstation::remove_nodejs_and_ruby_installations() {
   rm -rf "${HOME}/.bundle" || fail
   rm -rf "${HOME}/.node-gyp" || fail
 }
-
 
 # Config
 workstation::get_config_path() {
@@ -100,7 +96,6 @@ JSON
 }
 JSON
 }
-
 
 # Editor configs
 workstation::merge_editor_configs() {
