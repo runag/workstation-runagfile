@@ -20,18 +20,11 @@ workstation::remote_repositories_backup::tasks() {
 
   task::add --header "Remote repositories backup: deploy" || softfail || return $?
 
-  task::add workstation::remote_repositories_backup::initial_deploy || softfail || return $?
+  task::add workstation::remote_repositories_backup::deploy || softfail || return $?
   task::add workstation::remote_repositories_backup::deploy_services || softfail || return $?
   task::add workstation::remote_repositories_backup::create || softfail || return $?
 
-  task::add --header "Remote repositories backup: services" || softfail || return $?
-
-  task::add workstation::remote_repositories_backup::start || softfail || return $?
-  task::add workstation::remote_repositories_backup::stop || softfail || return $?
-  task::add workstation::remote_repositories_backup::disable_timers || softfail || return $?
-  task::add workstation::remote_repositories_backup::status || softfail || return $?
-  task::add workstation::remote_repositories_backup::log || softfail || return $?
-  task::add workstation::remote_repositories_backup::log_follow || softfail || return $?
+  systemd::service_tasks --user --with-timer --service-name "remote-repositories-backup" || softfail || return $?
 }
 
 # shellcheck disable=2120
@@ -59,25 +52,7 @@ workstation::remote_repositories_backup::tasks::identities() {
   fi
 }
 
-workstation::remote_repositories_backup::initial_deploy() {
-  if ! workstation::get_flag "remote-repositories-backup-was-suggested"; then
-    if ui::confirm "Do you want to store remote repositories backup on this machine?"; then
-      workstation::set_flag "remote-repositories-backup-was-accepted" || fail
-    else
-      workstation::set_flag "remote-repositories-backup-was-rejected" || fail
-    fi
-    workstation::set_flag "remote-repositories-backup-was-suggested" || fail
-  fi
-
-  if workstation::get_flag "remote-repositories-backup-was-rejected"; then
-    log::warning "Remote repositories backup will not be stored on this machine" || fail
-    return 0
-  fi
-
-  if ! workstation::get_flag "remote-repositories-backup-was-accepted"; then
-    fail "Unreachable state reached"
-  fi
-
+workstation::remote_repositories_backup::deploy() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}/github" ]; then
@@ -86,9 +61,6 @@ workstation::remote_repositories_backup::initial_deploy() {
       workstation::remote_repositories_backup::deploy_credentials "${identity_path}" || fail
     fi
   done
-
-  # Disabled: It's nice to check it right away but it took so much time on every redeploy
-  # workstation::remote_repositories_backup::create || softfail "workstation::remote_repositories_backup::create failed"
 
   workstation::remote_repositories_backup::deploy_services || fail
 }
@@ -128,9 +100,8 @@ workstation::remote_repositories_backup::deploy_credentials() {
     fi
   fi
 
-  local config_dir; config_dir="$(workstation::get_config_path "remote-repositories-backup")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup")" || fail
 
-  dir::should_exists --mode 0700 "${config_dir}" || fail
   dir::should_exists --mode 0700 "${config_dir}/github" || fail
   dir::should_exists --mode 0700 "${config_dir}/github/${credentials_name}" || fail
 
@@ -148,7 +119,7 @@ workstation::remote_repositories_backup::create() {
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
-  local config_dir; config_dir="$(workstation::get_config_path "remote-repositories-backup")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup")" || fail
 
   local exit_status=0
 
@@ -253,42 +224,4 @@ EOF
   # enable the service and start the timer
   systemctl --user --quiet reenable "remote-repositories-backup.timer" || fail
   systemctl --user start "remote-repositories-backup.timer" || fail
-}
-
-workstation::remote_repositories_backup::start() {
-  systemctl --user --no-block start "remote-repositories-backup.service" || fail
-}
-
-workstation::remote_repositories_backup::stop() {
-  systemctl --user stop "remote-repositories-backup.service" || fail
-}
-
-workstation::remote_repositories_backup::disable_timers() {
-  systemctl --user stop "remote-repositories-backup.timer" || fail
-  systemctl --user --quiet disable "remote-repositories-backup.timer" || fail
-}
-
-workstation::remote_repositories_backup::status() {
-  local exit_statuses=()
-
-  printf "\n"
-  systemctl --user status "remote-repositories-backup.service"
-  exit_statuses+=($?)
-  printf "\n\n\n"
-
-  systemctl --user status "remote-repositories-backup.timer"
-  exit_statuses+=($?)
-  printf "\n"
-
-  if [[ "${exit_statuses[*]}" =~ [^03[:space:]] ]]; then # I'm not sure about 3 here
-    fail
-  fi
-}
-
-workstation::remote_repositories_backup::log() {
-  journalctl --user -u "remote-repositories-backup.service" --lines 2048 || fail
-}
-
-workstation::remote_repositories_backup::log_follow() {
-  journalctl --user -u "remote-repositories-backup.service" --lines 2048 --follow || fail
 }
