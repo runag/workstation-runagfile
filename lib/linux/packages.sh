@@ -257,8 +257,13 @@ workstation::linux::install_packages::arch() {
     mtools # gparted dependencies for fat partitions
     qtpass
     thunar
-    ttf-dejavu
     zbar
+
+    # fonts
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    ttf-dejavu
   )
 
   if ! systemd-detect-virt --quiet; then
