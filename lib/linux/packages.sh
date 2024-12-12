@@ -113,83 +113,98 @@ workstation::linux::install_packages::debian() (
   . /etc/os-release || fail
 
   local package_list=(
-    # general tools
-    apache2-utils
-    btrfs-compsize
-    certbot
-    debian-goodies # checkrestart
-    direnv
-    ethtool
-    ffmpeg
-    git
-    gnupg
-    graphviz
-    htop
-    hyperfine
-    imagemagick
-    inotify-tools
-    mc
-    micro
-    ncdu
-    p7zip-full
-    rclone
-    shellcheck
-    sqlite3
-    sysbench
-    tmux
-    whois
-    xclip
-    xkcdpass
-    zsh
-    # iperf3
+    # # desktop: browsers
 
-    # build tools
-    build-essential
-    libsqlite3-dev
-    libssl-dev
-
-    # servers
-    libpq-dev
-    postgresql
-    postgresql-contrib
-    # memcached
-    # redis-server
-
-    # desktop software
-    calibre
-    dconf-editor
-    dosfstools # gparted dependencies for fat partitions
+    # # desktop: text editors
     ghex
-    gpa # gnu privacy assistant
-    gparted
-    imwheel
-    inkscape
+    meld
+
+    # # desktop: content creation
+    # inkscape
+    # obs-studio
     krita
     libreoffice-calc
     libreoffice-writer
-    meld
-    mtools # gparted dependencies for fat partitions
+
+    # # desktop: content consumption
+    calibre
+    vlc
+
+    # # desktop: misc tools
+    # gpa # gnu privacy assistant
+    # gparted
+    # thunar
+    dconf-editor
     qtpass
-    thunar
+
+    # # desktop: fonts
+
+    # # desktop: hardware
+    # ddcutil # display control
+    # pavucontrol # volume control
+    imwheel # mouse wheel
+    v4l-utils # webcam control
+
+    # # terminal ui
+    # debian-goodies # checkrestart
+    # htop
+    direnv
+    mc
+    micro
+    ncdu
+    tmux
+    xclip
+    xkcdpass
+    zsh
+
+    # # build and developer tools
+    # inotify-tools
+    build-essential
+    git
+    gnupg
+    libsqlite3-dev
+    libssl-dev
+    shellcheck
+
+    # # databases and servers
+    # memcached
+    # redis-server
+    libpq-dev
+    postgresql
+    postgresql-contrib
+    sqlite3
+
+    # # cloud and networking
+    # ethtool
+    certbot
+    whois
+
+    # # batch media processing
+    # graphviz
+    ffmpeg
+    imagemagick
     zbar-tools
+
+    # # storage and files
+    # btrfs-compsize
+    # dosfstools # gparted dependencies for fat partitions
+    # mtools # gparted dependencies for fat partitions
+    # rclone
+    nvme-cli
+    p7zip-full
+
+    # # benchmarks
+    # apache2-utils
+    # hyperfine
+    # iperf3
+    # sysbench
   )
 
   if [ "${ID:-}" = debian ]; then
     package_list+=(awscli)
   fi
 
-  if ! systemd-detect-virt --quiet; then
-    # software for bare metal workstation
-    package_list+=(
-      ddcutil # display control
-      nvme-cli
-      obs-studio
-      pavucontrol # volume control
-      v4l-utils # webcam control
-      vlc # video player
-    )
-  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
-    # spice-vdagent for kvm
+  if [ "$(systemd-detect-virt)" = "kvm" ]; then
     package_list+=(spice-vdagent)
   fi
 
@@ -198,92 +213,106 @@ workstation::linux::install_packages::debian() (
 
 workstation::linux::install_packages::arch() {
   local package_list=(
-    # general tools
-    apache
-    certbot
-    compsize
-    direnv
-    ethtool
-    ffmpeg
-    git
-    gnupg
-    graphviz
-    htop
-    hyperfine
-    imagemagick
-    inotify-tools
-    mc
-    micro
-    ncdu
-    p7zip
-    rclone
-    restic
-    shellcheck
-    sqlite
-    sysbench
-    tmux
-    whois
-    xclip
-    zsh
-    # iperf3
-    # xkcdpass
-
-    # build tools
-    base-devel
-    openssl
-
-    # servers
-    postgresql
-    # memcached
-    # redis-server
-
-    # cloud
-    aws-cli
-
-    # desktop software
-    calibre
+    # # desktop: browsers
     chromium
-    dconf-editor
-    dosfstools # gparted dependencies for fat partitions
     firefox
+
+    # # desktop: text editors
     ghex
-    gnome-terminal
-    gparted
-    imwheel
-    inkscape
+    meld
+
+    # # desktop: content creation
+    # inkscape
+    # obs-studio
     krita
     libreoffice-fresh
-    meld
-    mtools # gparted dependencies for fat partitions
-    qtpass
-    thunar
-    zbar
 
-    # fonts
+    # # desktop: content consumption
+    calibre
+    vlc
+
+    # # desktop: misc tools
+    # gparted
+    # thunar
+    dconf-editor
+    gnome-terminal
+    qtpass
+
+    # # desktop: fonts
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
     ttf-dejavu
+
+    # # desktop: hardware
+    # ddcutil # display control
+    # pavucontrol # volume control
+    imwheel # mouse wheel
+    v4l-utils # webcam control
+
+    # # terminal ui
+    # htop
+    direnv
+    fzf
+    mc
+    micro
+    ncdu
+    tmux
+    xclip
+    xkcdpass
+    zsh
+
+    # # build and developer tools
+    # inotify-tools
+    base-devel
+    git
+    gnupg
+    openssl
+    shellcheck
+
+    # # databases and servers
+    # memcached
+    # redis-server
+    postgresql
+    sqlite
+
+    # # cloud and networking
+    # ethtool
+    aws-cli
+    certbot
+    whois
+
+    # # batch media processing
+    # graphviz
+    ffmpeg
+    imagemagick
+    zbar
+
+    # # storage and files
+    # compsize
+    # dosfstools # gparted dependencies for fat partitions
+    # mtools # gparted dependencies for fat partitions
+    # rclone
+    nvme-cli
+    p7zip
+    restic
+
+    # # benchmarks
+    # apache
+    # fio
+    # hyperfine
+    # iperf3
+    # sysbench
   )
 
-  if ! systemd-detect-virt --quiet; then
-    # software for bare metal workstation
-    package_list+=(
-      ddcutil # display control
-      nvme-cli
-      obs-studio
-      pavucontrol # volume control
-      v4l-utils # webcam control
-      vlc # video player
-    )
-  elif [ "$(systemd-detect-virt)" = "kvm" ]; then
-    # spice-vdagent for kvm
+  # software for kvm
+  if [ "$(systemd-detect-virt)" = "kvm" ]; then
     package_list+=(spice-vdagent)
   fi
 
   sudo pacman --sync --needed --noconfirm "${package_list[@]}" || fail
 
-  # for restic
+  # patch things for restic
   if ! command -v fusermount >/dev/null; then
     ln -s /bin/fusermount3 ~/.local/bin/fusermount || fail
   fi
