@@ -113,39 +113,39 @@ workstation::linux::install_packages::debian() (
   . /etc/os-release || fail
 
   local package_list=(
-    # # desktop: browsers
+    # # Desktop: browsers
 
-    # # desktop: text editors
+    # # Desktop: text editors
     ghex
     meld
 
-    # # desktop: content creation
+    # # Desktop: content creation and productivity
     # inkscape
     # obs-studio
     krita
     libreoffice-calc
     libreoffice-writer
 
-    # # desktop: content consumption
+    # # Desktop: content consumption
     calibre
     vlc
 
-    # # desktop: misc tools
+    # # Desktop: misc tools
     # gpa # gnu privacy assistant
     # gparted
     # thunar
     dconf-editor
     qtpass
 
-    # # desktop: fonts
+    # # Desktop: fonts
 
-    # # desktop: hardware
+    # # Desktop: hardware
     # ddcutil # display control
     # pavucontrol # volume control
     imwheel # mouse wheel
     v4l-utils # webcam control
 
-    # # terminal ui
+    # # Terminal ui
     # debian-goodies # checkrestart
     # htop
     direnv
@@ -157,7 +157,7 @@ workstation::linux::install_packages::debian() (
     xkcdpass
     zsh
 
-    # # build and developer tools
+    # # Build and developer tools
     # inotify-tools
     build-essential
     git
@@ -166,7 +166,7 @@ workstation::linux::install_packages::debian() (
     libssl-dev
     shellcheck
 
-    # # databases and servers
+    # # Databases and servers
     # memcached
     # redis-server
     libpq-dev
@@ -174,18 +174,18 @@ workstation::linux::install_packages::debian() (
     postgresql-contrib
     sqlite3
 
-    # # cloud and networking
+    # # Cloud and networking
     # ethtool
     certbot
     whois
 
-    # # batch media processing
+    # # Batch media processing
     # graphviz
     ffmpeg
     imagemagick
     zbar-tools
 
-    # # storage and files
+    # # Storage and files
     # btrfs-compsize
     # dosfstools # gparted dependencies for fat partitions
     # mtools # gparted dependencies for fat partitions
@@ -193,7 +193,7 @@ workstation::linux::install_packages::debian() (
     nvme-cli
     p7zip-full
 
-    # # benchmarks
+    # # Benchmarks
     # apache2-utils
     # hyperfine
     # iperf3
@@ -213,44 +213,44 @@ workstation::linux::install_packages::debian() (
 
 workstation::linux::install_packages::arch() {
   local package_list=(
-    # # desktop: browsers
+    # # Desktop: browsers
     chromium
     firefox
 
-    # # desktop: text editors
+    # # Desktop: text editors
     ghex
     meld
 
-    # # desktop: content creation
+    # # Desktop: content creation and productivity
     # inkscape
     # obs-studio
     krita
     libreoffice-fresh
 
-    # # desktop: content consumption
+    # # Desktop: content consumption
     calibre
     vlc
 
-    # # desktop: misc tools
+    # # Desktop: misc tools
     # gparted
     # thunar
     dconf-editor
     gnome-terminal
     qtpass
 
-    # # desktop: fonts
+    # # Desktop: fonts
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
     ttf-dejavu
 
-    # # desktop: hardware
+    # # Desktop: hardware
     # ddcutil # display control
     # pavucontrol # volume control
     imwheel # mouse wheel
     v4l-utils # webcam control
 
-    # # terminal ui
+    # # Terminal ui
     # htop
     direnv
     fzf
@@ -262,7 +262,7 @@ workstation::linux::install_packages::arch() {
     xkcdpass
     zsh
 
-    # # build and developer tools
+    # # Build and developer tools
     # inotify-tools
     base-devel
     git
@@ -270,25 +270,25 @@ workstation::linux::install_packages::arch() {
     openssl
     shellcheck
 
-    # # databases and servers
+    # # Databases and servers
     # memcached
     # redis-server
     postgresql
     sqlite
 
-    # # cloud and networking
+    # # Cloud and networking
     # ethtool
     aws-cli
     certbot
     whois
 
-    # # batch media processing
+    # # Batch media processing
     # graphviz
     ffmpeg
     imagemagick
     zbar
 
-    # # storage and files
+    # # Storage and files
     # compsize
     # dosfstools # gparted dependencies for fat partitions
     # mtools # gparted dependencies for fat partitions
@@ -297,7 +297,7 @@ workstation::linux::install_packages::arch() {
     p7zip
     restic
 
-    # # benchmarks
+    # # Benchmarks
     # apache
     # fio
     # hyperfine
