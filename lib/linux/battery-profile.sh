@@ -17,7 +17,7 @@
 workstation::linux::set_battery_profile() {
   local profile_function="$1"
 
-  temp_file="$(mktemp)" || fail
+  local temp_file; temp_file="$(mktemp)" || fail
   {
     runag::mini_library --nounset || fail
 
