@@ -45,11 +45,6 @@ workstation::linux::configure() (
     fstab::add_mount_option --filesystem-type btrfs noatime || fail
   fi
 
-  # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid
-  if systemd-detect-virt --quiet; then
-    workstation::backup::configure_passwordless_sudo_for_dmidecode || fail
-  fi
-
   # disable unattended-upgrades, not so sure about that
   # apt::remove unattended-upgrades || fail
 
