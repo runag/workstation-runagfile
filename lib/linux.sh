@@ -40,14 +40,7 @@ workstation::linux::deploy_workstation() {
   workstation::linux::deploy_identities || fail
 
   # setup backup
-  workstation::backup::deploy_remotes || fail
-  workstation::backup::credentials::deploy_profile backup/profiles/workstation || fail
-  workstation::backup::deploy_services || fail
-
-  # setup remote repositories backup
-  if ! systemd-detect-virt --quiet; then
-    workstation::remote_repositories_backup::initial_deploy || fail
-  fi
+  workstation::backup::deploy || fail
 
   # fix for nvidia gpu
   # only if device is present and driver is installed (maybe there is a better method to check that other than "nvidia-smi" presence)

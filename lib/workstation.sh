@@ -52,18 +52,11 @@ workstation::remove_nodejs_and_ruby_installations() {
 
 # Config
 workstation::get_config_dir() {
-  local config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
-  dir::should_exists --mode 0700 "${config_home}" || fail
+  local full_path="${XDG_CONFIG_HOME:-"${HOME}/.config"}/workstation-runagfile${1:+"/$1"}"
 
-  local config_dir="${config_home}/workstation-runagfile"
-  dir::should_exists --mode 0700 "${config_dir}" || fail
+  dir::should_exists --for-me-only "${full_path}" || fail
 
-  if [ -n "${1:-}" ]; then
-    config_dir="${config_dir}/$1"
-    dir::should_exists --mode 0700 "${config_dir}" || fail
-  fi
-  
-  echo "${config_dir}"
+  echo "${full_path}"
 }
 
 # Micro editor

@@ -100,13 +100,10 @@ workstation::remote_repositories_backup::deploy_credentials() {
     fi
   fi
 
-  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup/github/${credentials_name}")" || fail
 
-  dir::should_exists --mode 0700 "${config_dir}/github" || fail
-  dir::should_exists --mode 0700 "${config_dir}/github/${credentials_name}" || fail
-
-  pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/github/${credentials_name}/username" || fail
-  pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/github/${credentials_name}/personal-access-token" || fail
+  pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/username" || fail
+  pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/personal-access-token" || fail
 }
 
 # shellcheck disable=2030
@@ -119,11 +116,11 @@ workstation::remote_repositories_backup::create() {
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
-  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup/github")" || fail
 
   local exit_status=0
 
-  local credentials_path; for credentials_path in "${config_dir}/github"/*; do
+  local credentials_path; for credentials_path in "${config_dir}"/*; do
     if [ -d "${credentials_path}" ]; then
       local credentials_name; credentials_name="$(basename "${credentials_path}")" || fail
 

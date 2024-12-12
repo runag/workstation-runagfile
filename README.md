@@ -112,46 +112,48 @@ iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagf
 ## Password Store
 
 ```
-Password Store
-├── backup
-│   ├── profiles
-│   │   └── workstation
-│   │       ├── password
-│   │       └── repositories
-│   │           └── default
-│   └── remotes
-|       └── sftp
-│           └── my-backup-server
-│               ├── config
-│               ├── config.linux
-│               ├── id_ed25519
-│               ├── id_ed25519.pub
-│               └── known_hosts
-└── identity
-    └── my
-        ├── git
-        │   ├── signing-key
-        │   ├── user-email
-        │   └── user-name
-        ├── github
-        │   ├── personal-access-token
-        │   └── username
-        ├── npm
-        │   └── access-token
-        ├── runag
-        │   └── runagfiles
-        ├── rubygems
-        │   └── credentials
-        ├── ssh
-        │   ├── config
-        │   ├── id_ed25519
-        │   └── id_ed25519.pub
-        ├── sublime-merge
-        │   └── license
-        ├── sublime-text
-        │   └── license
-        └── tailscale
-            └── authkey
+backup
+├── passwords
+│   └── workstation
+├── remotes
+│   └── sftp
+│       └── backup-server
+│           ├── config
+│           ├── config.linux
+│           ├── id_ed25519
+│           ├── id_ed25519.pub
+│           └── known_hosts
+└── repositories
+    └── workstation
+
+identity/my
+├── git
+│   ├── signing-key
+│   ├── user-email
+│   └── user-name
+├── github
+│   ├── personal-access-token
+│   └── username
+├── npm
+│   └── access-token
+├── runag
+│   └── runagfiles
+├── rubygems
+│   └── credentials
+├── ssh
+│   ├── config
+│   ├── id_ed25519
+│   └── id_ed25519.pub
+├── sublime-merge
+│   └── license
+├── sublime-text
+│   └── license
+├── tailscale
+│   └── authkey
+└── wifi
+    └── home
+        ├── password
+        └── ssid
 ```
 
 ### Generate and save SSH key to the password store
