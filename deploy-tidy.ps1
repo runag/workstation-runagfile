@@ -63,25 +63,31 @@ if ("$env:CI" -ne "true") {
   Choco-Install nvidia-display-driver
 }
 
-# Misc tools
-Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
-Choco-Install curl
-Choco-Install far
+# # Desktop: messengers
+Choco-Install discord # proprietary
+
+# # Desktop: browsers
+Choco-Install chromium
+Choco-Install firefox
+
+# # Desktop: content creation and productivity
+Choco-Install avidemux
+Choco-Install krita
+Choco-Install streamlabs-obs
+
+# # Desktop: content consumption
+Choco-Install spotify --ignore-checksums # proprietary
+Choco-Install vlc
+
+# # Desktop: hardware
 Choco-Install librehardwaremonitor
+
+# # Cloud and networking
+Choco-Install curl
+
+# # Storage and files
+Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
+Choco-Install far
 Choco-Install synctrayzor
 Choco-Install windirstat
 Choco-Install winscp
-
-# Messengers
-Choco-Install discord # proprietary
-
-# Browsers
-Choco-Install firefox
-Choco-Install chromium
-
-# Media
-Choco-Install avidemux
-Choco-Install krita
-Choco-Install spotify --ignore-checksums # proprietary
-Choco-Install streamlabs-obs
-Choco-Install vlc

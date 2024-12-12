@@ -64,54 +64,61 @@ if ("$env:CI" -ne "true") {
   Choco-Install nvidia-display-driver
 }
 
-# Misc tools
-Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
-Choco-Install crystaldiskmark
-Choco-Install curl
-Choco-Install far
-Choco-Install git
-# Choco-Install iperf3
-Choco-Install jq
-Choco-Install librehardwaremonitor
-Choco-Install rclone
-Choco-Install restic
-Choco-Install smartmontools
-Choco-Install synctrayzor
-Choco-Install tailscale # proprietary
-Choco-Install windirstat
-Choco-Install winscp
-Choco-Install zbar
-
-# Productivity
-Choco-Install libreoffice-still
-
-# Messengers
+# # Desktop: messengers
 Choco-Install discord # proprietary
 
-# Browsers
+# # Desktop: browsers
+Choco-Install chromium
 Choco-Install firefox
 Choco-Install googlechrome --ignore-checksums # proprietary
-Choco-Install chromium
 
-# Programming languages
-Choco-Install golang
-Choco-Install msys2 # for ruby
-Choco-Install nodejs
-Choco-Install ruby
-
-# Test editors
+# # Desktop: text editors
 Choco-Install meld
 Choco-Install sublimemerge # proprietary
 Choco-Install vscode # proprietary
 
-# Media
+# # Desktop: content creation and productivity
+# Choco-Install inkscape
 Choco-Install avidemux
-Choco-Install inkscape
 Choco-Install krita
-Choco-Install spotify --ignore-checksums # proprietary
+Choco-Install libreoffice-still
 Choco-Install streamlabs-obs
+
+# # Desktop: content consumption
+Choco-Install spotify --ignore-checksums # proprietary
 Choco-Install vlc
 
+# # Desktop: hardware
+Choco-Install librehardwaremonitor
+
+# # Build and developer tools
+Choco-Install git
+Choco-Install golang
+Choco-Install jq
+Choco-Install msys2 # for ruby
+Choco-Install nodejs
+Choco-Install ruby
+
+# # Cloud and networking
+Choco-Install curl
+Choco-Install tailscale # proprietary
+
+# # Batch media processing
+Choco-Install zbar
+
+# # Storage and files
+Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
+Choco-Install far
+Choco-Install rclone
+Choco-Install restic
+Choco-Install smartmontools
+Choco-Install synctrayzor
+Choco-Install windirstat
+Choco-Install winscp
+
+# # Benchmarks
+# Choco-Install crystaldiskmark
+# Choco-Install iperf3
 
 # Define git helper function
 function Git-Clone-or-Pull($url, $dest){

@@ -217,6 +217,8 @@ workstation::linux::install_packages::arch() {
     chromium
     firefox
 
+    # # Desktop: messengers
+
     # # Desktop: text editors
     ghex
     meld
