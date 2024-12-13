@@ -27,12 +27,10 @@ workstation::linux::gnome::configure() (
   # Please do not use dbus-launch here because it will introduce side-effect to "git:add-credentials-to-gnome-keyring"
   # and to "ssh::add-key-password-to-gnome-keyring"
 
-
   # Install extensions
   # 
   # To get full extension names use:
   #   gnome-extensions-cli list
-  #
 
   local dash_to_dock_schema=()
 
@@ -51,7 +49,6 @@ workstation::linux::gnome::configure() (
     gnome-extensions-cli update || fail
   fi
 
-
   # Terminal
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy '<Primary>c'
   # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste '<Primary>v'
@@ -65,7 +62,6 @@ workstation::linux::gnome::configure() (
 
     # sadly I can't select the color palette here as they are hardcoded in terminal app
   fi
-
 
   # Dash-to-dock
   gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock animation-time 0.1 || fail
@@ -99,8 +95,6 @@ workstation::linux::gnome::configure() (
     gsettings "${dash_to_dock_schema[@]}" set org.gnome.shell.extensions.dash-to-dock require-pressure-to-show false || fail 
   fi
 
-
-
   # No hot corners in VM
   if systemd-detect-virt --quiet; then
     gsettings set org.gnome.mutter edge-tiling false || fail
@@ -108,45 +102,35 @@ workstation::linux::gnome::configure() (
     gsettings set org.gnome.desktop.interface enable-hot-corners true || fail
   fi
 
-
   # Workspaces
   gsettings set org.gnome.mutter workspaces-only-on-primary false || fail
   gsettings set org.gnome.shell.app-switcher current-workspace-only true || fail
-
 
   # Nautilus
   gsettings set org.gnome.nautilus.list-view use-tree-view true || fail
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view' || fail
   gsettings set org.gnome.nautilus.preferences show-delete-permanently true || fail
 
-
   # Automatic timezone
   gsettings set org.gnome.desktop.datetime automatic-timezone true || fail
-
 
   # Disable sound alerts
   gsettings set org.gnome.desktop.sound event-sounds false || fail
 
-
   # Mouse, 3200 dpi
   gsettings set org.gnome.desktop.peripherals.mouse speed -1.0 || fail
-
 
   # Theme
   # gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || fail
 
-
   # Disable external search providers
   gsettings set org.gnome.desktop.search-providers disable-external true || fail
-
 
   # Window title
   gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close' || fail
 
-
   # Attach modal dialogs
   gsettings set org.gnome.mutter attach-modal-dialogs true || fail
-
 
   # Use Alt+Tab to switch windows on debian
   if [ "${ID:-}" = debian ] || [ "${ID:-}" = arch ]; then
@@ -157,13 +141,11 @@ workstation::linux::gnome::configure() (
     gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
   fi
 
-
   # Move to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Super>F1']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>F2']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>F4']" || fail
-
 
   # Switch to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>F1']" || fail
