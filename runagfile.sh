@@ -30,9 +30,6 @@ case "${OSTYPE}" in
   darwin*)
     task::add --group workstation::macos::tasks || softfail || return $?
     ;; 
-  msys*)
-    task::add --group workstation::windows::tasks || softfail || return $?
-    ;;
 esac
 
 task::add --group workstation::identity::tasks || softfail || return $?

@@ -79,33 +79,12 @@ bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) a
 ```
 
 
-## Deploy workstation on Windows 
-
-### 1. First stage deploy script (in powershell)
+## Deploy Windows machine
 
 Start PowerShell as administrator, run the following and wait for it to complete:
 
 ```sh
 iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy.ps1" | iex
-```
-
-### 2. Second stage deploy script (in bash)
-
-At this point, Git Bash should be installed by the first script. Start Git Bash as your regular user and run the following:
-
-```sh
-~/.runag/bin/runag
-```
-
-Select things that you need from the task list.
-
-
-## Deploy tidy machine on Windows 
-
-Start PowerShell as administrator, run the following and wait for it to complete:
-
-```sh
-iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy-tidy.ps1" | iex
 ```
 
 
@@ -176,7 +155,6 @@ pass insert --multiline "${pass_path}/${ssh_keyfile}.pub" <"${ssh_keyfile}.pub"
 You may wish to change some paths:
 
 1. This [README](README.md) file, `runag/workstation-runagfile` and maybe `runag/runag` if you forked it as well.
-2. In [deploy.ps1](deploy.ps1), find "If you forked this".
 
 ## License
 
