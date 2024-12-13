@@ -14,24 +14,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::remote_repositories_backup::tasks() {
+workstation::repositories_backup::tasks() {
   # shellcheck disable=2119
-  workstation::remote_repositories_backup::tasks::identities || fail
+  workstation::repositories_backup::tasks::identities || fail
 
-  task::add --header "Remote repositories backup: deploy" || softfail || return $?
+  task::add --header "Repositories backup: deploy" || softfail || return $?
 
-  task::add workstation::remote_repositories_backup::deploy || softfail || return $?
-  task::add workstation::remote_repositories_backup::deploy_services || softfail || return $?
-  task::add workstation::remote_repositories_backup::create || softfail || return $?
+  task::add workstation::repositories_backup::deploy || softfail || return $?
+  task::add workstation::repositories_backup::deploy_services || softfail || return $?
+  task::add workstation::repositories_backup::create || softfail || return $?
 
-  systemd::service_tasks --user --with-timer --service-name "remote-repositories-backup" || softfail || return $?
+  systemd::service_tasks --user --with-timer --service-name "repositories-backup" || softfail || return $?
 }
 
 # shellcheck disable=2120
-workstation::remote_repositories_backup::tasks::identities() {
+workstation::repositories_backup::tasks::identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  task::add --header "Remote repositories backup: deploy credentials" || softfail || return $?
+  task::add --header "Repositories backup: deploy credentials" || softfail || return $?
 
   local identity_found=false
 
@@ -43,7 +43,7 @@ workstation::remote_repositories_backup::tasks::identities() {
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
       identity_found=true
-      task::add --comment "github:${github_username}" workstation::remote_repositories_backup::deploy_credentials "$@" "${identity_path}" || softfail || return $?
+      task::add --comment "github:${github_username}" workstation::repositories_backup::deploy_credentials "$@" "${identity_path}" || softfail || return $?
     fi
   done
 
@@ -52,20 +52,20 @@ workstation::remote_repositories_backup::tasks::identities() {
   fi
 }
 
-workstation::remote_repositories_backup::deploy() {
+workstation::repositories_backup::deploy() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}/github" ]; then
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
 
-      workstation::remote_repositories_backup::deploy_credentials "${identity_path}" || fail
+      workstation::repositories_backup::deploy_credentials "${identity_path}" || fail
     fi
   done
 
-  workstation::remote_repositories_backup::deploy_services || fail
+  workstation::repositories_backup::deploy_services || fail
 }
 
-workstation::remote_repositories_backup::deploy_credentials() {
+workstation::repositories_backup::deploy_credentials() {
   local should_confirm=false
 
   while [ "$#" -gt 0 ]; do
@@ -100,23 +100,23 @@ workstation::remote_repositories_backup::deploy_credentials() {
     fi
   fi
 
-  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup/github/${credentials_name}")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "repositories-backup/github/${credentials_name}")" || fail
 
   pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/username" || fail
   pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/personal-access-token" || fail
 }
 
 # shellcheck disable=2030
-workstation::remote_repositories_backup::create() {
+workstation::repositories_backup::create() {
   local data_home="${XDG_DATA_HOME:-"${HOME}/.local/share"}"
   ( umask 0077 && mkdir -p "${data_home}" ) || fail
 
-  local backup_path="${data_home}/remote-repositories-backup"
+  local backup_path="${data_home}/repositories-backup"
 
   dir::should_exists --mode 0700 "${backup_path}" || fail
   dir::should_exists --mode 0700 "${backup_path}/github" || fail
 
-  local config_dir; config_dir="$(workstation::get_config_dir "remote-repositories-backup/github")" || fail
+  local config_dir; config_dir="$(workstation::get_config_dir "repositories-backup/github")" || fail
 
   local exit_status=0
 
@@ -127,7 +127,7 @@ workstation::remote_repositories_backup::create() {
       local GITHUB_USERNAME; GITHUB_USERNAME="$(<"${credentials_path}"/username)"
       local GITHUB_PERSONAL_ACCESS_TOKEN; GITHUB_PERSONAL_ACCESS_TOKEN="$(<"${credentials_path}"/personal-access-token)"
 
-      workstation::remote_repositories_backup::backup_github_repositories "${backup_path}/github/${credentials_name}" || exit_status=1
+      workstation::repositories_backup::backup_github_repositories "${backup_path}/github/${credentials_name}" || exit_status=1
     fi
   done
 
@@ -137,7 +137,7 @@ workstation::remote_repositories_backup::create() {
 }
 
 # shellcheck disable=2031
-workstation::remote_repositories_backup::backup_github_repositories() {
+workstation::repositories_backup::backup_github_repositories() {
   local backup_path="$1"
 
   # NOTE: There is a 10 000 (100*100) repository limit here. I put it here to not suffer an infinite loop if something is wrong
@@ -189,25 +189,25 @@ workstation::remote_repositories_backup::backup_github_repositories() {
   fi
 }
 
-workstation::remote_repositories_backup::deploy_services() {
+workstation::repositories_backup::deploy_services() {
   local runag_path; runag_path="$(command -v runag)" || fail
 
-  systemd::write_user_unit "remote-repositories-backup.service" <<EOF || fail
+  systemd::write_user_unit "repositories-backup.service" <<EOF || fail
 [Unit]
-Description=Remote repositories backup
+Description=Repositories backup
 
 [Service]
 Type=oneshot
-ExecStart=${runag_path} workstation::remote_repositories_backup::create
-SyslogIdentifier=remote-repositories-backup
+ExecStart=${runag_path} workstation::repositories_backup::create
+SyslogIdentifier=repositories-backup
 ProtectSystem=full
 PrivateTmp=true
 NoNewPrivileges=true
 EOF
 
-  systemd::write_user_unit "remote-repositories-backup.timer" <<EOF || fail
+  systemd::write_user_unit "repositories-backup.timer" <<EOF || fail
 [Unit]
-Description=Timer for remote repositories backup
+Description=Timer for Repositories backup
 
 [Timer]
 OnCalendar=daily
@@ -219,6 +219,6 @@ WantedBy=timers.target
 EOF
 
   # enable the service and start the timer
-  systemctl --user --quiet reenable "remote-repositories-backup.timer" || fail
-  systemctl --user start "remote-repositories-backup.timer" || fail
+  systemctl --user --quiet reenable "repositories-backup.timer" || fail
+  systemctl --user start "repositories-backup.timer" || fail
 }
