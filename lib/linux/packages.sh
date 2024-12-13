@@ -103,9 +103,6 @@ workstation::linux::install_packages() (
 
   # install syncthing
   syncthing::install || fail
-
-  # insall blankfast
-  blankfast::install || fail
 )
 
 workstation::linux::install_packages::debian() (
