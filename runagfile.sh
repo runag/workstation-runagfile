@@ -33,4 +33,4 @@ task::add --group workstation::identity::tasks || softfail || return $?
 task::add --group workstation::key_storage::tasks || softfail || return $?
 
 task::add --group --os linux workstation::backup::tasks || softfail || return $?
-task::add --group --os linux workstation::remote_repositories_backup::tasks || softfail || return $?
+task::add --group --os linux workstation::repositories_backup::tasks || softfail || return $?
