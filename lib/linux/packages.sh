@@ -106,11 +106,16 @@ workstation::linux::install_packages() (
 
   # insall blankfast
   blankfast::install || fail
+
+  # enable services
+  sudo systemctl --quiet --now enable tailscaled || fail
 )
 
 workstation::linux::install_packages::debian() (
   # Load operating system identification data
   . /etc/os-release || fail
+
+  tailscale::add_apt_source || fail
 
   local package_list=(
     # # Desktop: browsers
@@ -177,6 +182,7 @@ workstation::linux::install_packages::debian() (
     # # Cloud and networking
     # ethtool
     certbot
+    tailscale
     whois
 
     # # Batch media processing
@@ -282,6 +288,7 @@ workstation::linux::install_packages::arch() {
     # ethtool
     aws-cli
     certbot
+    tailscale
     whois
 
     # # Batch media processing

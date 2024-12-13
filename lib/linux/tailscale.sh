@@ -15,13 +15,9 @@
 #  limitations under the License.
 
 workstation::linux::deploy_tailscale() {
-  local key_path="$1" # sould be in the password
-
-  # install tailscale
-  tailscale::install || fail
+  local key_path="$1" # key sould be in the password
 
   if ! tailscale::is_logged_in; then
-    local tailscale_key; tailscale_key="$(pass::use "${key_path}")" || fail
-    sudo tailscale up --authkey "${tailscale_key}" || fail  
+    pass::use "${key_path}" sudo tailscale up --authkey || fail  
   fi
 }
