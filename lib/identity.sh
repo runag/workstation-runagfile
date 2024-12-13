@@ -14,6 +14,46 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::identity::tasks() {
+  task::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || softfail || return $?
+  if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
+    workstation::identity::tasks::list --for-directory . || fail
+  else
+    task::add --note "No project found in current directory" || softfail || return $?
+  fi
+
+  task::add --header "Configure identity and install credentials" || softfail || return $?
+  workstation::identity::tasks::list --with-system-credentials || fail
+
+  task::add --header "Configure identity, install credentials, and set default credentials" || softfail || return $?
+  workstation::identity::tasks::list --with-system-credentials --as-default || fail
+}
+
+workstation::identity::tasks::list() {
+  local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
+
+  local identity_found=false
+
+  local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
+    if [ -d "${absolute_identity_path}" ]; then
+      local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
+      local git_user_name
+
+      if pass::exists "${identity_path}/git/user-name"; then
+        git_user_name="$(pass::use "${identity_path}/git/user-name")" || fail
+      fi
+
+      identity_found=true
+
+      task::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::identity::use "$@" "${identity_path}" || softfail || return $?
+    fi
+  done
+
+  if [ "${identity_found}" = false ]; then
+    task::add --note "No identities found in password store" || softfail || return $?
+  fi
+}
+
 workstation::identity::use() {
   local identity_name directory_path
   local with_system_credentials=false as_default=false should_confirm=false
