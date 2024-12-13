@@ -62,3 +62,19 @@ workstation::linux::tasks() {
   task::add --header "Password generator" || softfail || return $?
   task::add workstation::linux::generate_password || softfail || return $?
 }
+
+
+# tasks
+task::add --header "Workstation" || softfail || return $?
+
+case "${OSTYPE}" in
+  linux*)
+    task::add --group workstation::linux::tasks || softfail || return $?
+    ;;
+esac
+
+task::add --group workstation::identity::tasks || softfail || return $?
+task::add --group workstation::key_storage::tasks || softfail || return $?
+
+task::add --group --os linux workstation::backup::tasks || softfail || return $?
+task::add --group --os linux workstation::repositories_backup::tasks || softfail || return $?

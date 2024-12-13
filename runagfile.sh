@@ -19,18 +19,3 @@
 
 # load all shell files
 shell::related_source --recursive lib || softfail || return $?
-
-# tasks
-task::add --header "Workstation" || softfail || return $?
-
-case "${OSTYPE}" in
-  linux*)
-    task::add --group workstation::linux::tasks || softfail || return $?
-    ;;
-esac
-
-task::add --group workstation::identity::tasks || softfail || return $?
-task::add --group workstation::key_storage::tasks || softfail || return $?
-
-task::add --group --os linux workstation::backup::tasks || softfail || return $?
-task::add --group --os linux workstation::repositories_backup::tasks || softfail || return $?
