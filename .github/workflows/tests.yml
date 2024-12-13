@@ -38,7 +38,7 @@ jobs:
       run: sleep 30
 
     - name: Add runag/workstation-runagfile
-      run: bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile 2>&1
+      run: bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile add senotrusov/blankfast 2>&1
 
   ubuntu-workstation:
     name: workstation::linux
