@@ -67,10 +67,17 @@ if ("$env:CI" -ne "true") {
 Choco-Install discord # proprietary
 
 # # Desktop: browsers
+# Choco-Install googlechrome --ignore-checksums # proprietary
 Choco-Install chromium
 Choco-Install firefox
 
+# # Desktop: text editors
+# Choco-Install meld
+# Choco-Install sublimemerge # proprietary
+# Choco-Install vscode # proprietary
+
 # # Desktop: content creation and productivity
+# Choco-Install libreoffice-still
 Choco-Install avidemux
 Choco-Install krita
 Choco-Install streamlabs-obs
@@ -82,12 +89,19 @@ Choco-Install vlc
 # # Desktop: hardware
 Choco-Install librehardwaremonitor
 
+# # Build and developer tools
+# Choco-Install git
+# Choco-Install nodejs
+
 # # Cloud and networking
-Choco-Install curl
+# Choco-Install curl
 
 # # Storage and files
+# Choco-Install restic
+# Choco-Install winscp
 Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
-Choco-Install far
 Choco-Install synctrayzor
 Choco-Install windirstat
-Choco-Install winscp
+
+# # Benchmarks
+# Choco-Install crystaldiskmark
