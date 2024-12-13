@@ -14,14 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# to debug:
+#   /usr/bin/imwheel --kill --detach --debug
+#
+# to disable:
+#   rm "${HOME}/.config/autostart/imwheel.desktop"
+#   pkill --full "/usr/bin/imwheel"
+
 workstation::linux::imwheel::deploy() {
-  workstation::linux::imwheel::configure || fail
-  workstation::linux::imwheel::reenable || fail
-}
-
-workstation::linux::imwheel::configure() {
   file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
-
 # In the absence of the following tedious list of modifiers,
 # (alt/ctrl/shift/meta + scroll) does not work
 
@@ -68,11 +69,8 @@ Meta_L,    Down, Meta_L|Button5
 Meta_R,    Up,   Meta_R|Button4
 Meta_R,    Down, Meta_R|Button5
 EOF
-}
 
-workstation::linux::imwheel::reenable() {
-  dir::should_exists --mode 0700 "${HOME}/.config" || fail
-  dir::should_exists --mode 0700 "${HOME}/.config/autostart" || fail
+  dir::should_exists --for-me-only 0700 "${HOME}/.config/autostart" || fail
 
   file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
@@ -91,14 +89,4 @@ EOF
   if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
     /usr/bin/imwheel --kill || fail
   fi
-}
-
-workstation::linux::imwheel::disable() {
-  rm "${HOME}/.config/autostart/imwheel.desktop" || fail
-  pkill --full "/usr/bin/imwheel"
-  [[ $? =~ ^[01]$ ]] || fail
-}
-
-workstation::linux::imwheel::debug() {
-  /usr/bin/imwheel --kill --detach --debug || fail
 }
