@@ -66,3 +66,12 @@ workstation::merge_editor_configs() {
   workstation::sublime_text::merge_config || fail
   workstation::vscode::merge_config || fail
 }
+
+# Connect to tailscale
+workstation::connect_tailscale() {
+  local key_path="$1" # key sould be in the password
+
+  if ! tailscale::is_logged_in; then
+    pass::use "${key_path}" sudo tailscale up --authkey || fail  
+  fi
+}
