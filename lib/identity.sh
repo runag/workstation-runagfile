@@ -147,7 +147,7 @@ workstation::identity::use() {
   if [ "${with_system_credentials}" = true ]; then
     # setup tailscale
     if pass::exists "${identity_path}/tailscale/authkey"; then
-      workstation::linux::deploy_tailscale "${identity_path}/tailscale/authkey" || fail
+      workstation::connect_tailscale "${identity_path}/tailscale/authkey" || fail
     fi
 
     # install sublime merge license
