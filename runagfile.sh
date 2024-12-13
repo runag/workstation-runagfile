@@ -27,9 +27,6 @@ case "${OSTYPE}" in
   linux*)
     task::add --group workstation::linux::tasks || softfail || return $?
     ;;
-  darwin*)
-    task::add --group workstation::macos::tasks || softfail || return $?
-    ;; 
 esac
 
 task::add --group workstation::identity::tasks || softfail || return $?

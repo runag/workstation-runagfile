@@ -23,32 +23,22 @@ on:
     - cron:  '00 06 * * *'
 
 jobs:
-  # macos-workstation:
-  #   name: workstation::macos
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       os: [macos-latest]
+  macos-workstation:
+    name: workstation::macos
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
 
-  #   steps:
-  #   - name: Display bash version
-  #     run: echo Bash version is $BASH_VERSION
+    steps:
+    - name: Display bash version
+      run: echo Bash version is $BASH_VERSION
 
-  #   - name: Wait to give developers time to update other repositories used in this test
-  #     run: sleep 30
+    - name: Wait to give developers time to update other repositories used in this test
+      run: sleep 30
 
-  #   - name: Add runag/workstation-runagfile
-  #     run: bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile 2>&1
-
-  #   - name: Run workstation::macos::install_packages
-  #     run: $HOME/.runag/bin/runag workstation::macos::install_packages 2>&1
-
-  #   - name: Run workstation::macos::configure
-  #     run: $HOME/.runag/bin/runag workstation::macos::configure 2>&1
-
-  #   - name: Run workstation::macos::start_developer_servers
-  #     run: $HOME/.runag/bin/runag workstation::macos::start_developer_servers 2>&1
-
+    - name: Add runag/workstation-runagfile
+      run: bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile 2>&1
 
   ubuntu-workstation:
     name: workstation::linux

@@ -72,10 +72,10 @@ sudo mount -m -t virtiofs runag ~/.runag
 runag  ~/.runag  virtiofs  defaults  0  0
 ```
 
-## Deploy workstation on MacOS 
+## Deploy on MacOS 
 
 ```sh
-bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile run
+bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile
 ```
 
 
