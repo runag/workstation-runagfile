@@ -180,19 +180,6 @@ workstation::backup::shell() {
   exec "${SHELL}"
 }
 
-workstation::get_output_dir() (
-  local full_path="${XDG_DATA_HOME:-"${HOME}/.local/share"}/workstation-runagfile${1:+"/$1"}"
-
-  umask 0077 || fail
-
-  mkdir -p "${full_path}" || fail
-
-  chmod 0700 "${full_path}" || fail
-  chown "${USER}:${USER}" "${full_path}" || fail
-
-  echo "${full_path}"
-)
-
 workstation::backup::mount() {
   local mount_directory="${XDG_DATA_HOME:-"${HOME}/.local/share"}/backup/mount" || fail
   dir::should_exists --for-me-only "${mount_directory}" || fail
