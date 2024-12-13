@@ -59,28 +59,10 @@ workstation::get_config_dir() {
   echo "${full_path}"
 }
 
-# Micro editor
-workstation::install_micro_config() {
-  local config_dir="${HOME}/.config/micro"
-
-  dir::should_exists --mode 0700 "${config_dir}" || fail
-
-  file::write --mode 640 "${config_dir}/settings.json" <<JSON || softfail || return $?
-{
-  "autoclose": false
-}
-JSON
-
-  file::write --mode 640 "${config_dir}/bindings.json" <<JSON || softfail || return $?
-{
-  "Ctrl-x": "Quit"
-}
-JSON
-}
-
 # Editor configs
 workstation::merge_editor_configs() {
-  workstation::vscode::merge_config || fail
+  workstation::micro::merge_config || fail
   workstation::sublime_merge::merge_config || fail
   workstation::sublime_text::merge_config || fail
+  workstation::vscode::merge_config || fail
 }
