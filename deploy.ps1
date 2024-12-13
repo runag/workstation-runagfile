@@ -60,7 +60,6 @@ if ("$env:CI" -ne "true") { # I don't need to update them in CI
 
 # Not in CI env
 if ("$env:CI" -ne "true") {
-  Choco-Install gpg4win # gpg4win hangs forever in CI
   Choco-Install nvidia-display-driver
 }
 
@@ -68,20 +67,19 @@ if ("$env:CI" -ne "true") {
 Choco-Install discord # proprietary
 
 # # Desktop: browsers
+# Choco-Install googlechrome --ignore-checksums # proprietary
 Choco-Install chromium
 Choco-Install firefox
-Choco-Install googlechrome --ignore-checksums # proprietary
 
 # # Desktop: text editors
-Choco-Install meld
-Choco-Install sublimemerge # proprietary
-Choco-Install vscode # proprietary
+# Choco-Install meld
+# Choco-Install sublimemerge # proprietary
+# Choco-Install vscode # proprietary
 
 # # Desktop: content creation and productivity
-# Choco-Install inkscape
+# Choco-Install libreoffice-still
 Choco-Install avidemux
 Choco-Install krita
-Choco-Install libreoffice-still
 Choco-Install streamlabs-obs
 
 # # Desktop: content consumption
@@ -92,75 +90,18 @@ Choco-Install vlc
 Choco-Install librehardwaremonitor
 
 # # Build and developer tools
-Choco-Install git
-Choco-Install golang
-Choco-Install jq
-Choco-Install msys2 # for ruby
-Choco-Install nodejs
-Choco-Install ruby
+# Choco-Install git
+# Choco-Install nodejs
 
 # # Cloud and networking
-Choco-Install curl
-Choco-Install tailscale # proprietary
-
-# # Batch media processing
-Choco-Install zbar
+# Choco-Install curl
 
 # # Storage and files
+# Choco-Install restic
+# Choco-Install winscp
 Choco-Install 7zip # partially under unRAR license, see details https://www.7-zip.org/
-Choco-Install far
-Choco-Install rclone
-Choco-Install restic
-Choco-Install smartmontools
 Choco-Install synctrayzor
 Choco-Install windirstat
-Choco-Install winscp
 
 # # Benchmarks
 # Choco-Install crystaldiskmark
-# Choco-Install iperf3
-
-# Define git helper function
-function Git-Clone-or-Pull($url, $dest){
-  if (-not (Test-Path "C:\Program Files\Git\bin\git.exe")) {
-    throw "Unable to find git"
-  }
-
-  if (Test-Path -Path "$dest") {
-    & "C:\Program Files\Git\bin\git.exe" -C "$dest" pull
-    if ($LASTEXITCODE -ne 0) { throw "Unable to git pull" }
-  } else {
-    & "C:\Program Files\Git\bin\git.exe" clone "$url" "$dest"
-    if ($LASTEXITCODE -ne 0) { throw "Unable to git clone" }
-  }
-}
-
-# Install runag shell scripts
-# If you forked this, you may wish to change the following
-$runag_repo = "runag/runag"
-$runagfile_repo = "runag/workstation-runagfile"
-$runagfile_dest = "workstation-runagfile-runag-github"
-
-$runag_path = "$env:USERPROFILE\.runag"
-$runagfile_path = "$runag_path\runagfiles\$runagfile_dest"
-
-Git-Clone-or-Pull "https://github.com/$runag_repo.git" "$runag_path"
-Git-Clone-or-Pull "https://github.com/$runagfile_repo.git" "$runagfile_path"
-
-# Load chocolatey environment
-$env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
-Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-Update-SessionEnvironment
-
-# Use ridk tool from ruby installation to install MSYS2 and MINGW development toolchain for use in ruby's gems compilation
-ridk install 2 3
-if ($LASTEXITCODE -ne 0) { throw "Unable to install MSYS2 and MINGW development toolchain" }
-
-# Install pass
-ridk exec pacman --sync --needed --noconfirm pass
-if ($LASTEXITCODE -ne 0) { throw "Unable to install pass" }
-New-Item -ItemType SymbolicLink -Path "C:\Program Files\Git\usr\bin\pass" -Target "C:\tools\msys64\usr\bin\pass" -Force
-
-# Enable ssh-agent
-Set-Service -Name ssh-agent -StartupType Automatic
-Set-Service -Name ssh-agent -Status Running

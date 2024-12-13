@@ -27,11 +27,7 @@ workstation::key_storage::tasks() {
 
   local Key_Storage_Found=false
 
-  if [[ "${OSTYPE}" =~ ^msys ]]; then
-    # TODO: Windows menu?
-    true
-
-  elif [[ "${OSTYPE}" =~ ^darwin ]]; then
+  if [[ "${OSTYPE}" =~ ^darwin ]]; then
     local media_path; for media_path in "/Volumes"/* ; do
       if [ -d "${media_path}" ]; then
         workstation::key_storage::tasks::media "${media_path}" || softfail || return $?
