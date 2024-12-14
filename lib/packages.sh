@@ -165,6 +165,7 @@ workstation::linux::install_packages::debian() (
     # # Build and developer tools
     # inotify-tools
     build-essential
+    gawk
     git
     gnupg
     libsqlite3-dev
@@ -273,6 +274,7 @@ workstation::linux::install_packages::arch() {
     # # Build and developer tools
     # inotify-tools
     base-devel
+    gawk
     git
     gnupg
     openssl
