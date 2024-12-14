@@ -14,6 +14,79 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+workstation::linux::configure() (
+  # Load operating system identification data
+  . /etc/os-release || fail
+
+  ## System ##
+
+  # enable systemd user instance without the need for the user to login
+  sudo loginctl enable-linger "${USER}" || fail
+
+  # configure bash
+  shellfile::install_flush_history_rc || fail
+  shellfile::install_short_prompt_rc || fail
+
+  # configure ssh
+  ssh::add_ssh_config_d_include_directive || fail
+  <<<"ServerAliveInterval 30" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/server-alive-interval.conf" || fail
+  <<<"IdentitiesOnly yes" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/identities-only.conf" || fail
+
+  # increase inotify limits
+  linux::configure_inotify || fail
+
+  # udisks mount options
+  workstation::linux::storage::configure_udisks_mount_options || fail
+
+  # btrfs configuration
+  if [ "${CI:-}" != "true" ]; then
+    fstab::add_mount_option --filesystem-type btrfs flushoncommit || fail
+    fstab::add_mount_option --filesystem-type btrfs noatime || fail
+  fi
+
+  # disable unattended-upgrades, not so sure about that
+  # apt::remove unattended-upgrades || fail
+
+  ## Developer ##
+
+  # configure git
+  workstation::configure_git || fail
+
+  # set editor
+  shellfile::install_editor_rc micro || fail
+  workstation::micro::install_config || fail
+
+  # install vscode configuration
+  workstation::vscode::install_extensions || fail
+  workstation::vscode::install_config || fail
+
+  # install sublime merge configuration
+  workstation::sublime_merge::install_config || fail
+
+  # install sublime text configuration
+  workstation::sublime_text::install_config || fail
+
+  # postgresql
+  # run initdb if needed
+  if [ "${ID:-}" = arch ] && sudo test ! -d /var/lib/postgres/data; then
+    postgresql::as_postgres_user initdb -D /var/lib/postgres/data || fail
+  fi
+  sudo systemctl --quiet --now enable postgresql || fail
+  postgresql::create_role_if_not_exists --with "SUPERUSER CREATEDB CREATEROLE LOGIN" || fail
+
+  ## Desktop ##
+
+  # configure gnome desktop
+  workstation::linux::gnome::configure || fail
+
+  # configure and start imwheel, some software need faster scrolling on X11
+  workstation::linux::imwheel::deploy || fail
+
+  # firefox
+  # TODO: remove as debian's firefox reaches version 121
+  firefox::enable_wayland || fail
+)
+
 workstation::linux::gnome::configure() (
   # Load operating system identification data
   . /etc/os-release || fail
@@ -153,3 +226,97 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>F4']" || fail
 )
+
+# to debug:
+#   /usr/bin/imwheel --kill --detach --debug
+#
+# to disable:
+#   rm "${HOME}/.config/autostart/imwheel.desktop"
+#   pkill --full "/usr/bin/imwheel"
+
+workstation::linux::imwheel::deploy() {
+  file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
+# In the absence of the following tedious list of modifiers,
+# (alt/ctrl/shift/meta + scroll) does not work
+
+"^(Sublime_merge|Sublime_text)$"
+None,      Up,   Button4, 2
+None,      Down, Button5, 2
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Control_R, Up,   Control_R|Button4
+Control_R, Down, Control_R|Button5
+Alt_L,     Up,   Button4, 4
+Alt_L,     Down, Button5, 4
+Alt_R,     Up,   Button4, 4
+Alt_R,     Down, Button5, 4
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+Shift_R,   Up,   Shift_R|Button4
+Shift_R,   Down, Shift_R|Button5
+Meta_L,    Up,   Meta_L|Button4
+Meta_L,    Down, Meta_L|Button5
+Meta_R,    Up,   Meta_R|Button4
+Meta_R,    Down, Meta_R|Button5
+
+# Without that wildcard match that seems just like a passthrough,
+# well, it's not passing through without that
+
+".*"
+None,      Up,   Button4
+None,      Down, Button5
+Control_L, Up,   Control_L|Button4
+Control_L, Down, Control_L|Button5
+Control_R, Up,   Control_R|Button4
+Control_R, Down, Control_R|Button5
+Alt_L,     Up,   Alt_L|Button4
+Alt_L,     Down, Alt_L|Button5
+Alt_R,     Up,   Alt_R|Button4
+Alt_R,     Down, Alt_R|Button5
+Shift_L,   Up,   Shift_L|Button4
+Shift_L,   Down, Shift_L|Button5
+Shift_R,   Up,   Shift_R|Button4
+Shift_R,   Down, Shift_R|Button5
+Meta_L,    Up,   Meta_L|Button4
+Meta_L,    Down, Meta_L|Button5
+Meta_R,    Up,   Meta_R|Button4
+Meta_R,    Down, Meta_R|Button5
+EOF
+
+  dir::should_exists --for-me-only "${HOME}/.config/autostart" || fail
+
+  file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/bash -c 'if [ "\${XDG_SESSION_TYPE:-}" = "x11" ]; then /usr/bin/imwheel; fi'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;XFCE;
+Name[en_US]=IMWheel
+Name=IMWheel
+Comment[en_US]=Scripting for mouse wheel and buttons
+Comment=Scripting for mouse wheel and buttons
+EOF
+
+  if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
+    /usr/bin/imwheel --kill || fail
+  fi
+}
+
+# Git
+workstation::configure_git() {
+  local user_media_path; user_media_path="$(linux::user_media_path)" || fail
+
+  git config --global core.autocrlf input || fail
+  git config --global init.defaultBranch main || fail
+  git config --global url."${user_media_path}/workstation-sync/".insteadOf "/workstation-sync/" || fail
+}
+
+workstation::linux::storage::configure_udisks_mount_options() {
+  file::write --sudo --mode 0644 /etc/udisks2/mount_options.conf <<SHELL || fail
+[defaults]
+btrfs_defaults=flushoncommit,noatime,compress=zstd
+btrfs_allow=compress,compress-force,datacow,nodatacow,datasum,nodatasum,autodefrag,noautodefrag,degraded,device,discard,nodiscard,subvol,subvolid,space_cache,commit,flushoncommit,noatime
+SHELL
+}
