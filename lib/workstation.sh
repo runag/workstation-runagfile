@@ -14,8 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# tasks
-task::add --header "Workstation" || softfail || return $?
+# Workstation (task header)
 
 case "${OSTYPE}" in
   linux*)
@@ -26,16 +25,16 @@ esac
 task::add --group workstation::identity::tasks || softfail || return $?
 task::add --group workstation::key_storage::tasks || softfail || return $?
 
-task::add --group --os linux workstation::backup::tasks || softfail || return $?
-task::add --group --os linux workstation::repositories_backup::tasks || softfail || return $?
+task::add --group workstation::backup::tasks || softfail || return $?
+task::add --group workstation::repositories_backup::tasks || softfail || return $?
 
 workstation::linux::tasks() {
   # Deploy
-  task::add --header "Linux workstation: complete deploy script" || softfail || return $?
+  # Linux workstation: complete deploy script (task header)
 
   task::add workstation::linux::deploy_workstation || softfail || return $?
 
-  task::add --header "Linux workstation: particular deployment tasks" || softfail || return $?
+  # Linux workstation: particular deployment tasks (task header)
 
   task::add workstation::linux::deploy_identities || softfail || return $?
   task::add workstation::linux::install_packages || softfail || return $?
@@ -47,7 +46,7 @@ workstation::linux::tasks() {
   fi
 
   # development
-  task::add --header "Development" || softfail || return $?
+  # Development (task header)
 
   task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
   task::add workstation::merge_editor_configs || softfail || return $?
@@ -57,19 +56,20 @@ workstation::linux::tasks() {
   runag::tasks || fail
 
   # storage
-  task::add --header "Storage devices" || softfail || return $?
+  # Storage devices (task header)
   task::add workstation::linux::storage::check_root || softfail || return $?
 
   # benchmark
-  task::add --header "Benchmark" || softfail || return $?
+  # Benchmark (task header)
   if benchmark::is_available; then
     task::add workstation::linux::run_benchmark || softfail || return $?
   else
-    task::add --note "Benchmark is not available" || softfail || return $?
+    # Benchmark is not available (task note)
+    true
   fi
 
   # password generator
-  task::add --header "Password generator" || softfail || return $?
+  # Password generator (task header)
   task::add workstation::linux::generate_password || softfail || return $?
 }
 

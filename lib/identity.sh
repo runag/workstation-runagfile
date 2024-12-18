@@ -15,17 +15,18 @@
 #  limitations under the License.
 
 workstation::identity::tasks() {
-  task::add --header "Configure identity and install credentials for use in project that resides in current directory: ${PWD}" || softfail || return $?
+  # Configure identity and install credentials for use in project that resides in current directory: ${PWD} (task header)
   if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
     workstation::identity::tasks::list --for-directory . || fail
   else
-    task::add --note "No project found in current directory" || softfail || return $?
+    # No project found in current directory (task note)
+    true
   fi
 
-  task::add --header "Configure identity and install credentials" || softfail || return $?
+  # Configure identity and install credentials (task header)
   workstation::identity::tasks::list --with-system-credentials || fail
 
-  task::add --header "Configure identity, install credentials, and set default credentials" || softfail || return $?
+  # Configure identity, install credentials, and set default credentials (task header)
   workstation::identity::tasks::list --with-system-credentials --as-default || fail
 }
 
@@ -37,20 +38,21 @@ workstation::identity::tasks::list() {
   local absolute_identity_path; for absolute_identity_path in "${password_store_dir}/identity"/* ; do
     if [ -d "${absolute_identity_path}" ]; then
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
-      local git_user_name
+      local git_user_name=""
 
       if pass::exists "${identity_path}/git/user-name"; then
         git_user_name="$(pass::use "${identity_path}/git/user-name")" || fail
       fi
 
-      identity_found=true
-
       task::add ${git_user_name:+"--comment" "${git_user_name}"} workstation::identity::use "$@" "${identity_path}" || softfail || return $?
+
+      identity_found=true
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    task::add --note "No identities found in password store" || softfail || return $?
+    # No identities found in password store (task note)
+    true
   fi
 }
 
