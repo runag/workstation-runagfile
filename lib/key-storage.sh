@@ -15,14 +15,14 @@
 #  limitations under the License.
 
 workstation::key_storage::tasks() {
-  task::add --header "Checksums for current directory: ${PWD}" || softfail || return $?
+  # Checksums for current directory: ${PWD} (task header)
 
   if [ -f "checksums.txt" ]; then
-    task::add workstation::key_storage::checksum create_or_update || softfail || return $?
-    task::add workstation::key_storage::checksum verify || softfail || return $?
+    task::add --comment "Checksums for current directory: ${PWD}" workstation::key_storage::checksum create_or_update || softfail || return $?
+    task::add --comment "Checksums for current directory: ${PWD}" workstation::key_storage::checksum verify || softfail || return $?
   else
-    task::add --note "There are no checksums.txt file in current directory" || softfail || return $?
-    task::add workstation::key_storage::checksum create_or_update || softfail || return $?
+    # There are no checksums.txt file in current directory (task note)
+    task::add --comment "Checksums for current directory: ${PWD}" workstation::key_storage::checksum create_or_update || softfail || return $?
   fi
 
   local Key_Storage_Found=false
@@ -48,8 +48,9 @@ workstation::key_storage::tasks() {
   workstation::key_storage::tasks::media "." || softfail || return $?
 
   if [ "${Key_Storage_Found}" = false ]; then
-    task::add --header "Key storage" || softfail || return $?
-    task::add --note "No key storage found" || softfail || return $?
+    # Key storage (task header)
+    # No key storage found (task note)
+    true
   fi
 }
 
@@ -62,7 +63,7 @@ workstation::key_storage::tasks::media() {
 
   Key_Storage_Found=true
 
-  task::add --header "Key storage: ${media_path}" || softfail || return $?
+  # Key storage: ${media_path} (task header)
   
   # Scopes
   local scope_found=false
@@ -76,20 +77,21 @@ workstation::key_storage::tasks::media() {
 
       scope_found=true
 
-      task::add --header "Password store in: ${media_path}/${scope_name}" || softfail || return $?
+      # Password store in: ${media_path}/${scope_name} (task header)
       workstation::key_storage::tasks::password_store "${scope_path}" "${git_remote_name}" || softfail || return $?
 
-      task::add --header "GPG keys in: ${media_path}/${scope_name}" || softfail || return $?
+      # GPG keys in: ${media_path}/${scope_name} (task header)
       workstation::key_storage::tasks::gpg_keys "${scope_path}" || softfail || return $?
     fi
   done
 
   if [ "${scope_found}" = false ]; then
-    task::add --note "No key storage scopes found" || softfail || return $?
+    # No key storage scopes found (task note)
+    true
   fi
 
   # Checksums
-  task::add --header "Checksums for: ${media_path}" || softfail || return $?
+  # Checksums for: ${media_path} (task header)
   task::add workstation::key_storage::maintain_checksums "${media_path}" || softfail || return $?
   task::add workstation::key_storage::make_backups "${media_path}" || softfail || return $?
 }
@@ -109,17 +111,20 @@ workstation::key_storage::tasks::password_store() {
       task::add workstation::key_storage::create_password_store_git_remote "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     fi
   else
-    task::add --note "No local password store with git versioning found: ${password_store_dir}/.git" || softfail || return $?
+    # No local password store with git versioning found: ${password_store_dir}/.git (task note)
+    true
   fi
 
   if [ -d "${password_store_git_remote_path}" ]; then
     if [ ! -d "${password_store_dir}" ]; then
       task::add workstation::key_storage::password_store_git_remote_clone_or_update_to_local "${git_remote_name}" "${password_store_git_remote_path}" || softfail || return $?
     else
-      task::add --note "There is no need to clone password store git remote as local password store already exists: ${password_store_dir}" || softfail || return $?
+      # There is no need to clone password store git remote as local password store already exists: ${password_store_dir} (task note)
+      true
     fi
   else
-    task::add --note "Password store git remote not exists: ${password_store_git_remote_path}" || softfail || return $?
+    # Password store git remote not exists: ${password_store_git_remote_path} (task note)
+    true
   fi
 }
 
@@ -149,7 +154,8 @@ workstation::key_storage::tasks::gpg_keys() {
   done
 
   if [ "${gpg_keys_found}" = false ]; then
-    task::add --note "No GPG keys found" || softfail || return $?
+    # No GPG keys found (task note)
+    true
   fi
 }
 
@@ -195,7 +201,7 @@ workstation::key_storage::maintain_checksums() {
   done
 
   if [ "${skip_backups}" = true ]; then
-    return
+    return 0
   fi
 
   local dir; for dir in "${media_path}/keys-backup/"*; do

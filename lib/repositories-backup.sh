@@ -18,7 +18,7 @@ workstation::repositories_backup::tasks() {
   # shellcheck disable=2119
   workstation::repositories_backup::tasks::identities || fail
 
-  task::add --header "Repositories backup: deploy" || softfail || return $?
+  # Repositories backup: deploy (task header)
 
   task::add workstation::repositories_backup::deploy || softfail || return $?
   task::add workstation::repositories_backup::deploy_services || softfail || return $?
@@ -31,7 +31,7 @@ workstation::repositories_backup::tasks() {
 workstation::repositories_backup::tasks::identities() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"
 
-  task::add --header "Repositories backup: deploy credentials" || softfail || return $?
+  # Repositories backup: deploy credentials (task header)
 
   local identity_found=false
 
@@ -42,13 +42,15 @@ workstation::repositories_backup::tasks::identities() {
       local identity_path="${absolute_identity_path:$((${#password_store_dir}+1))}"
       local github_username; github_username="$(pass::use "${identity_path}/github/username")" || fail
 
-      identity_found=true
       task::add --comment "github:${github_username}" workstation::repositories_backup::deploy_credentials "$@" "${identity_path}" || softfail || return $?
+
+      identity_found=true
     fi
   done
 
   if [ "${identity_found}" = false ]; then
-    task::add --note "Unable to find any identity" || softfail || return $?
+    # Unable to find any identity (task note)
+    true
   fi
 }
 

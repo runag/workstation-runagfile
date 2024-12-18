@@ -15,10 +15,10 @@
 #  limitations under the License.
 
 workstation::backup::tasks() {
-  task::add --header "Workstation backup: deploy" || softfail || return $?
+  # Workstation backup: deploy (task header)
   task::add workstation::backup::deploy || softfail || return $?
 
-  task::add --header "Workstation backup: commands" || softfail || return $?
+  # Workstation backup: commands (task header)
 
   local commands=(
     create
