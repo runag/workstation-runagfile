@@ -157,7 +157,7 @@ workstation::backup::create() (
 
 workstation::backup::machine_id() {
   if systemd-detect-virt --quiet && [ -f /etc/sudoers.d/passwordless-dmidecode ]; then
-    sudo dmidecode --string system-uuid && return
+    sudo dmidecode --string system-uuid && return 0
   fi
 
   cat /etc/machine-id || fail
