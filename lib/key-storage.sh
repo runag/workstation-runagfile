@@ -14,7 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::key_storage::tasks() {
+task::add --group workstation::key_storage::tasks || softfail || return $?
+
+workstation::key_storage::tasks::set() {
   # Checksums for current directory: ${PWD} (task header)
 
   if [ -f "checksums.txt" ]; then

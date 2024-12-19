@@ -14,7 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::repositories_backup::tasks() {
+task::add --group workstation::repositories_backup::tasks || softfail || return $?
+
+workstation::repositories_backup::tasks::set() {
   # shellcheck disable=2119
   workstation::repositories_backup::tasks::identities || fail
 

@@ -14,7 +14,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::backup::tasks() {
+task::add --group workstation::backup::tasks || softfail || return $?
+
+workstation::backup::tasks::set() {
   # Workstation backup: deploy (task header)
   task::add workstation::backup::deploy || softfail || return $?
 
