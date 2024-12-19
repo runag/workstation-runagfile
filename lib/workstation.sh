@@ -15,20 +15,9 @@
 #  limitations under the License.
 
 # Workstation (task header)
+task::add --group workstation::linux::tasks || softfail || return $?
 
-case "${OSTYPE}" in
-  linux*)
-    task::add --group workstation::linux::tasks || softfail || return $?
-    ;;
-esac
-
-task::add --group workstation::identity::tasks || softfail || return $?
-task::add --group workstation::key_storage::tasks || softfail || return $?
-
-task::add --group workstation::backup::tasks || softfail || return $?
-task::add --group workstation::repositories_backup::tasks || softfail || return $?
-
-workstation::linux::tasks() {
+workstation::linux::tasks::set() {
   # Deploy
   # Linux workstation: complete deploy script (task header)
 
