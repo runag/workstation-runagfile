@@ -107,6 +107,9 @@ workstation::linux::install_packages() (
   # insall blankfast
   blankfast::install || fail
 
+  # install pass fzf plugin
+  pass::install_fzf_extension || fail
+
   # enable services
   sudo systemctl --quiet --now enable tailscaled || fail
 )
