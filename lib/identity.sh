@@ -14,8 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-task::add --group workstation::identity::tasks || softfail || return $?
-
 workstation::identity::tasks::set() {
   # Configure identity and install credentials for use in project that resides in current directory: ${PWD} (task header)
   if [ -d .git ] || [ -f package.json ] || [ -f Gemfile ]; then
@@ -31,6 +29,8 @@ workstation::identity::tasks::set() {
   # Configure identity, install credentials, and set default credentials (task header)
   workstation::identity::tasks::list --with-system-credentials --as-default || fail
 }
+
+task::add --group workstation::identity::tasks || softfail || return $?
 
 workstation::identity::tasks::list() {
   local password_store_dir="${PASSWORD_STORE_DIR:-"${HOME}/.password-store"}"

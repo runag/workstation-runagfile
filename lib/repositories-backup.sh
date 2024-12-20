@@ -14,8 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-task::add --group workstation::repositories_backup::tasks || softfail || return $?
-
 workstation::repositories_backup::tasks::set() {
   # shellcheck disable=2119
   workstation::repositories_backup::tasks::identities || fail
@@ -28,6 +26,8 @@ workstation::repositories_backup::tasks::set() {
 
   systemd::service_tasks --user --with-timer --service-name "repositories-backup" || softfail || return $?
 }
+
+task::add --group workstation::repositories_backup::tasks || softfail || return $?
 
 # shellcheck disable=2120
 workstation::repositories_backup::tasks::identities() {
