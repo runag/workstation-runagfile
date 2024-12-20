@@ -41,9 +41,6 @@ workstation::linux::tasks::set() {
   task::add workstation::merge_editor_configs || softfail || return $?
   task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
-  # runagfiles
-  runag::tasks || fail
-
   # storage
   # Storage devices (task header)
   task::add workstation::linux::storage::check_root || softfail || return $?
@@ -266,3 +263,103 @@ workstation::linux::generate_password() {
 
   printf "\n"
 }
+
+# Adds tasks to perform the upsert and update operations for the cold rùnag repository.
+task::add cold-deploy upsert || softfail || return $?
+task::add cold-deploy update || softfail || return $?
+
+# ### `cold_deploy::update`
+#
+# This function updates the cold (offline) Rùnag deployment repository.
+#
+# It performs the following tasks:
+# - Verifies that the cold Rùnag repository exists.
+# - Retrieves the offline installation URL from the Rùnag configuration.
+# - Calls `cold_deploy::upsert` to update the repository with the retrieved URL.
+#
+# #### Parameters: None
+#
+cold_deploy::update() {
+  local runag_path="${HOME}/.runag"
+
+  # Check if the Rùnag repository exists.
+  if [ ! -d "${runag_path}/.git" ]; then
+    softfail "Unable to find Rùnag checkout in the specified directory: ${runag_path}" || return $?
+  fi
+
+  # Retrieve the remote offline installation URL from the Rùnag configuration.
+  local remote_path; remote_path="$(git -C "${runag_path}" config "remote.offline-install.url")" || softfail "Failed to retrieve remote URL for offline installation." || return $?
+
+  # Call the upsert function to update the repository and its contents.
+  cold_deploy::upsert "${remote_path}/.." || softfail "Failed to upsert the Rùnag repository with remote path: ${remote_path}" || return $?
+}
+
+# ### `cold_deploy::upsert`
+#
+# This function performs an "upsert" operation on the cold (offline) Rùnag repository.
+# If a target path is provided, the function changes to that directory and attempts
+# to update the repository by pulling and pushing changes.
+#
+# It performs the following tasks:
+# - Changes to the provided remote path (if specified).
+# - Verifies the existence of the Rùnag repository.
+# - Retrieves the remote URL of the repository and performs pull and push operations.
+# - Creates or updates mirrors for the repository and fetches the latest updates.
+# - Updates all subdirectories within "runagfiles" by performing similar operations on each.
+# - Copies the deploy script to the current working directory.
+#
+# #### Parameters:
+# - `$1`: Optional target path. If provided, the script changes to that directory before performing operations.
+#
+cold_deploy::upsert() (
+  local runag_path="${HOME}/.runag"
+
+  # If a remote path is provided, change to that directory.
+  if [ -n "${1:-}" ]; then
+    cd "$1" || softfail "Failed to change directory to: $1" || return $?
+  fi
+
+  local target_directory="${PWD}" || softfail "Failed to determine current working directory." || return $?
+
+  # Ensure the Rùnag repository exists.
+  if [ ! -d "${runag_path}/.git" ]; then
+    softfail "Unable to find Rùnag checkout in the specified directory: ${runag_path}" || return $?
+  fi
+
+  # Retrieve the remote URL of the Rùnag repository.
+  local runag_remote_url; runag_remote_url="$(git -C "${runag_path}" remote get-url origin)" || softfail "Failed to retrieve remote URL for Rùnag repository." || return $?
+
+  # Pull the latest changes from the main branch and push to the remote.
+  git -C "${runag_path}" pull origin main || softfail "Failed to pull changes from the main branch of Rùnag repository." || return $?
+  git -C "${runag_path}" push --set-upstream origin main || softfail "Failed to push changes to the main branch of Rùnag repository." || return $?
+
+  # Create or update the mirror for the Rùnag repository.
+  git::create_or_update_mirror "${runag_remote_url}" runag.git || softfail "Failed to create or update mirror for Rùnag repository." || return $?
+
+  # Update the offline install remote.
+  ( cd "${runag_path}" && git::add_or_update_remote "offline-install" "${target_directory}/runag.git" && git fetch "offline-install" ) || softfail "Failed to add or update offline-install remote for Rùnag repository." || return $?
+
+  # Ensure that the 'runagfiles' directory exists with the correct permissions.
+  dir::should_exists --mode 0700 "runagfiles" || softfail "Unable to ensure the existence and correct permissions of 'runagfiles'." || return $?
+
+  # Iterate through each subdirectory within 'runagfiles' and perform updates.
+  local runagfile_path; for runagfile_path in "${runag_path}/runagfiles"/*; do
+    if [ -d "${runagfile_path}" ]; then
+      local runagfile_dir_name; runagfile_dir_name="$(basename "${runagfile_path}")" || softfail "Failed to determine directory name for: ${runagfile_path}" || return $?
+      local runagfile_remote_url; runagfile_remote_url="$(git -C "${runagfile_path}" remote get-url origin)" || softfail "Failed to retrieve remote URL for 'runagfile' directory: ${runagfile_path}" || return $?
+
+      # Perform pull and push operations for each subdirectory.
+      git -C "${runagfile_path}" pull origin main || softfail "Failed to pull changes from the main branch of 'runagfile' directory: ${runagfile_path}" || return $?
+      git -C "${runagfile_path}" push --set-upstream origin main || softfail "Failed to push changes to the main branch of 'runagfile' directory: ${runagfile_path}" || return $?
+
+      # Create or update the mirror for each 'runagfile' directory.
+      git::create_or_update_mirror "${runagfile_remote_url}" "runagfiles/${runagfile_dir_name}" || softfail "Failed to create or update mirror for 'runagfile' directory: ${runagfile_path}" || return $?
+
+      # Update the offline install remote for each subdirectory.
+      ( cd "${runagfile_path}" && git::add_or_update_remote "offline-install" "${target_directory}/runagfiles/${runagfile_dir_name}" && git fetch "offline-install" ) || softfail "Failed to add or update offline-install remote for 'runagfile' directory: ${runagfile_path}" || return $?
+    fi
+  done
+
+  # Copy the deploy script to the current directory.
+  cp -f "${runag_path}/deploy-offline.sh" . || softfail "Failed to copy the deploy-offline.sh script." || return $?
+)
