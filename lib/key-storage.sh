@@ -14,8 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-task::add --group workstation::key_storage::tasks || softfail || return $?
-
 workstation::key_storage::tasks::set() {
   # Checksums for current directory: ${PWD} (task header)
 
@@ -55,6 +53,8 @@ workstation::key_storage::tasks::set() {
     true
   fi
 }
+
+task::add --group workstation::key_storage::tasks || softfail || return $?
 
 workstation::key_storage::tasks::media() {
   local media_path="$1"

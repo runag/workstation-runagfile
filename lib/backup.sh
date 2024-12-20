@@ -14,13 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-task::add --group workstation::backup::tasks || softfail || return $?
-
 workstation::backup::tasks::set() {
-  # Workstation backup: deploy (task header)
   task::add workstation::backup::deploy || softfail || return $?
-
-  # Workstation backup: commands (task header)
 
   local commands=(
     create
@@ -37,6 +32,8 @@ workstation::backup::tasks::set() {
 
   systemd::service_tasks --user --with-timer --service-name "workstation-backup" || softfail || return $?
 }
+
+task::add --group workstation::backup::tasks || softfail || return $?
 
 workstation::backup::deploy() {
   # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid

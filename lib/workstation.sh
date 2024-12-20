@@ -14,11 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Workstation (task header)
-task::add --group workstation::linux::tasks || softfail || return $?
-
 workstation::linux::tasks::set() {
-  # Deploy
   # Linux workstation: complete deploy script (task header)
 
   task::add workstation::linux::deploy_workstation || softfail || return $?
@@ -34,18 +30,15 @@ workstation::linux::tasks::set() {
     task::add workstation::linux::deploy_virt_keys || softfail || return $?
   fi
 
-  # development
   # Development (task header)
 
   task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
   task::add workstation::merge_editor_configs || softfail || return $?
   task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
-  # storage
   # Storage devices (task header)
   task::add workstation::linux::storage::check_root || softfail || return $?
 
-  # benchmark
   # Benchmark (task header)
   if benchmark::is_available; then
     task::add workstation::linux::run_benchmark || softfail || return $?
@@ -54,10 +47,11 @@ workstation::linux::tasks::set() {
     true
   fi
 
-  # password generator
   # Password generator (task header)
   task::add workstation::linux::generate_password || softfail || return $?
 }
+
+task::add --group workstation::linux::tasks || softfail || return $?
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
