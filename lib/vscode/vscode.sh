@@ -19,9 +19,9 @@ workstation::vscode::user_config_path() {
 
   local short_name="Code"
 
-  dir::should_exists --mode 0700 "${config_home}" || fail
-  dir::should_exists --mode 0700 "${config_home}/${short_name}" || fail
-  dir::should_exists --mode 0700 "${config_home}/${short_name}/User" || fail
+  dir::ensure_exists --mode 0700 "${config_home}" || fail
+  dir::ensure_exists --mode 0700 "${config_home}/${short_name}" || fail
+  dir::ensure_exists --mode 0700 "${config_home}/${short_name}/User" || fail
 
    echo "${config_home}/${short_name}/User"
 }

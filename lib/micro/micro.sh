@@ -16,7 +16,7 @@
 
 workstation::micro::install_config() (
   local config_path; config_path="$(cross_platform::config_home)/micro" || fail
-  dir::should_exists --for-me-only "${config_path}" || fail
+  dir::ensure_exists --for-me-only "${config_path}" || fail
 
   relative::cd . || fail
 
@@ -26,7 +26,7 @@ workstation::micro::install_config() (
 
 workstation::micro::merge_config() (
   local config_path; config_path="$(cross_platform::config_home)/micro" || fail
-  dir::should_exists --for-me-only "${config_path}" || fail
+  dir::ensure_exists --for-me-only "${config_path}" || fail
 
   relative::cd . || fail
 

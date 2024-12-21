@@ -189,7 +189,7 @@ workstation::identity::use() {
 
     # rubygems
     if pass::exists "${identity_path}/rubygems/credentials"; then # password field
-      dir::should_exists --mode 0700 "${HOME}/.gem" || fail
+      dir::ensure_exists --mode 0700 "${HOME}/.gem" || fail
       pass::use "${identity_path}/rubygems/credentials" rubygems::credentials || fail
     fi
   fi

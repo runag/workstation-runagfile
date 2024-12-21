@@ -25,8 +25,8 @@ workstation::linux::install_packages() (
   linux::install_runag_essential_dependencies || fail
 
   # ensure ~/.local/bin exists
-  dir::should_exists --mode 0700 "${HOME}/.local" || fail
-  dir::should_exists --mode 0700 "${HOME}/.local/bin" || fail
+  dir::ensure_exists --mode 0700 "${HOME}/.local" || fail
+  dir::ensure_exists --mode 0700 "${HOME}/.local/bin" || fail
 
   # install shellfiles
   shellfile::install_loader::bash || fail

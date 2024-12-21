@@ -183,7 +183,7 @@ workstation::remove_nodejs_and_ruby_installations() {
 workstation::get_config_dir() {
   local full_path="${XDG_CONFIG_HOME:-"${HOME}/.config"}/workstation-runagfile${1:+"/$1"}"
 
-  dir::should_exists --for-me-only "${full_path}" || fail
+  dir::ensure_exists --for-me-only "${full_path}" || fail
 
   echo "${full_path}"
 }
@@ -334,7 +334,7 @@ cold_deploy::upsert() (
   ( cd "${runag_path}" && git::add_or_update_remote "offline-install" "${target_directory}/runag.git" && git fetch "offline-install" ) || softfail "Failed to add or update offline-install remote for Rùnag repository." || return $?
 
   # Ensure that the 'runagfiles' directory exists with the correct permissions.
-  dir::should_exists --mode 0700 "runagfiles" || softfail "Unable to ensure the existence and correct permissions of 'runagfiles'." || return $?
+  dir::ensure_exists --mode 0700 "runagfiles" || softfail "Unable to ensure the existence and correct permissions of 'runagfiles'." || return $?
 
   # Iterate through each subdirectory within 'runagfiles' and perform updates.
   local runagfile_path; for runagfile_path in "${runag_path}/runagfiles"/*; do

@@ -284,7 +284,7 @@ Meta_R,    Up,   Meta_R|Button4
 Meta_R,    Down, Meta_R|Button5
 EOF
 
-  dir::should_exists --for-me-only "${HOME}/.config/autostart" || fail
+  dir::ensure_exists --for-me-only "${HOME}/.config/autostart" || fail
 
   file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
