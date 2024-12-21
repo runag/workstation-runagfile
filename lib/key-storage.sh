@@ -221,8 +221,8 @@ workstation::key_storage::make_backups() {
   local backups_dir="${media_path}/keys-backup"
   local dest_dir; dest_dir="${backups_dir}/$(date --utc +"%Y%m%dT%H%M%SZ")" || fail
 
-  dir::should_exists --mode 0700 "${backups_dir}" || fail
-  dir::should_exists --mode 0700 "${dest_dir}" || fail
+  dir::ensure_exists --mode 0700 "${backups_dir}" || fail
+  dir::ensure_exists --mode 0700 "${dest_dir}" || fail
 
   cp -R "${media_path}/keys" "${dest_dir}" || fail
 

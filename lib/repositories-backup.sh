@@ -117,8 +117,8 @@ workstation::repositories_backup::create() {
 
   local backup_path="${data_home}/repositories-backup"
 
-  dir::should_exists --mode 0700 "${backup_path}" || fail
-  dir::should_exists --mode 0700 "${backup_path}/github" || fail
+  dir::ensure_exists --mode 0700 "${backup_path}" || fail
+  dir::ensure_exists --mode 0700 "${backup_path}/github" || fail
 
   local config_dir; config_dir="$(workstation::get_config_dir "repositories-backup/github")" || fail
 
@@ -151,7 +151,7 @@ workstation::repositories_backup::backup_github_repositories() {
 
   local fail_flag; fail_flag="$(mktemp -u)" || fail
 
-  dir::should_exists --mode 0700 "${backup_path}" || fail
+  dir::ensure_exists --mode 0700 "${backup_path}" || fail
 
   # url to obtain a list of public repos for the specific user "https://api.github.com/users/${GITHUB_USERNAME}/repos?page=${page_number}&per_page=100"
 

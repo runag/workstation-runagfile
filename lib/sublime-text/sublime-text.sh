@@ -28,7 +28,7 @@ workstation::sublime_text::install_license() {
 
   local config_path; config_path="$(sublime_text::get_config_path)" || fail
 
-  dir::should_exists --mode 0700 "${config_path}/Local" || fail
+  dir::ensure_exists --mode 0700 "${config_path}/Local" || fail
 
   pass::use --absorb-in-callback --body "${license_path}" file::write --mode 0600 "${config_path}/Local/License.sublime_license" || fail
 }

@@ -58,7 +58,7 @@ workstation::backup::deploy() {
   {
     runag::mini_library --nounset || fail
  
-    declare -f dir::should_exists || fail
+    declare -f dir::ensure_exists || fail
     declare -f workstation::get_config_dir || fail
 
     declare -f workstation::backup || fail
@@ -73,7 +73,7 @@ workstation::backup::deploy() {
   local bin_dir="${HOME}/.local/bin"
   local bin_path="${bin_dir}/create-${service_name}"
 
-  dir::should_exists "${bin_dir}" || fail
+  dir::ensure_exists "${bin_dir}" || fail
   file::write --absorb "${temp_file}" --mode 0755 "${bin_path}" || fail
 
   systemd::write_user_unit "${service_name}.service" <<EOF || fail
@@ -181,7 +181,7 @@ workstation::backup::shell() {
 
 workstation::backup::mount() {
   local mount_directory="${XDG_DATA_HOME:-"${HOME}/.local/share"}/backup/mount" || fail
-  dir::should_exists --for-me-only "${mount_directory}" || fail
+  dir::ensure_exists --for-me-only "${mount_directory}" || fail
   
   if findmnt --mountpoint "${mount_directory}" >/dev/null; then
     fusermount3 -u -z "${mount_directory}" || fail
@@ -210,7 +210,7 @@ workstation::backup::restore() {
     fail "Restore directory already exists, unable to restore"
   fi
 
-  dir::should_exists --for-me-only "${restore_directory}" || fail
+  dir::ensure_exists --for-me-only "${restore_directory}" || fail
 
   restic restore --target "${restore_directory}" "${snapshot_id}" || fail
 }
