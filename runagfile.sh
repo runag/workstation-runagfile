@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 # load `config.sh` file first
-# shell::related_source config.sh || softfail || return $?
+# relative::source config.sh || softfail || return $?
 
 # load all shell files
-shell::related_source --recursive lib || softfail || return $?
+relative::source --recursive lib || softfail || return $?

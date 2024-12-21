@@ -18,7 +18,7 @@ workstation::micro::install_config() (
   local config_path; config_path="$(cross_platform::config_home)/micro" || fail
   dir::should_exists --for-me-only "${config_path}" || fail
 
-  shell::related_cd || fail
+  relative::cd . || fail
 
   config::install "bindings.json" "${config_path}/bindings.json" || fail
   config::install "settings.json" "${config_path}/settings.json" || fail
@@ -28,7 +28,7 @@ workstation::micro::merge_config() (
   local config_path; config_path="$(cross_platform::config_home)/micro" || fail
   dir::should_exists --for-me-only "${config_path}" || fail
 
-  shell::related_cd || fail
+  relative::cd . || fail
 
   config::merge "bindings.json" "${config_path}/bindings.json" || fail
   config::merge "settings.json" "${config_path}/settings.json" || fail

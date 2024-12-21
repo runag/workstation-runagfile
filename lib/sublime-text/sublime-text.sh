@@ -17,7 +17,7 @@
 workstation::sublime_text::install_config() (
   sublime_text::install_package_control || fail
 
-  shell::related_cd || fail
+  relative::cd . || fail
 
   sublime_text::install_config_file "Preferences.sublime-settings" || fail
   sublime_text::install_config_file "Package Control.sublime-settings" || fail
@@ -34,7 +34,7 @@ workstation::sublime_text::install_license() {
 }
 
 workstation::sublime_text::merge_config() (
-  shell::related_cd || fail
+  relative::cd . || fail
 
   sublime_text::merge_config_file "Preferences.sublime-settings" || fail
   sublime_text::merge_config_file "Package Control.sublime-settings" || fail

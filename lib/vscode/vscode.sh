@@ -27,12 +27,12 @@ workstation::vscode::user_config_path() {
 }
 
 workstation::vscode::install_extensions() (
-  shell::related_cd || fail
+  relative::cd . || fail
   vscode::install_extensions "extensions.txt" || fail
 )
 
 workstation::vscode::install_config() (
-  shell::related_cd || fail
+  relative::cd . || fail
 
   local user_config_path; user_config_path="$(workstation::vscode::user_config_path)" || fail
 
@@ -41,7 +41,7 @@ workstation::vscode::install_config() (
 )
 
 workstation::vscode::merge_config() (
-  shell::related_cd || fail
+  relative::cd . || fail
 
   local user_config_path; user_config_path="$(workstation::vscode::user_config_path)" || fail
 
