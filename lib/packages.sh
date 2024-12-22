@@ -21,6 +21,7 @@ workstation::linux::install_packages() (
   # install packages
   if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
     workstation::linux::install_packages::debian || fail
+
   elif [ "${ID:-}" = arch ]; then
     workstation::linux::install_packages::arch || fail
   fi
@@ -46,25 +47,17 @@ workstation::linux::install_packages() (
   fi
 
   # asdf
-  asdf::install_dependencies || fail
   asdf::install_with_shellrc || fail
 
   # nodejs
-  nodejs::install_dependencies || fail
   asdf::add_plugin_install_package_and_set_global nodejs || fail
 
   # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::install_disable_spring_shellfile || fail
-  ruby::install_dependencies || fail
   ruby::without_docs asdf::add_plugin_install_package_and_set_global ruby || fail
 
-  # python
-  python::install || fail
-
   # erlang & elixir
-  erlang::install_dependencies || fail
-  erlang::install_dependencies::observer || fail
   asdf::add_plugin_install_package_and_set_global erlang || fail
   asdf::add_plugin_install_package_and_set_global elixir || fail
   mix local.hex --if-missing --force || fail
@@ -175,6 +168,9 @@ workstation::linux::install_packages::debian() (
     gnupg
     libsqlite3-dev
     libssl-dev
+    pipx
+    python-is-python3
+    python3
     shellcheck
 
     # # Databases and servers
@@ -212,8 +208,13 @@ workstation::linux::install_packages::debian() (
     # sysbench
   )
 
-  # Populate the `package_list` array with the essential dependencies required  for running Rùnag.
+  # Populate the `package_list` array with dependencies
   runag::extend_package_list::debian || fail
+  asdf::extend_package_list::debian || fail
+  erlang::extend_package_list::debian || fail
+  erlang::extend_package_list::observer::debian || fail
+  ruby::extend_package_list::debian || fail
+  nodejs::extend_package_list::debian || fail
 
   if [ "${ID:-}" = debian ]; then
     package_list+=(awscli)
@@ -289,6 +290,8 @@ workstation::linux::install_packages::arch() {
     git
     gnupg
     openssl
+    python
+    python-pipx
     shellcheck
 
     # # Databases and servers
@@ -327,8 +330,13 @@ workstation::linux::install_packages::arch() {
     # sysbench
   )
 
-  # Populate the `package_list` array with the essential dependencies required  for running Rùnag.
+  # Populate the `package_list` array with dependencies
   runag::extend_package_list::arch || fail
+  asdf::extend_package_list::arch || fail
+  erlang::extend_package_list::arch || fail
+  erlang::extend_package_list::observer::arch || fail
+  ruby::extend_package_list::arch || fail
+  nodejs::extend_package_list::arch || fail
 
   # software for kvm
   if [ "$(systemd-detect-virt)" = "kvm" ]; then
