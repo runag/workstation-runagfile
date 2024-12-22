@@ -36,16 +36,6 @@ workstation::linux::install_packages() (
   shellfile::install_local_bin_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
 
-  # install aws-cli from snap
-  if [ "${ID:-}" = ubuntu ]; then
-    sudo snap install aws-cli --classic || fail
-  fi
-
-  # install restic from github
-  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
-    restic::install "0.17.1" || fail
-  fi
-
   # asdf
   asdf::install_with_shellrc || fail
 
@@ -225,6 +215,14 @@ workstation::linux::install_packages::debian() (
   fi
 
   apt::install "${package_list[@]}" || fail
+
+  # Install aws-cli via snap for Ubuntu.
+  if [ "${ID:-}" = ubuntu ]; then
+    sudo snap install aws-cli --classic || fail
+  fi
+
+  # Install restic from github.
+  restic::install "0.17.3" || fail
 )
 
 workstation::linux::install_packages::arch() {
