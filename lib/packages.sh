@@ -18,11 +18,12 @@ workstation::linux::install_packages() (
   # Load operating system identification data
   . /etc/os-release || fail
 
-  # perform system upgrade
-  linux::upgrade_system || fail
-
-  # install tools to use by the rest of the script
-  linux::install_runag_essential_dependencies || fail
+  # install packages
+  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
+    workstation::linux::install_packages::debian || fail
+  elif [ "${ID:-}" = arch ]; then
+    workstation::linux::install_packages::arch || fail
+  fi
 
   # ensure ~/.local/bin exists
   dir::ensure_exists --mode 0700 "${HOME}/.local" || fail
@@ -33,13 +34,6 @@ workstation::linux::install_packages() (
   shellfile::install_runag_path_profile --source-now || fail
   shellfile::install_local_bin_path_profile --source-now || fail
   shellfile::install_direnv_rc || fail
-
-  # install packages
-  if [ "${ID:-}" = debian ] || [ "${ID_LIKE:-}" = debian ]; then
-    workstation::linux::install_packages::debian || fail
-  elif [ "${ID:-}" = arch ]; then
-    workstation::linux::install_packages::arch || fail
-  fi
 
   # install aws-cli from snap
   if [ "${ID:-}" = ubuntu ]; then
@@ -117,6 +111,14 @@ workstation::linux::install_packages() (
 workstation::linux::install_packages::debian() (
   # Load operating system identification data
   . /etc/os-release || fail
+
+  if [ "${CI:-}" = "true" ]; then
+    apt::update || fail
+  else
+    apt::update || fail
+    apt::autoremove || fail
+    apt::upgrade || fail
+  fi
 
   tailscale::add_apt_source || fail
 
@@ -210,6 +212,9 @@ workstation::linux::install_packages::debian() (
     # sysbench
   )
 
+  # Populate the `package_list` array with the essential dependencies required  for running Rùnag.
+  runag::extend_package_list::apt || fail
+
   if [ "${ID:-}" = debian ]; then
     package_list+=(awscli)
   fi
@@ -222,6 +227,9 @@ workstation::linux::install_packages::debian() (
 )
 
 workstation::linux::install_packages::arch() {
+  sudo pacman --sync --clean --noconfirm || fail
+  sudo pacman --sync --sysupgrade --refresh --noconfirm || fail
+
   local package_list=(
     # # Desktop: browsers
     chromium
@@ -318,6 +326,9 @@ workstation::linux::install_packages::arch() {
     # iperf3
     # sysbench
   )
+
+  # Populate the `package_list` array with the essential dependencies required  for running Rùnag.
+  runag::extend_package_list::arch || fail
 
   # software for kvm
   if [ "$(systemd-detect-virt)" = "kvm" ]; then
