@@ -213,7 +213,7 @@ workstation::linux::install_packages::debian() (
   )
 
   # Populate the `package_list` array with the essential dependencies required  for running Rùnag.
-  runag::extend_package_list::apt || fail
+  runag::extend_package_list::debian || fail
 
   if [ "${ID:-}" = debian ]; then
     package_list+=(awscli)
