@@ -27,7 +27,6 @@ workstation::linux::install_packages() (
   fi
 
   # ensure ~/.local/bin exists
-  dir::ensure_exists --mode 0700 "${HOME}/.local" || fail
   dir::ensure_exists --mode 0700 "${HOME}/.local/bin" || fail
 
   # install shellfiles
