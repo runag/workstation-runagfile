@@ -105,39 +105,39 @@ workstation::linux::install_packages::debian() (
   tailscale::add_apt_source || fail
 
   local package_list=(
-    # # Desktop: browsers
+    # == Desktop: browsers ==
 
-    # # Desktop: text editors
+    # == Desktop: text editors ==
     ghex
     meld
 
-    # # Desktop: content creation and productivity
+    # == Desktop: content creation and productivity ==
     # inkscape
     # obs-studio
     krita
     libreoffice-calc
     libreoffice-writer
 
-    # # Desktop: content consumption
+    # == Desktop: content consumption ==
     calibre
     vlc
 
-    # # Desktop: misc tools
+    # == Desktop: misc tools ==
     # gpa # gnu privacy assistant
     # gparted
     # thunar
     dconf-editor
     qtpass
 
-    # # Desktop: fonts
+    # == Desktop: fonts ==
 
-    # # Desktop: hardware
+    # == Desktop: hardware ==
     # ddcutil # display control
     # pavucontrol # volume control
     imwheel # mouse wheel
     v4l-utils # webcam control
 
-    # # Terminal ui
+    # == Terminal ui ==
     # debian-goodies # checkrestart
     # htop
     direnv
@@ -149,7 +149,7 @@ workstation::linux::install_packages::debian() (
     xkcdpass
     zsh
 
-    # # Build and developer tools
+    # == Build and developer tools ==
     # inotify-tools
     build-essential
     gawk
@@ -162,7 +162,7 @@ workstation::linux::install_packages::debian() (
     python3
     shellcheck
 
-    # # Databases and servers
+    # == Databases and servers ==
     # memcached
     # redis-server
     libpq-dev
@@ -170,19 +170,19 @@ workstation::linux::install_packages::debian() (
     postgresql-contrib
     sqlite3
 
-    # # Cloud and networking
+    # == Cloud and networking ==
     # ethtool
     certbot
     tailscale
     whois
 
-    # # Batch media processing
+    # == Batch media processing ==
     # graphviz
     ffmpeg
     imagemagick
     zbar-tools
 
-    # # Storage and files
+    # == Storage and files ==
     # btrfs-compsize
     # dosfstools # gparted dependencies for fat partitions
     # mtools # gparted dependencies for fat partitions
@@ -190,7 +190,7 @@ workstation::linux::install_packages::debian() (
     nvme-cli
     p7zip-full
 
-    # # Benchmarks
+    # == Benchmarks ==
     # apache2-utils
     # hyperfine
     # iperf3
@@ -229,46 +229,46 @@ workstation::linux::install_packages::arch() {
   sudo pacman --sync --sysupgrade --refresh --noconfirm || fail
 
   local package_list=(
-    # # Desktop: browsers
+    # == Desktop: browsers ==
     chromium
     firefox
 
-    # # Desktop: messengers
+    # == Desktop: messengers ==
 
-    # # Desktop: text editors
+    # == Desktop: text editors ==
     ghex
     meld
 
-    # # Desktop: content creation and productivity
+    # == Desktop: content creation and productivity ==
     # inkscape
     # obs-studio
     krita
     libreoffice-fresh
 
-    # # Desktop: content consumption
+    # == Desktop: content consumption ==
     calibre
     vlc
 
-    # # Desktop: misc tools
+    # == Desktop: misc tools ==
     # gparted
     # thunar
     dconf-editor
     gnome-terminal
     qtpass
 
-    # # Desktop: fonts
+    # == Desktop: fonts ==
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
     ttf-dejavu
 
-    # # Desktop: hardware
+    # == Desktop: hardware ==
     # ddcutil # display control
     # pavucontrol # volume control
     imwheel # mouse wheel
     v4l-utils # webcam control
 
-    # # Terminal ui
+    # == Terminal ui ==
     # htop
     direnv
     fzf
@@ -280,7 +280,7 @@ workstation::linux::install_packages::arch() {
     xkcdpass
     zsh
 
-    # # Build and developer tools
+    # == Build and developer tools ==
     # inotify-tools
     base-devel
     gawk
@@ -291,26 +291,29 @@ workstation::linux::install_packages::arch() {
     python-pipx
     shellcheck
 
-    # # Databases and servers
+    # == Databases and servers ==
     # memcached
     # redis-server
     postgresql
     sqlite
 
-    # # Cloud and networking
+    # == Cloud and networking ==
     # ethtool
     aws-cli
     certbot
     tailscale
     whois
 
-    # # Batch media processing
+    # == Virtual machines ==
+    incus
+
+    # == Batch media processing ==
     # graphviz
     ffmpeg
     imagemagick
     zbar
 
-    # # Storage and files
+    # == Storage and files ==
     # compsize
     # dosfstools # gparted dependencies for fat partitions
     # mtools # gparted dependencies for fat partitions
@@ -319,7 +322,7 @@ workstation::linux::install_packages::arch() {
     p7zip
     restic
 
-    # # Benchmarks
+    # == Benchmarks ==
     # apache
     # fio
     # hyperfine
@@ -346,4 +349,9 @@ workstation::linux::install_packages::arch() {
   if ! command -v fusermount >/dev/null; then
     ln -s /bin/fusermount3 ~/.local/bin/fusermount || fail
   fi
+
+  # enable incus
+  sudo usermod --append --groups incus-admin "${USER}" || fail
+  sudo usermod -v 1000000-1000999999 -w 1000000-1000999999 root || fail
+  sudo systemctl --now enable incus.service || fail
 }
