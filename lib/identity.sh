@@ -137,7 +137,6 @@ workstation::identity::use() {
 
       # npm
       if [ -f package.json ] && pass::exists "${identity_path}/npm/access-token"; then # password field
-        asdf::load --if-installed || fail
         pass::use "${identity_path}/npm/access-token" npm::auth_token --project || fail
       fi
 
@@ -183,7 +182,6 @@ workstation::identity::use() {
 
     # npm
     if pass::exists "${identity_path}/npm/access-token"; then # password field
-      asdf::load --if-installed || fail
       pass::use "${identity_path}/npm/access-token" npm::auth_token || fail
     fi
 

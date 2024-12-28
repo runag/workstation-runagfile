@@ -36,19 +36,21 @@ workstation::linux::install_packages() (
   shellfile::install_direnv_rc || fail
 
   # asdf
-  asdf::install_with_shellrc || fail
+  asdf::install_self || fail
+  asdf::install_shellfile || fail
+  asdf::load || fail
 
   # nodejs
-  asdf::add_plugin_install_package_and_set_global nodejs || fail
+  asdf::install --global nodejs || fail
 
   # ruby
   ruby::dangerously_append_nodocument_to_gemrc || fail
   ruby::install_disable_spring_shellfile || fail
-  ruby::without_docs asdf::add_plugin_install_package_and_set_global ruby || fail
+  ruby::without_docs asdf::install --global ruby || fail
 
   # erlang & elixir
-  asdf::add_plugin_install_package_and_set_global erlang || fail
-  asdf::add_plugin_install_package_and_set_global elixir || fail
+  asdf::install --global erlang || fail
+  asdf::install --global elixir || fail
   mix local.hex --if-missing --force || fail
   mix local.rebar --if-missing --force || fail
   mix archive.install hex phx_new --force || fail
