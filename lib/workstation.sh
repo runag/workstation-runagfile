@@ -183,7 +183,7 @@ workstation::remove_nodejs_and_ruby_installations() {
 workstation::get_config_dir() {
   local full_path="${XDG_CONFIG_HOME:-"${HOME}/.config"}/workstation-runagfile${1:+"/$1"}"
 
-  dir::ensure_exists --for-me-only "${full_path}" || fail
+  dir::ensure_exists --user-only "${full_path}" || fail
 
   echo "${full_path}"
 }

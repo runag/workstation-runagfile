@@ -181,7 +181,7 @@ workstation::backup::shell() {
 
 workstation::backup::mount() {
   local mount_directory="${XDG_DATA_HOME:-"${HOME}/.local/share"}/backup/mount" || fail
-  dir::ensure_exists --for-me-only "${mount_directory}" || fail
+  dir::ensure_exists --user-only "${mount_directory}" || fail
   
   if findmnt --mountpoint "${mount_directory}" >/dev/null; then
     fusermount3 -u -z "${mount_directory}" || fail
@@ -210,7 +210,7 @@ workstation::backup::restore() {
     fail "Restore directory already exists, unable to restore"
   fi
 
-  dir::ensure_exists --for-me-only "${restore_directory}" || fail
+  dir::ensure_exists --user-only "${restore_directory}" || fail
 
   restic restore --target "${restore_directory}" "${snapshot_id}" || fail
 }
