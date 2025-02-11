@@ -267,6 +267,7 @@ workstation::linux::install_packages::arch() {
     # == Desktop: hardware ==
     # ddcutil # display control
     # pavucontrol # volume control
+    cameractrls # webcam control gui
     imwheel # mouse wheel
     v4l-utils # webcam control
 
