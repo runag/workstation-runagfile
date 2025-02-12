@@ -220,12 +220,16 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>F2']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>F4']" || fail
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Shift><Super>F5']" || fail
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Super>F6']" || fail
 
   # Switch to workspace keybindings
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>F1']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>F2']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>F3']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>F4']" || fail
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Super>F5']" || fail
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>F6']" || fail
 )
 
 # to debug:
