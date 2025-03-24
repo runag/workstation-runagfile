@@ -259,8 +259,8 @@ workstation::linux::generate_password() {
 }
 
 # Adds tasks to perform the upsert and update operations for the cold rùnag repository.
-task::add cold-deploy upsert || softfail || return $?
-task::add cold-deploy update || softfail || return $?
+task::add cold_deploy::upsert || softfail || return $?
+task::add cold_deploy::update || softfail || return $?
 
 # ### `cold_deploy::update`
 #
