@@ -82,9 +82,6 @@ workstation::linux::install_packages() (
   # install syncthing
   syncthing::install || fail
 
-  # insall blankfast
-  blankfast::install || fail
-
   # install pass fzf plugin
   pass::install_fzf_extension || fail
 
