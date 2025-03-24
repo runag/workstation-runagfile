@@ -106,8 +106,8 @@ workstation::repositories_backup::deploy_credentials() {
 
   local config_dir; config_dir="$(workstation::get_config_dir "repositories-backup/github/${credentials_name}")" || fail
 
-  pass::use "${credentials_path}/github/username" file::write --mode 0600 "${config_dir}/username" || fail
-  pass::use "${credentials_path}/github/personal-access-token" file::write --mode 0600 "${config_dir}/personal-access-token" || fail
+  pass::use "${credentials_path}/github/username" file::write --user-only "${config_dir}/username" || fail
+  pass::use "${credentials_path}/github/personal-access-token" file::write --user-only "${config_dir}/personal-access-token" || fail
 }
 
 # shellcheck disable=2030

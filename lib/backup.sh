@@ -38,7 +38,7 @@ task::add --group workstation::backup::tasks || softfail || return $?
 workstation::backup::deploy() {
   # In order for backup to work, configure passwordless sudo for dmidecode in get machine uuid
   if systemd-detect-virt --quiet; then
-    <<<"${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" file::write --sudo --mode 0440 /etc/sudoers.d/passwordless-dmidecode || fail
+    <<<"${USER} ALL=NOPASSWD: /usr/sbin/dmidecode" file::write --root --mode 0440 /etc/sudoers.d/passwordless-dmidecode || fail
     local no_new_privileges=false
   else
     local no_new_privileges=true
@@ -47,8 +47,8 @@ workstation::backup::deploy() {
   local passwords_dir; passwords_dir="$(workstation::get_config_dir "backup/passwords")" || fail
   local repositories_dir; repositories_dir="$(workstation::get_config_dir "backup/repositories")" || fail
   
-  pass::use "backup/passwords/workstation" file::write --mode 0600 "${passwords_dir}/workstation" || fail
-  pass::use "backup/repositories/workstation" file::write --mode 0600 "${repositories_dir}/workstation" || fail
+  pass::use "backup/passwords/workstation" file::write --user-only "${passwords_dir}/workstation" || fail
+  pass::use "backup/repositories/workstation" file::write --user-only "${repositories_dir}/workstation" || fail
 
   ssh::add_ssh_config_d_include_directive || fail
 
@@ -74,7 +74,7 @@ workstation::backup::deploy() {
   local bin_path="${bin_dir}/create-${service_name}"
 
   dir::ensure_exists "${bin_dir}" || fail
-  file::write --absorb "${temp_file}" --mode 0755 "${bin_path}" || fail
+  file::write --consume "${temp_file}" --mode 0755 "${bin_path}" || fail
 
   systemd::write_user_unit "${service_name}.service" <<EOF || fail
 [Unit]

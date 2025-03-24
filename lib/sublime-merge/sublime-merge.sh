@@ -28,7 +28,7 @@ workstation::sublime_merge::install_license() {
 
   dir::ensure_exists --mode 0700 "${config_path}/Local" || fail
 
-  pass::use --absorb-in-callback --body "${license_path}" file::write --mode 0600 "${config_path}/Local/License.sublime_license" || fail
+  pass::use --consume-in-callback --body "${license_path}" file::write --user-only "${config_path}/Local/License.sublime_license" || fail
 }
 
 workstation::sublime_merge::merge_config() (

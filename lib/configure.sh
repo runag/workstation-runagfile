@@ -30,8 +30,8 @@ workstation::linux::configure() (
 
   # configure ssh
   ssh::add_ssh_config_d_include_directive || fail
-  <<<"ServerAliveInterval 30" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/server-alive-interval.conf" || fail
-  <<<"IdentitiesOnly yes" file::write --mode 0600 "${HOME}/.ssh/ssh_config.d/identities-only.conf" || fail
+  <<<"ServerAliveInterval 30" file::write --user-only "${HOME}/.ssh/ssh_config.d/server-alive-interval.conf" || fail
+  <<<"IdentitiesOnly yes" file::write --user-only "${HOME}/.ssh/ssh_config.d/identities-only.conf" || fail
 
   # increase inotify limits
   linux::configure_inotify || fail
@@ -240,7 +240,7 @@ workstation::linux::gnome::configure() (
 #   pkill --full "/usr/bin/imwheel"
 
 workstation::linux::imwheel::deploy() {
-  file::write --mode 0600 "${HOME}/.imwheelrc" <<EOF || fail
+  file::write --user-only "${HOME}/.imwheelrc" <<EOF || fail
 # In the absence of the following tedious list of modifiers,
 # (alt/ctrl/shift/meta + scroll) does not work
 
@@ -290,7 +290,7 @@ EOF
 
   dir::ensure_exists --user-only "${HOME}/.config/autostart" || fail
 
-  file::write --mode 0600 "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
+  file::write --user-only "${HOME}/.config/autostart/imwheel.desktop" <<EOF || fail
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/bash -c 'if [ "\${XDG_SESSION_TYPE:-}" = "x11" ]; then /usr/bin/imwheel; fi'
@@ -319,7 +319,7 @@ workstation::configure_git() {
 }
 
 workstation::linux::storage::configure_udisks_mount_options() {
-  file::write --sudo --mode 0644 /etc/udisks2/mount_options.conf <<SHELL || fail
+  file::write --root --mode 0644 /etc/udisks2/mount_options.conf <<SHELL || fail
 [defaults]
 btrfs_defaults=flushoncommit,noatime,compress=zstd
 btrfs_allow=compress,compress-force,datacow,nodatacow,datasum,nodatasum,autodefrag,noautodefrag,degraded,device,discard,nodiscard,subvol,subvolid,space_cache,commit,flushoncommit,noatime
