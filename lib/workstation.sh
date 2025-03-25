@@ -14,44 +14,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-workstation::linux::tasks::set() {
-  # Linux workstation: complete deploy script (task header)
+task::add workstation::linux::deploy_workstation || softfail || return $?
+task::add workstation::linux::deploy_identities || softfail || return $?
+task::add workstation::linux::install_packages || softfail || return $?
+task::add workstation::linux::configure || softfail || return $?
+task::add workstation::linux::set_hostname || softfail || return $?
 
-  task::add workstation::linux::deploy_workstation || softfail || return $?
+if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
+  task::add workstation::linux::deploy_virt_keys || softfail || return $?
+fi
 
-  # Linux workstation: particular deployment tasks (task header)
+if benchmark::is_available; then
+  task::add workstation::linux::run_benchmark || softfail || return $?
+fi
 
-  task::add workstation::linux::deploy_identities || softfail || return $?
-  task::add workstation::linux::install_packages || softfail || return $?
-  task::add workstation::linux::configure || softfail || return $?
-  task::add workstation::linux::set_hostname || softfail || return $?
+task::add workstation::linux::storage::check_root || softfail || return $?
+task::add workstation::linux::generate_password || softfail || return $?
 
-  if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
-    task::add workstation::linux::deploy_virt_keys || softfail || return $?
-  fi
-
-  # Development (task header)
-
-  task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
-  task::add workstation::merge_editor_configs || softfail || return $?
-  task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
-
-  # Storage devices (task header)
-  task::add workstation::linux::storage::check_root || softfail || return $?
-
-  # Benchmark (task header)
-  if benchmark::is_available; then
-    task::add workstation::linux::run_benchmark || softfail || return $?
-  else
-    # Benchmark is not available (task note)
-    true
-  fi
-
-  # Password generator (task header)
-  task::add workstation::linux::generate_password || softfail || return $?
-}
-
-task::add --group workstation::linux::tasks || softfail || return $?
+task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
+task::add workstation::merge_editor_configs || softfail || return $?
+task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
 # one command to encompass the whole workstation deployment process.
 workstation::linux::deploy_workstation() {
@@ -259,8 +241,8 @@ workstation::linux::generate_password() {
 }
 
 # Adds tasks to perform the upsert and update operations for the cold rùnag repository.
-task::add cold_deploy::upsert || softfail || return $?
 task::add cold_deploy::update || softfail || return $?
+task::add cold_deploy::upsert || softfail || return $?
 
 # ### `cold_deploy::update`
 #
@@ -357,3 +339,34 @@ cold_deploy::upsert() (
   # Copy the deploy script to the current directory.
   cp -f "${runag_path}/deploy-offline.sh" . || softfail "Failed to copy the deploy-offline.sh script." || return $?
 )
+
+workstation::set_battery_profile() {
+  local profile_function="$1"
+
+  local temp_file; temp_file="$(mktemp)" || fail
+  {
+    runag::mini_library --nounset || fail
+
+    declare -f linux::set_battery_charge_control_threshold || fail
+    declare -f "${profile_function}" || fail
+
+    printf '%q || fail' "${profile_function}" || fail
+
+  } >"${temp_file}" || fail
+
+  file::write --consume "${temp_file}" --root --mode 755 /usr/local/bin/set-workstation-battery-profile || fail
+
+  file::write --root /etc/systemd/system/set-workstation-battery-profile.service <<EOF || fail
+[Unit]
+Description=Update battery profile
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/set-workstation-battery-profile
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  sudo systemctl --quiet --now enable "set-workstation-battery-profile.service" || fail
+}
