@@ -230,6 +230,17 @@ workstation::linux::gnome::configure() (
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>F4']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Super>F5']" || fail
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>F6']" || fail
+
+  # Other keybindings
+  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "\
+    ['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']" || fail
+
+  local keybindings_path="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+
+  gsettings set "${keybindings_path}/custom0/" binding '<Super>Pause' || fail
+  gsettings set "${keybindings_path}/custom0/" command 'systemctl suspend' || fail
+  gsettings set "${keybindings_path}/custom0/" name 'Suspend' || fail
+
 )
 
 # to debug:
