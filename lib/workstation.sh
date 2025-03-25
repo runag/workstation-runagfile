@@ -31,7 +31,6 @@ fi
 task::add workstation::linux::storage::check_root || softfail || return $?
 task::add workstation::linux::generate_password || softfail || return $?
 
-task::add workstation::remove_nodejs_and_ruby_installations || softfail || return $?
 task::add workstation::merge_editor_configs || softfail || return $?
 task::add git::add_signed_off_by_trailer_in_commit_msg_hook || softfail || return $?
 
@@ -139,26 +138,6 @@ workstation::add_runagfiles() {
 
   pass::use --body "${list_path}" | runagfile::add_from_list
   test "${PIPESTATUS[*]}" = "0 0" || fail
-}
-
-
-# Cleanup
-workstation::remove_nodejs_and_ruby_installations() {
-  if asdf plugin list | grep -qFx nodejs; then
-    asdf uninstall nodejs || fail
-  fi
-
-  if asdf plugin list | grep -qFx ruby; then
-    asdf uninstall ruby || fail
-  fi
-
-  rm -rf "${HOME}/.nodenv/versions"/* || fail
-  rm -rf "${HOME}/.rbenv/versions"/* || fail
-
-  rm -rf "${HOME}/.cache/yarn" || fail
-  rm -rf "${HOME}/.solargraph" || fail
-  rm -rf "${HOME}/.bundle" || fail
-  rm -rf "${HOME}/.node-gyp" || fail
 }
 
 # Config
