@@ -1,10 +1,11 @@
 {
 	"diff_style": "side-by-side",
-	"font_size": 12,
+	"font_size": 11,
 	"hide_menu": false,
 	"render_commit_dialog_message_at_top": true,
 	"side_bar_layout": "tabs",
 	"hardware_acceleration": "none",
 	"trim_trailing_white_space_on_save": true,
 	"font_face": "Liberation Mono",
+	"diff_algorithm": "histogram",
 }
