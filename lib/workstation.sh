@@ -15,14 +15,7 @@
 #  limitations under the License.
 
 task::add workstation::linux::deploy_workstation || softfail || return $?
-task::add workstation::linux::deploy_identities || softfail || return $?
-task::add workstation::linux::install_packages || softfail || return $?
-task::add workstation::linux::configure || softfail || return $?
 task::add workstation::linux::set_hostname || softfail || return $?
-
-if [ -d "${HOME}/.runag/.virt-deploy-keys" ]; then
-  task::add workstation::linux::deploy_virt_keys || softfail || return $?
-fi
 
 if benchmark::is_available; then
   task::add workstation::linux::run_benchmark || softfail || return $?
