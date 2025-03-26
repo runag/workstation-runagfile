@@ -295,6 +295,7 @@ workstation::linux::install_packages::arch() {
     # memcached
     # redis-server
     postgresql
+    postgresql-old-upgrade
     sqlite
 
     # == Cloud and networking ==
