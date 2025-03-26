@@ -103,7 +103,7 @@ WantedBy=timers.target
 EOF
 
   # enable the service and start the timer
-  systemctl --user --quiet reenable "${service_name}.timer" || fail
+  systemctl --user reenable "${service_name}.timer" || fail
   systemctl --user start "${service_name}.timer" || fail
 }
 

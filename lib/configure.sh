@@ -72,7 +72,7 @@ workstation::linux::configure() (
   if [ "${ID:-}" = arch ] && sudo test ! -d /var/lib/postgres/data; then
     postgresql::as_postgres_user initdb -D /var/lib/postgres/data || fail
   fi
-  sudo systemctl --quiet --now enable postgresql || fail
+  sudo systemctl --now enable postgresql || fail
   postgresql::create_role_if_not_exists --with "SUPERUSER CREATEDB CREATEROLE LOGIN" || fail
 
   ## Desktop ##

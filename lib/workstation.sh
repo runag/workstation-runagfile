@@ -340,5 +340,5 @@ ExecStart=/usr/local/bin/set-workstation-battery-profile
 WantedBy=multi-user.target
 EOF
 
-  sudo systemctl --quiet --now enable "set-workstation-battery-profile.service" || fail
+  sudo systemctl --now enable "set-workstation-battery-profile.service" || fail
 }

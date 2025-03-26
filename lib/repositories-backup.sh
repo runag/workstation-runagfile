@@ -223,6 +223,6 @@ WantedBy=timers.target
 EOF
 
   # enable the service and start the timer
-  systemctl --user --quiet reenable "repositories-backup.timer" || fail
+  systemctl --user reenable "repositories-backup.timer" || fail
   systemctl --user start "repositories-backup.timer" || fail
 }

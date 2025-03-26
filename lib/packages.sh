@@ -86,7 +86,7 @@ workstation::linux::install_packages() (
   pass::install_fzf_extension || fail
 
   # enable services
-  sudo systemctl --quiet --now enable tailscaled || fail
+  sudo systemctl --now enable tailscaled || fail
 )
 
 workstation::linux::install_packages::debian() (
