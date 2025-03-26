@@ -50,7 +50,7 @@ workstation::linux::install_packages() (
 
   # erlang & elixir
   asdf::install --global erlang || fail
-  asdf::install --global elixir || fail
+  asdf::install --global elixir "1.18.3-otp-27" || fail
   mix local.hex --if-missing --force || fail
   mix local.rebar --if-missing --force || fail
   mix archive.install hex phx_new --force || fail
