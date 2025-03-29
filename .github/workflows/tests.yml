@@ -58,7 +58,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y xvfb dbus-x11 ubuntu-desktop 2>&1
 
     - name: Deploy runag and runagfiles
-      run: bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile add senotrusov/blankfast 2>&1
+      run: bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile 2>&1
 
     - name: Run workstation::linux::install_packages
       run: $HOME/.runag/bin/runag workstation::linux::install_packages 2>&1
