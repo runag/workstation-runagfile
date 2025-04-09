@@ -65,19 +65,3 @@ jobs:
 
     - name: Run workstation::linux::configure
       run: DISPLAY=:42 dbus-launch xvfb-run --server-num 42 $HOME/.runag/bin/runag workstation::linux::configure 2>&1
-
-  windows-machine:
-    name: windows-machine
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest]
-
-    steps:
-    - name: Wait to give developers time to update other repositories used in this test
-      run: Start-Sleep -s 30
-
-    - name: Run PowerShell deploy script
-      shell: powershell -command "& '{0}'"
-      run: 'iwr -UseBasicParsing -Headers @{"Cache-Control"="no-cache"} "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy.ps1" | iex'
-    

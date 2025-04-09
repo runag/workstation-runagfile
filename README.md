@@ -18,7 +18,7 @@ limitations under the License.
 
 🧡 A script to deploy a workstation.
 
-* It could be run on a freshly installed Linux, MacOS, or Windows.
+* It could be run on a freshly installed Linux or MacOS.
 * It installs and configures software, credentials, and backups.
 * It is idempotent, it could be run multiple times to produce up-to date configuration.
 
@@ -87,16 +87,6 @@ runag  ~/.runag  virtiofs  defaults  0  0
 ```sh
 bash <(curl -Ssf https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile
 ```
-
-
-## Deploy Windows machine
-
-Start PowerShell as administrator, run the following and wait for it to complete:
-
-```sh
-iwr -UseBasicParsing "https://raw.githubusercontent.com/runag/workstation-runagfile/main/deploy.ps1" | iex
-```
-
 
 ## Password Store
 
