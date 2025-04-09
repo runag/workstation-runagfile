@@ -32,6 +32,16 @@ There is a library, [💜 Rùnag](https://github.com/runag/runag), that allows t
 bash <(wget -qO- https://raw.githubusercontent.com/runag/runag/main/deploy.sh) add runag/workstation-runagfile run
 ```
 
+## Offline install
+
+```sh
+# create offline install
+mkdir runag-offline-install && cd runag-offline-install
+runag offline_install::create_or_update
+
+# perform offline install from the runag-offline-install directory
+bash deploy-offline.sh
+```
 
 ## Deploy workstation on Linux in KVM (useful for testing)
 

@@ -213,21 +213,21 @@ workstation::linux::generate_password() {
 }
 
 # Adds tasks to perform the upsert and update operations for the cold rùnag repository.
-task::add cold_deploy::update || softfail || return $?
-task::add cold_deploy::upsert || softfail || return $?
+task::add offline_install::update || softfail || return $?
+task::add offline_install::create_or_update || softfail || return $?
 
-# ### `cold_deploy::update`
+# ### `offline_install::update`
 #
 # This function updates the cold (offline) Rùnag deployment repository.
 #
 # It performs the following tasks:
 # - Verifies that the cold Rùnag repository exists.
 # - Retrieves the offline installation URL from the Rùnag configuration.
-# - Calls `cold_deploy::upsert` to update the repository with the retrieved URL.
+# - Calls `offline_install::create_or_update` to update the repository with the retrieved URL.
 #
 # #### Parameters: None
 #
-cold_deploy::update() {
+offline_install::update() {
   local runag_path="${HOME}/.runag"
 
   # Check if the Rùnag repository exists.
@@ -239,10 +239,10 @@ cold_deploy::update() {
   local remote_path; remote_path="$(git -C "${runag_path}" config "remote.offline-install.url")" || softfail "Failed to retrieve remote URL for offline installation." || return $?
 
   # Call the upsert function to update the repository and its contents.
-  cold_deploy::upsert "${remote_path}/.." || softfail "Failed to upsert the Rùnag repository with remote path: ${remote_path}" || return $?
+  offline_install::create_or_update "${remote_path}/.." || softfail "Failed to upsert the Rùnag repository with remote path: ${remote_path}" || return $?
 }
 
-# ### `cold_deploy::upsert`
+# ### `offline_install::create_or_update`
 #
 # This function performs an "upsert" operation on the cold (offline) Rùnag repository.
 # If a target path is provided, the function changes to that directory and attempts
@@ -259,7 +259,7 @@ cold_deploy::update() {
 # #### Parameters:
 # - `$1`: Optional target path. If provided, the script changes to that directory before performing operations.
 #
-cold_deploy::upsert() (
+offline_install::create_or_update() (
   local runag_path="${HOME}/.runag"
 
   # If a remote path is provided, change to that directory.
